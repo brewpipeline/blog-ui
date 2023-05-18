@@ -28,6 +28,8 @@ jobs:
         run: rustup target add wasm32-unknown-unknown
       - name: Trunk Build
         run: trunk build --release
+      - name: Change base-tag in index.html
+        run: sed -i 's/<base href="\/" \/>/<base href="\/blog\/" \/>
       - name: Deploy 
         uses: JamesIves/github-pages-deploy-action@v4
         with:
