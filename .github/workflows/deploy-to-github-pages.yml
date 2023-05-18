@@ -44,6 +44,9 @@ jobs:
     needs: build
 
     steps:
-      - uses: JamesIves/github-pages-deploy-action@v4
+      - name: Setup Pages
+        uses: actions/configure-pages@v3
+      - name: Deploy
+        uses: JamesIves/github-pages-deploy-action@v4
         with:
           folder: dist
