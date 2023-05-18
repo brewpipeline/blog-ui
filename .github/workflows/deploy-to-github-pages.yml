@@ -23,18 +23,28 @@ env:
   CARGO_TERM_COLOR: always
 
 jobs:
+  # Build job
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v3
+      - name: Trunk Setup
+        uses: jetli/trunk-action@v0.4.0
+      - name: Target Add `wasm32-unknown-unknown`
+        run: rustup target add wasm32-unknown-unknown
+      - name: Trunk Build
+        run: trunk build --release
+      - name: Upload artifact
+        uses: actions/upload-pages-artifact@v1
+        
+  # Deployment job
   deploy:
 
     runs-on: ubuntu-latest
+    needs: build
 
     steps:
-    - uses: actions/checkout@v3
-    - uses: jetli/trunk-action@v0.4.0
-    - name: Target Add `wasm32-unknown-unknown`
-      run: rustup target add wasm32-unknown-unknown
-    - name: Trunk Build
-      run: trunk build --release
-    - name: Deploy
-      uses: JamesIves/github-pages-deploy-action@v4
-      with:
-        folder: dist
+      - uses: JamesIves/github-pages-deploy-action@v4
+        with:
+          folder: dist
