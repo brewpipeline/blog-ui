@@ -29,7 +29,7 @@ jobs:
       - name: Trunk Build
         run: trunk build --release
       - name: Change base-tag in index.html
-        run: sed -i 's/<base href="\/" \/>/<base href="\/blog\/" \/>/g' dist/index.html
+        run: sed -i 's/<base href="\/">/<base href="\/blog\/">/g' dist/index.html
       - name: Deploy 
         uses: JamesIves/github-pages-deploy-action@v4
         with:
