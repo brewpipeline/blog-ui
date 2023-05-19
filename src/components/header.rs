@@ -65,11 +65,10 @@ impl Component for Header {
                                     <div class="d-flex dropdown dropdown-menu-end">
                                         <img src="https://github.com/mdo.png" type="button" alt="mdo" class="item d-flex rounded" data-bs-toggle="dropdown" aria-expanded="false" />
                                         <ul class="dropdown-menu text-small" >
-                                            <li><a class="dropdown-item" href="#"> { "Ты" } </a></li>
-                                            <li><a class="dropdown-item" href="#"> { "ебучий" } </a></li>
-                                            <li><a class="dropdown-item" href="#"> { "пидарас" } </a></li>
+                                            <li><a class="dropdown-item" href="#"> { "Профиль" } </a></li>
+                                            <li><a class="dropdown-item" href="#"> { "Настройки" } </a></li>
                                             <li><hr class="dropdown-divider" /></li>
-                                            <li><a class="dropdown-item" href="#"> { "Выйди и зайди нормально" } </a></li>
+                                            <li><a class="dropdown-item" href="#"> { "Выход" } </a></li>
                                         </ul>
                                     </div>
                                 }

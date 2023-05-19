@@ -140,7 +140,10 @@ impl Body {
                     </h2>
                     <div id="collapseOne" class="accordion-collapse collapse show" data-bs-parent="#accordionExample">
                         <div class="accordion-body">
-                        <strong /> { "Я очень люблю жесткий секс но увы я только друг." } <strong/> { " А блог этот про хороших людей в плохое время." } 
+                            <strong> 
+                                { "Ты ошибка эволюции." } 
+                            </strong> 
+                            { "А блог этот про хороших людей в плохое время." } 
                         </div>
                     </div>
                     </div>
