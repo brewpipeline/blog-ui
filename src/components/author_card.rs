@@ -5,14 +5,9 @@ use crate::content::User;
 
 use crate::Route;
 
-#[derive(Clone, Debug, PartialEq, Eq)]
-pub struct AuthorCardContent {
-    pub user: User,
-}
-
 #[derive(Clone, Debug, PartialEq, Eq, Properties)]
 pub struct Props {
-    pub content: Option<AuthorCardContent>,
+    pub user: Option<User>,
 }
 
 pub struct AuthorCard;
@@ -26,7 +21,7 @@ impl Component for AuthorCard {
     }
 
     fn view(&self, ctx: &Context<Self>) -> Html {
-        let Some(AuthorCardContent { user }) = &ctx.props().content else {
+        let Some(user) = &ctx.props().user else {
             return html! {
                 <div class="card mb-3">
                     <div class="row g-0">

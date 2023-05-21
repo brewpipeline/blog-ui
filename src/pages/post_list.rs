@@ -5,7 +5,6 @@ use gloo_net::http::Request;
 use crate::components::pagination::*;
 use crate::components::post_card::*;
 use crate::content::PostsContainer;
-use crate::generator::Generator;
 
 use crate::Route;
 
@@ -19,7 +18,7 @@ pub fn post_list() -> Html {
         .map(|it| it.page)
         .unwrap_or(1);
     
-    let posts_container = use_state(|| None);
+    let posts_container = use_state_eq(|| None);
     {
         let posts_container = posts_container.clone();
         use_effect_with(page, move |_| {
@@ -45,7 +44,7 @@ pub fn post_list() -> Html {
     let Some(posts_container) = (*posts_container).clone() else {
         return (0..ITEMS_PER_PAGE).map(|_| {
             html! {
-                <PostCard content={ None } />
+                <PostCard post={ None } />
             }
         }).collect::<Html>()
     };
@@ -53,12 +52,8 @@ pub fn post_list() -> Html {
         <>
             {
                 posts_container.posts.into_iter().map(|post| {
-                    let image_url = Generator::from_seed(post.id).image_url((400, 100), post.tags.as_slice());
                     html! {
-                        <PostCard content={ Some(PostCardContent { 
-                            post, 
-                            image_url,
-                        }) } />
+                        <PostCard post={ Some(post) } />
                     }
                 }).collect::<Html>()
             }

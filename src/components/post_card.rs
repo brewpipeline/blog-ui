@@ -5,15 +5,9 @@ use crate::content::Post;
 
 use crate::Route;
 
-#[derive(Clone, Debug, PartialEq, Eq)]
-pub struct PostCardContent {
-    pub post: Post,
-    pub image_url: String,
-}
-
 #[derive(Clone, Debug, PartialEq, Eq, Properties)]
 pub struct Props {
-    pub content: Option<PostCardContent>
+    pub post: Option<Post>
 }
 
 pub struct PostCard;
@@ -27,7 +21,7 @@ impl Component for PostCard {
     }
 
     fn view(&self, ctx: &Context<Self>) -> Html {
-        let Some(PostCardContent { post, image_url }) = &ctx.props().content else {
+        let Some(post) = &ctx.props().post else {
             return html! {
                 <div class="card mb-3">
                     <img style="background-color:#868e96;height:180px;" class="bd-placeholder-img card-img-top" role="img" />
@@ -59,7 +53,7 @@ impl Component for PostCard {
         html! {
             <div class="card mb-3">
                 <Link<Route> classes={classes!("text-decoration-none")} to={Route::Post { id: post.id }}>
-                    <img src={ image_url.clone() } style="background-color:#868e96;height:180px;" class="bd-placeholder-img card-img-top" role="img" />
+                    <img src={ post.image_url() } style="background-color:#868e96;height:180px;" class="bd-placeholder-img card-img-top" role="img" />
                     <div class="card-body">
                         <h5 class="card-title">{ &post.title }</h5>
                         <p class="card-text">{ &post.body }</p>

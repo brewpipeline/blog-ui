@@ -3,7 +3,6 @@ use yew_router::prelude::*;
 
 mod components;
 mod content;
-mod generator;
 mod pages;
 use pages::author::Author;
 use pages::author_list::AuthorList;

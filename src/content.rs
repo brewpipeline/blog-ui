@@ -64,6 +64,18 @@ pub struct Post {
 }
 
 impl Post {
+    pub fn image_url(&self) -> String {
+        format!(
+            "https://source.unsplash.com/random/{}x{}?{}&sig={}",
+            400,
+            100,
+            self.tags.join(","),
+            self.id,
+        )
+    }
+}
+
+impl Post {
     pub fn url(id: u64) -> String {
         let select = Self::select();
         format!("https://dummyjson.com/posts/{id}?select={select}")

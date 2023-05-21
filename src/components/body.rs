@@ -142,7 +142,8 @@ impl Body {
                         <div class="accordion-body">
                             <strong> 
                                 { "Ты ошибка эволюции." } 
-                            </strong> 
+                            </strong>
+                            <br/>
                             { "А блог этот про хороших людей в плохое время." } 
                         </div>
                     </div>

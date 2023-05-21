@@ -18,7 +18,7 @@ pub fn author_list() -> Html {
         .map(|it| it.page)
         .unwrap_or(1);
     
-    let users_container = use_state(|| None);
+    let users_container = use_state_eq(|| None);
     {
         let users_container = users_container.clone();
         use_effect_with(page, move |_| {
@@ -44,7 +44,7 @@ pub fn author_list() -> Html {
     let Some(users_container) = (*users_container).clone() else {
         return (0..ITEMS_PER_PAGE).map(|_| {
             html! {
-                <AuthorCard content={ None } />
+                <AuthorCard user={ None } />
             }
         }).collect::<Html>()
     };
@@ -53,9 +53,7 @@ pub fn author_list() -> Html {
             {
                 users_container.users.into_iter().map(|user| {
                     html! {
-                        <AuthorCard content={ Some(AuthorCardContent { 
-                            user, 
-                        }) } />
+                        <AuthorCard user={ Some(user) } />
                     }
                 }).collect::<Html>()
             }

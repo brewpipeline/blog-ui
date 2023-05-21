@@ -12,7 +12,7 @@ pub struct Props {
 #[function_component(Author)]
 pub fn author(props: &Props) -> Html {
     let user_id = props.id;
-    let user = use_state(|| None);
+    let user = use_state_eq(|| None);
     {
         let user = user.clone();
         use_effect_with((), move |_| {
@@ -33,15 +33,7 @@ pub fn author(props: &Props) -> Html {
         });
     }
 
-    if let Some(user) = (*user).clone() {
-        html! {
-            <author_card::AuthorCard content={ Some(author_card::AuthorCardContent { 
-                user,
-            }) } />
-        }
-    } else {
-        html! {
-            <author_card::AuthorCard content={ None } />
-        }
+    html! {
+        <author_card::AuthorCard user={ (*user).clone() } />
     }
 }

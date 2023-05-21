@@ -3,7 +3,6 @@ use gloo_net::http::Request;
 
 use crate::components::post_card;
 use crate::content;
-use crate::generator::Generator;
 
 #[derive(Clone, Debug, Eq, PartialEq, Properties)]
 pub struct Props {
@@ -13,7 +12,7 @@ pub struct Props {
 #[function_component(Post)]
 pub fn post(props: &Props) -> Html {
     let post_id = props.id;
-    let post = use_state(|| None);
+    let post = use_state_eq(|| None);
     {
         let post = post.clone();
         use_effect_with((), move |_| {
@@ -35,20 +34,6 @@ pub fn post(props: &Props) -> Html {
     }
 
     html! {
-        {
-            if let Some(post) = (*post).clone() {
-                let image_url = Generator::from_seed(post.id).image_url((400, 100), post.tags.as_slice());
-                html! {
-                    <post_card::PostCard content={ Some(post_card::PostCardContent { 
-                        post, 
-                        image_url,
-                    }) } />
-                }
-            } else {
-                html! {
-                    <post_card::PostCard content={ None } />
-                }
-            }
-        }
+        <post_card::PostCard post={ (*post).clone() } />
     }
 }
