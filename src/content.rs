@@ -1,5 +1,7 @@
 use serde::Deserialize;
 
+use crate::components::{list::ExternalListContainer, item::ExternalItem};
+
 #[derive(Clone, Debug, Eq, PartialEq, Deserialize)]
 pub struct UsersContainer {
     pub users: Vec<User>,
@@ -8,10 +10,23 @@ pub struct UsersContainer {
     pub limit: u64,
 }
 
-impl UsersContainer {
-    pub fn url(limit: u64, skip: u64) -> String {
+impl ExternalListContainer for UsersContainer {
+    fn url(limit: u64, skip: u64) -> String {
         let select = User::select();
         format!("https://dummyjson.com/users?limit={limit}&skip={skip}&select={select}")
+    }
+    type Item = User;
+    fn items(self) -> Vec<Self::Item> {
+        self.users
+    }
+    fn total(&self) -> u64 {
+        self.total
+    }
+    fn skip(&self) -> u64 {
+        self.skip
+    }
+    fn limit(&self) -> u64 {
+        self.limit
     }
 }
 
@@ -28,11 +43,14 @@ pub struct User {
     pub email: String
 }
 
-impl User {
-    pub fn url(id: u64) -> String {
+impl ExternalItem for User {
+    fn url(id: u64) -> String {
         let select = Self::select();
         format!("https://dummyjson.com/users/{id}?select={select}")
     }
+}
+
+impl User {
     fn select() -> String {
         format!("id,firstName,lastName,image,gender,email")
     }
@@ -46,10 +64,23 @@ pub struct PostsContainer {
     pub limit: u64,
 }
 
-impl PostsContainer {
-    pub fn url(limit: u64, skip: u64) -> String {
+impl ExternalListContainer for PostsContainer {
+    fn url(limit: u64, skip: u64) -> String {
         let select = Post::select();
         format!("https://dummyjson.com/posts?limit={limit}&skip={skip}&select={select}")
+    }
+    type Item = Post;
+    fn items(self) -> Vec<Self::Item> {
+        self.posts
+    }
+    fn total(&self) -> u64 {
+        self.total
+    }
+    fn skip(&self) -> u64 {
+        self.skip
+    }
+    fn limit(&self) -> u64 {
+        self.limit
     }
 }
 
@@ -75,11 +106,14 @@ impl Post {
     }
 }
 
-impl Post {
-    pub fn url(id: u64) -> String {
+impl ExternalItem for Post {
+    fn url(id: u64) -> String {
         let select = Self::select();
         format!("https://dummyjson.com/posts/{id}?select={select}")
     }
+}
+
+impl Post {
     fn select() -> String {
         format!("id,title,body,userId,tags")
     }

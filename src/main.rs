@@ -1,17 +1,19 @@
-use yew::prelude::*;
-use yew_router::prelude::*;
-
 mod components;
 mod content;
 mod pages;
-use pages::author::Author;
-use pages::author_list::AuthorList;
-use pages::page_not_found::PageNotFound;
-use pages::post::Post;
-use pages::post_list::PostList;
 
+use yew::prelude::*;
+use yew_router::prelude::*;
+
+use pages::page_not_found::PageNotFound;
+
+use crate::components::author_card::AuthorCard;
 use crate::components::body::Body;
 use crate::components::header::Header;
+use crate::components::item::Item;
+use crate::components::list::List;
+use crate::components::post_card::PostCard;
+use crate::content::{PostsContainer, UsersContainer, User, Post};
 
 #[derive(Routable, PartialEq, Eq, Clone, Debug)]
 pub enum Route {
@@ -34,16 +36,16 @@ impl Route {
     fn switch(route: Route) -> Html {
         match route {
             Route::Post { id } => {
-                html! { <Post {id} /> }
+                html! { <Item<Post> { id } component={ |post| html! { <PostCard { post } /> } } /> }
             }
             Route::Home | Route::Posts => {
-                html! { <PostList /> }
+                html! { <List<PostsContainer> route_to_page={ Route::Posts } component={ |p| html! { <PostCard post={p} /> } } /> }
             }
             Route::Author { id } => {
-                html! { <Author {id} /> }
+                html! { <Item<User> { id } component={ |user| html! { <AuthorCard { user } /> } } /> }
             }
             Route::Authors => {
-                html! { <AuthorList /> }
+                html! { <List<UsersContainer> route_to_page={ Route::Authors } component={ |u| html! { <AuthorCard user={u} /> } } /> }
             }
             Route::NotFound => {
                 html! { <PageNotFound /> }
