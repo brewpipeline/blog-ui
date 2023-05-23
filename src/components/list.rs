@@ -8,12 +8,13 @@ use gloo_net::http::Request;
 use crate::components::pagination::*;
 
 use crate::Route;
+use crate::keyed_reducible::{UseKeyedReducerHandle, KeyedReducibleItem, KeyedReducibleAction};
 
 pub trait ExternalListContainer: Clone + PartialEq + for<'a> Deserialize<'a> {
     type UrlProps: PartialEq + Default;
     fn url(url_props: &Self::UrlProps, limit: u64, skip: u64) -> String;
-    type Item: PartialEq;
-    fn items(self) -> Vec<Self::Item>;
+    type Item: Clone + PartialEq + KeyedReducibleItem<Key = u64>;
+    fn items(&self) -> Vec<Self::Item>;
     fn total(&self) -> u64;
     fn skip(&self) -> u64;
     fn limit(&self) -> u64;
@@ -39,6 +40,8 @@ pub fn list<C>(props: &ListProps<C>) -> Html
 where
     C: ExternalListContainer + 'static,
 {
+    let items_cache = use_context::<UseKeyedReducerHandle<u64, C::Item>>();
+
     let page = use_location()
         .unwrap()
         .query::<PageQuery>()
@@ -52,8 +55,10 @@ where
     let list_container_url = C::url(url_props, limit, skip);
     let list_container = use_state_eq(|| None);
     {
+        let items_cache = items_cache.clone();
         let list_container = list_container.clone();
         use_effect_with(page, move |_| {
+            let items_cache = items_cache.clone();
             let list_container = list_container.clone();
             list_container.set(None);
             wasm_bindgen_futures::spawn_local(async move {
@@ -64,6 +69,9 @@ where
                     .json()
                     .await
                     .unwrap();
+                if let Some(items_cache) = items_cache {
+                    items_cache.dispatch(KeyedReducibleAction::Batch(fetched_list_container.items()))
+                }
                 list_container.set(Some(fetched_list_container));
             });
             || ()

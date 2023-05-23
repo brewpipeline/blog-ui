@@ -6,7 +6,7 @@ use crate::content::User;
 use crate::Route;
 
 #[derive(Clone, Debug, PartialEq, Eq, Properties)]
-pub struct Props {
+pub struct AuthorCardProps {
     pub user: Option<User>,
 }
 
@@ -14,7 +14,7 @@ pub struct AuthorCard;
 
 impl Component for AuthorCard {
     type Message = ();
-    type Properties = Props;
+    type Properties = AuthorCardProps;
 
     fn create(_ctx: &Context<Self>) -> Self {
         Self

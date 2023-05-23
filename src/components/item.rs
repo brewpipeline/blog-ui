@@ -2,6 +2,8 @@ use serde::Deserialize;
 use yew::prelude::*;
 use gloo_net::http::Request;
 
+use crate::keyed_reducible::{UseKeyedReducerHandle, KeyedReducibleItem, KeyedReducibleAction};
+
 pub trait ExternalItem: Clone + PartialEq + for<'a> Deserialize<'a> {
     fn url(id: u64) -> String;
 }
@@ -13,33 +15,49 @@ where
 {
     pub id: u64,
     pub component: Callback<Option<I>, Html>,
+    #[prop_or_default]
+    pub ignore_cache: bool
 }
 
 #[function_component(Item)]
 pub fn item<I>(props: &ItemProps<I>) -> Html
 where
-    I: ExternalItem + 'static,
+    I: ExternalItem + KeyedReducibleItem<Key = u64> + 'static,
 {
+    let items_cache = use_context::<UseKeyedReducerHandle<u64, I>>();
+
     let id = props.id;
-    let item = use_state_eq(|| None);
+    let cached_item = if let (Some(items_cache), false) = (&items_cache, props.ignore_cache) {
+        items_cache.map.get(&id).cloned()
+    } else {
+        None
+    };
+
+    let item = use_state_eq(|| cached_item);
     {
         let item = item.clone();
         use_effect_with((), move |_| {
             let item = item.clone();
-            item.set(None);
-            wasm_bindgen_futures::spawn_local(async move {
-                let item_url = I::url(id);
-                let fetched_item: I = Request::get(item_url.as_str())
-                    .send()
-                    .await
-                    .unwrap()
-                    .json()
-                    .await
-                    .unwrap();
-                item.set(Some(fetched_item));
-            });
+            if (*item) == None {
+                item.set(None);
+                wasm_bindgen_futures::spawn_local(async move {
+                    let item_url = I::url(id);
+                    let fetched_item: I = Request::get(item_url.as_str())
+                        .send()
+                        .await
+                        .unwrap()
+                        .json()
+                        .await
+                        .unwrap();
+                    if let Some(items_cache) = items_cache {
+                        items_cache.dispatch(KeyedReducibleAction::Single(fetched_item.clone()))
+                    }
+                    item.set(Some(fetched_item));
+                });
+            }
             || ()
         });
     }
+
     props.component.emit((*item).clone())
 }

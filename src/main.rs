@@ -1,6 +1,7 @@
 mod components;
 mod content;
 mod pages;
+mod keyed_reducible;
 
 use yew::prelude::*;
 use yew_router::prelude::*;
@@ -15,6 +16,7 @@ use crate::components::item::Item;
 use crate::components::list::List;
 use crate::components::post_card::PostCard;
 use crate::content::{PostsContainer, UsersContainer, User, Post, CommentsContainer, CommentsContainerUrlProps};
+use crate::keyed_reducible::UseKeyedReducerHandle;
 
 #[derive(Routable, PartialEq, Eq, Clone, Debug)]
 pub enum Route {
@@ -63,23 +65,19 @@ impl Route {
     }
 }
 
-struct App;
-
-impl Component for App {
-    type Message = ();
-    type Properties = ();
-
-    fn create(_ctx: &Context<Self>) -> Self {
-        Self
-    }
-
-    fn view(&self, _ctx: &Context<Self>) -> Html {
-        html! {
-            <BrowserRouter>
-                <Header />
-                <Body />
-            </BrowserRouter>
-        }
+#[function_component(App)]
+pub fn app() -> Html {
+    let posts_cache = use_reducer(|| Default::default());
+    let users_cache = use_reducer(|| Default::default());
+    html! {
+        <BrowserRouter>
+            <ContextProvider<UseKeyedReducerHandle<u64, Post>> context={posts_cache}>
+                <ContextProvider<UseKeyedReducerHandle<u64, User>> context={users_cache}>
+                    <Header />
+                    <Body />
+                </ContextProvider<UseKeyedReducerHandle<u64, User>>>
+            </ContextProvider<UseKeyedReducerHandle<u64, Post>>>
+        </BrowserRouter>
     }
 }
 

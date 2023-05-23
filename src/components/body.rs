@@ -19,6 +19,7 @@ pub struct Body {
     enabled_menu: EnabledMenu,
     _listener: LocationHandle,
 }
+
 impl Component for Body {
     type Message = EnabledMenu;
     type Properties = ();

@@ -12,7 +12,7 @@ pub struct PageQuery {
 }
 
 #[derive(Clone, Debug, PartialEq, Eq, Properties)]
-pub struct Props {
+pub struct PaginationProps {
     pub page: u64,
     pub total_pages: u64,
     pub route_to_page: Route,
@@ -22,7 +22,7 @@ pub struct Pagination;
 
 impl Component for Pagination {
     type Message = ();
-    type Properties = Props;
+    type Properties = PaginationProps;
 
     fn create(_ctx: &Context<Self>) -> Self {
         Self
@@ -41,8 +41,8 @@ impl Component for Pagination {
     }
 }
 impl Pagination {
-    fn render_link(&self, to_page: u64, props: &Props) -> Html {
-        let Props {
+    fn render_link(&self, to_page: u64, props: &PaginationProps) -> Html {
+        let PaginationProps {
             page,
             route_to_page,
             ..
@@ -63,7 +63,7 @@ impl Pagination {
         }
     }
 
-    fn render_links<P>(&self, mut pages: P, len: usize, max_links: usize, props: &Props) -> Html
+    fn render_links<P>(&self, mut pages: P, len: usize, max_links: usize, props: &PaginationProps) -> Html
     where
         P: Iterator<Item = u64> + DoubleEndedIterator,
     {
@@ -85,10 +85,10 @@ impl Pagination {
         }
     }
 
-    fn view_links(&self, props: &Props) -> Html {
+    fn view_links(&self, props: &PaginationProps) -> Html {
         const LINKS_PER_SIDE: usize = 3;
 
-        let Props {
+        let PaginationProps {
             page, total_pages, ..
         } = *props;
 
@@ -109,8 +109,8 @@ impl Pagination {
         }
     }
 
-    fn view_relnav_previous_button(&self, props: &Props) -> Html {
-        let Props {
+    fn view_relnav_previous_button(&self, props: &PaginationProps) -> Html {
+        let PaginationProps {
             page,
             route_to_page: to,
             ..
@@ -131,8 +131,8 @@ impl Pagination {
         }
     }
 
-    fn view_relnav_next_button(&self, props: &Props) -> Html {
-        let Props {
+    fn view_relnav_next_button(&self, props: &PaginationProps) -> Html {
+        let PaginationProps {
             page,
             total_pages,
             route_to_page: to,

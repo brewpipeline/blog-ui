@@ -1,6 +1,6 @@
 use serde::Deserialize;
 
-use crate::components::{list::ExternalListContainer, item::ExternalItem};
+use crate::{components::{list::ExternalListContainer, item::ExternalItem}, keyed_reducible::KeyedReducibleItem};
 
 #[derive(Clone, Debug, Eq, PartialEq, Deserialize)]
 pub struct UsersContainer {
@@ -17,8 +17,8 @@ impl ExternalListContainer for UsersContainer {
         format!("https://dummyjson.com/users?limit={limit}&skip={skip}&select={select}")
     }
     type Item = User;
-    fn items(self) -> Vec<Self::Item> {
-        self.users
+    fn items(&self) -> Vec<Self::Item> {
+        self.users.clone()
     }
     fn total(&self) -> u64 {
         self.total
@@ -42,6 +42,13 @@ pub struct User {
     pub image_url: String,
     pub username: String,
     pub email: String
+}
+
+impl KeyedReducibleItem for User {
+    type Key = u64;
+    fn key(&self) -> Self::Key {
+        self.id
+    }
 }
 
 impl ExternalItem for User {
@@ -72,8 +79,8 @@ impl ExternalListContainer for PostsContainer {
         format!("https://dummyjson.com/posts?limit={limit}&skip={skip}&select={select}")
     }
     type Item = Post;
-    fn items(self) -> Vec<Self::Item> {
-        self.posts
+    fn items(&self) -> Vec<Self::Item> {
+        self.posts.clone()
     }
     fn total(&self) -> u64 {
         self.total
@@ -105,6 +112,13 @@ impl Post {
             self.tags.join(","),
             self.id,
         )
+    }
+}
+
+impl KeyedReducibleItem for Post {
+    type Key = u64;
+    fn key(&self) -> Self::Key {
+        self.id
     }
 }
 
@@ -144,8 +158,8 @@ impl ExternalListContainer for CommentsContainer {
         }
     }
     type Item = Comment;
-    fn items(self) -> Vec<Self::Item> {
-        self.comments
+    fn items(&self) -> Vec<Self::Item> {
+        self.comments.clone()
     }
     fn total(&self) -> u64 {
         self.total
@@ -172,6 +186,13 @@ pub struct Comment {
     pub post_id: u64,
     #[serde(rename = "user")]
     pub short_user: ShortUser,
+}
+
+impl KeyedReducibleItem for Comment {
+    type Key = u64;
+    fn key(&self) -> Self::Key {
+        self.id
+    }
 }
 
 impl ExternalItem for Comment {

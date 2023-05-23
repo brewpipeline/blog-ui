@@ -7,7 +7,7 @@ use crate::content::{Post, User};
 use crate::Route;
 
 #[derive(Clone, Debug, PartialEq, Eq, Properties)]
-pub struct Props {
+pub struct PostCardProps {
     pub post: Option<Post>,
     #[prop_or_default]
     pub fetch_author: bool,
@@ -17,7 +17,7 @@ pub struct PostCard;
 
 impl Component for PostCard {
     type Message = ();
-    type Properties = Props;
+    type Properties = PostCardProps;
 
     fn create(_ctx: &Context<Self>) -> Self {
         Self
