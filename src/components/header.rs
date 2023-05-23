@@ -1,33 +1,14 @@
 use yew::prelude::*;
 use yew_router::prelude::*;
 
-use crate::Route;
+use crate::{Route, components::login_modal::LoginModal, LoggedUserContext};
 
-pub struct Header {
-    log_in: bool,
-}
-
-impl Component for Header {
-    type Message = ();
-    type Properties = ();
-
-    fn create(_ctx: &Context<Self>) -> Self {
-        Self {
-            log_in: false,
-        }
-    }
-
-    fn update(&mut self, _ctx: &Context<Self>, _msg: Self::Message) -> bool {
-        if self.log_in {
-            false
-        } else {
-            self.log_in = true;
-            true
-        }
-    }
-
-    fn view(&self, ctx: &Context<Self>) -> Html {
-        html! {
+#[function_component(Header)]
+pub fn header() -> Html {
+    let logged_user_context = use_context::<LoggedUserContext>().unwrap();
+    html! {
+        <>
+            <LoginModal id="loginModal" />
             <header class="header sticky-top bg-primary-subtle border-bottom d-flex flex-wrap align-items-center">
                 <div class="container">
                     <div class="d-flex flex-wrap align-items-center justify-content-center">
@@ -56,21 +37,21 @@ impl Component for Header {
                             </svg>
                         </button>
                         {
-                            if !self.log_in {
+                            if let Some(auth_user) = logged_user_context.auth_user.clone() {
                                 html! {
-                                    <button type="button" class="item btn btn-light" onclick={ ctx.link().callback(|_| ()) }> { "Войти" } </button>
+                                    <div class="d-flex dropdown dropdown-menu-end">
+                                        <img src={ auth_user.image_url.clone() } type="button" alt={ auth_user.username.clone() } class="item d-flex rounded" data-bs-toggle="dropdown" aria-expanded="false" />
+                                        <ul class="dropdown-menu text-small" >
+                                            <li><Link<Route> classes="dropdown-item" to={ Route::Author { id: auth_user.id } }> { auth_user.username.clone() } </Link<Route>></li>
+                                            // <li><a class="dropdown-item" href="#"> { "Настройки" } </a></li>
+                                            <li><hr class="dropdown-divider" /></li>
+                                            <li><button class="dropdown-item" onclick={ move |_| logged_user_context.dispatch(None) }> { "Выход" } </button></li>
+                                        </ul>
+                                    </div>
                                 }
                             } else {
                                 html! {
-                                    <div class="d-flex dropdown dropdown-menu-end">
-                                        <img src="https://github.com/mdo.png" type="button" alt="mdo" class="item d-flex rounded" data-bs-toggle="dropdown" aria-expanded="false" />
-                                        <ul class="dropdown-menu text-small" >
-                                            <li><a class="dropdown-item" href="#"> { "Профиль" } </a></li>
-                                            <li><a class="dropdown-item" href="#"> { "Настройки" } </a></li>
-                                            <li><hr class="dropdown-divider" /></li>
-                                            <li><a class="dropdown-item" href="#"> { "Выход" } </a></li>
-                                        </ul>
-                                    </div>
+                                    <button type="button" class="item btn btn-light" data-bs-toggle="modal" data-bs-target="#loginModal"> { "Войти" } </button>
                                 }
                             }
                         }
@@ -79,6 +60,6 @@ impl Component for Header {
                     </div>
                 </div>
             </header>
-        }
+        </>
     }
 }

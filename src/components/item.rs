@@ -13,7 +13,7 @@ pub struct ItemProps<I>
 where
     I: ExternalItem + 'static,
 {
-    pub id: u64,
+    pub item_id: u64,
     pub component: Callback<Option<I>, Html>,
     #[prop_or_default]
     pub ignore_cache: bool
@@ -26,9 +26,9 @@ where
 {
     let items_cache = use_context::<UseKeyedReducerHandle<u64, I>>();
 
-    let id = props.id;
+    let item_id = props.item_id;
     let cached_item = if let (Some(items_cache), false) = (&items_cache, props.ignore_cache) {
-        items_cache.map.get(&id).cloned()
+        items_cache.map.get(&item_id).cloned()
     } else {
         None
     };
@@ -41,7 +41,7 @@ where
             if (*item) == None {
                 item.set(None);
                 wasm_bindgen_futures::spawn_local(async move {
-                    let item_url = I::url(id);
+                    let item_url = I::url(item_id);
                     let fetched_item: I = Request::get(item_url.as_str())
                         .send()
                         .await

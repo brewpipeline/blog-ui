@@ -80,7 +80,7 @@ impl Component for PostCard {
                                 let post_author_id = post.user_id;
                                 html! {
                                     <div class="col text-end">
-                                        <Item<User> id={post_author_id} component={ move |user: Option<User>| {
+                                        <Item<User> item_id={post_author_id} component={ move |user: Option<User>| {
                                             if let Some(user) = user {
                                                 html! {
                                                     <Link<Route> classes={classes!("title", "is-block", "col-6", "text-decoration-none")} to={Route::Author { id: user.id }}>

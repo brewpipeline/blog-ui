@@ -1,4 +1,4 @@
-use serde::Deserialize;
+use serde::{Deserialize, Serialize};
 
 use crate::{components::{list::ExternalListContainer, item::ExternalItem}, keyed_reducible::KeyedReducibleItem};
 
@@ -41,7 +41,7 @@ pub struct User {
     #[serde(rename = "image")]
     pub image_url: String,
     pub username: String,
-    pub email: String
+    pub email: String,
 }
 
 impl KeyedReducibleItem for User {
@@ -199,4 +199,31 @@ impl ExternalItem for Comment {
     fn url(id: u64) -> String {
         format!("https://dummyjson.com/comments/{id}")
     }
+}
+
+#[derive(Clone, Debug, Eq, PartialEq, Deserialize)]
+#[serde(untagged)]
+pub enum AuthResult {
+    Success(AuthUser),
+    Error { message: String },
+}
+
+#[derive(Clone, Debug, Eq, PartialEq, Deserialize, Serialize)]
+pub struct AuthUser {
+    pub id: u64,
+    #[serde(rename = "firstName")]
+    pub first_name: String,
+    #[serde(rename = "lastName")]
+    pub last_name: String,
+    #[serde(rename = "image")]
+    pub image_url: String,
+    pub username: String,
+    pub email: String,
+    pub token: String,
+}
+
+#[derive(Clone, Debug, Eq, PartialEq, Serialize)]
+pub struct LoginParams {
+    pub username: String,
+    pub password: String,
 }
