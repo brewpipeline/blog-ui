@@ -10,7 +10,8 @@ use crate::components::pagination::*;
 use crate::Route;
 
 pub trait ExternalListContainer: Clone + PartialEq + for<'a> Deserialize<'a> {
-    fn url(limit: u64, skip: u64) -> String;
+    type UrlProps: PartialEq + Default;
+    fn url(url_props: &Self::UrlProps, limit: u64, skip: u64) -> String;
     type Item: PartialEq;
     fn items(self) -> Vec<Self::Item>;
     fn total(&self) -> u64;
@@ -23,6 +24,8 @@ pub struct ListProps<C>
 where
     C: ExternalListContainer + 'static,
 {
+    #[prop_or_default]
+    pub url_props: C::UrlProps,
     #[prop_or(10)]
     pub items_per_page: u64,
     pub route_to_page: Route,
@@ -41,10 +44,12 @@ where
         .query::<PageQuery>()
         .map(|it| it.page)
         .unwrap_or(1);
+    let url_props = &props.url_props;
     let limit = props.items_per_page;
     let skip = (page - 1) * limit;
     let route_to_page = props.route_to_page.clone();
     
+    let list_container_url = C::url(url_props, limit, skip);
     let list_container = use_state_eq(|| None);
     {
         let list_container = list_container.clone();
@@ -52,7 +57,6 @@ where
             let list_container = list_container.clone();
             list_container.set(None);
             wasm_bindgen_futures::spawn_local(async move {
-                let list_container_url = C::url(limit, skip);
                 let fetched_list_container: C = Request::get(list_container_url.as_str())
                     .send()
                     .await
@@ -79,11 +83,19 @@ where
                     props.component.emit(Option::Some(item))
                 }).collect::<Html>()
             }
-            <Pagination
-                { page }
-                { total_pages }
-                { route_to_page }
-            />
+            {
+                if total_pages > 1 {
+                    html! {
+                        <Pagination
+                            { page }
+                            { total_pages }
+                            { route_to_page }
+                        />
+                    }
+                } else {
+                    html! {}
+                }
+            }
         </>
     }
 }

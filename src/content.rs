@@ -11,7 +11,8 @@ pub struct UsersContainer {
 }
 
 impl ExternalListContainer for UsersContainer {
-    fn url(limit: u64, skip: u64) -> String {
+    type UrlProps = ();
+    fn url(_url_props: &Self::UrlProps, limit: u64, skip: u64) -> String {
         let select = User::select();
         format!("https://dummyjson.com/users?limit={limit}&skip={skip}&select={select}")
     }
@@ -39,7 +40,7 @@ pub struct User {
     pub last_name: String,
     #[serde(rename = "image")]
     pub image_url: String,
-    pub gender: String,
+    pub username: String,
     pub email: String
 }
 
@@ -52,7 +53,7 @@ impl ExternalItem for User {
 
 impl User {
     fn select() -> String {
-        format!("id,firstName,lastName,image,gender,email")
+        format!("id,firstName,lastName,image,username,email")
     }
 }
 
@@ -65,7 +66,8 @@ pub struct PostsContainer {
 }
 
 impl ExternalListContainer for PostsContainer {
-    fn url(limit: u64, skip: u64) -> String {
+    type UrlProps = ();
+    fn url(_url_props: &Self::UrlProps, limit: u64, skip: u64) -> String {
         let select = Post::select();
         format!("https://dummyjson.com/posts?limit={limit}&skip={skip}&select={select}")
     }
@@ -116,5 +118,64 @@ impl ExternalItem for Post {
 impl Post {
     fn select() -> String {
         format!("id,title,body,userId,tags")
+    }
+}
+
+#[derive(Default, PartialEq)]
+pub struct CommentsContainerUrlProps {
+    pub post_id: Option<u64>,
+}
+
+#[derive(Clone, Debug, Eq, PartialEq, Deserialize)]
+pub struct CommentsContainer {
+    pub comments: Vec<Comment>,
+    pub total: u64,
+    pub skip: u64,
+    pub limit: u64,
+}
+
+impl ExternalListContainer for CommentsContainer {
+    type UrlProps = CommentsContainerUrlProps;
+    fn url(url_props: &Self::UrlProps, limit: u64, skip: u64) -> String {
+        if let Some(post_id) = url_props.post_id {
+            format!("https://dummyjson.com/comments/post/{post_id}?limit={limit}&skip={skip}")
+        } else {
+            format!("https://dummyjson.com/comments?limit={limit}&skip={skip}")
+        }
+    }
+    type Item = Comment;
+    fn items(self) -> Vec<Self::Item> {
+        self.comments
+    }
+    fn total(&self) -> u64 {
+        self.total
+    }
+    fn skip(&self) -> u64 {
+        self.skip
+    }
+    fn limit(&self) -> u64 {
+        self.limit
+    }
+}
+
+#[derive(Clone, Debug, Eq, PartialEq, Deserialize)]
+pub struct ShortUser {
+    pub id: u64,
+    pub username: String,
+}
+
+#[derive(Clone, Debug, Eq, PartialEq, Deserialize)]
+pub struct Comment {
+    pub id: u64,
+    pub body: String,
+    #[serde(rename = "postId")]
+    pub post_id: u64,
+    #[serde(rename = "user")]
+    pub short_user: ShortUser,
+}
+
+impl ExternalItem for Comment {
+    fn url(id: u64) -> String {
+        format!("https://dummyjson.com/comments/{id}")
     }
 }

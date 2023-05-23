@@ -9,11 +9,12 @@ use pages::page_not_found::PageNotFound;
 
 use crate::components::author_card::AuthorCard;
 use crate::components::body::Body;
+use crate::components::comment_card::CommentCard;
 use crate::components::header::Header;
 use crate::components::item::Item;
 use crate::components::list::List;
 use crate::components::post_card::PostCard;
-use crate::content::{PostsContainer, UsersContainer, User, Post};
+use crate::content::{PostsContainer, UsersContainer, User, Post, CommentsContainer, CommentsContainerUrlProps};
 
 #[derive(Routable, PartialEq, Eq, Clone, Debug)]
 pub enum Route {
@@ -36,16 +37,24 @@ impl Route {
     fn switch(route: Route) -> Html {
         match route {
             Route::Post { id } => {
-                html! { <Item<Post> { id } component={ |post| html! { <PostCard { post } /> } } /> }
+                let url_props = CommentsContainerUrlProps {
+                    post_id: Some(id),
+                };
+                html! {
+                    <>
+                        <Item<Post> { id } component={ |post| html! { <PostCard { post } fetch_author={true} /> } } />
+                        <List<CommentsContainer> { url_props } items_per_page={100} route_to_page={ Route::Post { id } } component={ |comment| html! { <CommentCard { comment } /> } } />
+                    </>
+                }
             }
             Route::Home | Route::Posts => {
-                html! { <List<PostsContainer> route_to_page={ Route::Posts } component={ |p| html! { <PostCard post={p} /> } } /> }
+                html! { <List<PostsContainer> route_to_page={ Route::Posts } component={ |post| html! { <PostCard { post } /> } } /> }
             }
             Route::Author { id } => {
                 html! { <Item<User> { id } component={ |user| html! { <AuthorCard { user } /> } } /> }
             }
             Route::Authors => {
-                html! { <List<UsersContainer> route_to_page={ Route::Authors } component={ |u| html! { <AuthorCard user={u} /> } } /> }
+                html! { <List<UsersContainer> route_to_page={ Route::Authors } component={ |user| html! { <AuthorCard { user } /> } } /> }
             }
             Route::NotFound => {
                 html! { <PageNotFound /> }

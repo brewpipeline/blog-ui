@@ -26,12 +26,12 @@ impl Component for AuthorCard {
                 <div class="card mb-3">
                     <div class="row g-0">
                         <div class="col-4">
-                            <img style="background-color:#868e96;height:250px;width:100%;" class="img-fluid rounded-start" role="img" />
+                            <img style="height:250px;width:100%;" class="img-fluid rounded-start" role="img" />
                         </div>
                         <div class="col">
                             <div class="card-body">
                                 <h5 class="card-title placeholder-glow">
-                                    <span class="placeholder col-3"></span>
+                                    <span class="placeholder col-3"></span> { " " }
                                     <span class="placeholder col-3"></span>
                                 </h5>
                                 <p class="card-text placeholder-glow"><small class="text-body-secondary"><span class="placeholder col-2"></span></small></p>
@@ -47,12 +47,12 @@ impl Component for AuthorCard {
                 <Link<Route> classes={classes!("text-decoration-none")} to={Route::Author { id: user.id }}>
                     <div class="row g-0">
                         <div class="col-4">
-                            <img src={ user.image_url.clone() } style="background-color:#868e96;height:250px;width:100%;" class="img-fluid rounded-start" role="img" />
+                            <img src={ user.image_url.clone() } style="height:250px;width:100%;" class="img-fluid rounded-start" role="img" />
                         </div>
                         <div class="col">
                             <div class="card-body">
                                 <h5 class="card-title">{ format!("{} {}", user.first_name, user.last_name) }</h5>
-                                <p class="card-text"><small class="text-body-secondary">{ &user.gender }</small></p>
+                                <p class="card-text"><small class="text-body-secondary">{ &user.username }</small></p>
                                 <p class="card-text">{ &user.email }</p>
                             </div>
                         </div>
