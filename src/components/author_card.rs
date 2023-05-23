@@ -26,7 +26,7 @@ impl Component for AuthorCard {
                 <div class="card mb-3">
                     <div class="row g-0">
                         <div class="col-4">
-                            <img style="height:250px;width:100%;" class="img-fluid rounded-start" role="img" />
+                            <img style="height:220px;width:100%;" class="img-fluid rounded-start" role="img" />
                         </div>
                         <div class="col">
                             <div class="card-body">
@@ -47,7 +47,7 @@ impl Component for AuthorCard {
                 <Link<Route> classes={classes!("text-decoration-none")} to={Route::Author { id: user.id }}>
                     <div class="row g-0">
                         <div class="col-4">
-                            <img src={ user.image_url.clone() } style="height:250px;width:100%;" class="img-fluid rounded-start" role="img" />
+                            <img style={ format!("height:220px;width:100%;--image-url:url({});", user.image_url.clone()) } class="img-fluid rounded-start" role="img" />
                         </div>
                         <div class="col">
                             <div class="card-body">

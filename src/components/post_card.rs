@@ -27,7 +27,7 @@ impl Component for PostCard {
         let Some(post) = &ctx.props().post else {
             return html! {
                 <div class="card mb-3">
-                    <img style="height:180px;" class="bd-placeholder-img card-img-top" role="img" />
+                    <img style="height:180px;width:100%;" class="bd-placeholder-img card-img-top" role="img" />
                     <div class="card-body">
                         <h5 class="card-title placeholder-glow">
                             <span class="placeholder col-6"></span>
@@ -64,7 +64,7 @@ impl Component for PostCard {
         html! {
             <div class="card mb-3">
                 <Link<Route> classes={classes!("text-decoration-none")} to={Route::Post { id: post.id }}>
-                    <img src={ post.image_url() } style="height:180px;" class="bd-placeholder-img card-img-top" role="img" />
+                    <img style={ format!("height:180px;width:100%;--image-url:url({});", post.image_url()) } class="bd-placeholder-img card-img-top" role="img" />
                     <div class="card-body">
                         <h5 class="card-title">{ &post.title }</h5>
                         <p class="card-text">{ &post.body }</p>
@@ -83,7 +83,7 @@ impl Component for PostCard {
                                         <Item<User> id={post_author_id} component={ move |user: Option<User>| {
                                             if let Some(user) = user {
                                                 html! {
-                                                    <Link<Route> classes={classes!("title", "is-block", "col-6")} to={Route::Author { id: user.id }}>
+                                                    <Link<Route> classes={classes!("title", "is-block", "col-6", "text-decoration-none")} to={Route::Author { id: user.id }}>
                                                         { &user.username }
                                                     </Link<Route>>
                                                 }
