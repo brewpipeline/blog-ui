@@ -1,6 +1,8 @@
 use serde::{Deserialize, Serialize};
 
-use crate::{components::{list::ExternalListContainer, item::ExternalItem}, keyed_reducible::KeyedReducibleItem};
+use crate::components::list::ExternalListContainer;
+use crate::components::item::ExternalItem;
+use crate::hash_map_context::KeyedItem;
 
 #[derive(Clone, Debug, Eq, PartialEq, Deserialize)]
 pub struct UsersContainer {
@@ -44,7 +46,7 @@ pub struct User {
     pub email: String,
 }
 
-impl KeyedReducibleItem for User {
+impl KeyedItem for User {
     type Key = u64;
     fn key(&self) -> Self::Key {
         self.id
@@ -115,7 +117,7 @@ impl Post {
     }
 }
 
-impl KeyedReducibleItem for Post {
+impl KeyedItem for Post {
     type Key = u64;
     fn key(&self) -> Self::Key {
         self.id
@@ -188,7 +190,7 @@ pub struct Comment {
     pub short_user: ShortUser,
 }
 
-impl KeyedReducibleItem for Comment {
+impl KeyedItem for Comment {
     type Key = u64;
     fn key(&self) -> Self::Key {
         self.id

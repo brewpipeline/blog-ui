@@ -2,7 +2,7 @@ use serde::Deserialize;
 use yew::prelude::*;
 use gloo_net::http::Request;
 
-use crate::keyed_reducible::{UseKeyedReducerHandle, KeyedReducibleItem, KeyedReducibleAction};
+use crate::hash_map_context::*;
 
 pub trait ExternalItem: Clone + PartialEq + for<'a> Deserialize<'a> {
     fn url(id: u64) -> String;
@@ -22,13 +22,13 @@ where
 #[function_component(Item)]
 pub fn item<I>(props: &ItemProps<I>) -> Html
 where
-    I: ExternalItem + KeyedReducibleItem<Key = u64> + 'static,
+    I: ExternalItem + KeyedItem<Key = u64> + 'static,
 {
-    let items_cache = use_context::<UseKeyedReducerHandle<u64, I>>();
+    let items_cache = use_context::<HashMapContext<u64, I>>();
 
     let item_id = props.item_id;
     let cached_item = if let (Some(items_cache), false) = (&items_cache, props.ignore_cache) {
-        items_cache.map.get(&item_id).cloned()
+        items_cache.0.get(&item_id).cloned()
     } else {
         None
     };
@@ -50,7 +50,7 @@ where
                         .await
                         .unwrap();
                     if let Some(items_cache) = items_cache {
-                        items_cache.dispatch(KeyedReducibleAction::Single(fetched_item.clone()))
+                        items_cache.dispatch(ReducibleHashMapAction::Single(fetched_item.clone()))
                     }
                     item.set(Some(fetched_item));
                 });

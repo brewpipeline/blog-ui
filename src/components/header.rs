@@ -1,7 +1,10 @@
 use yew::prelude::*;
 use yew_router::prelude::*;
 
-use crate::{Route, components::login_modal::LoginModal, LoggedUserContext};
+use crate::components::login_modal::LoginModal;
+use crate::logged_user_context::{LoggedUserContext, LoggedUserState};
+
+use crate::Route;
 
 #[function_component(Header)]
 pub fn header() -> Html {
@@ -37,7 +40,7 @@ pub fn header() -> Html {
                             </svg>
                         </button>
                         {
-                            if let Some(auth_user) = logged_user_context.auth_user.clone() {
+                            if let LoggedUserState::Active(auth_user) = logged_user_context.state.clone() {
                                 html! {
                                     <div class="d-flex dropdown dropdown-menu-end">
                                         <img src={ auth_user.image_url.clone() } type="button" alt={ auth_user.username.clone() } class="item d-flex rounded" data-bs-toggle="dropdown" aria-expanded="false" />
@@ -45,7 +48,7 @@ pub fn header() -> Html {
                                             <li><Link<Route> classes="dropdown-item" to={ Route::Author { id: auth_user.id } }> { auth_user.username.clone() } </Link<Route>></li>
                                             // <li><a class="dropdown-item" href="#"> { "Настройки" } </a></li>
                                             <li><hr class="dropdown-divider" /></li>
-                                            <li><button class="dropdown-item" onclick={ move |_| logged_user_context.dispatch(None) }> { "Выход" } </button></li>
+                                            <li><button class="dropdown-item" onclick={ move |_| logged_user_context.dispatch(LoggedUserState::None) }> { "Выход" } </button></li>
                                         </ul>
                                     </div>
                                 }
