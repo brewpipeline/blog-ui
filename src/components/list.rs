@@ -62,7 +62,7 @@ where
             let list_container = list_container.clone();
             list_container.set(None);
             wasm_bindgen_futures::spawn_local(async move {
-                let fetched_list_container = C::get(ExternalListContainerParams { custom_params: params, limit, skip }).await;
+                let fetched_list_container = C::get(ExternalListContainerParams { custom_params: params, limit, skip }).await.unwrap();
                 if let Some(items_cache) = items_cache {
                     items_cache.dispatch(ReducibleHashMapAction::Batch(fetched_list_container.items()))
                 }

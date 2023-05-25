@@ -38,18 +38,18 @@ where
     {
         let item = item.clone();
         use_effect_with((), move |_| {
-            let item = item.clone();
-            if (*item) == None {
-                item.set(None);
-                wasm_bindgen_futures::spawn_local(async move {
-                    let fetched_item = I::get(ExternalItemParams { id: item_id }).await;
-                    if let Some(items_cache) = items_cache {
-                        items_cache.dispatch(ReducibleHashMapAction::Single(fetched_item.clone()))
-                    }
-                    item.set(Some(fetched_item));
-                });
+            if (*item) != None {
+                return
             }
-            || ()
+            item.set(None);
+            let item = item.clone();
+            wasm_bindgen_futures::spawn_local(async move {
+                let fetched_item = I::get(ExternalItemParams { id: item_id }).await.unwrap();
+                if let Some(items_cache) = items_cache {
+                    items_cache.dispatch(ReducibleHashMapAction::Single(fetched_item.clone()))
+                }
+                item.set(Some(fetched_item));
+            });
         });
     }
 

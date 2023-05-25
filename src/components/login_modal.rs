@@ -27,7 +27,7 @@ pub fn login_modal(props: &LoginModalProps) -> Html {
             let logged_user_context = logged_user_context.clone();
             let close_node_ref = close_node_ref.clone();
             wasm_bindgen_futures::spawn_local(async move {
-                match AuthResult::get(login_params).await {
+                match AuthResult::get(login_params).await.unwrap() {
                     AuthResult::Success(auth_user) => {
                         close_node_ref.cast::<HtmlInputElement>().unwrap().click();
                         logged_user_context.dispatch(LoggedUserState::Active(auth_user));
