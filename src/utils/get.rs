@@ -3,7 +3,7 @@ use gloo_net::Error;
 
 #[async_trait(?Send)]
 pub trait RequestableItem<P>: Sized {
-    fn request(params: P) -> Request;
+    async fn request(params: P) -> Result<Request, Error>;
     async fn response(response: Response) -> Result<Self, Error>;
 }
 
@@ -20,6 +20,8 @@ where
 {
     async fn get(params: P) -> Self {
         Self::response(Self::request(params)
+            .await
+            .unwrap()
             .send()
             .await
             .unwrap()
