@@ -2,6 +2,7 @@ use yew::prelude::*;
 use yew_router::prelude::*;
 
 use crate::components::login_modal::*;
+use crate::components::logout_modal::*;
 use crate::logged_user_context::*;
 
 use crate::Route;
@@ -12,6 +13,7 @@ pub fn header() -> Html {
     html! {
         <>
             <LoginModal id="loginModal" />
+            <LogoutModal id="logoutModal" />
             <header class="header fixed-top bg-primary-subtle border-bottom d-flex flex-wrap align-items-center">
                 <div class="container">
                     <div class="d-flex flex-wrap align-items-center justify-content-center">
@@ -46,7 +48,7 @@ pub fn header() -> Html {
                                     <li><Link<Route> classes="dropdown-item" to={ Route::Author { id: auth_user.id } }> { auth_user.username.clone() } </Link<Route>></li>
                                     // <li><a class="dropdown-item" href="#"> { "Настройки" } </a></li>
                                     <li><hr class="dropdown-divider" /></li>
-                                    <li><button class="dropdown-item" onclick={ move |_| logged_user_context.dispatch(LoggedUserState::None) }> { "Выход" } </button></li>
+                                    <li><button class="dropdown-item" type="button" data-bs-toggle="modal" data-bs-target="#logoutModal"> { "Выход" } </button></li>
                                 </ul>
                             </div>
                         } else {

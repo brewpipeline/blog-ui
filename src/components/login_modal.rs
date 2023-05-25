@@ -1,4 +1,5 @@
-use web_sys::HtmlInputElement;
+use gloo::events::EventListener;
+use web_sys::{HtmlInputElement, HtmlElement};
 use yew::prelude::*;
 
 use crate::content::{LoginParams, AuthResult};
@@ -47,39 +48,38 @@ pub fn login_modal(props: &LoginModalProps) -> Html {
         let username_node_ref = username_node_ref.clone();
         let password_node_ref = password_node_ref.clone();
         Callback::from(move |_event| {
-            let username: String = username_node_ref.cast::<HtmlInputElement>().unwrap().value();
-            let password: String = password_node_ref.cast::<HtmlInputElement>().unwrap().value();
+            let username = username_node_ref.cast::<HtmlInputElement>().unwrap().value();
+            let password = password_node_ref.cast::<HtmlInputElement>().unwrap().value();
             logged_user_context.dispatch(LoggedUserState::InProgress(LoginParams { username, password }));
         })
     };
 
-    /*
     let modal_node_ref = use_node_ref();
+
     {
-        let modal_node_ref = modal_node_ref.clone();
+        let logged_user_context = logged_user_context.clone();
         let username_node_ref = username_node_ref.clone();
         let password_node_ref = password_node_ref.clone();
-        use_effect_with(modal_node_ref, move |modal_node_ref| {
-            let display = modal_node_ref.cast::<HtmlElement>().unwrap().style().get_property_value("display");
-            log::info!("{:?}", display);
-            wasm_bindgen::
-            MutationObserver::new(|| {
-
+        let modal_node_ref = modal_node_ref.clone();
+        use_effect_with(logged_user_context, move |logged_user_context| {
+            let logged_user_context = logged_user_context.clone();
+            let modal_element = modal_node_ref.cast::<HtmlElement>().unwrap();
+            let listener = EventListener::new(&modal_element, "hidden.bs.modal", move |_| { 
+                username_node_ref.cast::<HtmlInputElement>().unwrap().set_value("");
+                password_node_ref.cast::<HtmlInputElement>().unwrap().set_value("");
+                match logged_user_context.state {
+                    LoggedUserState::None | LoggedUserState::Active(_) => {},
+                    LoggedUserState::Error(_) | LoggedUserState::InProgress(_) => {
+                        logged_user_context.dispatch(LoggedUserState::None);
+                    },
+                };
             });
-            match (**logged_user_context).state.clone() {
-                LoggedUserState::None | LoggedUserState::Active(_) => {
-                    reload.
-                    // username_node_ref.cast::<HtmlInputElement>().unwrap().set_value("");
-                    // password_node_ref.cast::<HtmlInputElement>().unwrap().set_value("");
-                }
-                LoggedUserState::InProgress(_) | LoggedUserState::Error(_) => {}
-            }
+            move || drop(listener)
         });
     }
-    */
 
     html! {
-        <div class="modal fade" { id } tabindex="-1" aria-labelledby="loginModalLabel" aria-hidden="true">
+        <div class="modal fade" { id } tabindex="-1" aria-labelledby="loginModalLabel" aria-hidden="true" ref={ modal_node_ref }>
             <div class="modal-dialog">
                 <div class="modal-content">
                     <div class="modal-header">
