@@ -12,7 +12,7 @@ pub fn header() -> Html {
     html! {
         <>
             <LoginModal id="loginModal" />
-            <header class="header sticky-top bg-primary-subtle border-bottom d-flex flex-wrap align-items-center">
+            <header class="header fixed-top bg-primary-subtle border-bottom d-flex flex-wrap align-items-center">
                 <div class="container">
                     <div class="d-flex flex-wrap align-items-center justify-content-center">
             

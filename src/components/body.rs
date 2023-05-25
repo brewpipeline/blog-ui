@@ -53,7 +53,7 @@ impl Component for Body {
         let Self { enabled_menu, .. } = *self;
 
         html! {
-            <main class="container">
+            <main class="body position-relative container">
 
                 <div class="menu-nav btn-group d-flex d-lg-none" role="group">
                     <input 
