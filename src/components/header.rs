@@ -39,24 +39,18 @@ pub fn header() -> Html {
                             <path d="M11.742 10.344a6.5 6.5 0 1 0-1.397 1.398h-.001c.03.04.062.078.098.115l3.85 3.85a1 1 0 0 0 1.415-1.414l-3.85-3.85a1.007 1.007 0 0 0-.115-.1zM12 6.5a5.5 5.5 0 1 1-11 0 5.5 5.5 0 0 1 11 0z"></path>
                             </svg>
                         </button>
-                        {
-                            if let LoggedUserState::Active(auth_user) = logged_user_context.state.clone() {
-                                html! {
-                                    <div class="d-flex dropdown dropdown-menu-end">
-                                        <img src={ auth_user.image_url.clone() } type="button" alt={ auth_user.username.clone() } class="item d-flex rounded" data-bs-toggle="dropdown" aria-expanded="false" />
-                                        <ul class="dropdown-menu text-small" >
-                                            <li><Link<Route> classes="dropdown-item" to={ Route::Author { id: auth_user.id } }> { auth_user.username.clone() } </Link<Route>></li>
-                                            // <li><a class="dropdown-item" href="#"> { "Настройки" } </a></li>
-                                            <li><hr class="dropdown-divider" /></li>
-                                            <li><button class="dropdown-item" onclick={ move |_| logged_user_context.dispatch(LoggedUserState::None) }> { "Выход" } </button></li>
-                                        </ul>
-                                    </div>
-                                }
-                            } else {
-                                html! {
-                                    <button type="button" class="item btn btn-light" data-bs-toggle="modal" data-bs-target="#loginModal"> { "Войти" } </button>
-                                }
-                            }
+                        if let LoggedUserState::Active(auth_user) = logged_user_context.state.clone() {
+                            <div class="d-flex dropdown dropdown-menu-end">
+                                <img src={ auth_user.image_url.clone() } type="button" alt={ auth_user.username.clone() } class="item d-flex rounded" data-bs-toggle="dropdown" aria-expanded="false" />
+                                <ul class="dropdown-menu text-small" >
+                                    <li><Link<Route> classes="dropdown-item" to={ Route::Author { id: auth_user.id } }> { auth_user.username.clone() } </Link<Route>></li>
+                                    // <li><a class="dropdown-item" href="#"> { "Настройки" } </a></li>
+                                    <li><hr class="dropdown-divider" /></li>
+                                    <li><button class="dropdown-item" onclick={ move |_| logged_user_context.dispatch(LoggedUserState::None) }> { "Выход" } </button></li>
+                                </ul>
+                            </div>
+                        } else {
+                            <button type="button" class="item btn btn-light" data-bs-toggle="modal" data-bs-target="#loginModal"> { "Войти" } </button>
                         }
                         </div>
             

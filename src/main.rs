@@ -4,6 +4,9 @@ mod pages;
 mod hash_map_context;
 mod logged_user_context;
 
+#[macro_use]
+extern crate async_trait;
+
 use wasm_bindgen::JsCast;
 use yew::prelude::*;
 use yew_router::prelude::*;

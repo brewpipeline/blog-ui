@@ -1,17 +1,19 @@
 use std::marker::PhantomData;
-use serde::Deserialize;
+use gloo_net::Error;
 use yew::prelude::*;
 use yew_router::prelude::*;
-use gloo_net::http::Request;
+use gloo_net::http::{Request, Response};
 
 use crate::components::pagination::*;
 use crate::hash_map_context::*;
 
 use crate::Route;
 
-pub trait ExternalListContainer: Clone + PartialEq + for<'a> Deserialize<'a> {
+#[async_trait(?Send)]
+pub trait ExternalListContainer: Clone + PartialEq {
     type UrlProps: PartialEq + Default;
-    fn url(url_props: &Self::UrlProps, limit: u64, skip: u64) -> String;
+    fn request(url_props: &Self::UrlProps, limit: u64, skip: u64) -> Request;
+    async fn response(response: Response) -> Result<Self, Error>;
     type Item: Clone + PartialEq + KeyedItem<Key = u64>;
     fn items(&self) -> Vec<Self::Item>;
     fn total(&self) -> u64;
@@ -51,7 +53,7 @@ where
     let skip = (page - 1) * limit;
     let route_to_page = props.route_to_page.clone();
     
-    let list_container_url = C::url(url_props, limit, skip);
+    let list_container_request = C::request(url_props, limit, skip);
     let list_container = use_state_eq(|| None);
     {
         let items_cache = items_cache.clone();
@@ -61,11 +63,11 @@ where
             let list_container = list_container.clone();
             list_container.set(None);
             wasm_bindgen_futures::spawn_local(async move {
-                let fetched_list_container: C = Request::get(list_container_url.as_str())
+                let fetched_list_container = C::response(list_container_request
                     .send()
                     .await
                     .unwrap()
-                    .json()
+                )
                     .await
                     .unwrap();
                 if let Some(items_cache) = items_cache {
@@ -90,18 +92,12 @@ where
                     props.component.emit(Option::Some(item))
                 }).collect::<Html>()
             }
-            {
-                if total_pages > 1 {
-                    html! {
-                        <Pagination
-                            { page }
-                            { total_pages }
-                            { route_to_page }
-                        />
-                    }
-                } else {
-                    html! {}
-                }
+            if total_pages > 1 {
+                <Pagination
+                    { page }
+                    { total_pages }
+                    { route_to_page }
+                />
             }
         </>
     }

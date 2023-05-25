@@ -45,16 +45,10 @@ impl Component for PostCard {
                             <div class="col">
                                 <span class="placeholder col-4"></span>
                             </div>
-                            {
-                                if ctx.props().fetch_author {
-                                    html! {
-                                        <div class="col text-end">
-                                            <span class="placeholder col-4"></span>
-                                        </div>
-                                    }
-                                } else {
-                                    html! {}
-                                }
+                            if ctx.props().fetch_author {
+                                <div class="col text-end">
+                                    <span class="placeholder col-4"></span>
+                                </div>
                             }
                         </div>
                     </div>
@@ -75,31 +69,20 @@ impl Component for PostCard {
                         <div class="col">
                             { post.tags.join(", ") }
                         </div>
-                        {
-                            if ctx.props().fetch_author {
-                                let post_author_id = post.user_id;
-                                html! {
-                                    <div class="col text-end">
-                                        <Item<User> item_id={post_author_id} component={ move |user: Option<User>| {
-                                            if let Some(user) = user {
-                                                html! {
-                                                    <Link<Route> classes={classes!("title", "is-block", "col-6", "text-decoration-none")} to={Route::Author { id: user.id }}>
-                                                        { &user.username }
-                                                    </Link<Route>>
-                                                }
-                                            } else {
-                                                html! {
-                                                    <div class="col text-end">
-                                                        <span class="placeholder col-4"></span>
-                                                    </div>
-                                                }
-                                            }
-                                        } } />
-                                    </div>
-                                }
-                            } else {
-                                html! {}
-                            }
+                        if ctx.props().fetch_author {
+                            <div class="col text-end">
+                                <Item<User> item_id={ post.user_id } component={ move |user: Option<User>| { html! {
+                                    if let Some(user) = user {
+                                        <Link<Route> classes={classes!("title", "is-block", "col-6", "text-decoration-none")} to={Route::Author { id: user.id }}>
+                                            { &user.username }
+                                        </Link<Route>>
+                                    } else {
+                                        <div class="col text-end">
+                                            <span class="placeholder col-4"></span>
+                                        </div>
+                                    }
+                                } } } />
+                            </div>
                         }
                     </div>
                 </div>

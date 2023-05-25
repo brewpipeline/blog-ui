@@ -1,3 +1,5 @@
+use gloo_net::Error;
+use gloo_net::http::{Request, Response};
 use serde::{Deserialize, Serialize};
 
 use crate::components::list::ExternalListContainer;
@@ -12,11 +14,16 @@ pub struct UsersContainer {
     pub limit: u64,
 }
 
+#[async_trait(?Send)]
 impl ExternalListContainer for UsersContainer {
     type UrlProps = ();
-    fn url(_url_props: &Self::UrlProps, limit: u64, skip: u64) -> String {
+    fn request(_url_props: &Self::UrlProps, limit: u64, skip: u64) -> Request {
         let select = User::select();
-        format!("https://dummyjson.com/users?limit={limit}&skip={skip}&select={select}")
+        let url = format!("https://dummyjson.com/users?limit={limit}&skip={skip}&select={select}");
+        Request::get(url.as_str())
+    }
+    async fn response(response: Response) -> Result<Self, Error> {
+        response.json().await
     }
     type Item = User;
     fn items(&self) -> Vec<Self::Item> {
@@ -53,10 +60,15 @@ impl KeyedItem for User {
     }
 }
 
+#[async_trait(?Send)]
 impl ExternalItem for User {
-    fn url(id: u64) -> String {
+    fn request(id: u64) -> Request {
         let select = Self::select();
-        format!("https://dummyjson.com/users/{id}?select={select}")
+        let url = format!("https://dummyjson.com/users/{id}?select={select}");
+        Request::get(url.as_str())
+    }
+    async fn response(response: Response) -> Result<Self, Error> {
+        response.json().await
     }
 }
 
@@ -74,11 +86,16 @@ pub struct PostsContainer {
     pub limit: u64,
 }
 
+#[async_trait(?Send)]
 impl ExternalListContainer for PostsContainer {
     type UrlProps = ();
-    fn url(_url_props: &Self::UrlProps, limit: u64, skip: u64) -> String {
+    fn request(_url_props: &Self::UrlProps, limit: u64, skip: u64) -> Request {
         let select = Post::select();
-        format!("https://dummyjson.com/posts?limit={limit}&skip={skip}&select={select}")
+        let url = format!("https://dummyjson.com/posts?limit={limit}&skip={skip}&select={select}");
+        Request::get(url.as_str())
+    }
+    async fn response(response: Response) -> Result<Self, Error> {
+        response.json().await
     }
     type Item = Post;
     fn items(&self) -> Vec<Self::Item> {
@@ -124,10 +141,15 @@ impl KeyedItem for Post {
     }
 }
 
+#[async_trait(?Send)]
 impl ExternalItem for Post {
-    fn url(id: u64) -> String {
+    fn request(id: u64) -> Request {
         let select = Self::select();
-        format!("https://dummyjson.com/posts/{id}?select={select}")
+        let url = format!("https://dummyjson.com/posts/{id}?select={select}");
+        Request::get(url.as_str())
+    }
+    async fn response(response: Response) -> Result<Self, Error> {
+        response.json().await
     }
 }
 
@@ -150,14 +172,19 @@ pub struct CommentsContainer {
     pub limit: u64,
 }
 
+#[async_trait(?Send)]
 impl ExternalListContainer for CommentsContainer {
     type UrlProps = CommentsContainerUrlProps;
-    fn url(url_props: &Self::UrlProps, limit: u64, skip: u64) -> String {
-        if let Some(post_id) = url_props.post_id {
+    fn request(url_props: &Self::UrlProps, limit: u64, skip: u64) -> Request {
+        let url = if let Some(post_id) = url_props.post_id {
             format!("https://dummyjson.com/comments/post/{post_id}?limit={limit}&skip={skip}")
         } else {
             format!("https://dummyjson.com/comments?limit={limit}&skip={skip}")
-        }
+        };
+        Request::get(url.as_str())
+    }
+    async fn response(response: Response) -> Result<Self, Error> {
+        response.json().await
     }
     type Item = Comment;
     fn items(&self) -> Vec<Self::Item> {
@@ -197,9 +224,14 @@ impl KeyedItem for Comment {
     }
 }
 
+#[async_trait(?Send)]
 impl ExternalItem for Comment {
-    fn url(id: u64) -> String {
-        format!("https://dummyjson.com/comments/{id}")
+    fn request(id: u64) -> Request {
+        let url = format!("https://dummyjson.com/comments/{id}");
+        Request::get(url.as_str())
+    }
+    async fn response(response: Response) -> Result<Self, Error> {
+        response.json().await
     }
 }
 

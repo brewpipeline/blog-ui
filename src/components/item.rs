@@ -1,11 +1,12 @@
-use serde::Deserialize;
 use yew::prelude::*;
-use gloo_net::http::Request;
+use gloo_net::{http::{Request, Response}, Error};
 
 use crate::hash_map_context::*;
 
-pub trait ExternalItem: Clone + PartialEq + for<'a> Deserialize<'a> {
-    fn url(id: u64) -> String;
+#[async_trait(?Send)]
+pub trait ExternalItem: Clone + PartialEq {
+    fn request(id: u64) -> Request;
+    async fn response(response: Response) -> Result<Self, Error>;
 }
 
 #[derive(PartialEq, Properties)]
@@ -41,12 +42,11 @@ where
             if (*item) == None {
                 item.set(None);
                 wasm_bindgen_futures::spawn_local(async move {
-                    let item_url = I::url(item_id);
-                    let fetched_item: I = Request::get(item_url.as_str())
+                    let fetched_item = I::response(I::request(item_id)
                         .send()
                         .await
                         .unwrap()
-                        .json()
+                    )
                         .await
                         .unwrap();
                     if let Some(items_cache) = items_cache {
