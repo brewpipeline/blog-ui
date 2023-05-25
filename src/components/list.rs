@@ -58,9 +58,9 @@ where
         let items_cache = items_cache.clone();
         let list_container = list_container.clone();
         use_effect_with(page, move |_| {
+            list_container.set(None);
             let items_cache = items_cache.clone();
             let list_container = list_container.clone();
-            list_container.set(None);
             wasm_bindgen_futures::spawn_local(async move {
                 let fetched_list_container = C::get(ExternalListContainerParams { params, limit, skip }).await.unwrap();
                 if let Some(items_cache) = items_cache {
