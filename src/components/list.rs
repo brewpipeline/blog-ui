@@ -8,7 +8,7 @@ use crate::get::*;
 use crate::Route;
 
 pub struct ExternalListContainerParams<P: Clone + PartialEq> {
-    pub custom_params: P,
+    pub params: P,
     pub limit: u64,
     pub skip: u64,
 }
@@ -62,7 +62,7 @@ where
             let list_container = list_container.clone();
             list_container.set(None);
             wasm_bindgen_futures::spawn_local(async move {
-                let fetched_list_container = C::get(ExternalListContainerParams { custom_params: params, limit, skip }).await.unwrap();
+                let fetched_list_container = C::get(ExternalListContainerParams { params, limit, skip }).await.unwrap();
                 if let Some(items_cache) = items_cache {
                     items_cache.dispatch(ReducibleHashMapAction::Batch(fetched_list_container.items()))
                 }
