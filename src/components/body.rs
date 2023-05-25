@@ -36,14 +36,17 @@ impl Component for Body {
     }
 
     fn update(&mut self, _ctx: &Context<Self>, msg: Self::Message) -> bool {
+        self.enabled_menu = msg;
+        true
+    }
+
+    fn rendered(&mut self, _ctx: &Context<Self>, _first_render: bool) {
         window().scroll_to_with_scroll_to_options(
             ScrollToOptions::new()
                 .left(0.0)
                 .top(0.0)
                 .behavior(ScrollBehavior::Instant)
         );
-        self.enabled_menu = msg;
-        true
     }
 
     fn view(&self, ctx: &Context<Self>) -> Html {
