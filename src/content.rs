@@ -2,9 +2,15 @@ use gloo_net::Error;
 use gloo_net::http::{Request, Response};
 use serde::{Deserialize, Serialize};
 
-use crate::components::list::ExternalListContainer;
-use crate::components::item::ExternalItem;
-use crate::hash_map_context::KeyedItem;
+use crate::components::list::*;
+use crate::components::item::*;
+use crate::get::*;
+use crate::hash_map_context::*;
+
+//
+// UsersContainer
+//
+//
 
 #[derive(Clone, Debug, Eq, PartialEq, Deserialize)]
 pub struct UsersContainer {
@@ -15,9 +21,9 @@ pub struct UsersContainer {
 }
 
 #[async_trait(?Send)]
-impl ExternalListContainer for UsersContainer {
-    type UrlProps = ();
-    fn request(_url_props: &Self::UrlProps, limit: u64, skip: u64) -> Request {
+impl RequestableItem<ExternalListContainerParams<()>> for UsersContainer {
+    fn request(params: ExternalListContainerParams<()>) -> Request {
+        let ExternalListContainerParams { limit, skip, .. } = params;
         let select = User::select();
         let url = format!("https://dummyjson.com/users?limit={limit}&skip={skip}&select={select}");
         Request::get(url.as_str())
@@ -25,6 +31,9 @@ impl ExternalListContainer for UsersContainer {
     async fn response(response: Response) -> Result<Self, Error> {
         response.json().await
     }
+} 
+
+impl ExternalListContainer for UsersContainer {
     type Item = User;
     fn items(&self) -> Vec<Self::Item> {
         self.users.clone()
@@ -39,6 +48,11 @@ impl ExternalListContainer for UsersContainer {
         self.limit
     }
 }
+
+//
+// User
+//
+//
 
 #[derive(Clone, Debug, Eq, PartialEq, Deserialize)]
 pub struct User {
@@ -61,22 +75,29 @@ impl KeyedItem for User {
 }
 
 #[async_trait(?Send)]
-impl ExternalItem for User {
-    fn request(id: u64) -> Request {
+impl RequestableItem<ExternalItemParams> for User {
+    fn request(params: ExternalItemParams) -> Request {
         let select = Self::select();
-        let url = format!("https://dummyjson.com/users/{id}?select={select}");
+        let url = format!("https://dummyjson.com/users/{id}?select={select}", id = params.id);
         Request::get(url.as_str())
     }
     async fn response(response: Response) -> Result<Self, Error> {
         response.json().await
     }
-}
+} 
+
+impl ExternalItem for User {}
 
 impl User {
     fn select() -> String {
         format!("id,firstName,lastName,image,username,email")
     }
 }
+
+//
+// PostsContainer
+//
+//
 
 #[derive(Clone, Debug, Eq, PartialEq, Deserialize)]
 pub struct PostsContainer {
@@ -87,9 +108,9 @@ pub struct PostsContainer {
 }
 
 #[async_trait(?Send)]
-impl ExternalListContainer for PostsContainer {
-    type UrlProps = ();
-    fn request(_url_props: &Self::UrlProps, limit: u64, skip: u64) -> Request {
+impl RequestableItem<ExternalListContainerParams<()>> for PostsContainer {
+    fn request(params: ExternalListContainerParams<()>) -> Request {
+        let ExternalListContainerParams { limit, skip, .. } = params;
         let select = Post::select();
         let url = format!("https://dummyjson.com/posts?limit={limit}&skip={skip}&select={select}");
         Request::get(url.as_str())
@@ -97,6 +118,9 @@ impl ExternalListContainer for PostsContainer {
     async fn response(response: Response) -> Result<Self, Error> {
         response.json().await
     }
+} 
+
+impl ExternalListContainer for PostsContainer {
     type Item = Post;
     fn items(&self) -> Vec<Self::Item> {
         self.posts.clone()
@@ -111,6 +135,11 @@ impl ExternalListContainer for PostsContainer {
         self.limit
     }
 }
+
+//
+// Post
+//
+//
 
 #[derive(Clone, Debug, Eq, PartialEq, Deserialize)]
 pub struct Post {
@@ -142,16 +171,18 @@ impl KeyedItem for Post {
 }
 
 #[async_trait(?Send)]
-impl ExternalItem for Post {
-    fn request(id: u64) -> Request {
+impl RequestableItem<ExternalItemParams> for Post {
+    fn request(params: ExternalItemParams) -> Request {
         let select = Self::select();
-        let url = format!("https://dummyjson.com/posts/{id}?select={select}");
+        let url = format!("https://dummyjson.com/posts/{id}?select={select}", id = params.id);
         Request::get(url.as_str())
     }
     async fn response(response: Response) -> Result<Self, Error> {
         response.json().await
     }
-}
+} 
+
+impl ExternalItem for Post {}
 
 impl Post {
     fn select() -> String {
@@ -159,9 +190,14 @@ impl Post {
     }
 }
 
-#[derive(Default, PartialEq)]
-pub struct CommentsContainerUrlProps {
-    pub post_id: Option<u64>,
+//
+// CommentsContainer
+//
+//
+
+#[derive(Clone, PartialEq)]
+pub struct CommentsContainerPostIdParam {
+    pub post_id: u64,
 }
 
 #[derive(Clone, Debug, Eq, PartialEq, Deserialize)]
@@ -173,19 +209,30 @@ pub struct CommentsContainer {
 }
 
 #[async_trait(?Send)]
-impl ExternalListContainer for CommentsContainer {
-    type UrlProps = CommentsContainerUrlProps;
-    fn request(url_props: &Self::UrlProps, limit: u64, skip: u64) -> Request {
-        let url = if let Some(post_id) = url_props.post_id {
-            format!("https://dummyjson.com/comments/post/{post_id}?limit={limit}&skip={skip}")
-        } else {
-            format!("https://dummyjson.com/comments?limit={limit}&skip={skip}")
-        };
+impl RequestableItem<ExternalListContainerParams<CommentsContainerPostIdParam>> for CommentsContainer {
+    fn request(params: ExternalListContainerParams<CommentsContainerPostIdParam>) -> Request {
+        let ExternalListContainerParams { custom_params, limit, skip } = params;
+        let url = format!("https://dummyjson.com/comments/post/{post_id}?limit={limit}&skip={skip}", post_id = custom_params.post_id);
         Request::get(url.as_str())
     }
     async fn response(response: Response) -> Result<Self, Error> {
         response.json().await
     }
+}
+
+#[async_trait(?Send)]
+impl RequestableItem<ExternalListContainerParams<()>> for CommentsContainer {
+    fn request(params: ExternalListContainerParams<()>) -> Request {
+        let ExternalListContainerParams { limit, skip, .. } = params;
+        let url = format!("https://dummyjson.com/comments?limit={limit}&skip={skip}");
+        Request::get(url.as_str())
+    }
+    async fn response(response: Response) -> Result<Self, Error> {
+        response.json().await
+    }
+} 
+
+impl ExternalListContainer for CommentsContainer {
     type Item = Comment;
     fn items(&self) -> Vec<Self::Item> {
         self.comments.clone()
@@ -200,6 +247,11 @@ impl ExternalListContainer for CommentsContainer {
         self.limit
     }
 }
+
+//
+// Comment
+//
+//
 
 #[derive(Clone, Debug, Eq, PartialEq, Deserialize)]
 pub struct ShortUser {
@@ -225,21 +277,27 @@ impl KeyedItem for Comment {
 }
 
 #[async_trait(?Send)]
-impl ExternalItem for Comment {
-    fn request(id: u64) -> Request {
-        let url = format!("https://dummyjson.com/comments/{id}");
+impl RequestableItem<ExternalItemParams> for Comment {
+    fn request(params: ExternalItemParams) -> Request {
+        let url = format!("https://dummyjson.com/comments/{id}", id = params.id);
         Request::get(url.as_str())
     }
     async fn response(response: Response) -> Result<Self, Error> {
         response.json().await
     }
-}
+} 
 
-#[derive(Clone, Debug, Eq, PartialEq, Deserialize)]
-#[serde(untagged)]
-pub enum AuthResult {
-    Success(AuthUser),
-    Error { message: String },
+impl ExternalItem for Comment {}
+
+//
+// Login
+//
+//
+
+#[derive(Clone, Debug, Eq, PartialEq, Serialize)]
+pub struct LoginParams {
+    pub username: String,
+    pub password: String,
 }
 
 #[derive(Clone, Debug, Eq, PartialEq, Deserialize, Serialize)]
@@ -256,8 +314,21 @@ pub struct AuthUser {
     pub token: String,
 }
 
-#[derive(Clone, Debug, Eq, PartialEq, Serialize)]
-pub struct LoginParams {
-    pub username: String,
-    pub password: String,
+#[derive(Clone, Debug, Eq, PartialEq, Deserialize)]
+#[serde(untagged)]
+pub enum AuthResult {
+    Success(AuthUser),
+    Error { message: String },
 }
+
+#[async_trait(?Send)]
+impl RequestableItem<LoginParams> for AuthResult {
+    fn request(params: LoginParams) -> Request {
+        Request::post("https://dummyjson.com/auth/login")
+            .header("Content-Type", "application/json")
+            .body(serde_json::to_string(&params).unwrap())
+    }
+    async fn response(response: Response) -> Result<Self, Error> {
+        response.json().await
+    }
+} 

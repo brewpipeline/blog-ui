@@ -1,9 +1,8 @@
 use web_sys::HtmlInputElement;
 use yew::prelude::*;
-use gloo_net::http::Request;
 
 use crate::content::{LoginParams, AuthResult};
-use crate::logged_user_context::{LoggedUserContext, LoggedUserState};
+use crate::utils::*;
 
 #[derive(PartialEq, Properties)]
 pub struct LoginModalProps {
@@ -27,16 +26,7 @@ pub fn login_modal(props: &LoginModalProps) -> Html {
             let logged_user_context = logged_user_context.clone();
             let close_node_ref = close_node_ref.clone();
             wasm_bindgen_futures::spawn_local(async move {
-                let auth_result: AuthResult = Request::post("https://dummyjson.com/auth/login")
-                    .header("Content-Type", "application/json")
-                    .body(serde_json::to_string(&login_params).unwrap())
-                    .send()
-                    .await
-                    .unwrap()
-                    .json()
-                    .await
-                    .unwrap();
-                match auth_result {
+                match AuthResult::get(login_params).await {
                     AuthResult::Success(auth_user) => {
                         close_node_ref.cast::<HtmlInputElement>().unwrap().click();
                         logged_user_context.dispatch(LoggedUserState::Active(auth_user));

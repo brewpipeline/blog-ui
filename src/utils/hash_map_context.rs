@@ -1,7 +1,6 @@
 use std::rc::Rc;
 use std::collections::HashMap;
 use std::hash::Hash;
-
 use yew::prelude::*;
 
 pub trait KeyedItem {

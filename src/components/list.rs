@@ -1,19 +1,20 @@
-use std::marker::PhantomData;
-use gloo_net::Error;
 use yew::prelude::*;
 use yew_router::prelude::*;
-use gloo_net::http::{Request, Response};
 
 use crate::components::pagination::*;
 use crate::hash_map_context::*;
+use crate::get::*;
 
 use crate::Route;
 
+pub struct ExternalListContainerParams<P: Clone + PartialEq> {
+    pub custom_params: P,
+    pub limit: u64,
+    pub skip: u64,
+}
+
 #[async_trait(?Send)]
 pub trait ExternalListContainer: Clone + PartialEq {
-    type UrlProps: PartialEq + Default;
-    fn request(url_props: &Self::UrlProps, limit: u64, skip: u64) -> Request;
-    async fn response(response: Response) -> Result<Self, Error>;
     type Item: Clone + PartialEq + KeyedItem<Key = u64>;
     fn items(&self) -> Vec<Self::Item>;
     fn total(&self) -> u64;
@@ -22,24 +23,23 @@ pub trait ExternalListContainer: Clone + PartialEq {
 }
 
 #[derive(Properties, PartialEq)]
-pub struct ListProps<C>
+pub struct ListProps<C, P = ()>
 where
-    C: ExternalListContainer + 'static,
+    C: ExternalListContainer + RequestableItem<ExternalListContainerParams<P>> + 'static,
+    P: Clone + PartialEq + 'static,
 {
-    #[prop_or_default]
-    pub url_props: C::UrlProps,
+    pub params: P,
     #[prop_or(10)]
     pub items_per_page: u64,
     pub route_to_page: Route,
-    #[prop_or_default]
-    _p_c: PhantomData<C>,
     pub component: Callback<Option<C::Item>, Html>,
 }
 
 #[function_component(List)]
-pub fn list<C>(props: &ListProps<C>) -> Html
+pub fn list<C, P = ()>(props: &ListProps<C, P>) -> Html
 where
-    C: ExternalListContainer + 'static,
+    C: ExternalListContainer + RequestableItem<ExternalListContainerParams<P>> + 'static,
+    P: Clone + PartialEq + 'static,
 {
     let items_cache = use_context::<HashMapContext<u64, C::Item>>();
 
@@ -48,12 +48,11 @@ where
         .query::<PageQuery>()
         .map(|it| it.page)
         .unwrap_or(1);
-    let url_props = &props.url_props;
+    let params = props.params.clone();
     let limit = props.items_per_page;
     let skip = (page - 1) * limit;
     let route_to_page = props.route_to_page.clone();
     
-    let list_container_request = C::request(url_props, limit, skip);
     let list_container = use_state_eq(|| None);
     {
         let items_cache = items_cache.clone();
@@ -63,13 +62,7 @@ where
             let list_container = list_container.clone();
             list_container.set(None);
             wasm_bindgen_futures::spawn_local(async move {
-                let fetched_list_container = C::response(list_container_request
-                    .send()
-                    .await
-                    .unwrap()
-                )
-                    .await
-                    .unwrap();
+                let fetched_list_container = C::get(ExternalListContainerParams { custom_params: params, limit, skip }).await;
                 if let Some(items_cache) = items_cache {
                     items_cache.dispatch(ReducibleHashMapAction::Batch(fetched_list_container.items()))
                 }

@@ -1,7 +1,7 @@
 use yew::prelude::*;
 use yew_router::components::Link;
 
-use crate::components::item::Item;
+use crate::components::item::*;
 use crate::content::{Post, User};
 
 use crate::Route;

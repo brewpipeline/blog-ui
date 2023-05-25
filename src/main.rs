@@ -1,28 +1,20 @@
 mod components;
 mod content;
 mod pages;
-mod hash_map_context;
-mod logged_user_context;
+mod utils;
 
 #[macro_use]
 extern crate async_trait;
 
-use wasm_bindgen::JsCast;
 use yew::prelude::*;
 use yew_router::prelude::*;
 use web_sys::HtmlDocument;
+use wasm_bindgen::JsCast;
 
-use crate::pages::page_not_found::PageNotFound;
-use crate::components::author_card::AuthorCard;
-use crate::components::body::Body;
-use crate::components::comment_card::CommentCard;
-use crate::components::header::Header;
-use crate::components::item::Item;
-use crate::components::list::List;
-use crate::components::post_card::PostCard;
-use crate::content::{PostsContainer, UsersContainer, User, Post, CommentsContainer, CommentsContainerUrlProps};
-use crate::hash_map_context::HashMapContext;
-use crate::logged_user_context::LoggedUserContext;
+use crate::pages::*;
+use crate::components::body::*;
+use crate::components::header::*;
+use crate::utils::*;
 
 #[derive(Routable, PartialEq, Eq, Clone, Debug)]
 pub enum Route {
@@ -44,39 +36,10 @@ pub enum Route {
 impl Route {
     fn switch(route: Route) -> Html {
         match route {
-            Route::Post { id: post_id } => html! {
-                <>
-                    <Item<Post> 
-                        item_id={ post_id } 
-                        component={ |post| html! { <PostCard { post } 
-                        fetch_author={ true } /> } } 
-                    />
-                    <List<CommentsContainer> 
-                        url_props={ CommentsContainerUrlProps { post_id: Some(post_id) } } 
-                        items_per_page={ 100 } 
-                        route_to_page={ Route::Post { id: post_id } } 
-                        component={ |comment| html! { <CommentCard { comment } /> } } 
-                    />
-                </>
-            },
-            Route::Home | Route::Posts => html! { 
-                <List<PostsContainer> 
-                    route_to_page={ Route::Posts } 
-                    component={ |post| html! { <PostCard { post } /> } } 
-                /> 
-            },
-            Route::Author { id: user_id } => html! { 
-                <Item<User> 
-                    item_id={ user_id } 
-                    component={ |user| html! { <AuthorCard { user } /> } } 
-                /> 
-            },
-            Route::Authors => html! { 
-                <List<UsersContainer> 
-                    route_to_page={ Route::Authors } 
-                    component={ |user| html! { <AuthorCard { user } /> } } 
-                /> 
-            },
+            Route::Post { id: post_id } => html! { <Post { post_id } /> },
+            Route::Home | Route::Posts => html! { <Posts />},
+            Route::Author { id: user_id } => html! { <Author { user_id } /> },
+            Route::Authors => html! { <Authors /> },
             Route::NotFound => html! { <PageNotFound /> }
         }
     }
@@ -90,12 +53,12 @@ pub fn app() -> Html {
     html! {
         <BrowserRouter>
             <ContextProvider<LoggedUserContext> context={logged_user}>
-                <ContextProvider<HashMapContext<u64, Post>> context={posts_cache}>
-                    <ContextProvider<HashMapContext<u64, User>> context={users_cache}>
-                        <Header />
+                <Header />
+                <ContextProvider<HashMapContext<u64, content::Post>> context={posts_cache}>
+                    <ContextProvider<HashMapContext<u64, content::User>> context={users_cache}>
                         <Body />
-                    </ContextProvider<HashMapContext<u64, User>>>
-                </ContextProvider<HashMapContext<u64, Post>>>
+                    </ContextProvider<HashMapContext<u64, content::User>>>
+                </ContextProvider<HashMapContext<u64, content::Post>>>
             </ContextProvider<LoggedUserContext>>
         </BrowserRouter>
     }

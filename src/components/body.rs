@@ -1,9 +1,8 @@
 use gloo::utils::window;
 use web_sys::{ScrollToOptions, ScrollBehavior};
 use yew::prelude::*;
-use yew_router::prelude::*;
-
 use yew::html::Scope;
+use yew_router::prelude::*;
 use yew_router::scope_ext::RouterScopeExt;
 
 use crate::Route;

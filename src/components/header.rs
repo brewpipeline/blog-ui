@@ -1,8 +1,8 @@
 use yew::prelude::*;
 use yew_router::prelude::*;
 
-use crate::components::login_modal::LoginModal;
-use crate::logged_user_context::{LoggedUserContext, LoggedUserState};
+use crate::components::login_modal::*;
+use crate::logged_user_context::*;
 
 use crate::Route;
 

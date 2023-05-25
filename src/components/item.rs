@@ -1,13 +1,13 @@
 use yew::prelude::*;
-use gloo_net::{http::{Request, Response}, Error};
 
 use crate::hash_map_context::*;
+use crate::get::*;
 
-#[async_trait(?Send)]
-pub trait ExternalItem: Clone + PartialEq {
-    fn request(id: u64) -> Request;
-    async fn response(response: Response) -> Result<Self, Error>;
+pub struct ExternalItemParams {
+    pub id: u64
 }
+
+pub trait ExternalItem: Clone + PartialEq + RequestableItem<ExternalItemParams> {}
 
 #[derive(PartialEq, Properties)]
 pub struct ItemProps<I>
@@ -42,13 +42,7 @@ where
             if (*item) == None {
                 item.set(None);
                 wasm_bindgen_futures::spawn_local(async move {
-                    let fetched_item = I::response(I::request(item_id)
-                        .send()
-                        .await
-                        .unwrap()
-                    )
-                        .await
-                        .unwrap();
+                    let fetched_item = I::get(ExternalItemParams { id: item_id }).await;
                     if let Some(items_cache) = items_cache {
                         items_cache.dispatch(ReducibleHashMapAction::Single(fetched_item.clone()))
                     }
