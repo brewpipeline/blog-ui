@@ -10,7 +10,7 @@ pub struct AuthorProps {
 }
 
 #[function_component(Author)]
-pub fn authoe(props: &AuthorProps) -> Html {
+pub fn author(props: &AuthorProps) -> Html {
     html! {
         <Item<content::User> 
             item_id={ props.user_id } 
