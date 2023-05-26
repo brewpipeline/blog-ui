@@ -7,6 +7,7 @@ use crate::get::*;
 
 use crate::Route;
 
+#[derive(Clone, PartialEq)]
 pub struct ExternalListContainerParams<P: Clone + PartialEq> {
     pub params: P,
     pub limit: u64,
@@ -33,6 +34,7 @@ where
     pub items_per_page: u64,
     pub route_to_page: Route,
     pub component: Callback<Option<C::Item>, Html>,
+    pub children: Children,
 }
 
 #[function_component(List)]
@@ -43,8 +45,9 @@ where
 {
     let items_cache = use_context::<HashMapContext<u64, C::Item>>();
 
-    let page = use_location()
-        .unwrap()
+    let location = use_location().unwrap();
+    let path = location.path().to_owned();
+    let page = location
         .query::<PageQuery>()
         .map(|it| it.page)
         .unwrap_or(1);
@@ -57,7 +60,7 @@ where
     {
         let items_cache = items_cache.clone();
         let list_container = list_container.clone();
-        use_effect_with(page, move |_| {
+        use_effect_with_deps(move |_| {
             list_container.set(None);
             let items_cache = items_cache.clone();
             let list_container = list_container.clone();
@@ -69,7 +72,7 @@ where
                 list_container.set(Some(fetched_list_container));
             });
             || ()
-        });
+        }, (path, page));
     }
 
     let Some(list_container) = (*list_container).clone() else {
@@ -78,10 +81,11 @@ where
         }).collect::<Html>()
     };
     let total_pages = (list_container.total() as f64 / limit as f64).ceil() as u64;
+    let items = list_container.items();
     html! {
-        <>
+        if items.len() > 0 {
             {
-                list_container.items().into_iter().map(|item| {
+                items.into_iter().map(|item| {
                     props.component.emit(Option::Some(item))
                 }).collect::<Html>()
             }
@@ -92,6 +96,8 @@ where
                     { route_to_page }
                 />
             }
-        </>
+        } else {
+            { props.children.clone() }
+        }
     }
 }

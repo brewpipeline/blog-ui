@@ -9,12 +9,15 @@ license = "MIT"
 log = "0.4"
 async-trait = "0.1"
 
-yew = { git = "https://github.com/yewstack/yew", branch = "master", features = ["csr"] }
-yew-router = { git = "https://github.com/yewstack/yew", branch = "master" }
+# yew = { git = "https://github.com/yewstack/yew", branch = "master", features = ["csr"] }
+# yew-router = { git = "https://github.com/yewstack/yew", branch = "master" }
+yew = { version = "0.20", features = ["csr"] }
+yew-router = "0.17"
+yew-hooks = "0.2"
 
 wasm-bindgen-futures = "0.4"
 wasm-bindgen = "0.2"
-wasm-cookies = { version = "0.2" }
+wasm-cookies = "0.2"
 wasm-logger = "0.2"
 
 web-sys = { version = "0.3", features = ["HtmlDocument","console","Document","HtmlElement","MouseEvent","DomRect","ScrollToOptions","ScrollBehavior","Element","MouseEvent","CssStyleDeclaration","MutationObserver","MutationObserverInit","Node"] }
@@ -23,7 +26,9 @@ gloo = "0.8"
 gloo-net = "0.2"
 
 serde = { version = "1.0", features = ["derive"] }
-serde_json = { version = "1.0" }
+serde_json = "1.0"
+
+urlencoding = "2.1"
 
 
 [profile.release]

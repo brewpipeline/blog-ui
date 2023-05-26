@@ -2,6 +2,7 @@ use yew::prelude::*;
 
 use crate::components::list::*;
 use crate::components::post_card::*;
+use crate::components::warning::*;
 use crate::content;
 
 use crate::Route;
@@ -13,6 +14,8 @@ pub fn posts() -> Html {
             params={ () }
             route_to_page={ Route::Posts } 
             component={ |post| html! { <PostCard { post } /> } } 
-        /> 
+        >
+            <Warning text="Нет публикаций" />
+        </List<content::PostsContainer>>
     }
 }

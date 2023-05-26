@@ -4,6 +4,7 @@ use crate::components::item::*;
 use crate::components::list::*;
 use crate::components::post_card::*;
 use crate::components::comment_card::*;
+use crate::components::warning::*;
 use crate::content;
 
 use crate::Route;
@@ -27,7 +28,9 @@ pub fn post(props: &PostProps) -> Html {
                 items_per_page={ 100 } 
                 route_to_page={ Route::Post { id: props.post_id } } 
                 component={ |comment| html! { <CommentCard { comment } /> } } 
-            />
+            >
+                <Warning text="Нет комментариев" />
+            </List<content::CommentsContainer, content::CommentsContainerPostIdParam>>
         </>
     }
 }

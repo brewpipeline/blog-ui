@@ -3,6 +3,8 @@ use yew_router::prelude::*;
 
 use crate::components::login_modal::*;
 use crate::components::logout_modal::*;
+use crate::components::search_button::*;
+use crate::components::search_field::*;
 use crate::logged_user_context::*;
 
 use crate::Route;
@@ -24,36 +26,33 @@ pub fn header() -> Html {
                             </Link<Route>>
                         </div>
                 
-                        <form class="col px-3 d-flex justify-content-center align-items-center d-none d-lg-block" role="search">
-                            <input type="search" class="form-control" list="datalistOptions" placeholder="Поиск..." />
-                            <datalist id="datalistOptions">
-                                <option value="San Francisco" />
-                                <option value="New York" />
-                                <option value="Seattle" />
-                                <option value="Los Angeles" />
-                                <option value="Chicago" />
-                            </datalist>
-                        </form>
+                        <div class="col px-lg-3 d-none d-lg-block">
+                            <SearchField />
+                        </div>
                 
                         <div class="col col-lg-3 gap-2 d-flex justify-content-end align-items-center">
-                        <button type="button" class="btn btn-light d-block d-lg-none">
-                            <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-search" viewBox="0 0 16 16">
-                            <path d="M11.742 10.344a6.5 6.5 0 1 0-1.397 1.398h-.001c.03.04.062.078.098.115l3.85 3.85a1 1 0 0 0 1.415-1.414l-3.85-3.85a1.007 1.007 0 0 0-.115-.1zM12 6.5a5.5 5.5 0 1 1-11 0 5.5 5.5 0 0 1 11 0z"></path>
-                            </svg>
-                        </button>
-                        if let LoggedUserState::Active(auth_user) = logged_user_context.state.clone() {
-                            <div class="d-flex dropdown dropdown-menu-end">
-                                <img src={ auth_user.image_url.clone() } type="button" alt={ auth_user.username.clone() } class="item d-flex rounded" data-bs-toggle="dropdown" aria-expanded="false" />
-                                <ul class="dropdown-menu text-small" >
-                                    <li><Link<Route> classes="dropdown-item" to={ Route::Author { id: auth_user.id } }> { auth_user.username.clone() } </Link<Route>></li>
-                                    // <li><a class="dropdown-item" href="#"> { "Настройки" } </a></li>
-                                    <li><hr class="dropdown-divider" /></li>
-                                    <li><button class="dropdown-item" type="button" data-bs-toggle="modal" data-bs-target="#logoutModal"> { "Выход" } </button></li>
-                                </ul>
-                            </div>
-                        } else {
-                            <button type="button" class="item btn btn-light" data-bs-toggle="modal" data-bs-target="#loginModal"> { "Войти" } </button>
-                        }
+                            <SearchButton />
+                            if let LoggedUserState::Active(auth_user) = logged_user_context.state.clone() {
+                                <div class="d-flex dropdown dropdown-menu-end">
+                                    <img src={ auth_user.image_url.clone() } type="button" alt={ auth_user.username.clone() } class="item d-flex rounded" data-bs-toggle="dropdown" aria-expanded="false" />
+                                    <ul class="dropdown-menu text-small" >
+                                        <li><Link<Route> classes="dropdown-item" to={ Route::Author { id: auth_user.id } }> { auth_user.username.clone() } </Link<Route>></li>
+                                        // <li><a class="dropdown-item" href="#"> { "Настройки" } </a></li>
+                                        <li><hr class="dropdown-divider" /></li>
+                                        <li><button class="dropdown-item" type="button" data-bs-toggle="modal" data-bs-target="#logoutModal"> { "Выход" } </button></li>
+                                    </ul>
+                                </div>
+                            } else {
+                                <button type="button" class="item btn btn-light" data-bs-toggle="modal" data-bs-target="#loginModal">
+                                    <div class="d-block d-lg-none">
+                                        <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-person-add" viewBox="0 0 16 16">
+                                            <path d="M12.5 16a3.5 3.5 0 1 0 0-7 3.5 3.5 0 0 0 0 7Zm.5-5v1h1a.5.5 0 0 1 0 1h-1v1a.5.5 0 0 1-1 0v-1h-1a.5.5 0 0 1 0-1h1v-1a.5.5 0 0 1 1 0Zm-2-6a3 3 0 1 1-6 0 3 3 0 0 1 6 0ZM8 7a2 2 0 1 0 0-4 2 2 0 0 0 0 4Z"/>
+                                            <path d="M8.256 14a4.474 4.474 0 0 1-.229-1.004H3c.001-.246.154-.986.832-1.664C4.484 10.68 5.711 10 8 10c.26 0 .507.009.74.025.226-.341.496-.65.804-.918C9.077 9.038 8.564 9 8 9c-5 0-6 3-6 4s1 1 1 1h5.256Z"/>
+                                        </svg>
+                                    </div>
+                                    <div class="d-none d-lg-block"> { "Войти" } </div>
+                                </button>
+                            }
                         </div>
             
                     </div>

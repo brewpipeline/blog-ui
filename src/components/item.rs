@@ -37,7 +37,7 @@ where
     let item = use_state_eq(|| cached_item);
     {
         let item = item.clone();
-        use_effect_with((), move |_| {
+        use_effect_with_deps(move |_| {
             if (*item) != None {
                 return
             }
@@ -50,7 +50,7 @@ where
                 }
                 item.set(Some(fetched_item));
             });
-        });
+        }, ());
     }
 
     props.component.emit((*item).clone())

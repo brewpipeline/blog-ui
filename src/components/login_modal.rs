@@ -20,7 +20,7 @@ pub fn login_modal(props: &LoginModalProps) -> Html {
     {
         let logged_user_context = logged_user_context.clone();
         let close_node_ref = close_node_ref.clone();
-        use_effect_with(logged_user_context, move |logged_user_context| {
+        use_effect_with_deps(move |logged_user_context| {
             let LoggedUserState::InProgress(login_params) = (**logged_user_context).state.clone() else {
                 return
             };
@@ -37,7 +37,7 @@ pub fn login_modal(props: &LoginModalProps) -> Html {
                     },
                 }
             });
-        });
+        }, logged_user_context);
     }
 
     let username_node_ref = use_node_ref();
@@ -61,10 +61,11 @@ pub fn login_modal(props: &LoginModalProps) -> Html {
         let username_node_ref = username_node_ref.clone();
         let password_node_ref = password_node_ref.clone();
         let modal_node_ref = modal_node_ref.clone();
-        use_effect_with(logged_user_context, move |logged_user_context| {
+        use_effect_with_deps(move |logged_user_context| {
             let logged_user_context = logged_user_context.clone();
             let modal_element = modal_node_ref.cast::<HtmlElement>().unwrap();
-            let listener = EventListener::new(&modal_element, "hidden.bs.modal", move |_| { 
+            let listener = EventListener::new(&modal_element, "hidden.bs.modal", move |e| {
+                e.prevent_default();
                 username_node_ref.cast::<HtmlInputElement>().unwrap().set_value("");
                 password_node_ref.cast::<HtmlInputElement>().unwrap().set_value("");
                 match logged_user_context.state {
@@ -75,7 +76,7 @@ pub fn login_modal(props: &LoginModalProps) -> Html {
                 };
             });
             move || drop(listener)
-        });
+        }, logged_user_context);
     }
 
     html! {
