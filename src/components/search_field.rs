@@ -41,7 +41,8 @@ impl SearchMode {
             )
             .flatten()
     }
-    pub fn new_query_route(&self, query: String) -> Route {
+    pub fn encode_new_query_and_route(&self, query: String) -> Route {
+        let query = urlencoding::encode(query.as_str()).into_owned();
         match self {
             Self::Authors { query: _ } => Route::AuthorsSearch { query },
             Self::Posts { query: _ } => Route::PostsSearch { query },
@@ -70,8 +71,10 @@ pub fn search_field() -> Html {
         let mode = mode.clone();
         let query = query.clone();
         use_effect_with_deps(move |mode| {
-            let current_query = mode.decoded_query();
-            query.set(current_query.unwrap_or("".to_string()));
+            let current_query = mode
+                .decoded_query()
+                .unwrap_or("".to_string());
+            query.set(current_query);
         }, mode)
     }
     
@@ -81,10 +84,11 @@ pub fn search_field() -> Html {
         use_debounce(move || {
             let current_query = mode.decoded_query();
             let query = (*query).clone();
-            if query.is_empty() && current_query == None || Some(query.clone()) == current_query {
+            if query.is_empty() && current_query == None || 
+                Some(query.clone()) == current_query {
                 return
             }
-            navigator.push(&mode.new_query_route(query))
+            navigator.push(&mode.encode_new_query_and_route(query))
         }, 700)
     };
 
