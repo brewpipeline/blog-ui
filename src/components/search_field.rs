@@ -54,6 +54,17 @@ impl SearchMode {
             Self::Posts { query: _ } => "Поиск публикаций...",
         }
     }
+    pub fn title(&self) -> String {
+        let main_title = match self {
+            Self::Authors { query: _ } => "Поиск авторов",
+            Self::Posts { query: _ } => "Поиск публикаций",
+        };
+        if let Some(query) = self.decoded_query() {
+            format!("{query} - {main_title}")
+        } else {
+            format!("{main_title}")
+        }
+    }
 }
 
 #[function_component(SearchField)]

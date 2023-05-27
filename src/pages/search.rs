@@ -7,6 +7,7 @@ use crate::components::author_card::*;
 use crate::components::warning::*;
 use crate::utils::not_empty::*;
 use crate::content;
+use crate::utils::html_document;
 
 use crate::Route;
 
@@ -18,6 +19,8 @@ pub struct SearchProps {
 #[function_component(Search)]
 pub fn search(props: &SearchProps) -> Html {
     let SearchProps { mode } = props.clone();
+    html_document::reset_title_and_meta();
+    html_document::set_prefix_default_title(mode.title());
     html! {
         <>
             <div class="mb-3 d-block d-lg-none">

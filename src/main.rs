@@ -8,8 +8,6 @@ extern crate async_trait;
 
 use yew::prelude::*;
 use yew_router::prelude::*;
-use web_sys::HtmlDocument;
-use wasm_bindgen::JsCast;
 
 use crate::pages::*;
 use crate::components::body::*;
@@ -75,10 +73,6 @@ pub fn app() -> Html {
             </ContextProvider<LoggedUserContext>>
         </HashRouter> // TODO: `</BrowserRouter>`
     }
-}
-
-pub fn html_document() -> HtmlDocument {
-    gloo::utils::document().unchecked_into::<HtmlDocument>()
 }
 
 fn main() {

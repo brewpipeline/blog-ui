@@ -4,11 +4,14 @@ use crate::components::list::*;
 use crate::components::post_card::*;
 use crate::components::warning::*;
 use crate::content;
+use crate::utils::html_document;
 
 use crate::Route;
 
 #[function_component(Posts)]
 pub fn posts() -> Html {
+    html_document::reset_title_and_meta();
+    html_document::set_prefix_default_title("Публикации".to_string());
     html! {
         <List<content::PostsContainer>
             params={ () }
