@@ -43,7 +43,7 @@ pub fn header() -> Html {
                                     </ul>
                                 </div>
                             } else {
-                                <button type="button" class="item btn btn-light" data-bs-toggle="modal" data-bs-target="#loginModal">
+                                <button aria-label="Войти" type="button" class="item btn btn-light" data-bs-toggle="modal" data-bs-target="#loginModal">
                                     <div class="d-block d-lg-none">
                                         <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-person-add" viewBox="0 0 16 16">
                                             <path d="M12.5 16a3.5 3.5 0 1 0 0-7 3.5 3.5 0 0 0 0 7Zm.5-5v1h1a.5.5 0 0 1 0 1h-1v1a.5.5 0 0 1-1 0v-1h-1a.5.5 0 0 1 0-1h1v-1a.5.5 0 0 1 1 0Zm-2-6a3 3 0 1 1-6 0 3 3 0 0 1 6 0ZM8 7a2 2 0 1 0 0-4 2 2 0 0 0 0 4Z"/>

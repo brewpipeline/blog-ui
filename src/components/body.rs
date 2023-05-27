@@ -65,6 +65,7 @@ impl Component for Body {
                     />
                     <label class="btn btn-light" for="vbtn-radio1"> { "Меню" } </label>
                     <input 
+                        aria-label="Контент"
                         type="radio" 
                         class="btn-check" 
                         name="vbtn-radio" 
