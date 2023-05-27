@@ -21,7 +21,7 @@ pub fn author_card(props: &AuthorCardProps) -> Html {
             <div class="card mb-3">
                 <div class="row g-0">
                     <div class="col-4">
-                        <img style="height:220px;width:100%;" class="img-fluid rounded-start" role="img" />
+                        <div style="height:220px;width:100%;" class="img img-fluid rounded-start" role="img" />
                     </div>
                     <div class="col">
                         <div class="card-body">
@@ -40,7 +40,7 @@ pub fn author_card(props: &AuthorCardProps) -> Html {
     let main_content = html! {
         <div class="row g-0">
             <div class="col-4">
-                <img style={ format!("height:220px;width:100%;--image-url:url({});", user.image_url.clone()) } class="img-fluid rounded-start" role="img" />
+                <div style={ format!("height:220px;width:100%;--image-url:url({});", user.image_url.clone()) } class="img img-fluid rounded-start" role="img" />
             </div>
             <div class="col">
                 <div class="card-body">
