@@ -64,7 +64,7 @@ pub fn app() -> Html {
     let posts_cache = use_reducer(|| Default::default());
     let users_cache = use_reducer(|| Default::default());
     html! {
-        <BrowserRouter>
+        <HashRouter> // TODO: `<BrowserRouter>`
             <ContextProvider<LoggedUserContext> context={logged_user}>
                 <Header />
                 <ContextProvider<HashMapContext<u64, content::Post>> context={posts_cache}>
@@ -73,7 +73,7 @@ pub fn app() -> Html {
                     </ContextProvider<HashMapContext<u64, content::User>>>
                 </ContextProvider<HashMapContext<u64, content::Post>>>
             </ContextProvider<LoggedUserContext>>
-        </BrowserRouter>
+        </HashRouter> // TODO: `</BrowserRouter>`
     }
 }
 
@@ -82,7 +82,7 @@ pub fn html_document() -> HtmlDocument {
 }
 
 fn main() {
-    // wasm_logger::init(wasm_logger::Config::new(log::Level::Trace));
+    // TODO: `wasm_logger::init(wasm_logger::Config::new(log::Level::Trace));`
     wasm_logger::init(wasm_logger::Config::default());
 
     let document = gloo::utils::document();
