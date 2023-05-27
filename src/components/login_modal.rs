@@ -1,8 +1,8 @@
 use gloo::events::EventListener;
-use web_sys::{HtmlInputElement, HtmlElement};
+use web_sys::{HtmlElement, HtmlInputElement};
 use yew::prelude::*;
 
-use crate::content::{LoginParams, AuthResult};
+use crate::content::{AuthResult, LoginParams};
 use crate::utils::*;
 
 #[derive(PartialEq, Properties)]
@@ -20,24 +20,27 @@ pub fn login_modal(props: &LoginModalProps) -> Html {
     {
         let logged_user_context = logged_user_context.clone();
         let close_node_ref = close_node_ref.clone();
-        use_effect_with_deps(move |logged_user_context| {
-            let LoggedUserState::InProgress(login_params) = (**logged_user_context).state.clone() else {
-                return
-            };
-            let logged_user_context = logged_user_context.clone();
-            let close_node_ref = close_node_ref.clone();
-            wasm_bindgen_futures::spawn_local(async move {
-                match AuthResult::get(login_params).await.unwrap() {
-                    AuthResult::Success(auth_user) => {
-                        close_node_ref.cast::<HtmlInputElement>().unwrap().click();
-                        logged_user_context.dispatch(LoggedUserState::Active(auth_user));
-                    },
-                    AuthResult::Error { message } => {
-                        logged_user_context.dispatch(LoggedUserState::Error(message));
-                    },
-                }
-            });
-        }, logged_user_context);
+        use_effect_with_deps(
+            move |logged_user_context| {
+                let LoggedUserState::InProgress(login_params) = (**logged_user_context).state.clone() else {
+                    return
+                };
+                let logged_user_context = logged_user_context.clone();
+                let close_node_ref = close_node_ref.clone();
+                wasm_bindgen_futures::spawn_local(async move {
+                    match AuthResult::get(login_params).await.unwrap() {
+                        AuthResult::Success(auth_user) => {
+                            close_node_ref.cast::<HtmlInputElement>().unwrap().click();
+                            logged_user_context.dispatch(LoggedUserState::Active(auth_user));
+                        }
+                        AuthResult::Error { message } => {
+                            logged_user_context.dispatch(LoggedUserState::Error(message));
+                        }
+                    }
+                });
+            },
+            logged_user_context,
+        );
     }
 
     let username_node_ref = use_node_ref();
@@ -48,9 +51,18 @@ pub fn login_modal(props: &LoginModalProps) -> Html {
         let username_node_ref = username_node_ref.clone();
         let password_node_ref = password_node_ref.clone();
         Callback::from(move |_event| {
-            let username = username_node_ref.cast::<HtmlInputElement>().unwrap().value();
-            let password = password_node_ref.cast::<HtmlInputElement>().unwrap().value();
-            logged_user_context.dispatch(LoggedUserState::InProgress(LoginParams { username, password }));
+            let username = username_node_ref
+                .cast::<HtmlInputElement>()
+                .unwrap()
+                .value();
+            let password = password_node_ref
+                .cast::<HtmlInputElement>()
+                .unwrap()
+                .value();
+            logged_user_context.dispatch(LoggedUserState::InProgress(LoginParams {
+                username,
+                password,
+            }));
         })
     };
 
@@ -61,22 +73,31 @@ pub fn login_modal(props: &LoginModalProps) -> Html {
         let username_node_ref = username_node_ref.clone();
         let password_node_ref = password_node_ref.clone();
         let modal_node_ref = modal_node_ref.clone();
-        use_effect_with_deps(move |logged_user_context| {
-            let logged_user_context = logged_user_context.clone();
-            let modal_element = modal_node_ref.cast::<HtmlElement>().unwrap();
-            let listener = EventListener::new(&modal_element, "hidden.bs.modal", move |e| {
-                e.prevent_default();
-                username_node_ref.cast::<HtmlInputElement>().unwrap().set_value("");
-                password_node_ref.cast::<HtmlInputElement>().unwrap().set_value("");
-                match logged_user_context.state {
-                    LoggedUserState::None | LoggedUserState::Active(_) => {},
-                    LoggedUserState::Error(_) | LoggedUserState::InProgress(_) => {
-                        logged_user_context.dispatch(LoggedUserState::None);
-                    },
-                };
-            });
-            move || drop(listener)
-        }, logged_user_context);
+        use_effect_with_deps(
+            move |logged_user_context| {
+                let logged_user_context = logged_user_context.clone();
+                let modal_element = modal_node_ref.cast::<HtmlElement>().unwrap();
+                let listener = EventListener::new(&modal_element, "hidden.bs.modal", move |e| {
+                    e.prevent_default();
+                    username_node_ref
+                        .cast::<HtmlInputElement>()
+                        .unwrap()
+                        .set_value("");
+                    password_node_ref
+                        .cast::<HtmlInputElement>()
+                        .unwrap()
+                        .set_value("");
+                    match logged_user_context.state {
+                        LoggedUserState::None | LoggedUserState::Active(_) => {}
+                        LoggedUserState::Error(_) | LoggedUserState::InProgress(_) => {
+                            logged_user_context.dispatch(LoggedUserState::None);
+                        }
+                    };
+                });
+                move || drop(listener)
+            },
+            logged_user_context,
+        );
     }
 
     html! {

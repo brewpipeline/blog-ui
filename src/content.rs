@@ -2,8 +2,8 @@ use gloo_net::http::{Request, Response};
 use gloo_net::Error;
 use serde::{Deserialize, Serialize};
 
-use crate::components::list::*;
 use crate::components::item::*;
+use crate::components::list::*;
 use crate::get::*;
 use crate::hash_map_context::*;
 
@@ -30,7 +30,7 @@ impl RequestableItem<ExternalListContainerParams<()>> for UsersContainer {
     async fn request(params: ExternalListContainerParams<()>) -> Result<Request, Error> {
         let ExternalListContainerParams { limit, skip, .. } = params;
         let url = format!(
-            "https://dummyjson.com/users?limit={limit}&skip={skip}&select={select}", 
+            "https://dummyjson.com/users?limit={limit}&skip={skip}&select={select}",
             select = User::select(),
         );
         Ok(Request::get(url.as_str()))
@@ -42,8 +42,14 @@ impl RequestableItem<ExternalListContainerParams<()>> for UsersContainer {
 
 #[async_trait(?Send)]
 impl RequestableItem<ExternalListContainerParams<UsersContainerSearchParam>> for UsersContainer {
-    async fn request(params: ExternalListContainerParams<UsersContainerSearchParam>) -> Result<Request, Error> {
-        let ExternalListContainerParams { params, limit, skip } = params;
+    async fn request(
+        params: ExternalListContainerParams<UsersContainerSearchParam>,
+    ) -> Result<Request, Error> {
+        let ExternalListContainerParams {
+            params,
+            limit,
+            skip,
+        } = params;
         let url = format!(
             "https://dummyjson.com/users/search?q={query}&limit={limit}&skip={skip}&select={select}", 
             select = User::select(),
@@ -101,8 +107,8 @@ impl KeyedItem for User {
 impl RequestableItem<ExternalItemParams> for User {
     async fn request(params: ExternalItemParams) -> Result<Request, Error> {
         let url = format!(
-            "https://dummyjson.com/users/{id}?select={select}", 
-            id = params.id, 
+            "https://dummyjson.com/users/{id}?select={select}",
+            id = params.id,
             select = Self::select(),
         );
         Ok(Request::get(url.as_str()))
@@ -110,7 +116,7 @@ impl RequestableItem<ExternalItemParams> for User {
     async fn response(response: Response) -> Result<Self, Error> {
         response.json().await
     }
-} 
+}
 
 impl ExternalItem for User {}
 
@@ -143,7 +149,7 @@ impl RequestableItem<ExternalListContainerParams<()>> for PostsContainer {
     async fn request(params: ExternalListContainerParams<()>) -> Result<Request, Error> {
         let ExternalListContainerParams { limit, skip, .. } = params;
         let url = format!(
-            "https://dummyjson.com/posts?limit={limit}&skip={skip}&select={select}", 
+            "https://dummyjson.com/posts?limit={limit}&skip={skip}&select={select}",
             select = Post::select(),
         );
         Ok(Request::get(url.as_str()))
@@ -155,8 +161,14 @@ impl RequestableItem<ExternalListContainerParams<()>> for PostsContainer {
 
 #[async_trait(?Send)]
 impl RequestableItem<ExternalListContainerParams<PostsContainerSearchParam>> for PostsContainer {
-    async fn request(params: ExternalListContainerParams<PostsContainerSearchParam>) -> Result<Request, Error> {
-        let ExternalListContainerParams { params, limit, skip } = params;
+    async fn request(
+        params: ExternalListContainerParams<PostsContainerSearchParam>,
+    ) -> Result<Request, Error> {
+        let ExternalListContainerParams {
+            params,
+            limit,
+            skip,
+        } = params;
         let url = format!(
             "https://dummyjson.com/posts/search?q={query}&limit={limit}&skip={skip}&select={select}", 
             query = params.query,
@@ -167,7 +179,7 @@ impl RequestableItem<ExternalListContainerParams<PostsContainerSearchParam>> for
     async fn response(response: Response) -> Result<Self, Error> {
         response.json().await
     }
-} 
+}
 
 impl ExternalListContainer for PostsContainer {
     type Item = Post;
@@ -223,8 +235,8 @@ impl KeyedItem for Post {
 impl RequestableItem<ExternalItemParams> for Post {
     async fn request(params: ExternalItemParams) -> Result<Request, Error> {
         let url = format!(
-            "https://dummyjson.com/posts/{id}?select={select}", 
-            id = params.id, 
+            "https://dummyjson.com/posts/{id}?select={select}",
+            id = params.id,
             select = Self::select(),
         );
         Ok(Request::get(url.as_str()))
@@ -232,7 +244,7 @@ impl RequestableItem<ExternalItemParams> for Post {
     async fn response(response: Response) -> Result<Self, Error> {
         response.json().await
     }
-} 
+}
 
 impl ExternalItem for Post {}
 
@@ -261,9 +273,17 @@ pub struct CommentsContainer {
 }
 
 #[async_trait(?Send)]
-impl RequestableItem<ExternalListContainerParams<CommentsContainerPostIdParam>> for CommentsContainer {
-    async fn request(params: ExternalListContainerParams<CommentsContainerPostIdParam>) -> Result<Request, Error> {
-        let ExternalListContainerParams { params, limit, skip } = params;
+impl RequestableItem<ExternalListContainerParams<CommentsContainerPostIdParam>>
+    for CommentsContainer
+{
+    async fn request(
+        params: ExternalListContainerParams<CommentsContainerPostIdParam>,
+    ) -> Result<Request, Error> {
+        let ExternalListContainerParams {
+            params,
+            limit,
+            skip,
+        } = params;
         let url = format!(
             "https://dummyjson.com/comments/post/{post_id}?limit={limit}&skip={skip}",
             post_id = params.post_id,
@@ -285,7 +305,7 @@ impl RequestableItem<ExternalListContainerParams<()>> for CommentsContainer {
     async fn response(response: Response) -> Result<Self, Error> {
         response.json().await
     }
-} 
+}
 
 impl ExternalListContainer for CommentsContainer {
     type Item = Comment;
@@ -334,16 +354,13 @@ impl KeyedItem for Comment {
 #[async_trait(?Send)]
 impl RequestableItem<ExternalItemParams> for Comment {
     async fn request(params: ExternalItemParams) -> Result<Request, Error> {
-        let url = format!(
-            "https://dummyjson.com/comments/{id}", 
-            id = params.id,
-        );
+        let url = format!("https://dummyjson.com/comments/{id}", id = params.id,);
         Ok(Request::get(url.as_str()))
     }
     async fn response(response: Response) -> Result<Self, Error> {
         response.json().await
     }
-} 
+}
 
 impl ExternalItem for Comment {}
 
@@ -389,4 +406,4 @@ impl RequestableItem<LoginParams> for AuthResult {
     async fn response(response: Response) -> Result<Self, Error> {
         response.json().await
     }
-} 
+}

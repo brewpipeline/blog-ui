@@ -1,10 +1,9 @@
 use std::rc::Rc;
-use yew::{UseReducerHandle, Reducible};
 #[cfg(target_arch = "wasm32")]
 use wasm_cookies::CookieOptions;
+use yew::{Reducible, UseReducerHandle};
 
-use crate::content::{LoginParams, AuthUser};
-
+use crate::content::{AuthUser, LoginParams};
 
 #[derive(Debug, PartialEq, Eq, Clone)]
 pub enum LoggedUserState {
@@ -17,7 +16,7 @@ pub enum LoggedUserState {
 impl LoggedUserState {
     pub fn action_available(&self) -> bool {
         match self {
-            LoggedUserState::None | LoggedUserState::Error(_)  => true,
+            LoggedUserState::None | LoggedUserState::Error(_) => true,
             LoggedUserState::InProgress(_) | LoggedUserState::Active(_) => false,
         }
     }
@@ -54,10 +53,12 @@ impl Default for LoggedUser {
         let auth_user = Self::load_auth_user();
         #[cfg(not(target_arch = "wasm32"))]
         let auth_user = None;
-        Self { state: match auth_user {
-            Some(auth_user) => LoggedUserState::Active(auth_user),
-            None => LoggedUserState::None,
-        } }
+        Self {
+            state: match auth_user {
+                Some(auth_user) => LoggedUserState::Active(auth_user),
+                None => LoggedUserState::None,
+            },
+        }
     }
 }
 
@@ -68,10 +69,10 @@ impl Reducible for LoggedUser {
         match &new_state {
             LoggedUserState::None | LoggedUserState::InProgress(_) | LoggedUserState::Error(_) => {
                 Self::save_auth_user(None);
-            },
+            }
             LoggedUserState::Active(auth_user) => {
                 Self::save_auth_user(Some(auth_user));
-            },
+            }
         }
         LoggedUser { state: new_state }.into()
     }

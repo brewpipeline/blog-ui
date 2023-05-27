@@ -63,7 +63,13 @@ impl Pagination {
         }
     }
 
-    fn render_links<P>(&self, mut pages: P, len: usize, max_links: usize, props: &PaginationProps) -> Html
+    fn render_links<P>(
+        &self,
+        mut pages: P,
+        len: usize,
+        max_links: usize,
+        props: &PaginationProps,
+    ) -> Html
     where
         P: Iterator<Item = u64> + DoubleEndedIterator,
     {

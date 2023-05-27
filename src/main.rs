@@ -9,10 +9,10 @@ extern crate async_trait;
 use yew::prelude::*;
 use yew_router::prelude::*;
 
-use crate::pages::*;
 use crate::components::body::*;
 use crate::components::header::*;
 use crate::components::search_field::*;
+use crate::pages::*;
 use crate::utils::*;
 
 #[derive(Routable, PartialEq, Eq, Clone, Debug)]
@@ -45,20 +45,28 @@ impl Route {
         match route {
             Route::Post { id: post_id } => html! { <Post { post_id } /> },
             Route::Home | Route::Posts => html! { <Posts />},
-            Route::PostsSearchRoot => html! { <Search mode={ SearchMode::Posts { query: None } } />},
-            Route::PostsSearch { query } => html! { <Search mode={ SearchMode::Posts { query: Some(query) } } />},
+            Route::PostsSearchRoot => {
+                html! { <Search mode={ SearchMode::Posts { query: None } } />}
+            }
+            Route::PostsSearch { query } => {
+                html! { <Search mode={ SearchMode::Posts { query: Some(query) } } />}
+            }
             Route::Author { id: user_id } => html! { <Author { user_id } /> },
             Route::Authors => html! { <Authors /> },
-            Route::AuthorsSearchRoot => html! { <Search mode={ SearchMode::Authors { query: None } } />},
-            Route::AuthorsSearch { query } => html! { <Search mode={ SearchMode::Authors { query: Some(query) } } />},
-            Route::NotFound => html! { <PageNotFound /> }
+            Route::AuthorsSearchRoot => {
+                html! { <Search mode={ SearchMode::Authors { query: None } } />}
+            }
+            Route::AuthorsSearch { query } => {
+                html! { <Search mode={ SearchMode::Authors { query: Some(query) } } />}
+            }
+            Route::NotFound => html! { <PageNotFound /> },
         }
     }
 }
 
 #[function_component(App)]
 pub fn app() -> Html {
-    let logged_user  = use_reducer(|| Default::default());
+    let logged_user = use_reducer(|| Default::default());
     let posts_cache = use_reducer(|| Default::default());
     let users_cache = use_reducer(|| Default::default());
     html! {
@@ -76,8 +84,7 @@ pub fn app() -> Html {
 }
 
 fn main() {
-    // TODO: `wasm_logger::init(wasm_logger::Config::new(log::Level::Trace));`
-    wasm_logger::init(wasm_logger::Config::default());
+    wasm_logger::init(wasm_logger::Config::default()); // TODO: `wasm_logger::init(wasm_logger::Config::new(log::Level::Trace));`
 
     let document = gloo::utils::document();
     let element = document.query_selector("#app").unwrap().unwrap();

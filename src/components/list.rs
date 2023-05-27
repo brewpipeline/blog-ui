@@ -2,8 +2,8 @@ use yew::prelude::*;
 use yew_router::prelude::*;
 
 use crate::components::pagination::*;
-use crate::hash_map_context::*;
 use crate::get::*;
+use crate::hash_map_context::*;
 
 use crate::Route;
 
@@ -47,32 +47,40 @@ where
 
     let location = use_location().unwrap();
     let path = location.path().to_owned();
-    let page = location
-        .query::<PageQuery>()
-        .map(|it| it.page)
-        .unwrap_or(1);
+    let page = location.query::<PageQuery>().map(|it| it.page).unwrap_or(1);
     let params = props.params.clone();
     let limit = props.items_per_page;
     let skip = (page - 1) * limit;
     let route_to_page = props.route_to_page.clone();
-    
+
     let list_container = use_state_eq(|| None);
     {
         let items_cache = items_cache.clone();
         let list_container = list_container.clone();
-        use_effect_with_deps(move |_| {
-            list_container.set(None);
-            let items_cache = items_cache.clone();
-            let list_container = list_container.clone();
-            wasm_bindgen_futures::spawn_local(async move {
-                let fetched_list_container = C::get(ExternalListContainerParams { params, limit, skip }).await.unwrap();
-                if let Some(items_cache) = items_cache {
-                    items_cache.dispatch(ReducibleHashMapAction::Batch(fetched_list_container.items()))
-                }
-                list_container.set(Some(fetched_list_container));
-            });
-            || ()
-        }, (path, page));
+        use_effect_with_deps(
+            move |_| {
+                list_container.set(None);
+                let items_cache = items_cache.clone();
+                let list_container = list_container.clone();
+                wasm_bindgen_futures::spawn_local(async move {
+                    let fetched_list_container = C::get(ExternalListContainerParams {
+                        params,
+                        limit,
+                        skip,
+                    })
+                    .await
+                    .unwrap();
+                    if let Some(items_cache) = items_cache {
+                        items_cache.dispatch(ReducibleHashMapAction::Batch(
+                            fetched_list_container.items(),
+                        ))
+                    }
+                    list_container.set(Some(fetched_list_container));
+                });
+                || ()
+            },
+            (path, page),
+        );
     }
 
     let Some(list_container) = (*list_container).clone() else {

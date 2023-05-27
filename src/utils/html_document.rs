@@ -1,6 +1,6 @@
-use web_sys::{HtmlDocument, Element};
-use wasm_bindgen::JsCast;
 use gloo::utils::document;
+use wasm_bindgen::JsCast;
+use web_sys::{Element, HtmlDocument};
 
 const TITLE: &'static str = "BLOG";
 const DESCRIPTION: &'static str = "BLOG DESCRIPTION";
@@ -61,8 +61,7 @@ pub fn title() -> String {
 */
 
 pub fn set_title(value: String) {
-    html_document()
-        .set_title(value.as_str())
+    html_document().set_title(value.as_str())
 }
 
 /*

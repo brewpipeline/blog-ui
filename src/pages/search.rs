@@ -1,13 +1,13 @@
 use yew::prelude::*;
 
-use crate::components::search_field::*;
+use crate::components::author_card::*;
 use crate::components::list::*;
 use crate::components::post_card::*;
-use crate::components::author_card::*;
+use crate::components::search_field::*;
 use crate::components::warning::*;
-use crate::utils::not_empty::*;
 use crate::content;
 use crate::utils::html_document;
+use crate::utils::not_empty::*;
 
 use crate::Route;
 
@@ -32,8 +32,8 @@ pub fn search(props: &SearchProps) -> Html {
                         if let Some(query) = not_empty(query) {
                             <List<content::PostsContainer, content::PostsContainerSearchParam>
                                 params={ content::PostsContainerSearchParam { query: query.clone() } }
-                                route_to_page={ Route::PostsSearch { query: query.clone() } } 
-                                component={ |post| html! { <PostCard { post } /> } } 
+                                route_to_page={ Route::PostsSearch { query: query.clone() } }
+                                component={ |post| html! { <PostCard { post } /> } }
                             >
                                 <Warning text="Публикаций не найдено!" />
                             </List<content::PostsContainer, content::PostsContainerSearchParam>>
@@ -45,8 +45,8 @@ pub fn search(props: &SearchProps) -> Html {
                         if let Some(query) = not_empty(query) {
                             <List<content::UsersContainer, content::UsersContainerSearchParam>
                                 params={ content::UsersContainerSearchParam { query: query.clone() } }
-                                route_to_page={ Route::AuthorsSearch { query: query.clone() } } 
-                                component={ |user| html! { <AuthorCard { user } /> } } 
+                                route_to_page={ Route::AuthorsSearch { query: query.clone() } }
+                                component={ |user| html! { <AuthorCard { user } /> } }
                             >
                                 <Warning text="Авторов не найдено!" />
                             </List<content::UsersContainer, content::UsersContainerSearchParam>>
@@ -57,6 +57,6 @@ pub fn search(props: &SearchProps) -> Html {
                 }
             }
         </>
-        
+
     }
 }

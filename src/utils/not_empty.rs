@@ -3,7 +3,7 @@ pub fn not_empty(value: Option<String>) -> Option<String> {
         return None
     };
     if value.is_empty() {
-        return None
+        return None;
     }
     Some(value)
 }

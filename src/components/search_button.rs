@@ -12,7 +12,7 @@ pub fn search_button() -> Html {
     let mode = SearchMode::new(route);
 
     html! {
-        <Link<Route> classes="btn btn-light d-block d-lg-none" to={ 
+        <Link<Route> classes="btn btn-light d-block d-lg-none" to={
             match mode {
                 SearchMode::Authors { query: _ } => Route::AuthorsSearchRoot,
                 SearchMode::Posts { query: _ } => Route::PostsSearchRoot,

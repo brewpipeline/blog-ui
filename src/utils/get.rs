@@ -1,4 +1,4 @@
-use gloo_net::http::{Response, Request};
+use gloo_net::http::{Request, Response};
 use gloo_net::Error;
 
 #[async_trait(?Send)]
@@ -19,14 +19,6 @@ where
     P: 'static,
 {
     async fn get(params: P) -> Result<Self, Error> {
-        Ok(
-            Self::response(
-                Self::request(params)
-                    .await?
-                    .send()
-                    .await?
-            )
-            .await?
-        )
+        Ok(Self::response(Self::request(params).await?.send().await?).await?)
     }
 }

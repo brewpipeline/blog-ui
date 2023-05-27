@@ -16,29 +16,23 @@ impl SearchMode {
         match route {
             Route::PostsSearch { query } => Self::Posts { query: Some(query) },
             Route::AuthorsSearch { query } => Self::Authors { query: Some(query) },
-            Route::Home | 
-            Route::NotFound |
-            Route::PostsSearchRoot | 
-            Route::Post { id: _ } | 
-            Route::Posts  => Self::Posts { query: None },
-            Route::AuthorsSearchRoot | 
-            Route::Author { id: _ } | 
-            Route::Authors => Self::Authors { query: None },
+            Route::Home
+            | Route::NotFound
+            | Route::PostsSearchRoot
+            | Route::Post { id: _ }
+            | Route::Posts => Self::Posts { query: None },
+            Route::AuthorsSearchRoot | Route::Author { id: _ } | Route::Authors => {
+                Self::Authors { query: None }
+            }
         }
     }
     pub fn decoded_query(&self) -> Option<String> {
         let query = match self {
             Self::Authors { query } | Self::Posts { query } => query,
         };
-        query                
+        query
             .clone()
-            .map(|q| 
-                urlencoding::decode(q.as_str())
-                    .map(|c| 
-                        c.into_owned()
-                    )
-                    .ok()
-            )
+            .map(|q| urlencoding::decode(q.as_str()).map(|c| c.into_owned()).ok())
             .flatten()
     }
     pub fn encode_new_query_and_route(&self, query: String) -> Route {
@@ -69,7 +63,6 @@ impl SearchMode {
 
 #[function_component(SearchField)]
 pub fn search_field() -> Html {
-
     let navigator = use_navigator().unwrap();
 
     let route = use_route::<Route>().unwrap_or_default();
@@ -81,26 +74,30 @@ pub fn search_field() -> Html {
     {
         let mode = mode.clone();
         let query = query.clone();
-        use_effect_with_deps(move |mode| {
-            let current_query = mode
-                .decoded_query()
-                .unwrap_or("".to_string());
-            query.set(current_query);
-        }, mode)
+        use_effect_with_deps(
+            move |mode| {
+                let current_query = mode.decoded_query().unwrap_or("".to_string());
+                query.set(current_query);
+            },
+            mode,
+        )
     }
-    
+
     let debounce = {
         let mode = mode.clone();
         let query = query.clone();
-        use_debounce(move || {
-            let current_query = mode.decoded_query();
-            let query = (*query).clone();
-            if query.is_empty() && current_query == None || 
-                Some(query.clone()) == current_query {
-                return
-            }
-            navigator.push(&mode.encode_new_query_and_route(query))
-        }, 700)
+        use_debounce(
+            move || {
+                let current_query = mode.decoded_query();
+                let query = (*query).clone();
+                let is_unique = Some(query.clone()) == current_query;
+                if is_unique || query.is_empty() && current_query == None {
+                    return;
+                }
+                navigator.push(&mode.encode_new_query_and_route(query))
+            },
+            700,
+        )
     };
 
     let oninput = {

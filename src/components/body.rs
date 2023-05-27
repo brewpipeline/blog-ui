@@ -1,7 +1,7 @@
 use gloo::utils::window;
-use web_sys::{ScrollToOptions, ScrollBehavior};
-use yew::prelude::*;
+use web_sys::{ScrollBehavior, ScrollToOptions};
 use yew::html::Scope;
+use yew::prelude::*;
 use yew_router::prelude::*;
 use yew_router::scope_ext::RouterScopeExt;
 
@@ -44,7 +44,7 @@ impl Component for Body {
             ScrollToOptions::new()
                 .left(0.0)
                 .top(0.0)
-                .behavior(ScrollBehavior::Instant)
+                .behavior(ScrollBehavior::Instant),
         );
     }
 
@@ -55,23 +55,23 @@ impl Component for Body {
             <main class="body position-relative container">
 
                 <div class="menu-nav btn-group d-flex d-lg-none" role="group">
-                    <input 
-                        type="radio" 
-                        class="btn-check" 
-                        name="vbtn-radio" 
-                        id="vbtn-radio1" 
-                        autocomplete="off" 
+                    <input
+                        type="radio"
+                        class="btn-check"
+                        name="vbtn-radio"
+                        id="vbtn-radio1"
+                        autocomplete="off"
                         onchange={ ctx.link().callback(|_| EnabledMenu::First) } checked={ enabled_menu == EnabledMenu::First }
                     />
                     <label class="btn btn-light" for="vbtn-radio1"> { "Меню" } </label>
-                    <input 
+                    <input
                         aria-label="Контент"
-                        type="radio" 
-                        class="btn-check" 
-                        name="vbtn-radio" 
-                        id="vbtn-radio2" 
-                        autocomplete="off" 
-                        onchange={ ctx.link().callback(|_| EnabledMenu::Second) } checked={ enabled_menu == EnabledMenu::Second } 
+                        type="radio"
+                        class="btn-check"
+                        name="vbtn-radio"
+                        id="vbtn-radio2"
+                        autocomplete="off"
+                        onchange={ ctx.link().callback(|_| EnabledMenu::Second) } checked={ enabled_menu == EnabledMenu::Second }
                     />
                     <label class="btn btn-light" for="vbtn-radio2">
                         <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-card-heading" viewBox="0 0 16 16">
@@ -79,21 +79,21 @@ impl Component for Body {
                             <path d="M3 8.5a.5.5 0 0 1 .5-.5h9a.5.5 0 0 1 0 1h-9a.5.5 0 0 1-.5-.5zm0 2a.5.5 0 0 1 .5-.5h6a.5.5 0 0 1 0 1h-6a.5.5 0 0 1-.5-.5zm0-5a.5.5 0 0 1 .5-.5h9a.5.5 0 0 1 .5.5v1a.5.5 0 0 1-.5.5h-9a.5.5 0 0 1-.5-.5v-1z"/>
                         </svg>
                     </label>
-                    <input 
-                        type="radio" 
-                        class="btn-check" 
-                        name="vbtn-radio" 
-                        id="vbtn-radio3" 
-                        autocomplete="off" 
-                        onchange={ ctx.link().callback(|_| EnabledMenu::Third) } checked={ enabled_menu == EnabledMenu::Third } 
+                    <input
+                        type="radio"
+                        class="btn-check"
+                        name="vbtn-radio"
+                        id="vbtn-radio3"
+                        autocomplete="off"
+                        onchange={ ctx.link().callback(|_| EnabledMenu::Third) } checked={ enabled_menu == EnabledMenu::Third }
                     />
                     <label class="btn btn-light" for="vbtn-radio3"> { "Инфо" } </label>
                 </div>
 
                 <div class="d-flex flex-wrap">
 
-                    <div 
-                        id="menu1" 
+                    <div
+                        id="menu1"
                         class={ classes!("menu", "gap-2", "sticky-lg-top", "col", "col-lg-2", "d-lg-grid", { if enabled_menu == EnabledMenu::First { "d-grid" } else { "d-none" } }) }
                     >
                         { self.navigation_menu(ctx.link()) }
@@ -102,15 +102,15 @@ impl Component for Body {
                         </div>
                     </div>
 
-                    <div 
-                        id="menu2" 
+                    <div
+                        id="menu2"
                         class={ classes!("menu", "col", "px-0", "px-lg-3", "d-lg-block", { if enabled_menu == EnabledMenu::Second { "d-block" } else { "d-none" } }) }
                     >
                         <Switch<Route> render={Route::switch} />
                     </div>
 
-                    <div 
-                        id="menu3" 
+                    <div
+                        id="menu3"
                         class={ classes!("menu", "gap-2", "sticky-lg-top", "col", "col-lg-3", "d-lg-grid", { if enabled_menu == EnabledMenu::Third { "d-grid" } else { "d-none" } }) }
                     >
                         { self.information_menu(ctx.link()) }
@@ -139,40 +139,40 @@ impl Body {
                 <div class="accordion-item">
                     <h2 class="accordion-header">
                         <button class="accordion-button" type="button" data-bs-toggle="collapse" data-bs-target="#collapseOne" aria-expanded="true" aria-controls="collapseOne">
-                        { "О блоге" } 
+                        { "О блоге" }
                         </button>
                     </h2>
                     <div id="collapseOne" class="accordion-collapse collapse show" data-bs-parent="#accordionExample">
                         <div class="accordion-body">
-                            <strong> 
-                                { "Ты ошибка эволюции." } 
+                            <strong>
+                                { "Ты ошибка эволюции." }
                             </strong>
                             <br/>
-                            { "А блог этот про хороших людей в плохое время." } 
+                            { "А блог этот про хороших людей в плохое время." }
                         </div>
                     </div>
                     </div>
                     <div class="accordion-item">
                     <h2 class="accordion-header">
                         <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#collapseTwo" aria-expanded="false" aria-controls="collapseTwo">
-                        { "Accordion Item #2" } 
+                        { "Accordion Item #2" }
                         </button>
                     </h2>
                     <div id="collapseTwo" class="accordion-collapse collapse" data-bs-parent="#accordionExample">
                         <div class="accordion-body">
-                        <strong /> { "This is the second item's accordion body." } <strong/> { " It is hidden by default, until the collapse plugin adds the appropriate classes that we use to style each element. These classes control the overall appearance, as well as the showing and hiding via CSS transitions. You can modify any of this with custom CSS or overriding our default variables. It's also worth noting that just about any HTML can go within the <code>.accordion-body</code>, though the transition does limit overflow." } 
+                        <strong /> { "This is the second item's accordion body." } <strong/> { " It is hidden by default, until the collapse plugin adds the appropriate classes that we use to style each element. These classes control the overall appearance, as well as the showing and hiding via CSS transitions. You can modify any of this with custom CSS or overriding our default variables. It's also worth noting that just about any HTML can go within the <code>.accordion-body</code>, though the transition does limit overflow." }
                         </div>
                     </div>
                     </div>
                     <div class="accordion-item">
                     <h2 class="accordion-header">
                         <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#collapseThree" aria-expanded="false" aria-controls="collapseThree">
-                        { "Accordion Item #3" } 
+                        { "Accordion Item #3" }
                         </button>
                     </h2>
                     <div id="collapseThree" class="accordion-collapse collapse" data-bs-parent="#accordionExample">
                         <div class="accordion-body">
-                        <strong /> { "This is the third item's accordion body." } <strong/> { " It is hidden by default, until the collapse plugin adds the appropriate classes that we use to style each element. These classes control the overall appearance, as well as the showing and hiding via CSS transitions. You can modify any of this with custom CSS or overriding our default variables. It's also worth noting that just about any HTML can go within the <code>.accordion-body</code>, though the transition does limit overflow." } 
+                        <strong /> { "This is the third item's accordion body." } <strong/> { " It is hidden by default, until the collapse plugin adds the appropriate classes that we use to style each element. These classes control the overall appearance, as well as the showing and hiding via CSS transitions. You can modify any of this with custom CSS or overriding our default variables. It's also worth noting that just about any HTML can go within the <code>.accordion-body</code>, though the transition does limit overflow." }
                         </div>
                     </div>
                 </div>

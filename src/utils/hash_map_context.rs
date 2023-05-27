@@ -1,6 +1,6 @@
-use std::rc::Rc;
 use std::collections::HashMap;
 use std::hash::Hash;
+use std::rc::Rc;
 use yew::prelude::*;
 
 pub trait KeyedItem {
@@ -19,7 +19,7 @@ impl<K: Eq + Hash + Clone, V: KeyedItem<Key = K> + Clone> Default for ReducibleH
 
 pub enum ReducibleHashMapAction<V> {
     Single(V),
-    Batch(Vec<V>)
+    Batch(Vec<V>),
 }
 
 impl<K: Eq + Hash + Clone, V: KeyedItem<Key = K> + Clone> Reducible for ReducibleHashMap<K, V> {
@@ -30,12 +30,12 @@ impl<K: Eq + Hash + Clone, V: KeyedItem<Key = K> + Clone> Reducible for Reducibl
         match action {
             ReducibleHashMapAction::Single(item) => {
                 map.insert(item.key(), item);
-            },
+            }
             ReducibleHashMapAction::Batch(items) => {
                 for item in items {
                     map.insert(item.key(), item);
                 }
-            },
+            }
         }
         ReducibleHashMap(map).into()
     }

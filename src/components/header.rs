@@ -19,17 +19,17 @@ pub fn header() -> Html {
             <header class="header fixed-top bg-primary-subtle border-bottom d-flex flex-wrap align-items-center">
                 <div class="container">
                     <div class="d-flex flex-wrap align-items-center justify-content-center">
-            
+
                         <div class="col col-lg-2 d-flex justify-content-start justify-content-lg-center align-items-center">
                             <Link<Route> classes="d-flex link-body-emphasis text-decoration-none" to={ Route::Home }>
                                 <img height="38" class="item" src="logo.svg" alt="LOGO" />
                             </Link<Route>>
                         </div>
-                
+
                         <div class="col px-lg-3 d-none d-lg-block">
                             <SearchField />
                         </div>
-                
+
                         <div class="col col-lg-3 gap-2 d-flex justify-content-end align-items-center">
                             <SearchButton />
                             if let LoggedUserState::Active(auth_user) = logged_user_context.state.clone() {
@@ -54,7 +54,7 @@ pub fn header() -> Html {
                                 </button>
                             }
                         </div>
-            
+
                     </div>
                 </div>
             </header>
