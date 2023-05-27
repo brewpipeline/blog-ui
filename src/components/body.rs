@@ -106,6 +106,12 @@ impl Component for Body {
                         id="menu2" 
                         class={ classes!("menu", "col", "px-0", "px-lg-3", "d-lg-block", { if enabled_menu == EnabledMenu::Second { "d-block" } else { "d-none" } }) }
                     >
+                        // TO REMOVE START
+                        <div class="card alert alert-info d-flex align-items-center" role="alert">
+                            <img style="width: 100%;" src="https://cdn.discordapp.com/attachments/779662621610737706/1111962675832950865/GZGp1AKHU2XmF1AlOQYqFg.png" />
+                            <h2>{ "Дорогая Аналстейша, ты лучший лучик бобра в наших сердОчках и сегодня в этой день мы поздравляем тебя с пасхой…. т.е. твоим днём повышения уровня в игре по названием «ворлд оф работай, чтобы потом не работать!»" }</h2>
+                        </div>
+                        // TO REMOVE END
                         <Switch<Route> render={Route::switch} />
                     </div>
 
