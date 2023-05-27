@@ -22,7 +22,7 @@ pub fn header() -> Html {
             
                         <div class="col col-lg-2 d-flex justify-content-start justify-content-lg-center align-items-center">
                             <Link<Route> classes="d-flex link-body-emphasis text-decoration-none" to={ Route::Home }>
-                                <object class="item" style="pointer-events: none;" type="image/svg+xml" data="logo.svg"> { "LOGO" } </object>
+                                <img class="item" src="logo.svg" alt="LOGO" />
                             </Link<Route>>
                         </div>
                 
@@ -34,7 +34,7 @@ pub fn header() -> Html {
                             <SearchButton />
                             if let LoggedUserState::Active(auth_user) = logged_user_context.state.clone() {
                                 <div class="d-flex dropdown dropdown-menu-end">
-                                    <img src={ auth_user.image_url.clone() } type="button" alt={ auth_user.username.clone() } class="item d-flex rounded" data-bs-toggle="dropdown" aria-expanded="false" />
+                                    <img src={ auth_user.image_url.clone() } type="button" alt={ auth_user.username.clone() } class="img-block item d-flex rounded" data-bs-toggle="dropdown" aria-expanded="false" />
                                     <ul class="dropdown-menu text-small" >
                                         <li><Link<Route> classes="dropdown-item" to={ Route::Author { id: auth_user.id } }> { auth_user.username.clone() } </Link<Route>></li>
                                         // <li><a class="dropdown-item" href="#"> { "Настройки" } </a></li>

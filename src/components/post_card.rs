@@ -22,7 +22,7 @@ pub fn post_card(props: &PostCardProps) -> Html {
     let Some(post) = post else {
         return html! {
             <div class="card mb-3">
-                <div style="height:180px;width:100%;" class="img bd-placeholder-img card-img-top" role="img" />
+                <div style="height:180px;width:100%;" class="img-block bd-placeholder-img card-img-top" role="img" />
                 <div class="card-body">
                     <h5 class="card-title placeholder-glow">
                         <span class="placeholder col-6"></span>
@@ -52,7 +52,7 @@ pub fn post_card(props: &PostCardProps) -> Html {
     };
     let main_content = html! {
         <>
-            <div style={ format!("height:180px;width:100%;--image-url:url({});", post.image_url()) } class="img bd-placeholder-img card-img-top" role="img" />
+            <div style={ format!("height:180px;width:100%;--image-url:url({});", post.image_url()) } class="img-block bd-placeholder-img card-img-top" role="img" />
             <div class="card-body">
                 <h5 class="card-title">{ &post.title }</h5>
                 <p class="card-text">{ &post.body }</p>
