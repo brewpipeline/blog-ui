@@ -104,8 +104,6 @@ pub fn search_field() -> Html {
     };
 
     html! {
-        <form role="search">
-            <input type="search" class="form-control" placeholder={ mode.placeholder() } value={ (*query).clone() } { oninput } />
-        </form>
+        <input type="search" class="form-control" placeholder={ mode.placeholder() } value={ (*query).clone() } { oninput } />
     }
 }
