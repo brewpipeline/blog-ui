@@ -72,12 +72,10 @@ pub fn set_prefix_title(value: String) {
 */
 
 pub fn set_prefix_default_title(value: String) {
-    log::info!("set_prefix_default_title: {}", value);
     set_title(format!("{} - {}", value, TITLE))
 }
 
 pub fn reset_title_and_meta() {
-    log::info!("reset_title_and_meta");
     set_title(TITLE.to_string());
     set_meta(MetaTag::Description, DESCRIPTION.to_string());
     set_meta(MetaTag::Keywords, KEYWORDS.to_string());
