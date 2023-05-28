@@ -63,13 +63,14 @@ where
                 let items_cache = items_cache.clone();
                 let list_container = list_container.clone();
                 wasm_bindgen_futures::spawn_local(async move {
-                    let fetched_list_container = C::get(ExternalListContainerParams {
+                    let Ok(fetched_list_container) = C::get(ExternalListContainerParams {
                         params,
                         limit,
                         skip,
                     })
-                    .await
-                    .unwrap();
+                    .await else {
+                        return
+                    };
                     if let Some(items_cache) = items_cache {
                         items_cache.dispatch(ReducibleHashMapAction::Batch(
                             fetched_list_container.items(),

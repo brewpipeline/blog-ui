@@ -45,7 +45,9 @@ where
                 item.set(None);
                 let item = item.clone();
                 wasm_bindgen_futures::spawn_local(async move {
-                    let fetched_item = I::get(ExternalItemParams { id: item_id }).await.unwrap();
+                    let Ok(fetched_item) = I::get(ExternalItemParams { id: item_id }).await else {
+                        return
+                    };
                     if let Some(items_cache) = items_cache {
                         items_cache.dispatch(ReducibleHashMapAction::Single(fetched_item.clone()))
                     }

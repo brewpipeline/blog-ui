@@ -39,7 +39,10 @@ impl Component for Body {
         true
     }
 
-    fn rendered(&mut self, _ctx: &Context<Self>, _first_render: bool) {
+    fn rendered(&mut self, _ctx: &Context<Self>, first_render: bool) {
+        if first_render {
+            return;
+        }
         window().scroll_to_with_scroll_to_options(
             ScrollToOptions::new()
                 .left(0.0)
