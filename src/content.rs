@@ -5,7 +5,6 @@ use serde::{Deserialize, Serialize};
 use crate::components::item::*;
 use crate::components::list::*;
 use crate::get::*;
-use crate::hash_map_context::*;
 
 //
 // UsersContainer
@@ -64,8 +63,8 @@ impl RequestableItem<ExternalListContainerParams<UsersContainerSearchParam>> for
 
 impl ExternalListContainer for UsersContainer {
     type Item = User;
-    fn items(&self) -> Vec<Self::Item> {
-        self.users.clone()
+    fn items(self) -> Vec<Self::Item> {
+        self.users
     }
     fn total(&self) -> u64 {
         self.total
@@ -94,13 +93,6 @@ pub struct User {
     pub image_url: String,
     pub username: String,
     pub email: String,
-}
-
-impl KeyedItem for User {
-    type Key = u64;
-    fn key(&self) -> Self::Key {
-        self.id
-    }
 }
 
 #[async_trait(?Send)]
@@ -183,8 +175,8 @@ impl RequestableItem<ExternalListContainerParams<PostsContainerSearchParam>> for
 
 impl ExternalListContainer for PostsContainer {
     type Item = Post;
-    fn items(&self) -> Vec<Self::Item> {
-        self.posts.clone()
+    fn items(self) -> Vec<Self::Item> {
+        self.posts
     }
     fn total(&self) -> u64 {
         self.total
@@ -221,13 +213,6 @@ impl Post {
             self.tags.join(","),
             self.id,
         )
-    }
-}
-
-impl KeyedItem for Post {
-    type Key = u64;
-    fn key(&self) -> Self::Key {
-        self.id
     }
 }
 
@@ -309,8 +294,8 @@ impl RequestableItem<ExternalListContainerParams<()>> for CommentsContainer {
 
 impl ExternalListContainer for CommentsContainer {
     type Item = Comment;
-    fn items(&self) -> Vec<Self::Item> {
-        self.comments.clone()
+    fn items(self) -> Vec<Self::Item> {
+        self.comments
     }
     fn total(&self) -> u64 {
         self.total
@@ -344,17 +329,10 @@ pub struct Comment {
     pub short_user: ShortUser,
 }
 
-impl KeyedItem for Comment {
-    type Key = u64;
-    fn key(&self) -> Self::Key {
-        self.id
-    }
-}
-
 #[async_trait(?Send)]
 impl RequestableItem<ExternalItemParams> for Comment {
     async fn request(params: ExternalItemParams) -> Result<Request, Error> {
-        let url = format!("https://dummyjson.com/comments/{id}", id = params.id,);
+        let url = format!("https://dummyjson.com/comments/{id}", id = params.id);
         Ok(Request::get(url.as_str()))
     }
     async fn response(response: Response) -> Result<Self, Error> {

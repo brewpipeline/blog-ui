@@ -3,7 +3,6 @@ use yew_router::prelude::*;
 
 use crate::components::pagination::*;
 use crate::get::*;
-use crate::hash_map_context::*;
 
 use crate::Route;
 
@@ -16,8 +15,8 @@ pub struct ExternalListContainerParams<P: Clone + PartialEq> {
 
 #[async_trait(?Send)]
 pub trait ExternalListContainer: Clone + PartialEq {
-    type Item: Clone + PartialEq + KeyedItem<Key = u64>;
-    fn items(&self) -> Vec<Self::Item>;
+    type Item: Clone + PartialEq;
+    fn items(self) -> Vec<Self::Item>;
     fn total(&self) -> u64;
     fn skip(&self) -> u64;
     fn limit(&self) -> u64;
@@ -43,10 +42,7 @@ where
     C: ExternalListContainer + RequestableItem<ExternalListContainerParams<P>> + 'static,
     P: Clone + PartialEq + 'static,
 {
-    let items_cache = use_context::<HashMapContext<u64, C::Item>>();
-
     let location = use_location().unwrap();
-    let path = location.path().to_owned();
     let page = location.query::<PageQuery>().map(|it| it.page).unwrap_or(1);
     let params = props.params.clone();
     let limit = props.items_per_page;
@@ -55,13 +51,14 @@ where
 
     let list_container = use_state_eq(|| None);
     {
-        let items_cache = items_cache.clone();
         let list_container = list_container.clone();
         use_effect_with_deps(
-            move |_| {
+            move |(params, limit, skip)| {
                 list_container.set(None);
-                let items_cache = items_cache.clone();
                 let list_container = list_container.clone();
+                let params = params.clone();
+                let limit = *limit;
+                let skip = *skip;
                 wasm_bindgen_futures::spawn_local(async move {
                     let Ok(fetched_list_container) = C::get(ExternalListContainerParams {
                         params,
@@ -71,16 +68,11 @@ where
                     .await else {
                         return
                     };
-                    if let Some(items_cache) = items_cache {
-                        items_cache.dispatch(ReducibleHashMapAction::Batch(
-                            fetched_list_container.items(),
-                        ))
-                    }
                     list_container.set(Some(fetched_list_container));
                 });
                 || ()
             },
-            (path, page),
+            (params, limit, skip),
         );
     }
 

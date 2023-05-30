@@ -67,17 +67,11 @@ impl Route {
 #[function_component(App)]
 pub fn app() -> Html {
     let logged_user = use_reducer(|| Default::default());
-    let posts_cache = use_reducer(|| Default::default());
-    let users_cache = use_reducer(|| Default::default());
     html! {
         <HashRouter> // TODO: `<BrowserRouter>`
             <ContextProvider<LoggedUserContext> context={logged_user}>
                 <Header />
-                <ContextProvider<HashMapContext<u64, content::Post>> context={posts_cache}>
-                    <ContextProvider<HashMapContext<u64, content::User>> context={users_cache}>
-                        <Body />
-                    </ContextProvider<HashMapContext<u64, content::User>>>
-                </ContextProvider<HashMapContext<u64, content::Post>>>
+                <Body />
             </ContextProvider<LoggedUserContext>>
         </HashRouter> // TODO: `</BrowserRouter>`
     }

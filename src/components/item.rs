@@ -1,7 +1,6 @@
 use yew::prelude::*;
 
 use crate::get::*;
-use crate::hash_map_context::*;
 
 pub struct ExternalItemParams {
     pub id: u64,
@@ -16,45 +15,31 @@ where
 {
     pub item_id: u64,
     pub component: Callback<Option<I>, Html>,
-    #[prop_or_default]
-    pub ignore_cache: bool,
 }
 
 #[function_component(Item)]
 pub fn item<I>(props: &ItemProps<I>) -> Html
 where
-    I: ExternalItem + KeyedItem<Key = u64> + 'static,
+    I: ExternalItem + 'static,
 {
-    let items_cache = use_context::<HashMapContext<u64, I>>();
-
     let item_id = props.item_id;
-    let cached_item = if let (Some(items_cache), false) = (&items_cache, props.ignore_cache) {
-        items_cache.0.get(&item_id).cloned()
-    } else {
-        None
-    };
 
-    let item = use_state_eq(|| cached_item);
+    let item = use_state_eq(|| None);
     {
         let item = item.clone();
         use_effect_with_deps(
-            move |_| {
-                if (*item) != None {
-                    return;
-                }
+            move |item_id| {
                 item.set(None);
                 let item = item.clone();
+                let item_id = *item_id;
                 wasm_bindgen_futures::spawn_local(async move {
                     let Ok(fetched_item) = I::get(ExternalItemParams { id: item_id }).await else {
                         return
                     };
-                    if let Some(items_cache) = items_cache {
-                        items_cache.dispatch(ReducibleHashMapAction::Single(fetched_item.clone()))
-                    }
                     item.set(Some(fetched_item));
                 });
             },
-            (),
+            item_id,
         );
     }
 
