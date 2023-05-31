@@ -22,7 +22,7 @@ pub fn author(props: &AuthorProps) -> Html {
                     html_document::reset_title_and_meta();
                     html_document::set_prefix_default_title(format!("{} - Автор", user.username.clone()));
                 }
-                html! { <AuthorCard { user } /> }
+                html! { <AuthorCard { user } link_to=false /> }
             } }
         />
     }

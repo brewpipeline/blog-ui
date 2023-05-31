@@ -33,42 +33,15 @@ fn meta_element(meta_type: MetaTag) -> Element {
         .unwrap()
 }
 
-/*
-pub fn meta(meta_type: MetaTag) -> String {
-    meta_element(meta_type)
-        .get_attribute("content")
-        .unwrap()
-}
-*/
-
 pub fn set_meta(meta_type: MetaTag, value: String) {
     meta_element(meta_type)
         .set_attribute("content", value.as_str())
         .unwrap()
 }
 
-/*
-pub fn set_prefix_meta(meta_type: MetaTag, value: String) {
-    set_meta(meta_type, value + meta(meta_type).as_str())
-}
-*/
-
-/*
-pub fn title() -> String {
-    html_document()
-        .title()
-}
-*/
-
 pub fn set_title(value: String) {
     html_document().set_title(value.as_str())
 }
-
-/*
-pub fn set_prefix_title(value: String) {
-    set_title(value + title().as_str())
-}
-*/
 
 pub fn set_prefix_default_title(value: String) {
     set_title(format!("{} - {}", value, TITLE))

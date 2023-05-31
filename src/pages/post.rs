@@ -30,7 +30,7 @@ pub fn post(props: &PostProps) -> Html {
                         html_document::set_meta(html_document::MetaTag::Description, post.body.clone());
                         html_document::set_meta(html_document::MetaTag::Keywords, post.tags.join(", "));
                     }
-                    html! { <PostCard { post } fetch_author={ true } /> }
+                    html! { <PostCard { post } fetch_author=true link_to=false /> }
                 } }
             />
             <List<content::CommentsContainer, content::CommentsContainerPostIdParam>

@@ -33,7 +33,7 @@ pub fn search(props: &SearchProps) -> Html {
                             <List<content::PostsContainer, content::PostsContainerSearchParam>
                                 params={ content::PostsContainerSearchParam { query: query.clone() } }
                                 route_to_page={ Route::PostsSearch { query: query.clone() } }
-                                component={ |post| html! { <PostCard { post } /> } }
+                                component={ |post| html! { <PostCard { post } fetch_author=false link_to=true /> } }
                             >
                                 <Warning text="Публикаций не найдено!" />
                             </List<content::PostsContainer, content::PostsContainerSearchParam>>
@@ -46,7 +46,7 @@ pub fn search(props: &SearchProps) -> Html {
                             <List<content::UsersContainer, content::UsersContainerSearchParam>
                                 params={ content::UsersContainerSearchParam { query: query.clone() } }
                                 route_to_page={ Route::AuthorsSearch { query: query.clone() } }
-                                component={ |user| html! { <AuthorCard { user } /> } }
+                                component={ |user| html! { <AuthorCard { user } link_to=true /> } }
                             >
                                 <Warning text="Авторов не найдено!" />
                             </List<content::UsersContainer, content::UsersContainerSearchParam>>

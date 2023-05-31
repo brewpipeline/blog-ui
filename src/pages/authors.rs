@@ -16,7 +16,7 @@ pub fn authors() -> Html {
         <List<content::UsersContainer>
             params={ () }
             route_to_page={ Route::Authors }
-            component={ |user| html! { <AuthorCard { user } /> } }
+            component={ |user| html! { <AuthorCard { user } link_to=true /> } }
         >
             <Warning text="Нет авторов" />
         </List<content::UsersContainer>>
