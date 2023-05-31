@@ -1,6 +1,6 @@
 use yew::prelude::*;
 
-use crate::get::*;
+use crate::utils::get::*;
 
 pub struct ExternalItemParams {
     pub id: u64,

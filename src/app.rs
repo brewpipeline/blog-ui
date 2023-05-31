@@ -1,11 +1,3 @@
-mod components;
-mod content;
-mod pages;
-mod utils;
-
-#[macro_use]
-extern crate async_trait;
-
 use yew::prelude::*;
 use yew_router::prelude::*;
 
@@ -41,7 +33,7 @@ pub enum Route {
 }
 
 impl Route {
-    fn switch(route: Route) -> Html {
+    pub fn switch(route: Route) -> Html {
         match route {
             Route::Post { id: post_id } => html! { <Post { post_id } /> },
             Route::Home | Route::Posts => html! { <Posts />},
@@ -75,12 +67,4 @@ pub fn app() -> Html {
             </ContextProvider<LoggedUserContext>>
         </HashRouter> // TODO: `</BrowserRouter>`
     }
-}
-
-fn main() {
-    wasm_logger::init(wasm_logger::Config::default()); // TODO: `wasm_logger::init(wasm_logger::Config::new(log::Level::Trace));`
-
-    let document = gloo::utils::document();
-    let element = document.query_selector("#app").unwrap().unwrap();
-    yew::Renderer::<App>::with_root(element).render();
 }

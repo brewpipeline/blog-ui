@@ -9,9 +9,9 @@ license = "MIT"
 log = "0.4"
 async-trait = "0.1"
 
-# yew = { git = "https://github.com/yewstack/yew", branch = "master", features = ["csr"] }
+# yew = { git = "https://github.com/yewstack/yew", branch = "master" }
 # yew-router = { git = "https://github.com/yewstack/yew", branch = "master" }
-yew = { version = "0.20", features = ["csr"] }
+yew = "0.20"
 yew-router = "0.17"
 yew-hooks = "0.2"
 
@@ -42,3 +42,7 @@ opt-level = 'z'
 # opt-level = 's'
 # link time optimization using using whole-program analysis
 lto = true
+
+[[bin]]
+name = "blog"
+required-features = ["yew/csr"]

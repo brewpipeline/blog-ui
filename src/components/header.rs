@@ -5,7 +5,7 @@ use crate::components::login_modal::*;
 use crate::components::logout_modal::*;
 use crate::components::search_button::*;
 use crate::components::search_field::*;
-use crate::logged_user_context::*;
+use crate::utils::logged_user_context::*;
 
 use crate::Route;
 

@@ -2,7 +2,7 @@ use yew::prelude::*;
 use yew_router::prelude::*;
 
 use crate::components::pagination::*;
-use crate::get::*;
+use crate::utils::get::*;
 
 use crate::Route;
 
