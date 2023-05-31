@@ -15,7 +15,11 @@ pub struct PostCardProps {
 
 #[function_component(PostCard)]
 pub fn post_card(props: &PostCardProps) -> Html {
-    let PostCardProps { post, fetch_author, link_to } = props.clone();
+    let PostCardProps {
+        post,
+        fetch_author,
+        link_to,
+    } = props.clone();
 
     let main_content = html! {
         <>
