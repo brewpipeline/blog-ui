@@ -1,5 +1,5 @@
 [package]
-name = "blog"
+name = "blog-ui"
 version = "0.0.1"
 edition = "2021"
 license = "MIT"
@@ -44,5 +44,5 @@ opt-level = 'z'
 lto = true
 
 [[bin]]
-name = "blog"
+name = "blog_ui"
 required-features = ["yew/csr"]
