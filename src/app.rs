@@ -68,9 +68,3 @@ pub fn app() -> Html {
         </HashRouter> // TODO: `</BrowserRouter>`
     }
 }
-
-pub fn app_renderer() -> yew::Renderer<App> {
-    let document = gloo::utils::document();
-    let element = document.query_selector("#app").unwrap().unwrap();
-    yew::Renderer::<App>::with_root(element)
-}

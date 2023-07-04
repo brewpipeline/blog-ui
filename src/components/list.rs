@@ -52,7 +52,8 @@ where
     let list_container = use_state_eq(|| None);
     {
         let list_container = list_container.clone();
-        use_effect_with_deps(
+        use_effect_with(
+            (params, limit, skip),
             move |(params, limit, skip)| {
                 list_container.set(None);
                 let list_container = list_container.clone();
@@ -72,7 +73,6 @@ where
                 });
                 || ()
             },
-            (params, limit, skip),
         );
     }
 

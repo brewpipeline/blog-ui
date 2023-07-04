@@ -31,11 +31,11 @@ pub fn body() -> Html {
     {
         let enabled_menu = enabled_menu.clone();
         let route = route.clone();
-        use_effect_with_deps(
+        use_effect_with(
+            route,
             move |_| {
                 enabled_menu.set(EnabledMenu::Second);
             },
-            route,
         );
     }
 

@@ -74,12 +74,12 @@ pub fn search_field() -> Html {
     {
         let mode = mode.clone();
         let query = query.clone();
-        use_effect_with_deps(
+        use_effect_with(
+            mode,
             move |mode| {
                 let current_query = mode.decoded_query().unwrap_or("".to_string());
                 query.set(current_query);
             },
-            mode,
         )
     }
 

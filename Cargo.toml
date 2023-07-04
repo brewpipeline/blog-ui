@@ -9,11 +9,8 @@ license = "MIT"
 log = "0.4"
 async-trait = "0.1"
 
-# yew = { git = "https://github.com/yewstack/yew", branch = "master" }
-# yew-router = { git = "https://github.com/yewstack/yew", branch = "master" }
-yew = "0.20"
-yew-router = "0.17"
-yew-hooks = "0.2"
+yew = { git = "https://github.com/yewstack/yew", branch = "master" }
+yew-router = { git = "https://github.com/yewstack/yew", branch = "master" }
 
 wasm-bindgen-futures = "0.4"
 wasm-bindgen = "0.2"

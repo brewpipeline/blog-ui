@@ -27,7 +27,8 @@ where
     let item = use_state_eq(|| None);
     {
         let item = item.clone();
-        use_effect_with_deps(
+        use_effect_with(
+            item_id,
             move |item_id| {
                 item.set(None);
                 let item = item.clone();
@@ -39,7 +40,6 @@ where
                     item.set(Some(fetched_item));
                 });
             },
-            item_id,
         );
     }
 
