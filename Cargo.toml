@@ -11,6 +11,7 @@ async-trait = "0.1"
 
 yew = { git = "https://github.com/yewstack/yew", branch = "master" }
 yew-router = { git = "https://github.com/yewstack/yew", branch = "master" }
+yew-hooks = { git = "https://github.com/tikitko/yew-hooks.git", branch = "main"  }
 
 wasm-bindgen-futures = "0.4"
 wasm-bindgen = "0.2"

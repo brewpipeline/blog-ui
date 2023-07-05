@@ -5,6 +5,7 @@ pub mod header;
 pub mod information_menu;
 pub mod item;
 pub mod list;
+pub mod load;
 pub mod login_modal;
 pub mod logout_modal;
 pub mod navigation_menu;
