@@ -2,14 +2,15 @@ use yew::prelude::*;
 
 use crate::utils::*;
 
-#[derive(PartialEq, Properties)]
+#[derive(PartialEq, Properties, Clone)]
 pub struct LogoutModalProps {
     pub id: &'static str,
 }
 
 #[function_component(LogoutModal)]
 pub fn logout_modal(props: &LogoutModalProps) -> Html {
-    let id = props.id;
+    let LogoutModalProps { id } = props.clone();
+
     let logged_user_context = use_context::<LoggedUserContext>().unwrap();
 
     html! {

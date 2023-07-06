@@ -57,7 +57,7 @@ impl Route {
 }
 
 #[function_component(App)]
-pub fn app() -> Html {
+fn app() -> Html {
     let logged_user = use_reducer(|| Default::default());
     html! {
         <HashRouter> // TODO: `<BrowserRouter>`
@@ -69,7 +69,7 @@ pub fn app() -> Html {
     }
 }
 
-pub fn app_renderer() -> yew::Renderer<App> {
+pub fn app_renderer() -> yew::Renderer<impl BaseComponent> {
     let document = gloo::utils::document();
     let element = document.query_selector("#app").unwrap().unwrap();
     yew::Renderer::<App>::with_root(element)

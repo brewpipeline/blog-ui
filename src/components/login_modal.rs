@@ -5,14 +5,15 @@ use yew::prelude::*;
 use crate::content::{AuthResult, LoginParams};
 use crate::utils::*;
 
-#[derive(PartialEq, Properties)]
+#[derive(PartialEq, Properties, Clone)]
 pub struct LoginModalProps {
     pub id: &'static str,
 }
 
 #[function_component(LoginModal)]
 pub fn login_modal(props: &LoginModalProps) -> Html {
-    let id = props.id;
+    let LoginModalProps { id } = props.clone();
+
     let logged_user_context = use_context::<LoggedUserContext>().unwrap();
 
     let close_node_ref = use_node_ref();
@@ -28,17 +29,21 @@ pub fn login_modal(props: &LoginModalProps) -> Html {
                 let logged_user_context = logged_user_context.clone();
                 let close_node_ref = close_node_ref.clone();
                 wasm_bindgen_futures::spawn_local(async move {
-                    let Ok(auth_result) = AuthResult::get(login_params).await else {
-                        logged_user_context.dispatch(LoggedUserState::Error("Ошибка запроса авторизации".to_string()));
-                        return;
-                    };
-                    match auth_result {
-                        AuthResult::Success(auth_user) => {
-                            close_node_ref.cast::<HtmlInputElement>().unwrap().click();
-                            logged_user_context.dispatch(LoggedUserState::Active(auth_user));
-                        }
-                        AuthResult::Error { message } => {
-                            logged_user_context.dispatch(LoggedUserState::Error(message));
+                    match AuthResult::get(login_params).await {
+                        Ok(auth_result) => match auth_result {
+                            AuthResult::Success(auth_user) => {
+                                close_node_ref.cast::<HtmlInputElement>().unwrap().click();
+                                logged_user_context.dispatch(LoggedUserState::Active(auth_user));
+                            }
+                            AuthResult::Error {
+                                message: auth_error_message,
+                            } => {
+                                logged_user_context
+                                    .dispatch(LoggedUserState::Error(auth_error_message));
+                            }
+                        },
+                        Err(err) => {
+                            logged_user_context.dispatch(LoggedUserState::Error(err.to_string()));
                         }
                     }
                 });

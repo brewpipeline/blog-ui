@@ -2,13 +2,14 @@ use yew::prelude::*;
 
 use crate::utils::get::*;
 
+#[derive(PartialEq, Clone)]
 pub struct ExternalItemParams {
     pub id: u64,
 }
 
 pub trait ExternalItem: Clone + PartialEq + RequestableItem<ExternalItemParams> {}
 
-#[derive(PartialEq, Properties)]
+#[derive(PartialEq, Properties, Clone)]
 pub struct ItemProps<I>
 where
     I: ExternalItem + 'static,
@@ -22,7 +23,7 @@ pub fn item<I>(props: &ItemProps<I>) -> Html
 where
     I: ExternalItem + 'static,
 {
-    let item_id = props.item_id;
+    let ItemProps { item_id, component } = props.clone();
 
     let item = use_state_eq(|| None);
     {
@@ -43,5 +44,5 @@ where
         );
     }
 
-    props.component.emit((*item).clone())
+    component.emit((*item).clone())
 }

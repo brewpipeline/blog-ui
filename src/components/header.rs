@@ -12,6 +12,7 @@ use crate::Route;
 #[function_component(Header)]
 pub fn header() -> Html {
     let logged_user_context = use_context::<LoggedUserContext>().unwrap();
+
     html! {
         <>
             <LoginModal id="loginModal" />

@@ -22,7 +22,7 @@ pub trait ExternalListContainer: Clone + PartialEq {
     fn limit(&self) -> u64;
 }
 
-#[derive(Properties, PartialEq)]
+#[derive(Properties, PartialEq, Clone)]
 pub struct ListProps<C, P = ()>
 where
     C: ExternalListContainer + RequestableItem<ExternalListContainerParams<P>> + 'static,
@@ -42,28 +42,33 @@ where
     C: ExternalListContainer + RequestableItem<ExternalListContainerParams<P>> + 'static,
     P: Clone + PartialEq + 'static,
 {
+    let ListProps {
+        params,
+        items_per_page,
+        route_to_page,
+        component,
+        children,
+    } = props.clone();
+
     let location = use_location().unwrap();
     let page = location.query::<PageQuery>().map(|it| it.page).unwrap_or(1);
-    let params = props.params.clone();
-    let limit = props.items_per_page;
-    let skip = (page - 1) * limit;
-    let route_to_page = props.route_to_page.clone();
+    let offset = (page - 1) * items_per_page;
 
     let list_container = use_state_eq(|| None);
     {
         let list_container = list_container.clone();
         use_effect_with_deps(
-            move |(params, limit, skip)| {
+            move |(params, items_per_page, offset)| {
                 list_container.set(None);
                 let list_container = list_container.clone();
                 let params = params.clone();
-                let limit = *limit;
-                let skip = *skip;
+                let items_per_page = *items_per_page;
+                let offset = *offset;
                 wasm_bindgen_futures::spawn_local(async move {
                     let Ok(fetched_list_container) = C::get(ExternalListContainerParams {
                         params,
-                        limit,
-                        skip,
+                        limit: items_per_page,
+                        skip: offset,
                     })
                     .await else {
                         return
@@ -72,22 +77,22 @@ where
                 });
                 || ()
             },
-            (params, limit, skip),
+            (params, items_per_page, offset),
         );
     }
 
     let Some(list_container) = (*list_container).clone() else {
-        return (0..limit).map(|_| {
-            props.component.emit(Option::None)
+        return (0..items_per_page).map(|_| {
+            component.emit(None)
         }).collect::<Html>()
     };
-    let total_pages = (list_container.total() as f64 / limit as f64).ceil() as u64;
+    let total_pages = (list_container.total() as f64 / items_per_page as f64).ceil() as u64;
     let items = list_container.items();
     html! {
         if items.len() > 0 {
             {
                 items.into_iter().map(|item| {
-                    props.component.emit(Option::Some(item))
+                    component.emit(Some(item))
                 }).collect::<Html>()
             }
             if total_pages > 1 {
@@ -98,7 +103,7 @@ where
                 />
             }
         } else {
-            { props.children.clone() }
+            { children.clone() }
         }
     }
 }
