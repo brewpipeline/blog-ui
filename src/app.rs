@@ -1,5 +1,6 @@
 use yew::prelude::*;
 use yew_router::prelude::*;
+use yew_router::history::*;
 
 use crate::components::body::*;
 use crate::components::header::*;
@@ -60,11 +61,35 @@ impl Route {
 pub fn app() -> Html {
     let logged_user = use_reducer(|| Default::default());
     html! {
-        <HashRouter> // TODO: `<BrowserRouter>`
+        <BrowserRouter>
             <ContextProvider<LoggedUserContext> context={logged_user}>
                 <Header />
                 <Body />
             </ContextProvider<LoggedUserContext>>
-        </HashRouter> // TODO: `</BrowserRouter>`
+        </BrowserRouter>
     }
+}
+
+#[derive(Properties, PartialEq, Eq, Debug)]
+pub struct ServerAppProps {
+    pub url: AttrValue,
+    pub queries: std::collections::HashMap<String, String>,
+}
+
+#[function_component]
+pub fn ServerApp(props: &ServerAppProps) -> Html {
+    let history = AnyHistory::from(MemoryHistory::new());
+    history
+        .push_with_query(&*props.url, &props.queries)
+        .unwrap();
+
+        let logged_user = use_reducer(|| Default::default());
+        html! {
+            <Router history={history}>
+                <ContextProvider<LoggedUserContext> context={logged_user}>
+                    <Header />
+                    <Body />
+                </ContextProvider<LoggedUserContext>>
+            </Router>
+        }
 }

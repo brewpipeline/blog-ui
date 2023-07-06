@@ -1,5 +1,4 @@
-use gloo_net::http::{Request, Response};
-use gloo_net::Error;
+use reqwest::{Request, Response, Error, Method, Url, header::HeaderValue};
 use serde::{Deserialize, Serialize};
 
 use crate::components::item::*;
@@ -32,7 +31,7 @@ impl RequestableItem<ExternalListContainerParams<()>> for UsersContainer {
             "https://dummyjson.com/users?limit={limit}&skip={skip}&select={select}",
             select = User::select(),
         );
-        Ok(Request::get(url.as_str()))
+        Ok(Request::new(Method::GET, Url::parse(url.as_str()).unwrap()))
     }
     async fn response(response: Response) -> Result<Self, Error> {
         response.json().await
@@ -54,7 +53,7 @@ impl RequestableItem<ExternalListContainerParams<UsersContainerSearchParam>> for
             select = User::select(),
             query = params.query,
         );
-        Ok(Request::get(url.as_str()))
+        Ok(Request::new(Method::GET, Url::parse(url.as_str()).unwrap()))
     }
     async fn response(response: Response) -> Result<Self, Error> {
         response.json().await
@@ -103,7 +102,7 @@ impl RequestableItem<ExternalItemParams> for User {
             id = params.id,
             select = Self::select(),
         );
-        Ok(Request::get(url.as_str()))
+        Ok(Request::new(Method::GET, Url::parse(url.as_str()).unwrap()))
     }
     async fn response(response: Response) -> Result<Self, Error> {
         response.json().await
@@ -144,7 +143,7 @@ impl RequestableItem<ExternalListContainerParams<()>> for PostsContainer {
             "https://dummyjson.com/posts?limit={limit}&skip={skip}&select={select}",
             select = Post::select(),
         );
-        Ok(Request::get(url.as_str()))
+        Ok(Request::new(Method::GET, Url::parse(url.as_str()).unwrap()))
     }
     async fn response(response: Response) -> Result<Self, Error> {
         response.json().await
@@ -166,7 +165,7 @@ impl RequestableItem<ExternalListContainerParams<PostsContainerSearchParam>> for
             query = params.query,
             select = Post::select(),
         );
-        Ok(Request::get(url.as_str()))
+        Ok(Request::new(Method::GET, Url::parse(url.as_str()).unwrap()))
     }
     async fn response(response: Response) -> Result<Self, Error> {
         response.json().await
@@ -224,7 +223,7 @@ impl RequestableItem<ExternalItemParams> for Post {
             id = params.id,
             select = Self::select(),
         );
-        Ok(Request::get(url.as_str()))
+        Ok(Request::new(Method::GET, Url::parse(url.as_str()).unwrap()))
     }
     async fn response(response: Response) -> Result<Self, Error> {
         response.json().await
@@ -273,7 +272,7 @@ impl RequestableItem<ExternalListContainerParams<CommentsContainerPostIdParam>>
             "https://dummyjson.com/comments/post/{post_id}?limit={limit}&skip={skip}",
             post_id = params.post_id,
         );
-        Ok(Request::get(url.as_str()))
+        Ok(Request::new(Method::GET, Url::parse(url.as_str()).unwrap()))
     }
     async fn response(response: Response) -> Result<Self, Error> {
         response.json().await
@@ -285,7 +284,7 @@ impl RequestableItem<ExternalListContainerParams<()>> for CommentsContainer {
     async fn request(params: ExternalListContainerParams<()>) -> Result<Request, Error> {
         let ExternalListContainerParams { limit, skip, .. } = params;
         let url = format!("https://dummyjson.com/comments?limit={limit}&skip={skip}");
-        Ok(Request::get(url.as_str()))
+        Ok(Request::new(Method::GET, Url::parse(url.as_str()).unwrap()))
     }
     async fn response(response: Response) -> Result<Self, Error> {
         response.json().await
@@ -333,7 +332,7 @@ pub struct Comment {
 impl RequestableItem<ExternalItemParams> for Comment {
     async fn request(params: ExternalItemParams) -> Result<Request, Error> {
         let url = format!("https://dummyjson.com/comments/{id}", id = params.id);
-        Ok(Request::get(url.as_str()))
+        Ok(Request::new(Method::GET, Url::parse(url.as_str()).unwrap()))
     }
     async fn response(response: Response) -> Result<Self, Error> {
         response.json().await
@@ -377,9 +376,10 @@ pub enum AuthResult {
 #[async_trait(?Send)]
 impl RequestableItem<LoginParams> for AuthResult {
     async fn request(params: LoginParams) -> Result<Request, Error> {
-        Ok(Request::post("https://dummyjson.com/auth/login")
-            .header("Content-Type", "application/json")
-            .body(serde_json::to_string(&params).map_err(|e| Error::SerdeError(e))?))
+        let mut request = Request::new(Method::POST, Url::parse("https://dummyjson.com/auth/login").unwrap());
+        request.headers_mut().append("Content-Type", HeaderValue::from_static("application/json"));
+        (*request.body_mut()) = Some(serde_json::to_string(&params).unwrap().into());
+        Ok(request)
     }
     async fn response(response: Response) -> Result<Self, Error> {
         response.json().await

@@ -1,7 +1,10 @@
+#[cfg(target_arch = "wasm32")]
 use gloo::events::EventListener;
+#[cfg(target_arch = "wasm32")]
 use web_sys::{HtmlElement, HtmlInputElement};
 use yew::prelude::*;
 
+#[cfg(target_arch = "wasm32")]
 use crate::content::{AuthResult, LoginParams};
 use crate::utils::*;
 
@@ -17,6 +20,7 @@ pub fn login_modal(props: &LoginModalProps) -> Html {
 
     let close_node_ref = use_node_ref();
 
+    #[cfg(target_arch = "wasm32")]
     {
         let logged_user_context = logged_user_context.clone();
         let close_node_ref = close_node_ref.clone();
@@ -47,6 +51,7 @@ pub fn login_modal(props: &LoginModalProps) -> Html {
     let username_node_ref = use_node_ref();
     let password_node_ref = use_node_ref();
 
+    #[cfg(target_arch = "wasm32")]
     let onclick = {
         let logged_user_context = logged_user_context.clone();
         let username_node_ref = username_node_ref.clone();
@@ -66,9 +71,12 @@ pub fn login_modal(props: &LoginModalProps) -> Html {
             }));
         })
     };
+    #[cfg(not(target_arch = "wasm32"))]
+    let onclick = Callback::from(|_| {});
 
     let modal_node_ref = use_node_ref();
 
+    #[cfg(target_arch = "wasm32")]
     {
         let logged_user_context = logged_user_context.clone();
         let username_node_ref = username_node_ref.clone();

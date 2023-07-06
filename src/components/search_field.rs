@@ -1,5 +1,7 @@
+#[cfg(target_arch = "wasm32")]
 use web_sys::HtmlInputElement;
 use yew::prelude::*;
+#[cfg(target_arch = "wasm32")]
 use yew_hooks::prelude::*;
 use yew_router::prelude::*;
 
@@ -35,6 +37,7 @@ impl SearchMode {
             .map(|q| urlencoding::decode(q.as_str()).map(|c| c.into_owned()).ok())
             .flatten()
     }
+    #[cfg(target_arch = "wasm32")]
     pub fn encode_new_query_and_route(&self, query: String) -> Route {
         let query = urlencoding::encode(query.as_str()).into_owned();
         match self {
@@ -63,6 +66,7 @@ impl SearchMode {
 
 #[function_component(SearchField)]
 pub fn search_field() -> Html {
+    #[cfg(target_arch = "wasm32")]
     let navigator = use_navigator().unwrap();
 
     let route = use_route::<Route>().unwrap_or_default();
@@ -80,6 +84,7 @@ pub fn search_field() -> Html {
         })
     }
 
+    #[cfg(target_arch = "wasm32")]
     let debounce = {
         let mode = mode.clone();
         let query = query.clone();
@@ -97,6 +102,7 @@ pub fn search_field() -> Html {
         )
     };
 
+    #[cfg(target_arch = "wasm32")]
     let oninput = {
         let query = query.clone();
         Callback::from(move |e: InputEvent| {
@@ -107,6 +113,8 @@ pub fn search_field() -> Html {
             debounce.run();
         })
     };
+    #[cfg(not(target_arch = "wasm32"))]
+    let oninput = Callback::from(|_| {});
 
     html! {
         <input type="search" class="form-control" placeholder={ mode.placeholder() } value={ (*query).clone() } { oninput } />

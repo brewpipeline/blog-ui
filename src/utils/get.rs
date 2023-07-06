@@ -1,5 +1,4 @@
-use gloo_net::http::{Request, Response};
-use gloo_net::Error;
+use reqwest::{Request, Response, Error};
 
 #[async_trait(?Send)]
 pub trait RequestableItem<P>: Sized {
@@ -19,6 +18,9 @@ where
     P: 'static,
 {
     async fn get(params: P) -> Result<Self, Error> {
-        Ok(Self::response(Self::request(params).await?.send().await?).await?)
+        let client = reqwest::Client::new();
+        let request = Self::request(params).await?;
+        let response = Self::response(client.execute(request).await?).await?;
+        Ok(response)
     }
 }
