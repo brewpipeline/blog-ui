@@ -2,7 +2,7 @@ use yew::prelude::*;
 use yew_router::prelude::*;
 
 use crate::components::item::*;
-use crate::content::{Post, User};
+use crate::content::*;
 
 use crate::Route;
 
@@ -70,9 +70,9 @@ pub fn post_card(props: &PostCardProps) -> Html {
                     if fetch_author {
                         <div class="col-6 text-end placeholder-glow">
                             if let Some(post) = post.as_ref() {
-                                <Item<User> item_id={ post.user_id } component={ move |user: Option<User>| { html! {
+                                <Item<User, UserIdParam> params={ UserIdParam { id: post.user_id } } component={ move |user: Option<User>| { html! {
                                     if let Some(user) = user {
-                                        <Link<Route> classes="title is-block col-6 text-decoration-none" to={Route::Author { id: user.id }}>
+                                        <Link<Route> classes="title is-block col-6 text-decoration-none" to={Route::Author { slug: "tikitko".to_owned() /* TODO */ }}>
                                             { &user.username }
                                         </Link<Route>>
                                     } else {

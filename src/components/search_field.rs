@@ -21,7 +21,7 @@ impl SearchMode {
             | Route::PostsSearchRoot
             | Route::Post { id: _ }
             | Route::Posts => Self::Posts { query: None },
-            Route::AuthorsSearchRoot | Route::Author { id: _ } | Route::Authors => {
+            Route::AuthorsSearchRoot | Route::Author { slug: _ } | Route::Authors => {
                 Self::Authors { query: None }
             }
         }

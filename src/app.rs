@@ -17,8 +17,8 @@ pub enum Route {
     PostsSearchRoot,
     #[at("/posts/search/:query")]
     PostsSearch { query: String },
-    #[at("/authors/:id")]
-    Author { id: u64 },
+    #[at("/authors/:slug")]
+    Author { slug: String },
     #[at("/authors")]
     Authors,
     #[at("/authors/search")]
@@ -43,7 +43,7 @@ impl Route {
             Route::PostsSearch { query } => {
                 html! { <Search mode={ SearchMode::Posts { query: Some(query) } } />}
             }
-            Route::Author { id: user_id } => html! { <Author { user_id } /> },
+            Route::Author { slug } => html! { <Author { slug } /> },
             Route::Authors => html! { <Authors /> },
             Route::AuthorsSearchRoot => {
                 html! { <Search mode={ SearchMode::Authors { query: None } } />}

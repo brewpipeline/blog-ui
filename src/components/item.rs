@@ -2,45 +2,47 @@ use yew::prelude::*;
 
 use crate::utils::get::*;
 
-#[derive(PartialEq, Clone)]
-pub struct ExternalItemParams {
-    pub id: u64,
-}
-
-pub trait ExternalItem: Clone + PartialEq + RequestableItem<ExternalItemParams> {}
+pub trait ExternalItem<P: PartialEq + Clone>: Clone + PartialEq + RequestableItem<P> {}
 
 #[derive(PartialEq, Properties, Clone)]
-pub struct ItemProps<I>
+pub struct ItemProps<I, P = ()>
 where
-    I: ExternalItem + 'static,
+    I: ExternalItem<P> + 'static,
+    P: PartialEq + Clone + 'static,
 {
-    pub item_id: u64,
+    pub params: P,
     pub component: Callback<Option<I>, Html>,
 }
 
 #[function_component(Item)]
-pub fn item<I>(props: &ItemProps<I>) -> Html
+pub fn item<I, P = ()>(props: &ItemProps<I, P>) -> Html
 where
-    I: ExternalItem + 'static,
+    I: ExternalItem<P> + 'static,
+    P: PartialEq + Clone + 'static,
 {
-    let ItemProps { item_id, component } = props.clone();
+    let ItemProps { params, component } = props.clone();
 
     let item = use_state_eq(|| None);
     {
         let item = item.clone();
         use_effect_with_deps(
-            move |item_id| {
+            move |params| {
                 item.set(None);
                 let item = item.clone();
-                let item_id = *item_id;
+                let params = params.clone();
                 wasm_bindgen_futures::spawn_local(async move {
-                    let Ok(fetched_item) = I::get(ExternalItemParams { id: item_id }).await else {
-                        return
-                    };
-                    item.set(Some(fetched_item));
+                    match I::get(params).await {
+                        Ok(fetched_item) => {
+                            item.set(Some(fetched_item));
+                        }
+                        Err(err) => {
+                            // TODO
+                            web_sys::console::log_1(&err.to_string().as_str().into());
+                        }
+                    }
                 });
             },
-            item_id,
+            params,
         );
     }
 

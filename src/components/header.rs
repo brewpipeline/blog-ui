@@ -37,7 +37,7 @@ pub fn header() -> Html {
                                 <div class="d-flex dropdown dropdown-menu-end">
                                     <img height="38" src={ auth_user.image_url.clone() } type="button" alt={ auth_user.username.clone() } class="img-block item d-flex rounded" data-bs-toggle="dropdown" aria-expanded="false" />
                                     <ul class="dropdown-menu text-small" >
-                                        <li><Link<Route> classes="dropdown-item" to={ Route::Author { id: auth_user.id } }> { auth_user.username.clone() } </Link<Route>></li>
+                                        <li><Link<Route> classes="dropdown-item" to={ Route::Author { slug: "tikitko".to_owned() /* TODO */ } }> { auth_user.username.clone() } </Link<Route>></li>
                                         // <li><a class="dropdown-item" href="#"> { "Настройки" } </a></li>
                                         <li><hr class="dropdown-divider" /></li>
                                         <li><button class="dropdown-item" type="button" data-bs-toggle="modal" data-bs-target="#logoutModal"> { "Выход" } </button></li>

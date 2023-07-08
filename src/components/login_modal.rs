@@ -2,7 +2,7 @@ use gloo::events::EventListener;
 use web_sys::{HtmlElement, HtmlInputElement};
 use yew::prelude::*;
 
-use crate::content::{AuthResult, LoginParams};
+use crate::content::*;
 use crate::utils::*;
 
 #[derive(PartialEq, Properties, Clone)]
