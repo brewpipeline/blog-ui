@@ -39,6 +39,18 @@ impl<D> ExternalResultContainer for API<D> {
 }
 
 //
+// AuthorImageUrl
+//
+//
+
+pub fn author_image_url(slug: &String) -> String {
+    format!(
+        "https://api.dicebear.com/6.x/bottts-neutral/svg?seed={}",
+        slug,
+    )
+}
+
+//
 // Tag
 //
 //
@@ -61,6 +73,12 @@ pub struct ShortAuthor {
     pub slug: String,
     pub first_name: Option<String>,
     pub last_name: Option<String>,
+}
+
+impl ShortAuthor {
+    pub fn image_url(&self) -> String {
+        author_image_url(&self.slug)
+    }
 }
 
 //
@@ -95,9 +113,17 @@ impl RequestableItem<ExternalListContainerParams<()>> for API<AuthorsContainer> 
 }
 
 #[async_trait(?Send)]
-impl RequestableItem<ExternalListContainerParams<AuthorsContainerSearchParam>> for API<AuthorsContainer> {
-    async fn request(params: ExternalListContainerParams<AuthorsContainerSearchParam>) -> Result<Request, Error> {
-        let ExternalListContainerParams { limit, skip, params } = params;
+impl RequestableItem<ExternalListContainerParams<AuthorsContainerSearchParam>>
+    for API<AuthorsContainer>
+{
+    async fn request(
+        params: ExternalListContainerParams<AuthorsContainerSearchParam>,
+    ) -> Result<Request, Error> {
+        let ExternalListContainerParams {
+            limit,
+            skip,
+            params,
+        } = params;
         let url = format!(
             "http://127.0.0.1:3000/api/search/authors/{query}?limit={limit}&offset={skip}",
             query = params.query,
@@ -155,10 +181,7 @@ pub struct Author {
 
 impl Author {
     pub fn image_url(&self) -> String {
-        format!(
-            "https://api.dicebear.com/6.x/bottts-neutral/svg?seed={}",
-            self.slug,
-        )
+        author_image_url(&self.slug)
     }
 }
 
@@ -204,7 +227,6 @@ impl ExternalItemContainer for AuthorContainer {
 //
 //
 
-
 #[derive(Clone, PartialEq)]
 pub struct PostsContainerSearchParam {
     pub query: String,
@@ -231,9 +253,17 @@ impl RequestableItem<ExternalListContainerParams<()>> for API<PostsContainer> {
 }
 
 #[async_trait(?Send)]
-impl RequestableItem<ExternalListContainerParams<PostsContainerSearchParam>> for API<PostsContainer> {
-    async fn request(params: ExternalListContainerParams<PostsContainerSearchParam>) -> Result<Request, Error> {
-        let ExternalListContainerParams { limit, skip, params } = params;
+impl RequestableItem<ExternalListContainerParams<PostsContainerSearchParam>>
+    for API<PostsContainer>
+{
+    async fn request(
+        params: ExternalListContainerParams<PostsContainerSearchParam>,
+    ) -> Result<Request, Error> {
+        let ExternalListContainerParams {
+            limit,
+            skip,
+            params,
+        } = params;
         let url = format!(
             "http://127.0.0.1:3000/api/search/posts/{query}?limit={limit}&offset={skip}",
             query = params.query,
