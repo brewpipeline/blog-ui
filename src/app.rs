@@ -9,8 +9,8 @@ use crate::utils::*;
 
 #[derive(Routable, PartialEq, Eq, Clone, Debug)]
 pub enum Route {
-    #[at("/posts/:id")]
-    Post { id: u64 },
+    #[at("/posts/:slug")]
+    Post { slug: String },
     #[at("/posts")]
     Posts,
     #[at("/posts/search")]
@@ -35,7 +35,7 @@ pub enum Route {
 impl Route {
     pub fn switch(route: Route) -> Html {
         match route {
-            Route::Post { id: post_id } => html! { <Post { post_id } /> },
+            Route::Post { slug } => html! { <Post { slug } /> },
             Route::Home | Route::Posts => html! { <Posts />},
             Route::PostsSearchRoot => {
                 html! { <Search mode={ SearchMode::Posts { query: None } } />}
@@ -60,12 +60,12 @@ impl Route {
 fn app() -> Html {
     let logged_user = use_reducer(|| Default::default());
     html! {
-        <HashRouter> // TODO: `<BrowserRouter>`
+        <BrowserRouter>
             <ContextProvider<LoggedUserContext> context={logged_user}>
                 <Header />
                 <Body />
             </ContextProvider<LoggedUserContext>>
-        </HashRouter> // TODO: `</BrowserRouter>`
+        </BrowserRouter>
     }
 }
 

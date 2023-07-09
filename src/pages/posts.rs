@@ -13,13 +13,13 @@ pub fn posts() -> Html {
     html_document::reset_title_and_meta();
     html_document::set_prefix_default_title("Публикации".to_string());
     html! {
-        <List<PostsContainer>
+        <List<API<PostsContainer>>
             params={ () }
             route_to_page={ Route::Posts }
-            component={ |post| html! { <PostCard { post } fetch_author=false link_to=true /> } }
+            component={ |post| html! { <PostCard { post } link_to=true /> } }
             error_component={ |_| html! { <Warning text="Ошибка загрузки публикаций" /> } }
         >
             <Warning text="Нет публикаций" />
-        </List<PostsContainer>>
+        </List<API<PostsContainer>>>
     }
 }

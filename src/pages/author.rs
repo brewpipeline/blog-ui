@@ -18,7 +18,7 @@ pub fn author(props: &AuthorProps) -> Html {
     html_document::set_prefix_default_title("Автор".to_string());
     html! {
         <Item<content::API<content::AuthorContainer>, content::AuthorSlugParam>
-            params={ content::AuthorSlugParam { slug } }
+            params={ content::AuthorSlugParam { slug: slug.clone() } }
             component={ |author: Option<content::Author>| {
                 if let Some(author) = &author {
                     html_document::reset_title_and_meta();

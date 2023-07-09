@@ -12,33 +12,33 @@ use crate::Route;
 
 #[derive(PartialEq, Properties, Clone)]
 pub struct PostProps {
-    pub post_id: u64,
+    pub slug: String,
 }
 
 #[function_component(Post)]
 pub fn post(props: &PostProps) -> Html {
-    let PostProps { post_id } = props.clone();
+    let PostProps { slug } = props.clone();
     html_document::reset_title_and_meta();
     html_document::set_prefix_default_title("Публикация".to_string());
     html! {
         <>
-            <Item<content::Post, content::PostIdParam>
-                params={ content::PostIdParam { id: post_id } }
+            <Item<content::API<content::PostContainer>, content::PostSlugParam>
+                params={ content::PostSlugParam { slug: slug.clone() } }
                 component={ |post: Option<content::Post>| {
                     if let Some(post) = &post {
                         html_document::reset_title_and_meta();
                         html_document::set_prefix_default_title(format!("{} - Публикация", post.title.clone()));
-                        html_document::set_meta(html_document::MetaTag::Description, post.body.clone());
-                        html_document::set_meta(html_document::MetaTag::Keywords, post.tags.join(", "));
+                        html_document::set_meta(html_document::MetaTag::Description, post.summary.clone());
+                        html_document::set_meta(html_document::MetaTag::Keywords, post.tags.clone().into_iter().map(|v| v.title).collect::<Vec<String>>().join(", "));
                     }
-                    html! { <PostCard { post } fetch_author=true link_to=false /> }
+                    html! { <PostCard { post } link_to=false /> }
                 } }
                 error_component={ |_| html! { <Warning text="Ошибка загрузки публикации" /> } }
             />
             <List<content::CommentsContainer, content::CommentsContainerPostIdParam>
-                params={ content::CommentsContainerPostIdParam { post_id: post_id } }
+                params={ content::CommentsContainerPostIdParam { post_id: 1 /* TODO */ } }
                 items_per_page={ 100 }
-                route_to_page={ Route::Post { id: post_id } }
+                route_to_page={ Route::Post { slug: slug.clone() } }
                 component={ |comment| html! { <CommentCard { comment } /> } }
                 error_component={ |_| html! { <Warning text="Ошибка загрузки комментариев" /> } }
             >

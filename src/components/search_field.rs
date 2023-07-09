@@ -19,7 +19,7 @@ impl SearchMode {
             Route::Home
             | Route::NotFound
             | Route::PostsSearchRoot
-            | Route::Post { id: _ }
+            | Route::Post { slug: _ }
             | Route::Posts => Self::Posts { query: None },
             Route::AuthorsSearchRoot | Route::Author { slug: _ } | Route::Authors => {
                 Self::Authors { query: None }

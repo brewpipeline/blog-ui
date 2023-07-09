@@ -112,10 +112,8 @@ pub struct AuthorContainer {
 #[async_trait(?Send)]
 impl RequestableItem<AuthorSlugParam> for API<AuthorContainer> {
     async fn request(params: AuthorSlugParam) -> Result<Request, Error> {
-        let url = format!(
-            "http://127.0.0.1:3000/api/author/{slug}",
-            slug = params.slug,
-        );
+        let AuthorSlugParam { slug } = params;
+        let url = format!("http://127.0.0.1:3000/api/author/{slug}");
         Ok(Request::get(url.as_str()))
     }
     async fn response(response: Response) -> Result<Self, Error> {
@@ -131,191 +129,23 @@ impl ExternalItemContainer for AuthorContainer {
 }
 
 //
-// UsersContainer
-//
-//
-
-#[derive(Clone, PartialEq)]
-pub struct UsersContainerSearchParam {
-    pub query: String,
-}
-
-#[derive(Clone, Debug, Eq, PartialEq, Deserialize)]
-pub struct UsersContainer {
-    pub users: Vec<User>,
-    pub total: u64,
-    pub skip: u64,
-    pub limit: u64,
-}
-
-#[async_trait(?Send)]
-impl RequestableItem<ExternalListContainerParams<()>> for UsersContainer {
-    async fn request(params: ExternalListContainerParams<()>) -> Result<Request, Error> {
-        let ExternalListContainerParams { limit, skip, .. } = params;
-        let url = format!(
-            "https://dummyjson.com/users?limit={limit}&skip={skip}&select={select}",
-            select = User::select(),
-        );
-        Ok(Request::get(url.as_str()))
-    }
-    async fn response(response: Response) -> Result<Self, Error> {
-        response.json().await
-    }
-}
-
-#[async_trait(?Send)]
-impl RequestableItem<ExternalListContainerParams<UsersContainerSearchParam>> for UsersContainer {
-    async fn request(
-        params: ExternalListContainerParams<UsersContainerSearchParam>,
-    ) -> Result<Request, Error> {
-        let ExternalListContainerParams {
-            params,
-            limit,
-            skip,
-        } = params;
-        let url = format!(
-            "https://dummyjson.com/users/search?q={query}&limit={limit}&skip={skip}&select={select}", 
-            select = User::select(),
-            query = params.query,
-        );
-        Ok(Request::get(url.as_str()))
-    }
-    async fn response(response: Response) -> Result<Self, Error> {
-        response.json().await
-    }
-}
-
-impl ExternalListContainer for UsersContainer {
-    type Item = User;
-    fn items(self) -> Vec<Self::Item> {
-        self.users
-    }
-    fn total(&self) -> u64 {
-        self.total
-    }
-    fn skip(&self) -> u64 {
-        self.skip
-    }
-    fn limit(&self) -> u64 {
-        self.limit
-    }
-}
-
-impl ExternalResultContainer for UsersContainer {
-    type Inner = UsersContainer;
-    type Error = std::convert::Infallible;
-    fn result(self) -> Result<Self::Inner, Self::Error> {
-        Ok(self)
-    }
-}
-
-//
-// User
-//
-//
-
-#[derive(Clone, PartialEq)]
-pub struct UserIdParam {
-    pub id: u64,
-}
-
-#[derive(Clone, Debug, Eq, PartialEq, Deserialize)]
-pub struct User {
-    pub id: u64,
-    #[serde(rename = "firstName")]
-    pub first_name: String,
-    #[serde(rename = "lastName")]
-    pub last_name: String,
-    #[serde(rename = "image")]
-    pub image_url: String,
-    pub username: String,
-    pub email: String,
-}
-
-#[async_trait(?Send)]
-impl RequestableItem<UserIdParam> for User {
-    async fn request(params: UserIdParam) -> Result<Request, Error> {
-        let url = format!(
-            "https://dummyjson.com/users/{id}?select={select}",
-            id = params.id,
-            select = Self::select(),
-        );
-        Ok(Request::get(url.as_str()))
-    }
-    async fn response(response: Response) -> Result<Self, Error> {
-        response.json().await
-    }
-}
-
-impl ExternalItemContainer for User {
-    type Item = Self;
-    fn item(self) -> Self::Item {
-        self
-    }
-}
-
-impl ExternalResultContainer for User {
-    type Inner = User;
-    type Error = std::convert::Infallible;
-    fn result(self) -> Result<Self::Inner, Self::Error> {
-        Ok(self)
-    }
-}
-
-impl User {
-    fn select() -> String {
-        format!("id,firstName,lastName,image,username,email")
-    }
-}
-
-//
 // PostsContainer
 //
 //
-
-#[derive(Clone, PartialEq)]
-pub struct PostsContainerSearchParam {
-    pub query: String,
-}
 
 #[derive(Clone, Debug, Eq, PartialEq, Deserialize)]
 pub struct PostsContainer {
     pub posts: Vec<Post>,
     pub total: u64,
-    pub skip: u64,
+    pub offset: u64,
     pub limit: u64,
 }
 
 #[async_trait(?Send)]
-impl RequestableItem<ExternalListContainerParams<()>> for PostsContainer {
+impl RequestableItem<ExternalListContainerParams<()>> for API<PostsContainer> {
     async fn request(params: ExternalListContainerParams<()>) -> Result<Request, Error> {
         let ExternalListContainerParams { limit, skip, .. } = params;
-        let url = format!(
-            "https://dummyjson.com/posts?limit={limit}&skip={skip}&select={select}",
-            select = Post::select(),
-        );
-        Ok(Request::get(url.as_str()))
-    }
-    async fn response(response: Response) -> Result<Self, Error> {
-        response.json().await
-    }
-}
-
-#[async_trait(?Send)]
-impl RequestableItem<ExternalListContainerParams<PostsContainerSearchParam>> for PostsContainer {
-    async fn request(
-        params: ExternalListContainerParams<PostsContainerSearchParam>,
-    ) -> Result<Request, Error> {
-        let ExternalListContainerParams {
-            params,
-            limit,
-            skip,
-        } = params;
-        let url = format!(
-            "https://dummyjson.com/posts/search?q={query}&limit={limit}&skip={skip}&select={select}", 
-            query = params.query,
-            select = Post::select(),
-        );
+        let url = format!("http://127.0.0.1:3000/api/posts?limit={limit}&skip={skip}");
         Ok(Request::get(url.as_str()))
     }
     async fn response(response: Response) -> Result<Self, Error> {
@@ -332,7 +162,7 @@ impl ExternalListContainer for PostsContainer {
         self.total
     }
     fn skip(&self) -> u64 {
-        self.skip
+        self.offset
     }
     fn limit(&self) -> u64 {
         self.limit
@@ -353,18 +183,35 @@ impl ExternalResultContainer for PostsContainer {
 //
 
 #[derive(Clone, PartialEq)]
-pub struct PostIdParam {
-    pub id: u64,
+pub struct PostSlugParam {
+    pub slug: String,
 }
 
 #[derive(Clone, Debug, Eq, PartialEq, Deserialize)]
-pub struct Post {
-    pub id: u64,
+#[serde(rename_all = "camelCase")]
+pub struct Tag {
     pub title: String,
-    pub body: String,
-    #[serde(rename = "userId")]
-    pub user_id: u64,
-    pub tags: Vec<String>,
+    pub slug: String,
+}
+
+#[derive(Clone, Debug, Eq, PartialEq, Deserialize)]
+#[serde(rename_all = "camelCase")]
+pub struct ShortAuthor {
+    pub slug: String,
+    pub first_name: Option<String>,
+    pub last_name: Option<String>,
+}
+
+#[derive(Clone, Debug, Eq, PartialEq, Deserialize)]
+#[serde(rename_all = "camelCase")]
+pub struct Post {
+    pub title: String,
+    pub slug: String,
+    pub summary: String,
+    pub created_at: i64,
+    pub content: Option<String>,
+    pub short_author: ShortAuthor,
+    pub tags: Vec<Tag>,
 }
 
 impl Post {
@@ -373,20 +220,23 @@ impl Post {
             "https://source.unsplash.com/random/{}x{}?{}&sig={}",
             400,
             100,
-            self.tags.join(","),
-            self.id,
+            self.tags.clone().into_iter().map(|v| v.title).collect::<Vec<String>>().join(","),
+            self.slug,
         )
     }
 }
 
+#[derive(Clone, Debug, Eq, PartialEq, Deserialize)]
+#[serde(rename_all = "camelCase")]
+pub struct PostContainer {
+    pub post: Post,
+}
+
 #[async_trait(?Send)]
-impl RequestableItem<PostIdParam> for Post {
-    async fn request(params: PostIdParam) -> Result<Request, Error> {
-        let url = format!(
-            "https://dummyjson.com/posts/{id}?select={select}",
-            id = params.id,
-            select = Self::select(),
-        );
+impl RequestableItem<PostSlugParam> for API<PostContainer> {
+    async fn request(params: PostSlugParam) -> Result<Request, Error> {
+        let PostSlugParam { slug } = params;
+        let url = format!("http://127.0.0.1:3000/api/post/{slug}");
         Ok(Request::get(url.as_str()))
     }
     async fn response(response: Response) -> Result<Self, Error> {
@@ -394,24 +244,10 @@ impl RequestableItem<PostIdParam> for Post {
     }
 }
 
-impl ExternalItemContainer for Post {
-    type Item = Self;
+impl ExternalItemContainer for PostContainer {
+    type Item = Post;
     fn item(self) -> Self::Item {
-        self
-    }
-}
-
-impl ExternalResultContainer for Post {
-    type Inner = Post;
-    type Error = std::convert::Infallible;
-    fn result(self) -> Result<Self::Inner, Self::Error> {
-        Ok(self)
-    }
-}
-
-impl Post {
-    fn select() -> String {
-        format!("id,title,body,userId,tags")
+        self.post
     }
 }
 
