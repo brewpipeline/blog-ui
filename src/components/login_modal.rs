@@ -23,23 +23,27 @@ pub fn login_modal(props: &LoginModalProps) -> Html {
         let close_node_ref = close_node_ref.clone();
         use_effect_with_deps(
             move |logged_user_context| {
-                let LoggedUserState::InProgress(login_params) = (**logged_user_context).state.clone() else {
+                let LoggedUserState::InProgress(auth_params) = (**logged_user_context).state.clone() else {
                     return
                 };
                 let logged_user_context = logged_user_context.clone();
                 let close_node_ref = close_node_ref.clone();
                 wasm_bindgen_futures::spawn_local(async move {
-                    match AuthResult::get(login_params).await {
+                    match API::<TokenContainer>::get(auth_params).await {
                         Ok(auth_result) => match auth_result {
-                            AuthResult::Success(auth_user) => {
-                                close_node_ref.cast::<HtmlInputElement>().unwrap().click();
-                                logged_user_context.dispatch(LoggedUserState::Active(auth_user));
-                            }
-                            AuthResult::Error {
-                                message: auth_error_message,
+                            API::Success {
+                                identifier: _,
+                                description: _,
+                                data: token_container,
                             } => {
+                                close_node_ref.cast::<HtmlInputElement>().unwrap().click();
+                                logged_user_context.dispatch(LoggedUserState::Active {
+                                    token: token_container.token,
+                                });
+                            }
+                            API::Failure { identifier, reason } => {
                                 logged_user_context
-                                    .dispatch(LoggedUserState::Error(auth_error_message));
+                                    .dispatch(LoggedUserState::Error(reason.unwrap_or(identifier)));
                             }
                         },
                         Err(err) => {
@@ -68,8 +72,8 @@ pub fn login_modal(props: &LoginModalProps) -> Html {
                 .cast::<HtmlInputElement>()
                 .unwrap()
                 .value();
-            logged_user_context.dispatch(LoggedUserState::InProgress(LoginParams {
-                username,
+            logged_user_context.dispatch(LoggedUserState::InProgress(AuthParams {
+                slug: username,
                 password,
             }));
         })
@@ -97,7 +101,7 @@ pub fn login_modal(props: &LoginModalProps) -> Html {
                         .unwrap()
                         .set_value("");
                     match logged_user_context.state {
-                        LoggedUserState::None | LoggedUserState::Active(_) => {}
+                        LoggedUserState::None | LoggedUserState::Active { token: _ } => {}
                         LoggedUserState::Error(_) | LoggedUserState::InProgress(_) => {
                             logged_user_context.dispatch(LoggedUserState::None);
                         }
@@ -118,13 +122,9 @@ pub fn login_modal(props: &LoginModalProps) -> Html {
                         <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                     </div>
                     <div class="modal-body">
-                        <div class="alert alert-info d-flex align-items-center" role="alert">
-                            { "Login: atuny0" }
-                            <br/>
-                            { "Password: 9uQFF1Lh" }
-                        </div>
                         if let LoggedUserState::Error(message) = logged_user_context.state.clone() {
                             <div class="alert alert-danger d-flex align-items-center" role="alert">
+                                { "Ошибка авторизации: " }
                                 { message }
                             </div>
                         }

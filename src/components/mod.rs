@@ -1,3 +1,4 @@
+pub mod auth_user_block;
 pub mod author_card;
 pub mod body;
 pub mod comment_card;

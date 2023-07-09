@@ -18,7 +18,7 @@ pub fn author_card(props: &AuthorCardProps) -> Html {
     let main_content = html! {
         <div class="row g-0">
             <div class="col-4">
-                <div style={ format!("height:220px;width:100%;--image-url:url({});", author.as_ref().map(|a| format!("https://api.dicebear.com/6.x/bottts-neutral/svg?seed={}", a.slug.clone())).unwrap_or_default()) } class="img-block img-fluid rounded-start" role="img" />
+                <div style={ format!("height:220px;width:100%;--image-url:url({});", author.as_ref().map(|a| a.image_url()).unwrap_or_default()) } class="img-block img-fluid rounded-start" role="img" />
             </div>
             <div class="col">
                 <div class="card-body">

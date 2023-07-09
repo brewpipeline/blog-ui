@@ -3,21 +3,21 @@ use std::rc::Rc;
 use wasm_cookies::CookieOptions;
 use yew::{Reducible, UseReducerHandle};
 
-use crate::content::{AuthUser, LoginParams};
+use crate::content::AuthParams;
 
 #[derive(Debug, PartialEq, Eq, Clone)]
 pub enum LoggedUserState {
     None,
-    InProgress(LoginParams),
+    InProgress(AuthParams),
     Error(String),
-    Active(AuthUser),
+    Active { token: String },
 }
 
 impl LoggedUserState {
     pub fn action_available(&self) -> bool {
         match self {
             LoggedUserState::None | LoggedUserState::Error(_) => true,
-            LoggedUserState::InProgress(_) | LoggedUserState::Active(_) => false,
+            LoggedUserState::InProgress(_) | LoggedUserState::Active { token: _ } => false,
         }
     }
 }
@@ -29,19 +29,16 @@ pub struct LoggedUser {
 
 impl LoggedUser {
     #[cfg(target_arch = "wasm32")]
-    fn load_auth_user() -> Option<AuthUser> {
-        let cookie = wasm_cookies::get("AuthUser")?.ok()?;
-        let auth_user: AuthUser = serde_json::from_str(cookie.as_str()).ok()?;
-        Some(auth_user)
+    fn load_token() -> Option<String> {
+        Some(wasm_cookies::get("Token")?.ok()?)
     }
 
     #[cfg(target_arch = "wasm32")]
-    fn save_auth_user(auth_user: Option<&AuthUser>) -> Option<()> {
-        if let Some(auth_user) = &auth_user {
-            let auth_user_string = serde_json::to_string(auth_user).ok()?;
-            wasm_cookies::set("AuthUser", &auth_user_string, &CookieOptions::default());
+    fn save_token(token: Option<&String>) -> Option<()> {
+        if let Some(token) = &token {
+            wasm_cookies::set("Token", &token, &CookieOptions::default());
         } else {
-            wasm_cookies::delete("AuthUser")
+            wasm_cookies::delete("Token")
         }
         Some(())
     }
@@ -50,12 +47,12 @@ impl LoggedUser {
 impl Default for LoggedUser {
     fn default() -> Self {
         #[cfg(target_arch = "wasm32")]
-        let auth_user = Self::load_auth_user();
+        let token = Self::load_token();
         #[cfg(not(target_arch = "wasm32"))]
-        let auth_user = None;
+        let token = None;
         Self {
-            state: match auth_user {
-                Some(auth_user) => LoggedUserState::Active(auth_user),
+            state: match token {
+                Some(token) => LoggedUserState::Active { token },
                 None => LoggedUserState::None,
             },
         }
@@ -68,10 +65,10 @@ impl Reducible for LoggedUser {
         #[cfg(target_arch = "wasm32")]
         match &new_state {
             LoggedUserState::None | LoggedUserState::InProgress(_) | LoggedUserState::Error(_) => {
-                Self::save_auth_user(None);
+                Self::save_token(None);
             }
-            LoggedUserState::Active(auth_user) => {
-                Self::save_auth_user(Some(auth_user));
+            LoggedUserState::Active { token } => {
+                Self::save_token(Some(token));
             }
         }
         LoggedUser { state: new_state }.into()

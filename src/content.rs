@@ -90,6 +90,11 @@ pub struct AuthorSlugParam {
     pub slug: String,
 }
 
+#[derive(Clone, PartialEq)]
+pub struct AuthorTokenParam {
+    pub token: String,
+}
+
 #[derive(Clone, Debug, Eq, PartialEq, Deserialize)]
 #[serde(rename_all = "camelCase")]
 pub struct Author {
@@ -101,6 +106,15 @@ pub struct Author {
     pub email: Option<String>,
     pub registered_at: i64,
     pub status: Option<String>,
+}
+
+impl Author {
+    pub fn image_url(&self) -> String {
+        format!(
+            "https://api.dicebear.com/6.x/bottts-neutral/svg?seed={}",
+            self.slug,
+        )
+    }
 }
 
 #[derive(Clone, Debug, Eq, PartialEq, Deserialize)]
@@ -115,6 +129,18 @@ impl RequestableItem<AuthorSlugParam> for API<AuthorContainer> {
         let AuthorSlugParam { slug } = params;
         let url = format!("http://127.0.0.1:3000/api/author/{slug}");
         Ok(Request::get(url.as_str()))
+    }
+    async fn response(response: Response) -> Result<Self, Error> {
+        response.json().await
+    }
+}
+
+#[async_trait(?Send)]
+impl RequestableItem<AuthorTokenParam> for API<AuthorContainer> {
+    async fn request(params: AuthorTokenParam) -> Result<Request, Error> {
+        let AuthorTokenParam { token } = params;
+        let url = format!("http://127.0.0.1:3000/api/author/me");
+        Ok(Request::get(url.as_str()).header("Token", token.as_str()))
     }
     async fn response(response: Response) -> Result<Self, Error> {
         response.json().await
@@ -220,7 +246,12 @@ impl Post {
             "https://source.unsplash.com/random/{}x{}?{}&sig={}",
             400,
             100,
-            self.tags.clone().into_iter().map(|v| v.title).collect::<Vec<String>>().join(","),
+            self.tags
+                .clone()
+                .into_iter()
+                .map(|v| v.title)
+                .collect::<Vec<String>>()
+                .join(","),
             self.slug,
         )
     }
@@ -381,41 +412,25 @@ impl ExternalResultContainer for Comment {
 }
 
 //
-// Login
+// Auth
 //
 //
 
 #[derive(Clone, Debug, Eq, PartialEq, Serialize)]
-pub struct LoginParams {
-    pub username: String,
+pub struct AuthParams {
+    pub slug: String,
     pub password: String,
 }
 
 #[derive(Clone, Debug, Eq, PartialEq, Deserialize, Serialize)]
-pub struct AuthUser {
-    pub id: u64,
-    #[serde(rename = "firstName")]
-    pub first_name: String,
-    #[serde(rename = "lastName")]
-    pub last_name: String,
-    #[serde(rename = "image")]
-    pub image_url: String,
-    pub username: String,
-    pub email: String,
+pub struct TokenContainer {
     pub token: String,
 }
 
-#[derive(Clone, Debug, Eq, PartialEq, Deserialize)]
-#[serde(untagged)]
-pub enum AuthResult {
-    Success(AuthUser),
-    Error { message: String },
-}
-
 #[async_trait(?Send)]
-impl RequestableItem<LoginParams> for AuthResult {
-    async fn request(params: LoginParams) -> Result<Request, Error> {
-        Ok(Request::post("https://dummyjson.com/auth/login")
+impl RequestableItem<AuthParams> for API<TokenContainer> {
+    async fn request(params: AuthParams) -> Result<Request, Error> {
+        Ok(Request::post("http://127.0.0.1:3000/api/login")
             .header("Content-Type", "application/json")
             .body(serde_json::to_string(&params).map_err(|e| Error::SerdeError(e))?))
     }
