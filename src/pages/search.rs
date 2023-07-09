@@ -30,28 +30,28 @@ pub fn search(props: &SearchProps) -> Html {
                 match mode {
                     SearchMode::Posts { query } => html! {
                         if let Some(query) = not_empty(query) {
-                            <List<API<PostsContainer>> /* TODO */
-                                params={ () /* TODO */ }
+                            <List<API<PostsContainer>, PostsContainerSearchParam>
+                                params={ PostsContainerSearchParam { query: query.clone() } }
                                 route_to_page={ Route::PostsSearch { query: query.clone() } }
-                                component={ |post| html! { <PostCard { post } link_to=true /> } }
+                                component={ |post| html! { <PostCard { post } is_full=false link_to=true /> } }
                                 error_component={ |_| html! { <Warning text="Ошибка загрузки результатов поиска публикаций" /> } }
                             >
                                 <Warning text="Публикаций не найдено!" />
-                            </List<API<PostsContainer>>>
+                            </List<API<PostsContainer>, PostsContainerSearchParam>>
                         } else {
                             <Warning text="Начните ввод для поиска публикаций..." />
                         }
                     },
                     SearchMode::Authors { query } => html! {
                         if let Some(query) = not_empty(query) {
-                            <List<API<AuthorsContainer>> /* TODO */
-                                params={ () /* TODO */ }
+                            <List<API<AuthorsContainer>, AuthorsContainerSearchParam>
+                                params={ AuthorsContainerSearchParam { query: query.clone() } }
                                 route_to_page={ Route::AuthorsSearch { query: query.clone() } }
                                 component={ |author| html! { <AuthorCard { author } link_to=true /> } }
                                 error_component={ |_| html! { <Warning text="Ошибка загрузки результатов поиска авторов" /> } }
                             >
                                 <Warning text="Авторов не найдено!" />
-                            </List<API<AuthorsContainer>>>
+                            </List<API<AuthorsContainer>, AuthorsContainerSearchParam>>
                         } else {
                             <Warning text="Начните ввод для поиска авторов..." />
                         }

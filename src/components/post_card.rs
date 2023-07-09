@@ -8,12 +8,13 @@ use crate::Route;
 #[derive(Clone, Debug, PartialEq, Eq, Properties)]
 pub struct PostCardProps {
     pub post: Option<Post>,
+    pub is_full: bool,
     pub link_to: bool,
 }
 
 #[function_component(PostCard)]
 pub fn post_card(props: &PostCardProps) -> Html {
-    let PostCardProps { post, link_to } = props.clone();
+    let PostCardProps { post, is_full, link_to } = props.clone();
 
     let main_content = html! {
         <>
@@ -27,8 +28,14 @@ pub fn post_card(props: &PostCardProps) -> Html {
                     }
                 </h5>
                 <p class="card-text placeholder-glow">
-                    if let Some(summary) = post.as_ref().map(|p| p.summary.clone()) {
-                        { summary }
+                    if let Some(text) = post.as_ref().map(|post| {
+                        if is_full {
+                            post.content.clone().unwrap_or(post.summary.clone())
+                        } else {
+                            post.summary.clone()
+                        }
+                    }) {
+                        { text }
                     } else {
                         <span class="placeholder col-7"></span> { " " }
                         <span class="placeholder col-4"></span> { " " }
@@ -38,6 +45,16 @@ pub fn post_card(props: &PostCardProps) -> Html {
                         <span class="placeholder col-5"></span> { " " }
                         <span class="placeholder col-5"></span> { " " }
                         <span class="placeholder col-3"></span> { " " }
+                        if is_full {
+                            <span class="placeholder col-7"></span> { " " }
+                            <span class="placeholder col-4"></span> { " " }
+                            <span class="placeholder col-4"></span> { " " }
+                            <span class="placeholder col-6"></span> { " " }
+                            <span class="placeholder col-6"></span> { " " }
+                            <span class="placeholder col-5"></span> { " " }
+                            <span class="placeholder col-5"></span> { " " }
+                            <span class="placeholder col-3"></span> { " " }
+                        }
                     }
                 </p>
             </div>

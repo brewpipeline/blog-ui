@@ -31,19 +31,19 @@ pub fn post(props: &PostProps) -> Html {
                         html_document::set_meta(html_document::MetaTag::Description, post.summary.clone());
                         html_document::set_meta(html_document::MetaTag::Keywords, post.tags.clone().into_iter().map(|v| v.title).collect::<Vec<String>>().join(", "));
                     }
-                    html! { <PostCard { post } link_to=false /> }
+                    html! { <PostCard { post } is_full=true link_to=false /> }
                 } }
                 error_component={ |_| html! { <Warning text="Ошибка загрузки публикации" /> } }
             />
-            <List<content::CommentsContainer, content::CommentsContainerPostIdParam>
-                params={ content::CommentsContainerPostIdParam { post_id: 1 /* TODO */ } }
+            <List<content::API<content::CommentsContainer>, content::CommentsContainerPostSlugParam>
+                params={ content::CommentsContainerPostSlugParam { post_slug: slug.clone() } }
                 items_per_page={ 100 }
                 route_to_page={ Route::Post { slug: slug.clone() } }
                 component={ |comment| html! { <CommentCard { comment } /> } }
                 error_component={ |_| html! { <Warning text="Ошибка загрузки комментариев" /> } }
             >
                 <Warning text="Нет комментариев" />
-            </List<content::CommentsContainer, content::CommentsContainerPostIdParam>>
+            </List<content::API<content::CommentsContainer>, content::CommentsContainerPostSlugParam>>
         </>
     }
 }

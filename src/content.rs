@@ -39,9 +39,39 @@ impl<D> ExternalResultContainer for API<D> {
 }
 
 //
-// AuthorsContainer
+// Tag
 //
 //
+
+#[derive(Clone, Debug, Eq, PartialEq, Deserialize)]
+#[serde(rename_all = "camelCase")]
+pub struct Tag {
+    pub title: String,
+    pub slug: String,
+}
+
+//
+// ShortAuthor
+//
+//
+
+#[derive(Clone, Debug, Eq, PartialEq, Deserialize)]
+#[serde(rename_all = "camelCase")]
+pub struct ShortAuthor {
+    pub slug: String,
+    pub first_name: Option<String>,
+    pub last_name: Option<String>,
+}
+
+//
+// Authors
+//
+//
+
+#[derive(Clone, PartialEq)]
+pub struct AuthorsContainerSearchParam {
+    pub query: String,
+}
 
 #[derive(Clone, Debug, Eq, PartialEq, Deserialize)]
 #[serde(rename_all = "camelCase")]
@@ -57,6 +87,21 @@ impl RequestableItem<ExternalListContainerParams<()>> for API<AuthorsContainer> 
     async fn request(params: ExternalListContainerParams<()>) -> Result<Request, Error> {
         let ExternalListContainerParams { limit, skip, .. } = params;
         let url = format!("http://127.0.0.1:3000/api/authors?limit={limit}&offset={skip}");
+        Ok(Request::get(url.as_str()))
+    }
+    async fn response(response: Response) -> Result<Self, Error> {
+        response.json().await
+    }
+}
+
+#[async_trait(?Send)]
+impl RequestableItem<ExternalListContainerParams<AuthorsContainerSearchParam>> for API<AuthorsContainer> {
+    async fn request(params: ExternalListContainerParams<AuthorsContainerSearchParam>) -> Result<Request, Error> {
+        let ExternalListContainerParams { limit, skip, params } = params;
+        let url = format!(
+            "http://127.0.0.1:3000/api/search/authors/{query}?limit={limit}&offset={skip}",
+            query = params.query,
+        );
         Ok(Request::get(url.as_str()))
     }
     async fn response(response: Response) -> Result<Self, Error> {
@@ -155,9 +200,15 @@ impl ExternalItemContainer for AuthorContainer {
 }
 
 //
-// PostsContainer
+// Posts
 //
 //
+
+
+#[derive(Clone, PartialEq)]
+pub struct PostsContainerSearchParam {
+    pub query: String,
+}
 
 #[derive(Clone, Debug, Eq, PartialEq, Deserialize)]
 pub struct PostsContainer {
@@ -171,7 +222,22 @@ pub struct PostsContainer {
 impl RequestableItem<ExternalListContainerParams<()>> for API<PostsContainer> {
     async fn request(params: ExternalListContainerParams<()>) -> Result<Request, Error> {
         let ExternalListContainerParams { limit, skip, .. } = params;
-        let url = format!("http://127.0.0.1:3000/api/posts?limit={limit}&skip={skip}");
+        let url = format!("http://127.0.0.1:3000/api/posts?limit={limit}&offset={skip}");
+        Ok(Request::get(url.as_str()))
+    }
+    async fn response(response: Response) -> Result<Self, Error> {
+        response.json().await
+    }
+}
+
+#[async_trait(?Send)]
+impl RequestableItem<ExternalListContainerParams<PostsContainerSearchParam>> for API<PostsContainer> {
+    async fn request(params: ExternalListContainerParams<PostsContainerSearchParam>) -> Result<Request, Error> {
+        let ExternalListContainerParams { limit, skip, params } = params;
+        let url = format!(
+            "http://127.0.0.1:3000/api/search/posts/{query}?limit={limit}&offset={skip}",
+            query = params.query,
+        );
         Ok(Request::get(url.as_str()))
     }
     async fn response(response: Response) -> Result<Self, Error> {
@@ -211,21 +277,6 @@ impl ExternalResultContainer for PostsContainer {
 #[derive(Clone, PartialEq)]
 pub struct PostSlugParam {
     pub slug: String,
-}
-
-#[derive(Clone, Debug, Eq, PartialEq, Deserialize)]
-#[serde(rename_all = "camelCase")]
-pub struct Tag {
-    pub title: String,
-    pub slug: String,
-}
-
-#[derive(Clone, Debug, Eq, PartialEq, Deserialize)]
-#[serde(rename_all = "camelCase")]
-pub struct ShortAuthor {
-    pub slug: String,
-    pub first_name: Option<String>,
-    pub last_name: Option<String>,
 }
 
 #[derive(Clone, Debug, Eq, PartialEq, Deserialize)]
@@ -283,29 +334,29 @@ impl ExternalItemContainer for PostContainer {
 }
 
 //
-// CommentsContainer
+// Comments
 //
 //
 
 #[derive(Clone, PartialEq)]
-pub struct CommentsContainerPostIdParam {
-    pub post_id: u64,
+pub struct CommentsContainerPostSlugParam {
+    pub post_slug: String,
 }
 
 #[derive(Clone, Debug, Eq, PartialEq, Deserialize)]
 pub struct CommentsContainer {
     pub comments: Vec<Comment>,
     pub total: u64,
-    pub skip: u64,
+    pub offset: u64,
     pub limit: u64,
 }
 
 #[async_trait(?Send)]
-impl RequestableItem<ExternalListContainerParams<CommentsContainerPostIdParam>>
-    for CommentsContainer
+impl RequestableItem<ExternalListContainerParams<CommentsContainerPostSlugParam>>
+    for API<CommentsContainer>
 {
     async fn request(
-        params: ExternalListContainerParams<CommentsContainerPostIdParam>,
+        params: ExternalListContainerParams<CommentsContainerPostSlugParam>,
     ) -> Result<Request, Error> {
         let ExternalListContainerParams {
             params,
@@ -313,21 +364,9 @@ impl RequestableItem<ExternalListContainerParams<CommentsContainerPostIdParam>>
             skip,
         } = params;
         let url = format!(
-            "https://dummyjson.com/comments/post/{post_id}?limit={limit}&skip={skip}",
-            post_id = params.post_id,
+            "http://127.0.0.1:3000/api/comments/{post_slug}?limit={limit}&offset={skip}",
+            post_slug = params.post_slug,
         );
-        Ok(Request::get(url.as_str()))
-    }
-    async fn response(response: Response) -> Result<Self, Error> {
-        response.json().await
-    }
-}
-
-#[async_trait(?Send)]
-impl RequestableItem<ExternalListContainerParams<()>> for CommentsContainer {
-    async fn request(params: ExternalListContainerParams<()>) -> Result<Request, Error> {
-        let ExternalListContainerParams { limit, skip, .. } = params;
-        let url = format!("https://dummyjson.com/comments?limit={limit}&skip={skip}");
         Ok(Request::get(url.as_str()))
     }
     async fn response(response: Response) -> Result<Self, Error> {
@@ -344,7 +383,7 @@ impl ExternalListContainer for CommentsContainer {
         self.total
     }
     fn skip(&self) -> u64 {
-        self.skip
+        self.offset
     }
     fn limit(&self) -> u64 {
         self.limit
@@ -364,51 +403,13 @@ impl ExternalResultContainer for CommentsContainer {
 //
 //
 
-#[derive(Clone, PartialEq)]
-pub struct CommentsPostIdParam {
-    pub post_id: u64,
-}
-
 #[derive(Clone, Debug, Eq, PartialEq, Deserialize)]
-pub struct ShortUser {
-    pub id: u64,
-    pub username: String,
-}
-
-#[derive(Clone, Debug, Eq, PartialEq, Deserialize)]
+#[serde(rename_all = "camelCase")]
 pub struct Comment {
-    pub id: u64,
-    pub body: String,
-    #[serde(rename = "postId")]
-    pub post_id: u64,
-    #[serde(rename = "user")]
-    pub short_user: ShortUser,
-}
-
-#[async_trait(?Send)]
-impl RequestableItem<CommentsPostIdParam> for Comment {
-    async fn request(params: CommentsPostIdParam) -> Result<Request, Error> {
-        let url = format!("https://dummyjson.com/comments/{id}", id = params.post_id);
-        Ok(Request::get(url.as_str()))
-    }
-    async fn response(response: Response) -> Result<Self, Error> {
-        response.json().await
-    }
-}
-
-impl ExternalItemContainer for Comment {
-    type Item = Self;
-    fn item(self) -> Self::Item {
-        self
-    }
-}
-
-impl ExternalResultContainer for Comment {
-    type Inner = Comment;
-    type Error = std::convert::Infallible;
-    fn result(self) -> Result<Self::Inner, Self::Error> {
-        Ok(self)
-    }
+    pub post_id: i64,
+    pub created_at: i64,
+    pub content: String,
+    pub short_author: ShortAuthor,
 }
 
 //
