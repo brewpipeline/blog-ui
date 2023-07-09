@@ -33,12 +33,14 @@ pub fn post(props: &PostProps) -> Html {
                     }
                     html! { <PostCard { post } fetch_author=true link_to=false /> }
                 } }
+                error_component={ |_| html! { <Warning text="Ошибка загрузки публикации" /> } }
             />
             <List<content::CommentsContainer, content::CommentsContainerPostIdParam>
                 params={ content::CommentsContainerPostIdParam { post_id: post_id } }
                 items_per_page={ 100 }
                 route_to_page={ Route::Post { id: post_id } }
                 component={ |comment| html! { <CommentCard { comment } /> } }
+                error_component={ |_| html! { <Warning text="Ошибка загрузки комментариев" /> } }
             >
                 <Warning text="Нет комментариев" />
             </List<content::CommentsContainer, content::CommentsContainerPostIdParam>>

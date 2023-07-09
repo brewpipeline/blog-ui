@@ -17,6 +17,7 @@ pub fn authors() -> Html {
             params={ () }
             route_to_page={ Route::Authors }
             component={ |author| html! { <AuthorCard { author } link_to=true /> } }
+            error_component={ |_| html! { <Warning text="Ошибка загрузки авторов" /> } }
         >
             <Warning text="Нет авторов" />
         </List<API<AuthorsContainer>>>

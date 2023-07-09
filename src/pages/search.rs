@@ -34,6 +34,7 @@ pub fn search(props: &SearchProps) -> Html {
                                 params={ PostsContainerSearchParam { query: query.clone() } }
                                 route_to_page={ Route::PostsSearch { query: query.clone() } }
                                 component={ |post| html! { <PostCard { post } fetch_author=false link_to=true /> } }
+                                error_component={ |_| html! { <Warning text="Ошибка загрузки результатов поиска публикаций" /> } }
                             >
                                 <Warning text="Публикаций не найдено!" />
                             </List<PostsContainer, PostsContainerSearchParam>>
@@ -47,6 +48,7 @@ pub fn search(props: &SearchProps) -> Html {
                                 params={ () /* TODO */ }
                                 route_to_page={ Route::AuthorsSearch { query: query.clone() } }
                                 component={ |author| html! { <AuthorCard { author } link_to=true /> } }
+                                error_component={ |_| html! { <Warning text="Ошибка загрузки результатов поиска авторов" /> } }
                             >
                                 <Warning text="Авторов не найдено!" />
                             </List<API<AuthorsContainer>>>

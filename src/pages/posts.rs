@@ -17,6 +17,7 @@ pub fn posts() -> Html {
             params={ () }
             route_to_page={ Route::Posts }
             component={ |post| html! { <PostCard { post } fetch_author=false link_to=true /> } }
+            error_component={ |_| html! { <Warning text="Ошибка загрузки публикаций" /> } }
         >
             <Warning text="Нет публикаций" />
         </List<PostsContainer>>

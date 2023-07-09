@@ -67,6 +67,7 @@ pub fn post_card(props: &PostCardProps) -> Html {
                             <span class="placeholder col-6"></span>
                         }
                     </div>
+                    /* TODO
                     if fetch_author {
                         <div class="col-6 text-end placeholder-glow">
                             if let Some(post) = post.as_ref() {
@@ -84,6 +85,7 @@ pub fn post_card(props: &PostCardProps) -> Html {
                             }
                         </div>
                     }
+                    */
                 </div>
             </div>
         </div>

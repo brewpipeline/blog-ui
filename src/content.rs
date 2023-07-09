@@ -2,9 +2,7 @@ use gloo_net::http::{Request, Response};
 use gloo_net::Error;
 use serde::{Deserialize, Serialize};
 
-use crate::components::item::*;
-use crate::components::list::*;
-use crate::utils::get::*;
+use crate::utils::*;
 
 //
 // API
@@ -25,51 +23,18 @@ pub enum API<D> {
     },
 }
 
-impl<D> API<D> {
-    pub fn data(self) -> Option<D> {
+impl<D> ExternalResultContainer for API<D> {
+    type Inner = D;
+    type Error = String;
+    fn result(self) -> Result<Self::Inner, Self::Error> {
         match self {
             API::Success {
                 identifier: _,
                 description: _,
                 data,
-            } => Some(data),
-            API::Failure {
-                identifier: _,
-                reason: _,
-            } => None,
+            } => Ok(data),
+            API::Failure { identifier, reason } => Err(reason.unwrap_or(identifier)),
         }
-    }
-    pub fn ref_data(&self) -> Option<&D> {
-        match self {
-            API::Success {
-                identifier: _,
-                description: _,
-                data,
-            } => Some(data),
-            API::Failure {
-                identifier: _,
-                reason: _,
-            } => None,
-        }
-    }
-}
-
-impl<D> ExternalListContainer for API<D>
-where
-    D: ExternalListContainer,
-{
-    type Item = D::Item;
-    fn items(self) -> Vec<Self::Item> {
-        self.data().map(|d| d.items()).unwrap_or(vec![])
-    }
-    fn total(&self) -> u64 {
-        self.ref_data().map(|d| d.total()).unwrap_or_default()
-    }
-    fn skip(&self) -> u64 {
-        self.ref_data().map(|d| d.skip()).unwrap_or_default()
-    }
-    fn limit(&self) -> u64 {
-        self.ref_data().map(|d| d.limit()).unwrap_or_default()
     }
 }
 
@@ -158,7 +123,12 @@ impl RequestableItem<AuthorSlugParam> for API<AuthorContainer> {
     }
 }
 
-impl ExternalItem<AuthorSlugParam> for API<AuthorContainer> {}
+impl ExternalItemContainer for AuthorContainer {
+    type Item = Author;
+    fn item(self) -> Self::Item {
+        self.author
+    }
+}
 
 //
 // UsersContainer
@@ -231,6 +201,14 @@ impl ExternalListContainer for UsersContainer {
     }
 }
 
+impl ExternalResultContainer for UsersContainer {
+    type Inner = UsersContainer;
+    type Error = std::convert::Infallible;
+    fn result(self) -> Result<Self::Inner, Self::Error> {
+        Ok(self)
+    }
+}
+
 //
 // User
 //
@@ -269,7 +247,20 @@ impl RequestableItem<UserIdParam> for User {
     }
 }
 
-impl ExternalItem<UserIdParam> for User {}
+impl ExternalItemContainer for User {
+    type Item = Self;
+    fn item(self) -> Self::Item {
+        self
+    }
+}
+
+impl ExternalResultContainer for User {
+    type Inner = User;
+    type Error = std::convert::Infallible;
+    fn result(self) -> Result<Self::Inner, Self::Error> {
+        Ok(self)
+    }
+}
 
 impl User {
     fn select() -> String {
@@ -348,6 +339,14 @@ impl ExternalListContainer for PostsContainer {
     }
 }
 
+impl ExternalResultContainer for PostsContainer {
+    type Inner = PostsContainer;
+    type Error = std::convert::Infallible;
+    fn result(self) -> Result<Self::Inner, Self::Error> {
+        Ok(self)
+    }
+}
+
 //
 // Post
 //
@@ -395,7 +394,20 @@ impl RequestableItem<PostIdParam> for Post {
     }
 }
 
-impl ExternalItem<PostIdParam> for Post {}
+impl ExternalItemContainer for Post {
+    type Item = Self;
+    fn item(self) -> Self::Item {
+        self
+    }
+}
+
+impl ExternalResultContainer for Post {
+    type Inner = Post;
+    type Error = std::convert::Infallible;
+    fn result(self) -> Result<Self::Inner, Self::Error> {
+        Ok(self)
+    }
+}
 
 impl Post {
     fn select() -> String {
@@ -472,6 +484,14 @@ impl ExternalListContainer for CommentsContainer {
     }
 }
 
+impl ExternalResultContainer for CommentsContainer {
+    type Inner = CommentsContainer;
+    type Error = std::convert::Infallible;
+    fn result(self) -> Result<Self::Inner, Self::Error> {
+        Ok(self)
+    }
+}
+
 //
 // Comment
 //
@@ -509,7 +529,20 @@ impl RequestableItem<CommentsPostIdParam> for Comment {
     }
 }
 
-impl ExternalItem<CommentsPostIdParam> for Comment {}
+impl ExternalItemContainer for Comment {
+    type Item = Self;
+    fn item(self) -> Self::Item {
+        self
+    }
+}
+
+impl ExternalResultContainer for Comment {
+    type Inner = Comment;
+    type Error = std::convert::Infallible;
+    fn result(self) -> Result<Self::Inner, Self::Error> {
+        Ok(self)
+    }
+}
 
 //
 // Login
