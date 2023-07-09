@@ -9,16 +9,16 @@ use crate::utils::*;
 
 #[derive(Routable, PartialEq, Eq, Clone, Debug)]
 pub enum Route {
-    #[at("/posts/:id")]
-    Post { id: u64 },
+    #[at("/posts/:slug")]
+    Post { slug: String },
     #[at("/posts")]
     Posts,
     #[at("/posts/search")]
     PostsSearchRoot,
     #[at("/posts/search/:query")]
     PostsSearch { query: String },
-    #[at("/authors/:id")]
-    Author { id: u64 },
+    #[at("/authors/:slug")]
+    Author { slug: String },
     #[at("/authors")]
     Authors,
     #[at("/authors/search")]
@@ -35,7 +35,7 @@ pub enum Route {
 impl Route {
     pub fn switch(route: Route) -> Html {
         match route {
-            Route::Post { id: post_id } => html! { <Post { post_id } /> },
+            Route::Post { slug } => html! { <Post { slug } /> },
             Route::Home | Route::Posts => html! { <Posts />},
             Route::PostsSearchRoot => {
                 html! { <Search mode={ SearchMode::Posts { query: None } } />}
@@ -43,7 +43,7 @@ impl Route {
             Route::PostsSearch { query } => {
                 html! { <Search mode={ SearchMode::Posts { query: Some(query) } } />}
             }
-            Route::Author { id: user_id } => html! { <Author { user_id } /> },
+            Route::Author { slug } => html! { <Author { slug } /> },
             Route::Authors => html! { <Authors /> },
             Route::AuthorsSearchRoot => {
                 html! { <Search mode={ SearchMode::Authors { query: None } } />}
@@ -60,12 +60,12 @@ impl Route {
 fn app() -> Html {
     let logged_user = use_reducer(|| Default::default());
     html! {
-        <HashRouter> // TODO: `<BrowserRouter>`
+        <BrowserRouter>
             <ContextProvider<LoggedUserContext> context={logged_user}>
                 <Header />
                 <Body />
             </ContextProvider<LoggedUserContext>>
-        </HashRouter> // TODO: `</BrowserRouter>`
+        </BrowserRouter>
     }
 }
 

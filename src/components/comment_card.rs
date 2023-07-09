@@ -1,7 +1,7 @@
 use yew::prelude::*;
 use yew_router::prelude::*;
 
-use crate::content::Comment;
+use crate::content::*;
 
 use crate::Route;
 
@@ -40,13 +40,13 @@ pub fn comment_card(props: &CommentCardProps) -> Html {
         <div class="card mb-3">
             <div class="card-header d-flex">
                 <svg class="bd-placeholder-img rounded me-2" width="20" height="20" xmlns="http://www.w3.org/2000/svg" aria-hidden="true" preserveAspectRatio="xMidYMid slice" focusable="false"><rect width="100%" height="100%" fill="#007aff"></rect></svg>
-                <Link<Route> classes={classes!("text-decoration-none", "me-auto")} to={Route::Author { id: comment.short_user.id }}>
-                    <strong>{ &comment.short_user.username }</strong>
+                <Link<Route> classes={classes!("text-decoration-none", "me-auto")} to={Route::Author { slug: comment.short_author.slug.clone() }}>
+                    <strong>{ &comment.short_author.slug }</strong>
                 </Link<Route>>
                 // <small> { "11 mins ago" } </small>
             </div>
             <div class="card-body">
-                <p class="card-text">{ &comment.body }</p>
+                <p class="card-text">{ &comment.content }</p>
             </div>
         </div>
     }
