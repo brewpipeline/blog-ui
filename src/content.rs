@@ -39,6 +39,17 @@ impl<D> ExternalResultContainer for API<D> {
 }
 
 //
+// Token
+//
+//
+
+#[derive(Clone, PartialEq)]
+pub struct TokenParam<D> {
+    pub token: String,
+    pub data: D,
+}
+
+//
 // AuthorImageUrl
 //
 //
@@ -161,11 +172,6 @@ pub struct AuthorSlugParam {
     pub slug: String,
 }
 
-#[derive(Clone, PartialEq)]
-pub struct AuthorTokenParam {
-    pub token: String,
-}
-
 #[derive(Clone, Debug, Eq, PartialEq, Deserialize)]
 #[serde(rename_all = "camelCase")]
 pub struct Author {
@@ -204,9 +210,9 @@ impl RequestableItem<AuthorSlugParam> for API<AuthorContainer> {
 }
 
 #[async_trait(?Send)]
-impl RequestableItem<AuthorTokenParam> for API<AuthorContainer> {
-    async fn request(params: AuthorTokenParam) -> Result<Request, Error> {
-        let AuthorTokenParam { token } = params;
+impl RequestableItem<TokenParam<()>> for API<AuthorContainer> {
+    async fn request(params: TokenParam<()>) -> Result<Request, Error> {
+        let TokenParam { token, data: _ } = params;
         let url = format!("http://127.0.0.1:3000/api/author/me");
         Ok(Request::get(url.as_str()).header("Token", token.as_str()))
     }
@@ -219,6 +225,39 @@ impl ExternalItemContainer for AuthorContainer {
     type Item = Author;
     fn item(self) -> Self::Item {
         self.author
+    }
+}
+
+//
+// NewPost
+//
+//
+
+#[derive(Clone, Debug, Eq, PartialEq, Serialize)]
+#[serde(rename_all = "camelCase")]
+pub struct NewPost {
+    pub title: String,
+    pub slug: String, // KONCH
+    pub published: u64,
+    pub summary: String,
+    pub content: Option<String>,
+    pub tags: Vec<String>,
+}
+
+#[async_trait(?Send)]
+impl RequestableItem<TokenParam<NewPost>> for API<PostContainer> {
+    async fn request(params: TokenParam<NewPost>) -> Result<Request, Error> {
+        let TokenParam {
+            token,
+            data: new_post,
+        } = params;
+        Ok(Request::post("http://127.0.0.1:3000/api/post")
+            .header("Token", token.as_str())
+            .header("Content-Type", "application/json")
+            .body(serde_json::to_string(&new_post).map_err(|e| Error::SerdeError(e))?))
+    }
+    async fn response(response: Response) -> Result<Self, Error> {
+        response.json().await
     }
 }
 
