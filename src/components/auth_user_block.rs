@@ -21,7 +21,15 @@ pub fn auth_user_block() -> Html {
                             <img height="38" src={ author.as_ref().map(|a| a.image_url()).unwrap_or_default() } type="button" alt={ author.as_ref().map(|u| u.slug.clone()) } class="img-block item d-flex rounded" data-bs-toggle="dropdown" aria-expanded="false" />
                             if let Some(author) = author.as_ref() {
                                 <ul class="dropdown-menu text-small" >
-                                    <li><Link<Route> classes="dropdown-item" to={ Route::Author { slug: author.slug.clone() } }> { &author.slug } </Link<Route>></li>
+                                    <li>
+                                        <Link<Route, Author>
+                                            classes="dropdown-item"
+                                            to={ Route::Author { slug: author.slug.clone() } }
+                                            state={ Some(author.clone()) }
+                                        >
+                                            { &author.slug }
+                                        </Link<Route, Author>>
+                                    </li>
                                     // <li><a class="dropdown-item" href="#"> { "Настройки" } </a></li>
                                     <li><hr class="dropdown-divider" /></li>
                                     <li><button class="dropdown-item" type="button" data-bs-toggle="modal" data-bs-target="#logoutModal"> { "Выход" } </button></li>

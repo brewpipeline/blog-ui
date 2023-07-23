@@ -1,5 +1,6 @@
 use super::*;
 use yew::prelude::*;
+use yew_router::prelude::*;
 
 use crate::utils::*;
 
@@ -32,38 +33,45 @@ where
         error_component,
     } = props.clone();
 
-    let item_result = use_state_eq(|| None);
+    let location = use_location().unwrap();
+
+    let item_result = use_state_eq(|| {
+        location
+            .state::<<C::Inner as ExternalItemContainer>::Item>()
+            .map(|i| Ok((*i).clone()))
+    });
     {
         let item_result = item_result.clone();
-        use_effect_with_deps(
-            move |params| {
-                item_result.set(None);
-                let item_result = item_result.clone();
-                let params = params.clone();
-                wasm_bindgen_futures::spawn_local(async move {
-                    match C::get(params).await {
-                        Ok(fetched_item_result_container) => {
-                            item_result.set(Some(
-                                fetched_item_result_container
-                                    .result()
-                                    .map_err(|e| ExternalError::Content(e)),
-                            ));
-                        }
-                        Err(err) => {
-                            item_result.set(Some(Err(ExternalError::Net(err.to_string()))));
-                        }
+        use_effect_with(params, move |params| {
+            if (*item_result) != None {
+                return;
+            }
+            item_result.set(None);
+            let item_result = item_result.clone();
+            let params = params.clone();
+            wasm_bindgen_futures::spawn_local(async move {
+                match C::get(params).await {
+                    Ok(fetched_item_result_container) => {
+                        item_result.set(Some(
+                            fetched_item_result_container
+                                .result()
+                                .map(|i| i.item())
+                                .map_err(|e| ExternalError::Content(e)),
+                        ));
                     }
-                });
-            },
-            params,
-        );
+                    Err(err) => {
+                        item_result.set(Some(Err(ExternalError::Net(err.to_string()))));
+                    }
+                }
+            });
+        });
     }
 
     let Some(item_result) = (*item_result).clone() else {
         return component.emit(None)
     };
     match item_result {
-        Ok(item_container) => component.emit(Some(item_container.item())),
+        Ok(item) => component.emit(Some(item)),
         Err(err) => error_component.emit(err),
     }
 }

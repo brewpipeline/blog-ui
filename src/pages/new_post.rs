@@ -11,10 +11,7 @@ use crate::Route;
 #[derive(Clone, Debug, PartialEq, Eq)]
 enum NewPostState {
     None,
-    InProgress {
-        token: String,
-        new_post: content::NewPost,
-    },
+    InProgress(content::NewPost),
     Error(String),
     Created(content::Post),
 }
@@ -23,11 +20,7 @@ impl NewPostState {
     pub fn action_available(&self) -> bool {
         match self {
             NewPostState::None | NewPostState::Error(_) => true,
-            NewPostState::InProgress {
-                token: _,
-                new_post: _,
-            }
-            | NewPostState::Created(_) => false,
+            NewPostState::InProgress(_) | NewPostState::Created(_) => false,
         }
     }
 }
@@ -50,30 +43,29 @@ pub fn new_post() -> Html {
 
     {
         let navigator = navigator.clone();
+        let logged_user_context = logged_user_context.clone();
         let state = state.clone();
-        use_effect_with_deps(
-            move |state| {
-                let NewPostState::InProgress { token, new_post } = (**state).clone() else {
+        use_effect_with(state, move |state| match (**state).clone() {
+            NewPostState::None | NewPostState::Error(_) => {}
+            NewPostState::InProgress(new_post) => {
+                let LoggedUserState::Active { token } = logged_user_context.state.clone() else {
                     return
                 };
-                let navigator = navigator.clone();
                 let state = state.clone();
                 wasm_bindgen_futures::spawn_local(async move {
-                    match content::API::<content::PostContainer>::get(content::TokenParam {
+                    match content::API::<content::NewPostContainer>::get(content::TokenParam {
                         token,
                         data: new_post,
                     })
                     .await
                     {
-                        Ok(auth_result) => match auth_result {
+                        Ok(new_post_result) => match new_post_result {
                             content::API::Success {
                                 identifier: _,
                                 description: _,
-                                data: content::PostContainer { post },
+                                data: content::NewPostContainer { created_post: post },
                             } => {
-                                let post_slug = post.slug.clone();
-                                state.set(NewPostState::Created(post));
-                                navigator.push(&Route::Post { slug: post_slug })
+                                state.set(NewPostState::Created(post.clone()));
                             }
                             content::API::Failure { identifier, reason } => {
                                 state.set(NewPostState::Error(reason.unwrap_or(identifier)));
@@ -84,13 +76,17 @@ pub fn new_post() -> Html {
                         }
                     }
                 });
-            },
-            state,
-        )
+            }
+            NewPostState::Created(post) => navigator.push_with_state(
+                &Route::Post {
+                    slug: post.slug.clone(),
+                },
+                post,
+            ),
+        })
     }
 
     let onclick = {
-        let logged_user_context = logged_user_context.clone();
         let state = state.clone();
         let title_node_ref = title_node_ref.clone();
         let summary_node_ref = summary_node_ref.clone();
@@ -99,26 +95,28 @@ pub fn new_post() -> Html {
         Callback::from(move |e: MouseEvent| {
             e.prevent_default();
 
-            let LoggedUserState::Active { token } = logged_user_context.state.clone() else {
-                return
-            };
             let title = title_node_ref.cast::<HtmlInputElement>().unwrap().value();
             let summary = summary_node_ref.cast::<HtmlInputElement>().unwrap().value();
             let content = content_node_ref
                 .cast::<HtmlInputElement>()
-                .map(|v| v.value());
-            let tags = tags_node_ref.cast::<HtmlInputElement>().unwrap().value();
-            state.set(NewPostState::InProgress {
-                token,
-                new_post: content::NewPost {
-                    title: title.clone(),
-                    slug: title,
-                    published: 1,
-                    summary: summary,
-                    content: content,
-                    tags: tags.split(',').map(|t| t.trim().to_owned()).collect(),
-                },
-            })
+                .map(|v| v.value())
+                .filter(|s| !s.is_empty());
+            let tags = tags_node_ref
+                .cast::<HtmlInputElement>()
+                .unwrap()
+                .value()
+                .split(',')
+                .map(|t| t.trim().to_owned())
+                .filter(|s| !s.is_empty())
+                .collect();
+            state.set(NewPostState::InProgress(content::NewPost {
+                title: title.clone(),
+                slug: title, // KONCH
+                published: 1,
+                summary,
+                content,
+                tags,
+            }))
         })
     };
 
@@ -130,11 +128,18 @@ pub fn new_post() -> Html {
                         { "Новая публикация" }
                     </h5>
 
+                    if let NewPostState::Error(message) = (*state).clone() {
+                        <div class="alert alert-danger d-flex align-items-center" role="alert">
+                            { "Ошибка добавления публикации: " }
+                            { message }
+                        </div>
+                    }
+
                     <div class="mb-3">
                         <label for="validationTitle1" class="form-label"> { "Заголовок" } </label>
                         <input type="text" class="form-control" id="validationTitle1" placeholder="Что-то захватывающее внимание..." required=true ref={ title_node_ref } />
                         <div class="invalid-feedback">
-                            { "Заголовок это обязательное поле!" }
+                            { "Пожалуйста, введите заголовок публикации, это обязательное поле!" }
                         </div>
                     </div>
 
@@ -142,7 +147,7 @@ pub fn new_post() -> Html {
                         <label for="validationTextarea1" class="form-label"> { "Короткая версия" } </label>
                         <textarea class="form-control" id="validationTextarea1" placeholder="Что-то короткое, но важное!" required=true ref={ summary_node_ref }></textarea>
                         <div class="invalid-feedback">
-                            { "Пожалуйста введите короткую версию публикации, это обязательное поле!" }
+                            { "Пожалуйста, введите короткую версию публикации, это обязательное поле!" }
                         </div>
                     </div>
 
@@ -159,7 +164,7 @@ pub fn new_post() -> Html {
                     <div class="form-check mb-3">
                         <input type="checkbox" class="form-check-input" id="validationFormCheck1" required=true />
                         <label class="form-check-label" for="validationFormCheck1"> { "Все проверено?" } </label>
-                        <div class="invalid-feedback"> { "Проверьте или все заполнено и верно" } </div>
+                        <div class="invalid-feedback"> { "Убедитесь, все ли поля заполнены корректными значениями\\данными" } </div>
                     </div>
 
                     <div class="mb-3">

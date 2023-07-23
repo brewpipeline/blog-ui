@@ -58,7 +58,8 @@ where
     let list_result = use_state_eq(|| None);
     {
         let list_result = list_result.clone();
-        use_effect_with_deps(
+        use_effect_with(
+            (params, items_per_page, offset),
             move |(params, items_per_page, offset)| {
                 list_result.set(None);
                 let list_result = list_result.clone();
@@ -87,7 +88,6 @@ where
                 });
                 || ()
             },
-            (params, items_per_page, offset),
         );
     }
 
