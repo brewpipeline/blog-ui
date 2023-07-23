@@ -11,21 +11,21 @@ use crate::utils::*;
 pub enum Route {
     #[at("/new/post/")]
     NewPost,
-    #[at("/posts/:slug")]
-    Post { slug: String },
+    #[at("/post/:slug/:id")]
+    Post { slug: String, id: u64 },
     #[at("/posts")]
     Posts,
-    #[at("/posts/search")]
+    #[at("/search/posts")]
     PostsSearchRoot,
-    #[at("/posts/search/:query")]
+    #[at("/search/posts/:query")]
     PostsSearch { query: String },
-    #[at("/authors/:slug")]
+    #[at("/author/:slug")]
     Author { slug: String },
     #[at("/authors")]
     Authors,
-    #[at("/authors/search")]
+    #[at("/search/authors")]
     AuthorsSearchRoot,
-    #[at("/authors/search/:query")]
+    #[at("/search/authors/:query")]
     AuthorsSearch { query: String },
     #[at("/")]
     Home,
@@ -38,7 +38,7 @@ impl Route {
     pub fn switch(route: Route) -> Html {
         match route {
             Route::NewPost => html! { <NewPost /> },
-            Route::Post { slug } => html! { <Post { slug } /> },
+            Route::Post { slug, id } => html! { <Post { slug } { id } /> },
             Route::Home | Route::Posts => html! { <Posts />},
             Route::PostsSearchRoot => {
                 html! { <Search mode={ SearchMode::Posts { query: None } } />}

@@ -80,6 +80,7 @@ pub fn new_post() -> Html {
             NewPostState::Created(post) => navigator.push_with_state(
                 &Route::Post {
                     slug: post.slug.clone(),
+                    id: post.id,
                 },
                 post,
             ),
@@ -110,9 +111,8 @@ pub fn new_post() -> Html {
                 .filter(|s| !s.is_empty())
                 .collect();
             state.set(NewPostState::InProgress(content::NewPost {
-                title: title.clone(),
-                slug: title, // KONCH
-                published: 1,
+                title,
+                published: 0,
                 summary,
                 content,
                 tags,

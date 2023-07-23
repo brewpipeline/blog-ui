@@ -69,6 +69,7 @@ pub fn author_image_url(slug: &String) -> String {
 #[derive(Clone, Debug, Eq, PartialEq, Deserialize)]
 #[serde(rename_all = "camelCase")]
 pub struct Tag {
+    pub id: u64,
     pub title: String,
     pub slug: String,
 }
@@ -115,7 +116,7 @@ pub struct AuthorsContainer {
 impl RequestableItem<ExternalListContainerParams<()>> for API<AuthorsContainer> {
     async fn request(params: ExternalListContainerParams<()>) -> Result<Request, Error> {
         let ExternalListContainerParams { limit, skip, .. } = params;
-        let url = format!("http://127.0.0.1:3000/api/authors?limit={limit}&offset={skip}");
+        let url = format!("{url}/api/authors?limit={limit}&offset={skip}", url = crate::API_URL);
         Ok(Request::get(url.as_str()).build()?)
     }
     async fn response(response: Response) -> Result<Self, Error> {
@@ -133,11 +134,11 @@ impl RequestableItem<ExternalListContainerParams<AuthorsContainerSearchParam>>
         let ExternalListContainerParams {
             limit,
             skip,
-            params,
+            params: AuthorsContainerSearchParam { query },
         } = params;
         let url = format!(
-            "http://127.0.0.1:3000/api/search/authors/{query}?limit={limit}&offset={skip}",
-            query = params.query,
+            "{url}/api/search/authors/{query}?limit={limit}&offset={skip}",
+            url = crate::API_URL
         );
         Ok(Request::get(url.as_str()).build()?)
     }
@@ -201,7 +202,7 @@ pub struct AuthorContainer {
 impl RequestableItem<AuthorSlugParam> for API<AuthorContainer> {
     async fn request(params: AuthorSlugParam) -> Result<Request, Error> {
         let AuthorSlugParam { slug } = params;
-        let url = format!("http://127.0.0.1:3000/api/author/{slug}");
+        let url = format!("{url}/api/author/{slug}", url = crate::API_URL);
         Ok(Request::get(url.as_str()).build()?)
     }
     async fn response(response: Response) -> Result<Self, Error> {
@@ -213,7 +214,7 @@ impl RequestableItem<AuthorSlugParam> for API<AuthorContainer> {
 impl RequestableItem<TokenParam<()>> for API<AuthorContainer> {
     async fn request(params: TokenParam<()>) -> Result<Request, Error> {
         let TokenParam { token, data: _ } = params;
-        let url = format!("http://127.0.0.1:3000/api/author/me");
+        let url = format!("{url}/api/author/me", url = crate::API_URL);
         Ok(Request::get(url.as_str())
             .header("Token", token.as_str())
             .build()?)
@@ -239,8 +240,7 @@ impl ExternalItemContainer for AuthorContainer {
 #[serde(rename_all = "camelCase")]
 pub struct NewPost {
     pub title: String,
-    pub slug: String, // KONCH
-    pub published: u64,
+    pub published: u8,
     pub summary: String,
     pub content: Option<String>,
     pub tags: Vec<String>,
@@ -259,7 +259,8 @@ impl RequestableItem<TokenParam<NewPost>> for API<NewPostContainer> {
             token,
             data: new_post,
         } = params;
-        Ok(Request::post("http://127.0.0.1:3000/api/post")
+        let url = format!("{url}/api/post", url = crate::API_URL);
+        Ok(Request::post(url.as_str())
             .header("Token", token.as_str())
             .header("Content-Type", "application/json")
             .body(serde_json::to_string(&new_post).map_err(|e| Error::SerdeError(e))?)?)
@@ -298,7 +299,7 @@ pub struct PostsContainer {
 impl RequestableItem<ExternalListContainerParams<()>> for API<PostsContainer> {
     async fn request(params: ExternalListContainerParams<()>) -> Result<Request, Error> {
         let ExternalListContainerParams { limit, skip, .. } = params;
-        let url = format!("http://127.0.0.1:3000/api/posts?limit={limit}&offset={skip}");
+        let url = format!("{url}/api/posts?limit={limit}&offset={skip}", url = crate::API_URL);
         Ok(Request::get(url.as_str()).build()?)
     }
     async fn response(response: Response) -> Result<Self, Error> {
@@ -316,11 +317,11 @@ impl RequestableItem<ExternalListContainerParams<PostsContainerSearchParam>>
         let ExternalListContainerParams {
             limit,
             skip,
-            params,
+            params: PostsContainerSearchParam { query },
         } = params;
         let url = format!(
-            "http://127.0.0.1:3000/api/search/posts/{query}?limit={limit}&offset={skip}",
-            query = params.query,
+            "{url}/api/search/posts/{query}?limit={limit}&offset={skip}",
+            url = crate::API_URL,
         );
         Ok(Request::get(url.as_str()).build()?)
     }
@@ -359,13 +360,14 @@ impl ExternalResultContainer for PostsContainer {
 //
 
 #[derive(Clone, PartialEq)]
-pub struct PostSlugParam {
-    pub slug: String,
+pub struct PostIdParam {
+    pub id: u64,
 }
 
 #[derive(Clone, Debug, Eq, PartialEq, Deserialize)]
 #[serde(rename_all = "camelCase")]
 pub struct Post {
+    pub id: u64,
     pub title: String,
     pub slug: String,
     pub summary: String,
@@ -399,10 +401,10 @@ pub struct PostContainer {
 }
 
 #[async_trait(?Send)]
-impl RequestableItem<PostSlugParam> for API<PostContainer> {
-    async fn request(params: PostSlugParam) -> Result<Request, Error> {
-        let PostSlugParam { slug } = params;
-        let url = format!("http://127.0.0.1:3000/api/post/{slug}");
+impl RequestableItem<PostIdParam> for API<PostContainer> {
+    async fn request(params: PostIdParam) -> Result<Request, Error> {
+        let PostIdParam { id } = params;
+        let url = format!("{url}/api/post/{id}", url = crate::API_URL);
         Ok(Request::get(url.as_str()).build()?)
     }
     async fn response(response: Response) -> Result<Self, Error> {
@@ -423,8 +425,8 @@ impl ExternalItemContainer for PostContainer {
 //
 
 #[derive(Clone, PartialEq)]
-pub struct CommentsContainerPostSlugParam {
-    pub post_slug: String,
+pub struct CommentsContainerPostIdParam {
+    pub post_id: u64,
 }
 
 #[derive(Clone, Debug, Eq, PartialEq, Deserialize)]
@@ -436,20 +438,20 @@ pub struct CommentsContainer {
 }
 
 #[async_trait(?Send)]
-impl RequestableItem<ExternalListContainerParams<CommentsContainerPostSlugParam>>
+impl RequestableItem<ExternalListContainerParams<CommentsContainerPostIdParam>>
     for API<CommentsContainer>
 {
     async fn request(
-        params: ExternalListContainerParams<CommentsContainerPostSlugParam>,
+        params: ExternalListContainerParams<CommentsContainerPostIdParam>,
     ) -> Result<Request, Error> {
         let ExternalListContainerParams {
-            params,
+            params: CommentsContainerPostIdParam { post_id },
             limit,
             skip,
         } = params;
         let url = format!(
-            "http://127.0.0.1:3000/api/comments/{post_slug}?limit={limit}&offset={skip}",
-            post_slug = params.post_slug,
+            "{url}/api/comments/{post_id}?limit={limit}&offset={skip}",
+            url = crate::API_URL,
         );
         Ok(Request::get(url.as_str()).build()?)
     }
@@ -515,7 +517,8 @@ pub struct TokenContainer {
 #[async_trait(?Send)]
 impl RequestableItem<AuthParams> for API<TokenContainer> {
     async fn request(params: AuthParams) -> Result<Request, Error> {
-        Ok(Request::post("http://127.0.0.1:3000/api/login")
+        let url = format!("{url}/api/login", url = crate::API_URL);
+        Ok(Request::post(url.as_str())
             .header("Content-Type", "application/json")
             .body(serde_json::to_string(&params).map_err(|e| Error::SerdeError(e))?)?)
     }
