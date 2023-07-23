@@ -116,7 +116,10 @@ pub struct AuthorsContainer {
 impl RequestableItem<ExternalListContainerParams<()>> for API<AuthorsContainer> {
     async fn request(params: ExternalListContainerParams<()>) -> Result<Request, Error> {
         let ExternalListContainerParams { limit, skip, .. } = params;
-        let url = format!("{url}/api/authors?limit={limit}&offset={skip}", url = crate::API_URL);
+        let url = format!(
+            "{url}/api/authors?limit={limit}&offset={skip}",
+            url = crate::API_URL
+        );
         Ok(Request::get(url.as_str()).build()?)
     }
     async fn response(response: Response) -> Result<Self, Error> {
@@ -299,7 +302,10 @@ pub struct PostsContainer {
 impl RequestableItem<ExternalListContainerParams<()>> for API<PostsContainer> {
     async fn request(params: ExternalListContainerParams<()>) -> Result<Request, Error> {
         let ExternalListContainerParams { limit, skip, .. } = params;
-        let url = format!("{url}/api/posts?limit={limit}&offset={skip}", url = crate::API_URL);
+        let url = format!(
+            "{url}/api/posts?limit={limit}&offset={skip}",
+            url = crate::API_URL
+        );
         Ok(Request::get(url.as_str()).build()?)
     }
     async fn response(response: Response) -> Result<Self, Error> {
