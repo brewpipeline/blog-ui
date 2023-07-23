@@ -123,7 +123,7 @@ pub fn new_post() -> Html {
     html! {
         <>
             if let LoggedUserState::Active { token: _ } = logged_user_context.state.clone() {
-                <form class="was-validated">
+                <form /*class="was-validated"*/>
                     <h5 class="mb-3">
                         { "Новая публикация" }
                     </h5>
@@ -134,6 +134,13 @@ pub fn new_post() -> Html {
                             { message }
                         </div>
                     }
+
+                    <div class="mb-4 border rounded-3 d-flex align-items-center justify-content-center p-3 py-6" style="font-size: 10em" role="img">
+                        <svg style="width: 1em; height: 1em;" xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-file-post" viewBox="0 0 16 16">
+                            <path d="M4 3.5a.5.5 0 0 1 .5-.5h5a.5.5 0 0 1 0 1h-5a.5.5 0 0 1-.5-.5zm0 2a.5.5 0 0 1 .5-.5h7a.5.5 0 0 1 .5.5v8a.5.5 0 0 1-.5.5h-7a.5.5 0 0 1-.5-.5v-8z"></path>
+                            <path d="M2 2a2 2 0 0 1 2-2h8a2 2 0 0 1 2 2v12a2 2 0 0 1-2 2H4a2 2 0 0 1-2-2V2zm10-1H4a1 1 0 0 0-1 1v12a1 1 0 0 0 1 1h8a1 1 0 0 0 1-1V2a1 1 0 0 0-1-1z"></path>
+                        </svg>
+                    </div>
 
                     <div class="mb-3">
                         <label for="validationTitle1" class="form-label"> { "Заголовок" } </label>
@@ -161,11 +168,13 @@ pub fn new_post() -> Html {
                         <input type="text" class="form-control" id="validationTitle2" placeholder="Что-то напоминающее о..." ref={ tags_node_ref } />
                     </div>
 
+                    /*
                     <div class="form-check mb-3">
                         <input type="checkbox" class="form-check-input" id="validationFormCheck1" required=true />
                         <label class="form-check-label" for="validationFormCheck1"> { "Все проверено?" } </label>
                         <div class="invalid-feedback"> { "Убедитесь, все ли поля заполнены корректными значениями\\данными" } </div>
                     </div>
+                    */
 
                     <div class="mb-3">
                         <button class="btn btn-light" type="submit" { onclick } disabled={ !state.action_available() }> { "Отправить" } </button>

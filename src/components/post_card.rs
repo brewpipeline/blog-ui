@@ -22,7 +22,7 @@ pub fn post_card(props: &PostCardProps) -> Html {
 
     let main_content = html! {
         <>
-            <div style={ format!("height:180px;width:100%;--image-url:url({});", post.as_ref().map(|p| p.image_url()).unwrap_or_default()) } class="img-block bd-placeholder-img card-img-top" role="img" />
+            <div style={ format!("height:194px;width:100%;--image-url:url({});", post.as_ref().map(|p| p.image_url()).unwrap_or_default()) } class="img-block bd-placeholder-img card-img-top" role="img" />
             <div class="card-body">
                 <h5 class="card-title placeholder-glow">
                     if let Some(title) = post.as_ref().map(|p| p.title.clone()) {
