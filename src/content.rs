@@ -39,6 +39,17 @@ impl<D> ExternalResultContainer for API<D> {
 }
 
 //
+// Token
+//
+//
+
+#[derive(Clone, PartialEq)]
+pub struct TokenParam<D> {
+    pub token: String,
+    pub data: D,
+}
+
+//
 // AuthorImageUrl
 //
 //
@@ -105,7 +116,7 @@ impl RequestableItem<ExternalListContainerParams<()>> for API<AuthorsContainer> 
     async fn request(params: ExternalListContainerParams<()>) -> Result<Request, Error> {
         let ExternalListContainerParams { limit, skip, .. } = params;
         let url = format!("http://127.0.0.1:3000/api/authors?limit={limit}&offset={skip}");
-        Ok(Request::get(url.as_str()))
+        Ok(Request::get(url.as_str()).build()?)
     }
     async fn response(response: Response) -> Result<Self, Error> {
         response.json().await
@@ -128,7 +139,7 @@ impl RequestableItem<ExternalListContainerParams<AuthorsContainerSearchParam>>
             "http://127.0.0.1:3000/api/search/authors/{query}?limit={limit}&offset={skip}",
             query = params.query,
         );
-        Ok(Request::get(url.as_str()))
+        Ok(Request::get(url.as_str()).build()?)
     }
     async fn response(response: Response) -> Result<Self, Error> {
         response.json().await
@@ -161,11 +172,6 @@ pub struct AuthorSlugParam {
     pub slug: String,
 }
 
-#[derive(Clone, PartialEq)]
-pub struct AuthorTokenParam {
-    pub token: String,
-}
-
 #[derive(Clone, Debug, Eq, PartialEq, Deserialize)]
 #[serde(rename_all = "camelCase")]
 pub struct Author {
@@ -196,7 +202,7 @@ impl RequestableItem<AuthorSlugParam> for API<AuthorContainer> {
     async fn request(params: AuthorSlugParam) -> Result<Request, Error> {
         let AuthorSlugParam { slug } = params;
         let url = format!("http://127.0.0.1:3000/api/author/{slug}");
-        Ok(Request::get(url.as_str()))
+        Ok(Request::get(url.as_str()).build()?)
     }
     async fn response(response: Response) -> Result<Self, Error> {
         response.json().await
@@ -204,11 +210,13 @@ impl RequestableItem<AuthorSlugParam> for API<AuthorContainer> {
 }
 
 #[async_trait(?Send)]
-impl RequestableItem<AuthorTokenParam> for API<AuthorContainer> {
-    async fn request(params: AuthorTokenParam) -> Result<Request, Error> {
-        let AuthorTokenParam { token } = params;
+impl RequestableItem<TokenParam<()>> for API<AuthorContainer> {
+    async fn request(params: TokenParam<()>) -> Result<Request, Error> {
+        let TokenParam { token, data: _ } = params;
         let url = format!("http://127.0.0.1:3000/api/author/me");
-        Ok(Request::get(url.as_str()).header("Token", token.as_str()))
+        Ok(Request::get(url.as_str())
+            .header("Token", token.as_str())
+            .build()?)
     }
     async fn response(response: Response) -> Result<Self, Error> {
         response.json().await
@@ -219,6 +227,52 @@ impl ExternalItemContainer for AuthorContainer {
     type Item = Author;
     fn item(self) -> Self::Item {
         self.author
+    }
+}
+
+//
+// NewPost
+//
+//
+
+#[derive(Clone, Debug, Eq, PartialEq, Serialize)]
+#[serde(rename_all = "camelCase")]
+pub struct NewPost {
+    pub title: String,
+    pub slug: String, // KONCH
+    pub published: u64,
+    pub summary: String,
+    pub content: Option<String>,
+    pub tags: Vec<String>,
+}
+
+#[derive(Clone, Debug, Eq, PartialEq, Deserialize)]
+#[serde(rename_all = "camelCase")]
+pub struct NewPostContainer {
+    pub created_post: Post,
+}
+
+#[async_trait(?Send)]
+impl RequestableItem<TokenParam<NewPost>> for API<NewPostContainer> {
+    async fn request(params: TokenParam<NewPost>) -> Result<Request, Error> {
+        let TokenParam {
+            token,
+            data: new_post,
+        } = params;
+        Ok(Request::post("http://127.0.0.1:3000/api/post")
+            .header("Token", token.as_str())
+            .header("Content-Type", "application/json")
+            .body(serde_json::to_string(&new_post).map_err(|e| Error::SerdeError(e))?)?)
+    }
+    async fn response(response: Response) -> Result<Self, Error> {
+        response.json().await
+    }
+}
+
+impl ExternalItemContainer for NewPostContainer {
+    type Item = Post;
+    fn item(self) -> Self::Item {
+        self.created_post
     }
 }
 
@@ -245,7 +299,7 @@ impl RequestableItem<ExternalListContainerParams<()>> for API<PostsContainer> {
     async fn request(params: ExternalListContainerParams<()>) -> Result<Request, Error> {
         let ExternalListContainerParams { limit, skip, .. } = params;
         let url = format!("http://127.0.0.1:3000/api/posts?limit={limit}&offset={skip}");
-        Ok(Request::get(url.as_str()))
+        Ok(Request::get(url.as_str()).build()?)
     }
     async fn response(response: Response) -> Result<Self, Error> {
         response.json().await
@@ -268,7 +322,7 @@ impl RequestableItem<ExternalListContainerParams<PostsContainerSearchParam>>
             "http://127.0.0.1:3000/api/search/posts/{query}?limit={limit}&offset={skip}",
             query = params.query,
         );
-        Ok(Request::get(url.as_str()))
+        Ok(Request::get(url.as_str()).build()?)
     }
     async fn response(response: Response) -> Result<Self, Error> {
         response.json().await
@@ -349,7 +403,7 @@ impl RequestableItem<PostSlugParam> for API<PostContainer> {
     async fn request(params: PostSlugParam) -> Result<Request, Error> {
         let PostSlugParam { slug } = params;
         let url = format!("http://127.0.0.1:3000/api/post/{slug}");
-        Ok(Request::get(url.as_str()))
+        Ok(Request::get(url.as_str()).build()?)
     }
     async fn response(response: Response) -> Result<Self, Error> {
         response.json().await
@@ -397,7 +451,7 @@ impl RequestableItem<ExternalListContainerParams<CommentsContainerPostSlugParam>
             "http://127.0.0.1:3000/api/comments/{post_slug}?limit={limit}&offset={skip}",
             post_slug = params.post_slug,
         );
-        Ok(Request::get(url.as_str()))
+        Ok(Request::get(url.as_str()).build()?)
     }
     async fn response(response: Response) -> Result<Self, Error> {
         response.json().await
@@ -463,7 +517,7 @@ impl RequestableItem<AuthParams> for API<TokenContainer> {
     async fn request(params: AuthParams) -> Result<Request, Error> {
         Ok(Request::post("http://127.0.0.1:3000/api/login")
             .header("Content-Type", "application/json")
-            .body(serde_json::to_string(&params).map_err(|e| Error::SerdeError(e))?))
+            .body(serde_json::to_string(&params).map_err(|e| Error::SerdeError(e))?)?)
     }
     async fn response(response: Response) -> Result<Self, Error> {
         response.json().await

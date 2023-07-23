@@ -43,13 +43,13 @@ fn render_link(to_page: u64, props: &PaginationProps) -> Html {
 
     html! {
         <li class={classes!("page-item", "text-center", is_current_class)}>
-            <Link<Route, PageQuery>
+            <Link<Route, (), PageQuery>
                 classes={classes!("page-link")}
                 to={route_to_page}
                 query={Some(PageQuery{page: to_page})}
             >
                 { to_page }
-            </Link<Route, PageQuery>>
+            </Link<Route, (), PageQuery>>
         </li>
     }
 }
@@ -109,13 +109,13 @@ fn view_relnav_previous_button(props: &PaginationProps) -> Html {
 
     html! {
         <li class={classes!("page-item", "text-center", is_current_class)}>
-            <Link<Route, PageQuery>
+            <Link<Route, (), PageQuery>
                 classes={classes!("page-link")}
                 query={Some(PageQuery{page: page - 1})}
                 to={to.clone()}
             >
                 { "<" }
-            </Link<Route, PageQuery>>
+            </Link<Route, (), PageQuery>>
         </li>
     }
 }
@@ -131,13 +131,13 @@ fn view_relnav_next_button(props: &PaginationProps) -> Html {
 
     html! {
         <li class={classes!("page-item", "text-center", is_current_class)}>
-            <Link<Route, PageQuery>
+            <Link<Route, (), PageQuery>
                 classes={classes!("page-link")}
                 query={Some(PageQuery{page: page + 1})}
                 {to}
             >
                 { ">" }
-            </Link<Route, PageQuery>>
+            </Link<Route, (), PageQuery>>
         </li>
     }
 }

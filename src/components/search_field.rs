@@ -19,6 +19,7 @@ impl SearchMode {
             Route::Home
             | Route::NotFound
             | Route::PostsSearchRoot
+            | Route::NewPost
             | Route::Post { slug: _ }
             | Route::Posts => Self::Posts { query: None },
             Route::AuthorsSearchRoot | Route::Author { slug: _ } | Route::Authors => {
@@ -74,13 +75,10 @@ pub fn search_field() -> Html {
     {
         let mode = mode.clone();
         let query = query.clone();
-        use_effect_with_deps(
-            move |mode| {
-                let current_query = mode.decoded_query().unwrap_or("".to_string());
-                query.set(current_query);
-            },
-            mode,
-        )
+        use_effect_with(mode, move |mode| {
+            let current_query = mode.decoded_query().unwrap_or("".to_string());
+            query.set(current_query);
+        })
     }
 
     let debounce = {
