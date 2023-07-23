@@ -35,6 +35,7 @@ where
 
     let location = use_location().unwrap();
 
+    // TODO: check item id
     let item_result = use_state_eq(|| {
         location
             .state::<<C::Inner as ExternalItemContainer>::Item>()
