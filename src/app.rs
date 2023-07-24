@@ -9,23 +9,23 @@ use crate::utils::*;
 
 #[derive(Routable, PartialEq, Eq, Clone, Debug)]
 pub enum Route {
-    #[at("/new/post/")]
+    #[at("/post/new")]
     NewPost,
     #[at("/post/:slug/:id")]
     Post { slug: String, id: u64 },
     #[at("/posts")]
     Posts,
-    #[at("/search/posts")]
+    #[at("/posts/search")]
     PostsSearchRoot,
-    #[at("/search/posts/:query")]
+    #[at("/posts/search/:query")]
     PostsSearch { query: String },
     #[at("/author/:slug")]
     Author { slug: String },
     #[at("/authors")]
     Authors,
-    #[at("/search/authors")]
+    #[at("/authors/search")]
     AuthorsSearchRoot,
-    #[at("/search/authors/:query")]
+    #[at("/authors/search/:query")]
     AuthorsSearch { query: String },
     #[at("/")]
     Home,

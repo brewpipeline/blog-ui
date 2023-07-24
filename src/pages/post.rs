@@ -26,13 +26,27 @@ pub fn post(props: &PostProps) -> Html {
             params={ content::PostIdParam { id } }
             component={ move |post: Option<content::Post>| {
                 if let Some(post) = &post {
-                    if post.slug != slug {
-                        return html! { <Warning text="Ссылка на данную публикацию повреждена" /> }
+                    if post.id != id || post.slug != slug {
+                        return html! { <Warning text="Ссылка на публикацию повреждена" /> }
                     }
                     html_document::reset_title_and_meta();
-                    html_document::set_prefix_default_title(format!("{} - Публикация", post.title.clone()));
-                    html_document::set_meta(html_document::MetaTag::Description, post.summary.clone());
-                    html_document::set_meta(html_document::MetaTag::Keywords, post.tags.clone().into_iter().map(|v| v.title).collect::<Vec<String>>().join(", "));
+                    html_document::set_prefix_default_title(
+                        format!("{} - Публикация", post.title.clone())
+                    );
+                    html_document::set_meta(
+                        html_document::MetaTag::Description, 
+                        post.summary.clone()
+                    );
+                    html_document::set_meta(
+                        html_document::MetaTag::Keywords, 
+                        post
+                            .tags
+                            .clone()
+                            .into_iter()
+                            .map(|v| v.title)
+                            .collect::<Vec<String>>()
+                            .join(", ")
+                    );
                 }
                 html! {
                     <>
