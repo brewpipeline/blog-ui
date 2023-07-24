@@ -46,12 +46,12 @@ where
                 .map(|i| (*i).clone())
                 .or_else(|| {
                     location
-                            .state::<std::collections::HashMap<
-                                P::Id,
-                                <C::Inner as ExternalItemContainer>::Item,
-                            >>()
-                            .map(|i| (*i).get(params.id()).cloned())
-                            .flatten()
+                        .state::<std::collections::HashMap<
+                            P::Id,
+                            <C::Inner as ExternalItemContainer>::Item,
+                        >>()
+                        .map(|i| (*i).get(params.id()).cloned())
+                        .flatten()
                 })
                 .filter(|i| i.id() == params.id())
             {
