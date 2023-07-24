@@ -159,12 +159,12 @@ pub fn new_post() -> Html {
                     </div>
 
                     <div class="mb-3">
-                        <label for="validationTextarea2" class="form-label"> { "Полная версия" } </label>
+                        <label for="validationTextarea2" class="form-label"> { "Полная версия (Опциональное)" } </label>
                         <textarea class="form-control" id="validationTextarea2" placeholder="Что-то динное и скучн... веселое!" ref={ content_node_ref } ></textarea>
                     </div>
 
                     <div class="mb-3">
-                        <label for="validationTitle2" class="form-label"> { "Теги (через `,`)" } </label>
+                        <label for="validationTitle2" class="form-label"> { "Теги (через `,`) (Опциональное)" } </label>
                         <input type="text" class="form-control" id="validationTitle2" placeholder="Что-то напоминающее о..." ref={ tags_node_ref } />
                     </div>
 
@@ -180,6 +180,11 @@ pub fn new_post() -> Html {
                         <button class="btn btn-light" type="submit" { onclick } disabled={ !state.action_available() }> { "Отправить" } </button>
                     </div>
                 </form>
+                <script> { "
+                    setTimeout(function() {
+                        var editor = new FroalaEditor('#validationTextarea2');
+                    }, 0)
+                " } </script>
             } else {
                 <Warning text="Создавать публикации можно только авторизованным авторам" />
             }
