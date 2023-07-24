@@ -10,8 +10,8 @@ where
     C: ExternalResultContainer + RequestableItem<P> + Clone + PartialEq + 'static,
     C::Inner: ExternalItemContainer + Clone + PartialEq + 'static,
     C::Error: Clone + PartialEq + 'static,
-    <C::Inner as ExternalItemContainer>::Item: Clone + PartialEq + 'static,
-    P: Clone + PartialEq + 'static,
+    <C::Inner as ExternalItemContainer>::Item: Identifiable + Clone + PartialEq + 'static,
+    P: Identifiable + Clone + PartialEq + 'static,
 {
     pub params: P,
     pub component: Callback<Option<<C::Inner as ExternalItemContainer>::Item>, Html>,
@@ -24,8 +24,9 @@ where
     C: ExternalResultContainer + RequestableItem<P> + Clone + PartialEq + 'static,
     C::Inner: ExternalItemContainer + Clone + PartialEq + 'static,
     C::Error: Clone + PartialEq + 'static,
-    <C::Inner as ExternalItemContainer>::Item: Clone + PartialEq + 'static,
-    P: Clone + PartialEq + 'static,
+    <C::Inner as ExternalItemContainer>::Item:
+        Identifiable<Id = P::Id> + Clone + PartialEq + 'static,
+    P: Identifiable + Clone + PartialEq + 'static,
 {
     let ItemProps {
         params,
@@ -35,26 +36,38 @@ where
 
     let location = use_location().unwrap();
 
-    // TODO: check item id
-    let item_result = use_state_eq(|| {
-        location
-            .state::<<C::Inner as ExternalItemContainer>::Item>()
-            .map(|i| Ok((*i).clone()))
-    });
+    let item_result = use_state_eq(|| None);
     {
+        let location = location.clone();
         let item_result = item_result.clone();
         use_effect_with(params, move |params| {
-            if (*item_result) != None {
+            if let Some(cached_item) = location
+                .state::<<C::Inner as ExternalItemContainer>::Item>()
+                .map(|i| (*i).clone())
+                .or_else(|| {
+                    location
+                            .state::<std::collections::HashMap<
+                                P::Id,
+                                <C::Inner as ExternalItemContainer>::Item,
+                            >>()
+                            .map(|i| (*i).get(params.id()).cloned())
+                            .flatten()
+                })
+                .filter(|i| i.id() == params.id())
+            {
+                item_result.set(Some(Ok(cached_item)));
                 return;
+            } else {
+                item_result.set(None);
             }
-            item_result.set(None);
-            let item_result = item_result.clone();
+
             let params = params.clone();
+            let item_result = item_result.clone();
             wasm_bindgen_futures::spawn_local(async move {
                 match C::get(params).await {
-                    Ok(fetched_item_result_container) => {
+                    Ok(item_result_container) => {
                         item_result.set(Some(
-                            fetched_item_result_container
+                            item_result_container
                                 .result()
                                 .map(|i| i.item())
                                 .map_err(|e| ExternalError::Content(e)),

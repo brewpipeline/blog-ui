@@ -49,6 +49,16 @@ pub struct TokenParam<D> {
     pub data: D,
 }
 
+impl<T: Identifiable> Identifiable for TokenParam<T> {
+    type Id = T::Id;
+    fn id(&self) -> &Self::Id {
+        if core::any::type_name::<T>() == core::any::type_name::<TokenParam<T>>() {
+            panic!("recursion")
+        }
+        self.id()
+    }
+}
+
 //
 // AuthorImageUrl
 //
@@ -176,6 +186,23 @@ pub struct AuthorSlugParam {
     pub slug: String,
 }
 
+impl Identifiable for AuthorSlugParam {
+    type Id = String;
+    fn id(&self) -> &Self::Id {
+        &self.slug
+    }
+}
+
+#[derive(Clone, PartialEq)]
+pub struct AuthorMeParam;
+
+impl Identifiable for AuthorMeParam {
+    type Id = String;
+    fn id(&self) -> &Self::Id {
+        unreachable!()
+    }
+}
+
 #[derive(Clone, Debug, Eq, PartialEq, Deserialize)]
 #[serde(rename_all = "camelCase")]
 pub struct Author {
@@ -192,6 +219,13 @@ pub struct Author {
 impl Author {
     pub fn image_url(&self) -> String {
         author_image_url(&self.slug)
+    }
+}
+
+impl Identifiable for Author {
+    type Id = String;
+    fn id(&self) -> &Self::Id {
+        &self.slug
     }
 }
 
@@ -214,8 +248,8 @@ impl RequestableItem<AuthorSlugParam> for API<AuthorContainer> {
 }
 
 #[async_trait(?Send)]
-impl RequestableItem<TokenParam<()>> for API<AuthorContainer> {
-    async fn request(params: TokenParam<()>) -> Result<Request, Error> {
+impl RequestableItem<TokenParam<AuthorMeParam>> for API<AuthorContainer> {
+    async fn request(params: TokenParam<AuthorMeParam>) -> Result<Request, Error> {
         let TokenParam { token, data: _ } = params;
         let url = format!("{url}/api/author/me", url = crate::API_URL);
         Ok(Request::get(url.as_str())
@@ -370,6 +404,13 @@ pub struct PostIdParam {
     pub id: u64,
 }
 
+impl Identifiable for PostIdParam {
+    type Id = u64;
+    fn id(&self) -> &Self::Id {
+        &self.id
+    }
+}
+
 #[derive(Clone, Debug, Eq, PartialEq, Deserialize)]
 #[serde(rename_all = "camelCase")]
 pub struct Post {
@@ -397,6 +438,13 @@ impl Post {
                 .join(","),
             self.slug,
         )
+    }
+}
+
+impl Identifiable for Post {
+    type Id = u64;
+    fn id(&self) -> &Self::Id {
+        &self.id
     }
 }
 
