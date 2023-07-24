@@ -34,11 +34,11 @@ pub fn post(props: &PostProps) -> Html {
                         format!("{} - Публикация", post.title.clone())
                     );
                     html_document::set_meta(
-                        html_document::MetaTag::Description, 
+                        html_document::MetaTag::Description,
                         post.summary.clone()
                     );
                     html_document::set_meta(
-                        html_document::MetaTag::Keywords, 
+                        html_document::MetaTag::Keywords,
                         post
                             .tags
                             .clone()

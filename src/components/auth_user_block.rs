@@ -13,8 +13,8 @@ pub fn auth_user_block() -> Html {
 
     html! {
         if let LoggedUserState::Active { token } = logged_user_context.state.clone() {
-            <Item<API<AuthorContainer>, TokenParam<()>>
-                params={ TokenParam { token, data: () } }
+            <Item<API<AuthorContainer>, TokenParam<AuthorMeParam>>
+                params={ TokenParam { token, data: AuthorMeParam } }
                 component={ |author: Option<Author>| {
                     html! {
                         <div class="d-flex dropdown dropdown-menu-end">

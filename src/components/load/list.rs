@@ -74,9 +74,9 @@ where
                     })
                     .await
                     {
-                        Ok(fetched_list_result_container) => {
+                        Ok(list_result_container) => {
                             list_result.set(Some(
-                                fetched_list_result_container
+                                list_result_container
                                     .result()
                                     .map_err(|e| ExternalError::Content(e)),
                             ));
