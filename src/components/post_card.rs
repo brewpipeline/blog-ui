@@ -69,7 +69,7 @@ pub fn post_card(props: &PostCardProps) -> Html {
             if let (Some(post), true) = (post.as_ref(), link_to) {
                 <Link<Route, Post>
                     classes="text-decoration-none"
-                    to={ Route::Post { slug: post.slug.clone() } }
+                    to={ Route::Post { slug: post.slug.clone(), id: post.id } }
                     state={ Some(post.clone()) }
                 >
                     { main_content }

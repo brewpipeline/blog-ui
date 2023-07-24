@@ -9,17 +9,17 @@ use crate::utils::*;
 
 #[derive(Routable, PartialEq, Eq, Clone, Debug)]
 pub enum Route {
-    #[at("/new/post/")]
+    #[at("/post/new")]
     NewPost,
-    #[at("/posts/:slug")]
-    Post { slug: String },
+    #[at("/post/:slug/:id")]
+    Post { slug: String, id: u64 },
     #[at("/posts")]
     Posts,
     #[at("/posts/search")]
     PostsSearchRoot,
     #[at("/posts/search/:query")]
     PostsSearch { query: String },
-    #[at("/authors/:slug")]
+    #[at("/author/:slug")]
     Author { slug: String },
     #[at("/authors")]
     Authors,
@@ -38,7 +38,7 @@ impl Route {
     pub fn switch(route: Route) -> Html {
         match route {
             Route::NewPost => html! { <NewPost /> },
-            Route::Post { slug } => html! { <Post { slug } /> },
+            Route::Post { slug, id } => html! { <Post { slug } { id } /> },
             Route::Home | Route::Posts => html! { <Posts />},
             Route::PostsSearchRoot => {
                 html! { <Search mode={ SearchMode::Posts { query: None } } />}

@@ -2,10 +2,6 @@ use gloo::utils::document;
 use wasm_bindgen::JsCast;
 use web_sys::{Element, HtmlDocument};
 
-const TITLE: &'static str = "BLOG";
-const DESCRIPTION: &'static str = "BLOG DESCRIPTION";
-const KEYWORDS: &'static str = "BLOG, KEYWORDS";
-
 pub fn html_document() -> HtmlDocument {
     document().unchecked_into::<HtmlDocument>()
 }
@@ -44,11 +40,11 @@ pub fn set_title(value: String) {
 }
 
 pub fn set_prefix_default_title(value: String) {
-    set_title(format!("{} - {}", value, TITLE))
+    set_title(format!("{} - {}", value, crate::TITLE))
 }
 
 pub fn reset_title_and_meta() {
-    set_title(TITLE.to_string());
-    set_meta(MetaTag::Description, DESCRIPTION.to_string());
-    set_meta(MetaTag::Keywords, KEYWORDS.to_string());
+    set_title(crate::TITLE.to_string());
+    set_meta(MetaTag::Description, crate::DESCRIPTION.to_string());
+    set_meta(MetaTag::Keywords, crate::KEYWORDS.to_string());
 }
