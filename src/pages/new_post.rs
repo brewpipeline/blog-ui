@@ -2,6 +2,7 @@ use web_sys::HtmlInputElement;
 use yew::prelude::*;
 use yew_router::prelude::*;
 
+use crate::components::svg_image::*;
 use crate::components::warning::*;
 use crate::content;
 use crate::utils::*;
@@ -135,37 +136,70 @@ pub fn new_post() -> Html {
                         </div>
                     }
 
-                    <div class="mb-4 border rounded-3 d-flex align-items-center justify-content-center p-3 py-6" style="font-size: 10em" role="img">
-                        <svg style="width: 1em; height: 1em;" xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-file-post" viewBox="0 0 16 16">
-                            <path d="M4 3.5a.5.5 0 0 1 .5-.5h5a.5.5 0 0 1 0 1h-5a.5.5 0 0 1-.5-.5zm0 2a.5.5 0 0 1 .5-.5h7a.5.5 0 0 1 .5.5v8a.5.5 0 0 1-.5.5h-7a.5.5 0 0 1-.5-.5v-8z"></path>
-                            <path d="M2 2a2 2 0 0 1 2-2h8a2 2 0 0 1 2 2v12a2 2 0 0 1-2 2H4a2 2 0 0 1-2-2V2zm10-1H4a1 1 0 0 0-1 1v12a1 1 0 0 0 1 1h8a1 1 0 0 0 1-1V2a1 1 0 0 0-1-1z"></path>
-                        </svg>
+                    <div
+                        class="mb-4 border rounded-3 d-flex align-items-center justify-content-center p-3 py-6"
+                        style="font-size: 10em"
+                        role="img"
+                    >
+                        <FilePostImg />
                     </div>
 
                     <div class="mb-3">
-                        <label for="validationTitle1" class="form-label"> { "Заголовок" } </label>
-                        <input type="text" class="form-control" id="validationTitle1" placeholder="Что-то захватывающее внимание..." required=true ref={ title_node_ref } />
+                        <label for="validationTitle1" class="form-label">
+                            { "Заголовок" }
+                        </label>
+                        <input
+                            type="text"
+                            class="form-control"
+                            id="validationTitle1"
+                            placeholder="Что-то захватывающее внимание..."
+                            required=true
+                            ref={ title_node_ref }
+                        />
                         <div class="invalid-feedback">
                             { "Пожалуйста, введите заголовок публикации, это обязательное поле!" }
                         </div>
                     </div>
 
                     <div class="mb-3">
-                        <label for="validationTextarea1" class="form-label"> { "Короткая версия" } </label>
-                        <textarea class="form-control" id="validationTextarea1" placeholder="Что-то короткое, но важное!" required=true ref={ summary_node_ref }></textarea>
+                        <label for="validationTextarea1" class="form-label">
+                            { "Короткая версия" }
+                        </label>
+                        <textarea
+                            class="form-control"
+                            id="validationTextarea1"
+                            placeholder="Что-то короткое, но важное!"
+                            required=true
+                            ref={ summary_node_ref }
+                        ></textarea>
                         <div class="invalid-feedback">
                             { "Пожалуйста, введите короткую версию публикации, это обязательное поле!" }
                         </div>
                     </div>
 
                     <div class="mb-3">
-                        <label for="validationTextarea2" class="form-label"> { "Полная версия" } </label>
-                        <textarea class="form-control" id="validationTextarea2" placeholder="Что-то динное и скучн... веселое!" ref={ content_node_ref } ></textarea>
+                        <label for="validationTextarea2" class="form-label">
+                            { "Полная версия" }
+                        </label>
+                        <textarea
+                            class="form-control"
+                            id="validationTextarea2"
+                            placeholder="Что-то динное и скучн... веселое!"
+                            ref={ content_node_ref }
+                        ></textarea>
                     </div>
 
                     <div class="mb-3">
-                        <label for="validationTitle2" class="form-label"> { "Теги (через `,`)" } </label>
-                        <input type="text" class="form-control" id="validationTitle2" placeholder="Что-то напоминающее о..." ref={ tags_node_ref } />
+                        <label for="validationTitle2" class="form-label">
+                            { "Теги (через `,`)" }
+                        </label>
+                        <input
+                            type="text"
+                            class="form-control"
+                            id="validationTitle2"
+                            placeholder="Что-то напоминающее о..."
+                            ref={ tags_node_ref }
+                        />
                     </div>
 
                     /*
@@ -177,7 +211,14 @@ pub fn new_post() -> Html {
                     */
 
                     <div class="mb-3">
-                        <button class="btn btn-light" type="submit" { onclick } disabled={ !state.action_available() }> { "Отправить" } </button>
+                        <button
+                            class="btn btn-light"
+                            type="submit"
+                            { onclick }
+                            disabled={ !state.action_available() }
+                        >
+                            { "Отправить" }
+                        </button>
                     </div>
                 </form>
             } else {

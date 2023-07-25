@@ -1,6 +1,7 @@
 use yew::prelude::*;
 use yew_router::prelude::*;
 
+use crate::components::svg_image::*;
 use crate::content::*;
 
 use crate::Route;
@@ -14,16 +15,31 @@ pub struct CommentCardProps {
 pub fn comment_card(props: &CommentCardProps) -> Html {
     let CommentCardProps { comment } = props.clone();
 
-    let Some(comment) = comment else {
-        return html! {
-            <div class="card mb-3">
-                <div class="card-header d-flex placeholder-glow">
-                    <svg class="bd-placeholder-img rounded me-2" width="20" height="20" xmlns="http://www.w3.org/2000/svg" aria-hidden="true" preserveAspectRatio="xMidYMid slice" focusable="false"><rect width="100%" height="100%" fill="#007aff"></rect></svg>
+    html! {
+        <div class="card mb-3">
+            <div class="card-header d-flex placeholder-glow">
+                <PlaceholderImg />
+                if let Some(comment) = &comment {
+                    <Link<Route>
+                        classes={ classes!("text-decoration-none", "me-auto") }
+                        to={ Route::Author { slug: comment.short_author.slug.clone() } }
+                    >
+                        <strong>
+                            { &comment.short_author.slug }
+                        </strong>
+                    </Link<Route>>
+                } else {
                     <span class="me-auto placeholder col-3"></span>
-                    // <span class="placeholder col-3"></span>
-                </div>
-                <div class="card-body">
-                    <p class="card-text placeholder-glow">
+                }
+                // <small> { "11 mins ago" } </small>
+                // OR
+                // <span class="placeholder col-3"></span>
+            </div>
+            <div class="card-body">
+                <p class="card-text placeholder-glow">
+                    if let Some(comment) = &comment {
+                        { &comment.content }
+                    } else {
                         <span class="placeholder col-3"></span> { " " }
                         <span class="placeholder col-4"></span> { " " }
                         <span class="placeholder col-2"></span> { " " }
@@ -31,22 +47,8 @@ pub fn comment_card(props: &CommentCardProps) -> Html {
                         <span class="placeholder col-4"></span> { " " }
                         <span class="placeholder col-2"></span> { " " }
                         <span class="placeholder col-2"></span> { " " }
-                    </p>
-                </div>
-            </div>
-        }
-    };
-    html! {
-        <div class="card mb-3">
-            <div class="card-header d-flex">
-                <svg class="bd-placeholder-img rounded me-2" width="20" height="20" xmlns="http://www.w3.org/2000/svg" aria-hidden="true" preserveAspectRatio="xMidYMid slice" focusable="false"><rect width="100%" height="100%" fill="#007aff"></rect></svg>
-                <Link<Route> classes={classes!("text-decoration-none", "me-auto")} to={Route::Author { slug: comment.short_author.slug.clone() }}>
-                    <strong>{ &comment.short_author.slug }</strong>
-                </Link<Route>>
-                // <small> { "11 mins ago" } </small>
-            </div>
-            <div class="card-body">
-                <p class="card-text">{ &comment.content }</p>
+                    }
+                </p>
             </div>
         </div>
     }

@@ -22,7 +22,19 @@ pub fn post_card(props: &PostCardProps) -> Html {
 
     let main_content = html! {
         <>
-            <div style={ format!("height:194px;width:100%;--image-url:url({});", post.as_ref().map(|p| p.image_url()).unwrap_or_default()) } class="img-block bd-placeholder-img card-img-top" role="img" />
+            <div
+                style={
+                    format!(
+                        "height:194px;width:100%;--image-url:url({});",
+                        post
+                            .as_ref()
+                            .map(|p| p.image_url())
+                            .unwrap_or_default()
+                    )
+                }
+                class="img-block bd-placeholder-img card-img-top"
+                role="img"
+            />
             <div class="card-body">
                 <h5 class="card-title placeholder-glow">
                     if let Some(title) = post.as_ref().map(|p| p.title.clone()) {
@@ -80,7 +92,17 @@ pub fn post_card(props: &PostCardProps) -> Html {
             <div class="card-footer">
                 <div class="row align-items-center">
                     <div class="col placeholder-glow">
-                        if let Some(tags) = post.as_ref().map(|p| p.tags.clone().into_iter().map(|v| v.title).collect::<Vec<String>>().join(", ")) {
+                        if let Some(tags) = post
+                            .as_ref()
+                            .map(|p|
+                                p
+                                    .tags
+                                    .clone()
+                                    .into_iter()
+                                    .map(|v| v.title)
+                            .collect::<Vec<String>>()
+                            .join(", "))
+                        {
                             { tags }
                         } else {
                             <span class="placeholder col-6"></span>
@@ -88,7 +110,12 @@ pub fn post_card(props: &PostCardProps) -> Html {
                     </div>
                     <div class="col-6 text-end placeholder-glow">
                         if let Some(post) = post.as_ref() {
-                            <Link<Route> classes="title is-block col-6 text-decoration-none" to={Route::Author { slug: post.short_author.slug.clone() }}>
+                            <Link<Route>
+                                classes="title is-block col-6 text-decoration-none"
+                                to={ Route::Author {
+                                    slug: post.short_author.slug.clone()
+                                } }
+                            >
                                 { &post.short_author.slug }
                             </Link<Route>>
                         } else {
