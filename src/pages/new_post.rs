@@ -1,4 +1,5 @@
-use web_sys::HtmlInputElement;
+use gloo::utils::document;
+use web_sys::{Element, HtmlInputElement, Node};
 use yew::prelude::*;
 use yew_router::prelude::*;
 
@@ -121,6 +122,19 @@ pub fn new_post() -> Html {
         })
     };
 
+    let editor_script = {
+        let script: Element = document().create_element("script").unwrap();
+        script.set_inner_html(
+            "
+            setTimeout(function() {
+                var editor = new FroalaEditor('#validationTextarea2');
+            }, 0)
+        ",
+        );
+        let node: Node = script.into();
+        Html::VRef(node)
+    };
+
     html! {
         <>
             if let LoggedUserState::Active { token: _ } = logged_user_context.state.clone() {
@@ -179,7 +193,7 @@ pub fn new_post() -> Html {
 
                     <div class="mb-3">
                         <label for="validationTextarea2" class="form-label">
-                            { "Полная версия" }
+                            { "Полная версия (Опциональное)" }
                         </label>
                         <textarea
                             class="form-control"
@@ -191,7 +205,7 @@ pub fn new_post() -> Html {
 
                     <div class="mb-3">
                         <label for="validationTitle2" class="form-label">
-                            { "Теги (через `,`)" }
+                            { "Теги (через `,`) (Опциональное)" }
                         </label>
                         <input
                             type="text"
@@ -221,6 +235,7 @@ pub fn new_post() -> Html {
                         </button>
                     </div>
                 </form>
+                { editor_script }
             } else {
                 <Warning text="Создавать публикации можно только авторизованным авторам" />
             }
