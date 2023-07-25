@@ -18,13 +18,36 @@ pub fn author_card(props: &AuthorCardProps) -> Html {
     let main_content = html! {
         <div class="row g-0">
             <div class="col-4">
-                <div style={ format!("height:220px;width:100%;--image-url:url({});", author.as_ref().map(|a| a.image_url()).unwrap_or_default()) } class="img-block img-fluid rounded-start" role="img" />
+                <div
+                    style={
+                        format!(
+                            "height:220px;width:100%;--image-url:url({});",
+                            author
+                                .as_ref()
+                                .map(|a| a.image_url())
+                                .unwrap_or_default()
+                        )
+                    }
+                    class="img-block img-fluid rounded-start" role="img"
+                />
             </div>
             <div class="col">
                 <div class="card-body">
                     <h5 class="card-title placeholder-glow">
                         if let Some(author) = author.as_ref() {
-                            { format!("{} {}", author.first_name.clone().unwrap_or("Имя не указано".to_owned()), author.last_name.clone().unwrap_or("Фамилия не указано".to_owned())) }
+                            {
+                                format!(
+                                    "{} {}",
+                                    author
+                                        .first_name
+                                        .clone()
+                                        .unwrap_or("Имя не указано".to_owned()),
+                                    author
+                                        .last_name
+                                        .clone()
+                                        .unwrap_or("Фамилия не указано".to_owned())
+                                )
+                            }
                         } else {
                             <span class="placeholder col-3"></span> { " " }
                             <span class="placeholder col-3"></span>

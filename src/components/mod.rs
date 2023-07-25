@@ -12,6 +12,7 @@ pub mod pagination;
 pub mod post_card;
 pub mod search_button;
 pub mod search_field;
+pub mod svg_image;
 pub mod warning;
 
 pub use load::*;
