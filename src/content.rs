@@ -269,52 +269,6 @@ impl ExternalItemContainer for AuthorContainer {
 }
 
 //
-// NewPost
-//
-//
-
-#[derive(Clone, Debug, Eq, PartialEq, Serialize)]
-#[serde(rename_all = "camelCase")]
-pub struct NewPost {
-    pub title: String,
-    pub published: u8,
-    pub summary: String,
-    pub content: Option<String>,
-    pub tags: Vec<String>,
-}
-
-#[derive(Clone, Debug, Eq, PartialEq, Deserialize)]
-#[serde(rename_all = "camelCase")]
-pub struct NewPostContainer {
-    pub created_post: Post,
-}
-
-#[async_trait(?Send)]
-impl RequestableItem<TokenParam<NewPost>> for API<NewPostContainer> {
-    async fn request(params: TokenParam<NewPost>) -> Result<Request, Error> {
-        let TokenParam {
-            token,
-            data: new_post,
-        } = params;
-        let url = format!("{url}/api/post", url = crate::API_URL);
-        Ok(Request::post(url.as_str())
-            .header("Token", token.as_str())
-            .header("Content-Type", "application/json")
-            .body(serde_json::to_string(&new_post).map_err(|e| Error::SerdeError(e))?)?)
-    }
-    async fn response(response: Response) -> Result<Self, Error> {
-        response.json().await
-    }
-}
-
-impl ExternalItemContainer for NewPostContainer {
-    type Item = Post;
-    fn item(self) -> Self::Item {
-        self.created_post
-    }
-}
-
-//
 // Posts
 //
 //
@@ -404,11 +358,32 @@ pub struct PostIdParam {
     pub id: u64,
 }
 
+#[derive(Clone, PartialEq)]
+pub struct NewPostParam {
+    pub new_post: CommonPost,
+}
+
+#[derive(Clone, PartialEq)]
+pub struct UpdatePostParams {
+    pub id: u64,
+    pub update_post: CommonPost,
+}
+
 impl Identifiable for PostIdParam {
     type Id = u64;
     fn id(&self) -> &Self::Id {
         &self.id
     }
+}
+
+#[derive(Clone, Debug, Eq, PartialEq, Serialize)]
+#[serde(rename_all = "camelCase")]
+pub struct CommonPost {
+    pub title: String,
+    pub published: u8,
+    pub summary: String,
+    pub content: Option<String>,
+    pub tags: Vec<String>,
 }
 
 #[derive(Clone, Debug, Eq, PartialEq, Deserialize)]
@@ -430,14 +405,18 @@ impl Post {
             "https://source.unsplash.com/random/{}x{}?{}&sig={}",
             400,
             100,
-            self.tags
-                .clone()
-                .into_iter()
-                .map(|v| v.title)
-                .collect::<Vec<String>>()
-                .join(","),
+            self.tags_string(),
             self.slug,
         )
+    }
+
+    pub fn tags_string(&self) -> String {
+        self.tags
+            .clone()
+            .into_iter()
+            .map(|v| v.title)
+            .collect::<Vec<String>>()
+            .join(", ")
     }
 }
 
@@ -451,6 +430,8 @@ impl Identifiable for Post {
 #[derive(Clone, Debug, Eq, PartialEq, Deserialize)]
 #[serde(rename_all = "camelCase")]
 pub struct PostContainer {
+    #[serde(alias = "createdPost")]
+    #[serde(alias = "updatedPost")]
     pub post: Post,
 }
 
@@ -460,6 +441,42 @@ impl RequestableItem<PostIdParam> for API<PostContainer> {
         let PostIdParam { id } = params;
         let url = format!("{url}/api/post/{id}", url = crate::API_URL);
         Ok(Request::get(url.as_str()).build()?)
+    }
+    async fn response(response: Response) -> Result<Self, Error> {
+        response.json().await
+    }
+}
+
+#[async_trait(?Send)]
+impl RequestableItem<TokenParam<NewPostParam>> for API<PostContainer> {
+    async fn request(params: TokenParam<NewPostParam>) -> Result<Request, Error> {
+        let TokenParam {
+            token,
+            data: NewPostParam { new_post },
+        } = params;
+        let url = format!("{url}/api/post", url = crate::API_URL);
+        Ok(Request::post(url.as_str())
+            .header("Token", token.as_str())
+            .header("Content-Type", "application/json")
+            .body(serde_json::to_string(&new_post).map_err(|e| Error::SerdeError(e))?)?)
+    }
+    async fn response(response: Response) -> Result<Self, Error> {
+        response.json().await
+    }
+}
+
+#[async_trait(?Send)]
+impl RequestableItem<TokenParam<UpdatePostParams>> for API<PostContainer> {
+    async fn request(params: TokenParam<UpdatePostParams>) -> Result<Request, Error> {
+        let TokenParam {
+            token,
+            data: UpdatePostParams { id, update_post },
+        } = params;
+        let url = format!("{url}/api/post/{id}", url = crate::API_URL);
+        Ok(Request::patch(url.as_str())
+            .header("Token", token.as_str())
+            .header("Content-Type", "application/json")
+            .body(serde_json::to_string(&update_post).map_err(|e| Error::SerdeError(e))?)?)
     }
     async fn response(response: Response) -> Result<Self, Error> {
         response.json().await

@@ -96,11 +96,8 @@ pub fn login_modal(props: &LoginModalProps) -> Html {
                     .cast::<HtmlInputElement>()
                     .unwrap()
                     .set_value("");
-                match logged_user_context.state {
-                    LoggedUserState::None | LoggedUserState::Active { token: _ } => {}
-                    LoggedUserState::Error(_) | LoggedUserState::InProgress(_) => {
-                        logged_user_context.dispatch(LoggedUserState::None);
-                    }
+                if logged_user_context.state.action_available() {
+                    logged_user_context.dispatch(LoggedUserState::None);
                 };
             });
             move || drop(listener)

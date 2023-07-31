@@ -11,6 +11,8 @@ use crate::utils::*;
 pub enum Route {
     #[at("/post/new")]
     NewPost,
+    #[at("/post/edit/:id")]
+    EditPost { id: u64 },
     #[at("/post/:slug/:id")]
     Post { slug: String, id: u64 },
     #[at("/posts")]
@@ -37,7 +39,8 @@ pub enum Route {
 impl Route {
     pub fn switch(route: Route) -> Html {
         match route {
-            Route::NewPost => html! { <NewPost /> },
+            Route::NewPost => html! { <EditPost id={ None } /> },
+            Route::EditPost { id } => html! { <EditPost { id } /> },
             Route::Post { slug, id } => html! { <Post { slug } { id } /> },
             Route::Home | Route::Posts => html! { <Posts />},
             Route::PostsSearchRoot => {

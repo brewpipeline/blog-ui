@@ -3,7 +3,7 @@ use std::rc::Rc;
 use wasm_cookies::CookieOptions;
 use yew::{Reducible, UseReducerHandle};
 
-use crate::content::AuthParams;
+use crate::content::*;
 
 #[derive(Debug, PartialEq, Eq, Clone)]
 pub enum LoggedUserState {
@@ -11,13 +11,28 @@ pub enum LoggedUserState {
     InProgress(AuthParams),
     Error(String),
     Active { token: String },
+    ActiveAndLoaded { token: String, author: Author },
 }
 
 impl LoggedUserState {
+    pub fn token(&self) -> Option<&String> {
+        match self {
+            LoggedUserState::None | LoggedUserState::Error(_) | LoggedUserState::InProgress(_) => {
+                None
+            }
+            LoggedUserState::Active { token }
+            | LoggedUserState::ActiveAndLoaded { token, author: _ } => Some(token),
+        }
+    }
     pub fn action_available(&self) -> bool {
         match self {
             LoggedUserState::None | LoggedUserState::Error(_) => true,
-            LoggedUserState::InProgress(_) | LoggedUserState::Active { token: _ } => false,
+            LoggedUserState::InProgress(_)
+            | LoggedUserState::Active { token: _ }
+            | LoggedUserState::ActiveAndLoaded {
+                token: _,
+                author: _,
+            } => false,
         }
     }
 }
@@ -63,14 +78,7 @@ impl Reducible for LoggedUser {
     type Action = LoggedUserState;
     fn reduce(self: Rc<Self>, new_state: LoggedUserState) -> Rc<Self> {
         #[cfg(target_arch = "wasm32")]
-        match &new_state {
-            LoggedUserState::None | LoggedUserState::InProgress(_) | LoggedUserState::Error(_) => {
-                Self::save_token(None);
-            }
-            LoggedUserState::Active { token } => {
-                Self::save_token(Some(token));
-            }
-        }
+        Self::save_token(new_state.token());
         LoggedUser { state: new_state }.into()
     }
 }

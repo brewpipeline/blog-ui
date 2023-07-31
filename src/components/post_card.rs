@@ -3,7 +3,9 @@ use web_sys::{Element, Node};
 use yew::prelude::*;
 use yew_router::prelude::*;
 
+use crate::components::svg_image::*;
 use crate::content::*;
+use crate::utils::*;
 
 use crate::Route;
 
@@ -21,6 +23,8 @@ pub fn post_card(props: &PostCardProps) -> Html {
         is_full,
         link_to,
     } = props.clone();
+
+    let logged_user_context = use_context::<LoggedUserContext>().unwrap();
 
     let main_content = html! {
         <>
@@ -99,14 +103,7 @@ pub fn post_card(props: &PostCardProps) -> Html {
                     <div class="col placeholder-glow">
                         if let Some(tags) = post
                             .as_ref()
-                            .map(|p|
-                                p
-                                    .tags
-                                    .clone()
-                                    .into_iter()
-                                    .map(|v| v.title)
-                            .collect::<Vec<String>>()
-                            .join(", "))
+                            .map(|p| p.tags_string())
                         {
                             { tags }
                         } else {
@@ -123,6 +120,18 @@ pub fn post_card(props: &PostCardProps) -> Html {
                             >
                                 { &post.short_author.slug }
                             </Link<Route>>
+                            if let LoggedUserState::ActiveAndLoaded { token: _, author } = logged_user_context.state.clone() {
+                                if author.slug == post.short_author.slug {
+                                    { " | " }
+                                    <Link<Route, Post>
+                                        classes="title is-block col-6 text-decoration-none"
+                                        to={ Route::EditPost { id: post.id } }
+                                        state={ Some(post.clone()) }
+                                    >
+                                        <PencilSquareImg />
+                                    </Link<Route, Post>>
+                                }
+                            }
                         } else {
                             <span class="placeholder col-4"></span>
                         }
