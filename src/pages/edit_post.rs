@@ -275,8 +275,15 @@ pub fn edit_post(props: &EditPostProps) -> Html {
                     </div>
 
                     <div class="form-check mb-3">
-                        <input type="checkbox" class="form-check-input" id="validationFormCheck1" ref={ published_node_ref }/>
-                        <label class="form-check-label" for="validationFormCheck1"> { "Опубликовать" } </label>
+                        <input
+                            type="checkbox"
+                            class="form-check-input"
+                            id="validationFormCheck1"
+                            ref={ published_node_ref }
+                        />
+                        <label class="form-check-label" for="validationFormCheck1">
+                            { "Опубликовать" }
+                        </label>
                     </div>
 
                     <div class="mb-3">
