@@ -1,7 +1,7 @@
+pub use blog_generic::entities::*;
 use gloo_net::http::{Request, Response};
 use gloo_net::Error;
 use serde::Deserialize;
-pub use blog_generic::entities::*;
 
 use crate::utils::*;
 
