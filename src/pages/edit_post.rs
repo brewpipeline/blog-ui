@@ -3,6 +3,7 @@ use web_sys::{Element, HtmlInputElement, Node};
 use yew::prelude::*;
 use yew_router::prelude::*;
 
+use crate::components::item::*;
 use crate::components::svg_image::*;
 use crate::components::warning::*;
 use crate::content;
@@ -11,75 +12,102 @@ use crate::utils::*;
 use crate::Route;
 
 #[derive(Clone, Debug, PartialEq, Eq)]
-enum NewPostState {
+enum EditPostState {
     None,
-    InProgress(content::NewPost),
+    InProgress(content::CommonPost),
     Error(String),
     Created(content::Post),
 }
 
-impl NewPostState {
+impl EditPostState {
     pub fn action_available(&self) -> bool {
         match self {
-            NewPostState::None | NewPostState::Error(_) => true,
-            NewPostState::InProgress(_) | NewPostState::Created(_) => false,
+            EditPostState::None | EditPostState::Error(_) => true,
+            EditPostState::InProgress(_) | EditPostState::Created(_) => false,
         }
     }
 }
 
-#[function_component(NewPost)]
-pub fn new_post() -> Html {
+#[derive(PartialEq, Properties, Clone)]
+pub struct EditPostProps {
+    pub id: Option<u64>,
+}
+
+#[function_component(EditPost)]
+pub fn edit_post(props: &EditPostProps) -> Html {
+    let EditPostProps { id } = props.clone();
     html_document::reset_title_and_meta();
-    html_document::set_prefix_default_title("Новая публикация".to_string());
+    html_document::set_prefix_default_title(
+        {
+            if id == None {
+                "Новая публикация"
+            } else {
+                "Редактирование публикации"
+            }
+        }
+        .to_string(),
+    );
 
     let navigator = use_navigator().unwrap();
 
     let logged_user_context = use_context::<LoggedUserContext>().unwrap();
 
-    let state = use_state_eq(|| NewPostState::None);
+    let state = use_state_eq(|| EditPostState::None);
 
     let title_node_ref = use_node_ref();
     let summary_node_ref = use_node_ref();
     let content_node_ref = use_node_ref();
     let tags_node_ref = use_node_ref();
+    let published_node_ref = use_node_ref();
 
     {
         let navigator = navigator.clone();
         let logged_user_context = logged_user_context.clone();
         let state = state.clone();
         use_effect_with(state, move |state| match (**state).clone() {
-            NewPostState::None | NewPostState::Error(_) => {}
-            NewPostState::InProgress(new_post) => {
-                let LoggedUserState::Active { token } = logged_user_context.state.clone() else {
+            EditPostState::None | EditPostState::Error(_) => {}
+            EditPostState::InProgress(common_post) => {
+                let Some(token) = logged_user_context.state.token().cloned() else {
                     return
                 };
                 let state = state.clone();
                 wasm_bindgen_futures::spawn_local(async move {
-                    match content::API::<content::NewPostContainer>::get(content::TokenParam {
-                        token,
-                        data: new_post,
-                    })
-                    .await
-                    {
+                    let edit_post_request = if let Some(id) = id {
+                        content::API::<content::PostContainer>::get(content::TokenParam {
+                            token,
+                            data: content::UpdatePostParams {
+                                id,
+                                update_post: common_post,
+                            },
+                        })
+                    } else {
+                        content::API::<content::PostContainer>::get(content::TokenParam {
+                            token,
+                            data: content::NewPostParam {
+                                new_post: common_post,
+                            },
+                        })
+                    };
+                    match edit_post_request.await {
                         Ok(new_post_result) => match new_post_result {
                             content::API::Success {
                                 identifier: _,
                                 description: _,
-                                data: content::NewPostContainer { created_post: post },
+                                data: content::PostContainer { post },
                             } => {
-                                state.set(NewPostState::Created(post.clone()));
+                                state.set(EditPostState::Created(post.clone()));
                             }
                             content::API::Failure { identifier, reason } => {
-                                state.set(NewPostState::Error(reason.unwrap_or(identifier)));
+                                state.set(EditPostState::Error(reason.unwrap_or(identifier)));
                             }
                         },
                         Err(err) => {
-                            state.set(NewPostState::Error(err.to_string()));
+                            state.set(EditPostState::Error(err.to_string()));
                         }
                     }
                 });
             }
-            NewPostState::Created(post) => navigator.push_with_state(
+            EditPostState::Created(post) => navigator.push_with_state(
                 &Route::Post {
                     slug: post.slug.clone(),
                     id: post.id,
@@ -89,12 +117,25 @@ pub fn new_post() -> Html {
         })
     }
 
+    let LoggedUserState::ActiveAndLoaded { token: _, author } = logged_user_context.state.clone() else {
+        return html! {
+            <Warning text={
+                if id == None {
+                    "Создавать публикации можно только авторизованным авторам"
+                } else {
+                    "Редактировать публикации можно только авторизованным авторам"
+                }
+            } />
+        }
+    };
+
     let onclick = {
         let state = state.clone();
         let title_node_ref = title_node_ref.clone();
         let summary_node_ref = summary_node_ref.clone();
         let content_node_ref = content_node_ref.clone();
         let tags_node_ref = tags_node_ref.clone();
+        let published_node_ref = published_node_ref.clone();
         Callback::from(move |e: MouseEvent| {
             e.prevent_default();
 
@@ -112,9 +153,13 @@ pub fn new_post() -> Html {
                 .map(|t| t.trim().to_owned())
                 .filter(|s| !s.is_empty())
                 .collect();
-            state.set(NewPostState::InProgress(content::NewPost {
+            let published = published_node_ref
+                .cast::<HtmlInputElement>()
+                .unwrap()
+                .checked() as u8;
+            state.set(EditPostState::InProgress(content::CommonPost {
                 title,
-                published: 0,
+                published,
                 summary,
                 content,
                 tags,
@@ -135,17 +180,26 @@ pub fn new_post() -> Html {
         Html::VRef(node)
     };
 
-    html! {
-        <>
-            if let LoggedUserState::Active { token: _ } = logged_user_context.state.clone() {
-                <form /*class="was-validated"*/>
+    let main_content = move |post: Option<content::Post>| {
+        html! {
+            <>
+                <form>
                     <h5 class="mb-3">
-                        { "Новая публикация" }
+                        if let Some(post) = post.as_ref() {
+                            { "Редактирование публикации: " }
+                            { post.title.clone() }
+                        } else {
+                            { "Новая публикация" }
+                        }
                     </h5>
 
-                    if let NewPostState::Error(message) = (*state).clone() {
+                    if let EditPostState::Error(message) = (*state).clone() {
                         <div class="alert alert-danger d-flex align-items-center" role="alert">
-                            { "Ошибка добавления публикации: " }
+                            if post == None {
+                                { "Ошибка добавления публикации: " }
+                            } else {
+                                { "Ошибка редактирования публикации: " }
+                            }
                             { message }
                         </div>
                     }
@@ -167,7 +221,7 @@ pub fn new_post() -> Html {
                             class="form-control"
                             id="validationTitle1"
                             placeholder="Что-то захватывающее внимание..."
-                            required=true
+                            value={ post.as_ref().map(|p| p.title.clone()) }
                             ref={ title_node_ref }
                         />
                         <div class="invalid-feedback">
@@ -183,7 +237,7 @@ pub fn new_post() -> Html {
                             class="form-control"
                             id="validationTextarea1"
                             placeholder="Что-то короткое, но важное!"
-                            required=true
+                            value={ post.as_ref().map(|p| p.summary.clone()) }
                             ref={ summary_node_ref }
                         ></textarea>
                         <div class="invalid-feedback">
@@ -199,6 +253,7 @@ pub fn new_post() -> Html {
                             class="form-control"
                             id="validationTextarea2"
                             placeholder="Что-то динное и скучн... веселое!"
+                            value={ post.as_ref().map(|p| p.content.clone()).flatten() }
                             ref={ content_node_ref }
                         ></textarea>
                     </div>
@@ -212,17 +267,22 @@ pub fn new_post() -> Html {
                             class="form-control"
                             id="validationTitle2"
                             placeholder="Что-то напоминающее о..."
+                            value={ post.as_ref().map(|p| p.tags_string()) }
                             ref={ tags_node_ref }
                         />
                     </div>
 
-                    /*
                     <div class="form-check mb-3">
-                        <input type="checkbox" class="form-check-input" id="validationFormCheck1" required=true />
-                        <label class="form-check-label" for="validationFormCheck1"> { "Все проверено?" } </label>
-                        <div class="invalid-feedback"> { "Убедитесь, все ли поля заполнены корректными значениями\\данными" } </div>
+                        <input
+                            type="checkbox"
+                            class="form-check-input"
+                            id="validationFormCheck1"
+                            ref={ published_node_ref }
+                        />
+                        <label class="form-check-label" for="validationFormCheck1">
+                            { "Опубликовать" }
+                        </label>
                     </div>
-                    */
 
                     <div class="mb-3">
                         <button
@@ -236,9 +296,30 @@ pub fn new_post() -> Html {
                     </div>
                 </form>
                 { editor_script }
-            } else {
-                <Warning text="Создавать публикации можно только авторизованным авторам" />
-            }
-        </>
+            </>
+        }
+    };
+
+    if let Some(id) = id {
+        html! {
+            <Item<content::API<content::PostContainer>, content::PostIdParam>
+                params={ content::PostIdParam { id } }
+                component={ move |post: Option<content::Post>| {
+                    if let Some(post) = post {
+                        if post.short_author.slug == author.slug {
+                            let main_content = main_content.clone();
+                            main_content(Some(post))
+                        } else {
+                            html! { <Warning text="Только автор может редактировать публикацию" /> }
+                        }
+                    } else {
+                        html! { <Warning text="Загрузка публикации для редактирования..." /> }
+                    }
+                } }
+                error_component={ |_| html! { <Warning text="Ошибка загрузки публикации для редактирования" /> } }
+            />
+        }
+    } else {
+        main_content(None)
     }
 }

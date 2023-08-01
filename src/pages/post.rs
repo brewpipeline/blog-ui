@@ -39,13 +39,7 @@ pub fn post(props: &PostProps) -> Html {
                     );
                     html_document::set_meta(
                         html_document::MetaTag::Keywords,
-                        post
-                            .tags
-                            .clone()
-                            .into_iter()
-                            .map(|v| v.title)
-                            .collect::<Vec<String>>()
-                            .join(", ")
+                        post.tags_string()
                     );
                 }
                 html! {
