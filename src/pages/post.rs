@@ -22,8 +22,8 @@ pub fn post(props: &PostProps) -> Html {
     html_document::reset_title_and_meta();
     html_document::set_prefix_default_title("Публикация".to_string());
     html! {
-        <Item<content::API<content::PostContainer>, content::PostIdParam>
-            params={ content::PostIdParam { id } }
+        <Item<content::API<content::PostContainer>, content::PostIdParams>
+            params={ content::PostIdParams { id } }
             component={ move |post: Option<content::Post>| {
                 if let Some(post) = &post {
                     if post.id != id || post.slug != slug {
@@ -46,15 +46,15 @@ pub fn post(props: &PostProps) -> Html {
                     <>
                         <PostCard post={ post.clone() } is_full=true link_to=false />
                         if let Some(post) = post {
-                            <List<content::API<content::CommentsContainer>, content::CommentsContainerPostIdParam>
-                                params={ content::CommentsContainerPostIdParam { post_id: post.id } }
+                            <List<content::API<content::CommentsContainer>, content::CommentsContainerPostIdParams>
+                                params={ content::CommentsContainerPostIdParams { post_id: post.id } }
                                 items_per_page={ 100 }
                                 route_to_page={ Route::Post { slug: post.slug, id: post.id } }
                                 component={ |comment| html! { <CommentCard { comment } /> } }
                                 error_component={ |_| html! { <Warning text="Ошибка загрузки комментариев" /> } }
                             >
                                 <Warning text="Нет комментариев" />
-                            </List<content::API<content::CommentsContainer>, content::CommentsContainerPostIdParam>>
+                            </List<content::API<content::CommentsContainer>, content::CommentsContainerPostIdParams>>
                         }
                     </>
                 }

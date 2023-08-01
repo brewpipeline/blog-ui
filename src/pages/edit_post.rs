@@ -73,17 +73,17 @@ pub fn edit_post(props: &EditPostProps) -> Html {
                 let state = state.clone();
                 wasm_bindgen_futures::spawn_local(async move {
                     let edit_post_request = if let Some(id) = id {
-                        content::API::<content::PostContainer>::get(content::TokenParam {
+                        content::API::<content::PostContainer>::get(content::Tokened {
                             token,
-                            data: content::UpdatePostParams {
+                            params: content::UpdatePostParams {
                                 id,
                                 update_post: common_post,
                             },
                         })
                     } else {
-                        content::API::<content::PostContainer>::get(content::TokenParam {
+                        content::API::<content::PostContainer>::get(content::Tokened {
                             token,
-                            data: content::NewPostParam {
+                            params: content::NewPostParams {
                                 new_post: common_post,
                             },
                         })
@@ -302,11 +302,11 @@ pub fn edit_post(props: &EditPostProps) -> Html {
 
     if let Some(id) = id {
         html! {
-            <Item<content::API<content::PostContainer>, content::PostIdParam>
-                params={ content::PostIdParam { id } }
+            <Item<content::API<content::PostContainer>, content::PostIdParams>
+                params={ content::PostIdParams { id } }
                 component={ move |post: Option<content::Post>| {
                     if let Some(post) = post {
-                        if post.short_author.slug == author.slug {
+                        if post.short_author.slug == author.base.slug {
                             let main_content = main_content.clone();
                             main_content(Some(post))
                         } else {

@@ -29,9 +29,9 @@ pub fn auth_user_block() -> Html {
         }
     };
 
-    let params = TokenParam {
+    let params = Tokened {
         token: token.clone(),
-        data: AuthorMeParam,
+        params: AuthorMeParams,
     };
 
     let component = {
@@ -51,14 +51,14 @@ pub fn auth_user_block() -> Html {
                         src={
                             author
                                 .as_ref()
-                                .map(|a| a.image_url())
+                                .map(|a| a.base.image_url())
                                 .unwrap_or_default()
                         }
                         type="button"
                         alt={
                             author
                                 .as_ref()
-                                .map(|u| u.slug.clone())
+                                .map(|a| a.base.slug.clone())
                         }
                         class="img-block item d-flex rounded"
                         data-bs-toggle="dropdown"
@@ -69,10 +69,10 @@ pub fn auth_user_block() -> Html {
                             <li>
                                 <Link<Route, Author>
                                     classes="dropdown-item"
-                                    to={ Route::Author { slug: author.slug.clone() } }
+                                    to={ Route::Author { slug: author.base.slug.clone() } }
                                     state={ Some(author.clone()) }
                                 >
-                                    { &author.slug }
+                                    { &author.base.slug }
                                 </Link<Route, Author>>
                             </li>
                             // <li><a class="dropdown-item" href="#"> { "Настройки" } </a></li>
@@ -103,7 +103,7 @@ pub fn auth_user_block() -> Html {
     };
 
     html! {
-        <Item<API<AuthorContainer>, TokenParam<AuthorMeParam>>
+        <Item<API<AuthorContainer>, Tokened<AuthorMeParams>>
             { params }
             { component }
             { error_component }

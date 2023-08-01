@@ -17,12 +17,12 @@ pub fn author(props: &AuthorProps) -> Html {
     html_document::reset_title_and_meta();
     html_document::set_prefix_default_title("Автор".to_string());
     html! {
-        <Item<content::API<content::AuthorContainer>, content::AuthorSlugParam>
-            params={ content::AuthorSlugParam { slug: slug.clone() } }
+        <Item<content::API<content::AuthorContainer>, content::AuthorSlugParams>
+            params={ content::AuthorSlugParams { slug: slug.clone() } }
             component={ |author: Option<content::Author>| {
                 if let Some(author) = &author {
                     html_document::reset_title_and_meta();
-                    html_document::set_prefix_default_title(format!("{} - Автор", author.slug.clone()));
+                    html_document::set_prefix_default_title(format!("{} - Автор", author.base.slug.clone()));
                 }
                 html! { <AuthorCard { author } link_to=false /> }
             } }

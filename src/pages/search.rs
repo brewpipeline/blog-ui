@@ -44,14 +44,14 @@ pub fn search(props: &SearchProps) -> Html {
                     },
                     SearchMode::Authors { query } => html! {
                         if let Some(query) = not_empty(query) {
-                            <List<API<AuthorsContainer>, AuthorsContainerSearchParam>
-                                params={ AuthorsContainerSearchParam { query: query.clone() } }
+                            <List<API<AuthorsContainer>, AuthorsContainerSearchParams>
+                                params={ AuthorsContainerSearchParams { query: query.clone() } }
                                 route_to_page={ Route::AuthorsSearch { query: query.clone() } }
                                 component={ |author| html! { <AuthorCard { author } link_to=true /> } }
                                 error_component={ |_| html! { <Warning text="Ошибка загрузки результатов поиска авторов" /> } }
                             >
                                 <Warning text="Авторов не найдено!" />
-                            </List<API<AuthorsContainer>, AuthorsContainerSearchParam>>
+                            </List<API<AuthorsContainer>, AuthorsContainerSearchParams>>
                         } else {
                             <Warning text="Начните ввод для поиска авторов..." />
                         }

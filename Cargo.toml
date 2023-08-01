@@ -6,6 +6,8 @@ license = "MIT"
 
 
 [dependencies]
+blog-generic = { git = "https://github.com/tikitko/blog-server.git", package = "blog-generic" }
+
 log = "0.4"
 async-trait = "0.1"
 
@@ -20,7 +22,7 @@ wasm-logger = "0.2"
 
 web-sys = { version = "0.3", features = ["HtmlDocument","console","Document","HtmlElement","MouseEvent","DomRect","ScrollToOptions","ScrollBehavior","Element","MouseEvent","CssStyleDeclaration","MutationObserver","MutationObserverInit","Node"] }
 
-gloo = "0.8"
+gloo = "0.9"
 gloo-net = "0.3"
 
 serde = { version = "1.0", features = ["derive"] }

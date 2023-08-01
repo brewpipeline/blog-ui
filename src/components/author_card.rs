@@ -24,7 +24,7 @@ pub fn author_card(props: &AuthorCardProps) -> Html {
                             "height:220px;width:100%;--image-url:url({});",
                             author
                                 .as_ref()
-                                .map(|a| a.image_url())
+                                .map(|a| a.base.image_url())
                                 .unwrap_or_default()
                         )
                     }
@@ -39,10 +39,12 @@ pub fn author_card(props: &AuthorCardProps) -> Html {
                                 format!(
                                     "{} {}",
                                     author
+                                        .base
                                         .first_name
                                         .clone()
                                         .unwrap_or("Имя не указано".to_owned()),
                                     author
+                                        .base
                                         .last_name
                                         .clone()
                                         .unwrap_or("Фамилия не указано".to_owned())
@@ -55,7 +57,7 @@ pub fn author_card(props: &AuthorCardProps) -> Html {
                     </h5>
                     <p class="card-text placeholder-glow">
                         <small class="text-body-secondary">
-                            if let Some(slug) = author.as_ref().map(|u| u.slug.clone()) {
+                            if let Some(slug) = author.as_ref().map(|a| a.base.slug.clone()) {
                                 { slug }
                             } else {
                                 <span class="placeholder col-2"></span>
@@ -63,7 +65,7 @@ pub fn author_card(props: &AuthorCardProps) -> Html {
                         </small>
                     </p>
                     <p class="card-text placeholder-glow">
-                        if let Some(email) = author.as_ref().map(|u| u.email.clone()) {
+                        if let Some(email) = author.as_ref().map(|a| a.email.clone()) {
                             { email }
                         } else {
                             <span class="placeholder col-4"></span>
@@ -78,7 +80,7 @@ pub fn author_card(props: &AuthorCardProps) -> Html {
             if let (Some(author), true) = (author.as_ref(), link_to) {
                 <Link<Route, Author>
                     classes="text-decoration-none"
-                    to={ Route::Author { slug: author.slug.clone() } }
+                    to={ Route::Author { slug: author.base.slug.clone() } }
                     state= { Some(author.clone()) }
                 >
                     { main_content }
