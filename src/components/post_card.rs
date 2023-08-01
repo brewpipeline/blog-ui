@@ -1,5 +1,3 @@
-use gloo::utils::document;
-use web_sys::{Element, Node};
 use yew::prelude::*;
 use yew_router::prelude::*;
 
@@ -52,10 +50,7 @@ pub fn post_card(props: &PostCardProps) -> Html {
                 <p class="card-text placeholder-glow">
                     if let Some(text) = post.as_ref().map(|post| {
                         if let (Some(content), true) = (post.content.clone(), is_full) {
-                            let div: Element = document().create_element("div").unwrap();
-                            div.set_inner_html(content.as_str());
-                            let node: Node = div.into();
-                            Html::VRef(node)
+                            Html::from_html_unchecked(AttrValue::from(content))
                         } else {
                             html! { post.summary.clone() }
                         }
