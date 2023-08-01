@@ -121,7 +121,7 @@ pub fn post_card(props: &PostCardProps) -> Html {
                                 { &post.short_author.slug }
                             </Link<Route>>
                             if let LoggedUserState::ActiveAndLoaded { token: _, author } = logged_user_context.state.clone() {
-                                if author.slug == post.short_author.slug {
+                                if author.base.slug == post.short_author.slug {
                                     { " | " }
                                     <Link<Route, Post>
                                         classes="title is-block col-6 text-decoration-none"

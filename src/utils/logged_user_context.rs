@@ -8,7 +8,7 @@ use crate::content::*;
 #[derive(Debug, PartialEq, Eq, Clone)]
 pub enum LoggedUserState {
     None,
-    InProgress(AuthParams),
+    InProgress(LoginQuestion),
     Error(String),
     Active { token: String },
     ActiveAndLoaded { token: String, author: Author },

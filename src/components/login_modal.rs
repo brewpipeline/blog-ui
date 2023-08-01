@@ -22,13 +22,13 @@ pub fn login_modal(props: &LoginModalProps) -> Html {
         let logged_user_context = logged_user_context.clone();
         let close_node_ref = close_node_ref.clone();
         use_effect_with(logged_user_context, move |logged_user_context| {
-            let LoggedUserState::InProgress(auth_params) = (**logged_user_context).state.clone() else {
+            let LoggedUserState::InProgress(login_question) = (**logged_user_context).state.clone() else {
                 return
             };
             let logged_user_context = logged_user_context.clone();
             let close_node_ref = close_node_ref.clone();
             wasm_bindgen_futures::spawn_local(async move {
-                match API::<TokenContainer>::get(auth_params).await {
+                match API::<LoginAnswer>::get(login_question).await {
                     Ok(auth_result) => match auth_result {
                         API::Success {
                             identifier: _,
@@ -69,7 +69,7 @@ pub fn login_modal(props: &LoginModalProps) -> Html {
                 .cast::<HtmlInputElement>()
                 .unwrap()
                 .value();
-            logged_user_context.dispatch(LoggedUserState::InProgress(AuthParams {
+            logged_user_context.dispatch(LoggedUserState::InProgress(LoginQuestion {
                 slug: username,
                 password,
             }));
