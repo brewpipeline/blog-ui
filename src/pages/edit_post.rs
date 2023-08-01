@@ -153,10 +153,10 @@ pub fn edit_post(props: &EditPostProps) -> Html {
                 .map(|t| t.trim().to_owned())
                 .filter(|s| !s.is_empty())
                 .collect();
-            let published = published_node_ref // wat?
+            let published = published_node_ref
                 .cast::<HtmlInputElement>()
                 .unwrap()
-                .value_as_number() as u8;
+                .checked() as u8;
             state.set(EditPostState::InProgress(content::CommonPost {
                 title,
                 published,
@@ -183,7 +183,7 @@ pub fn edit_post(props: &EditPostProps) -> Html {
     let main_content = move |post: Option<content::Post>| {
         html! {
             <>
-                <form /*class="was-validated"*/>
+                <form>
                     <h5 class="mb-3">
                         if let Some(post) = post.as_ref() {
                             { "Редактирование публикации: " }
@@ -221,7 +221,6 @@ pub fn edit_post(props: &EditPostProps) -> Html {
                             class="form-control"
                             id="validationTitle1"
                             placeholder="Что-то захватывающее внимание..."
-                            required=true
                             value={ post.as_ref().map(|p| p.title.clone()) }
                             ref={ title_node_ref }
                         />
@@ -238,7 +237,6 @@ pub fn edit_post(props: &EditPostProps) -> Html {
                             class="form-control"
                             id="validationTextarea1"
                             placeholder="Что-то короткое, но важное!"
-                            required=true
                             value={ post.as_ref().map(|p| p.summary.clone()) }
                             ref={ summary_node_ref }
                         ></textarea>
