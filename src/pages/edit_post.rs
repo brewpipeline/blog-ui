@@ -186,6 +186,7 @@ pub fn edit_post(props: &EditPostProps) -> Html {
         let node: Node = script.into();
         Html::VRef(node)
     };
+    // TODO: Panic next on hydration
     #[cfg(not(feature = "client"))]
     let editor_script = html! {};
 
