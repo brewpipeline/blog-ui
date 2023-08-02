@@ -1,5 +1,7 @@
 pub use blog_generic::entities::*;
+#[cfg(feature = "client")]
 use gloo_net::http::{Request, Response};
+#[cfg(feature = "client")]
 use gloo_net::Error;
 use serde::Deserialize;
 
@@ -70,6 +72,7 @@ pub struct AuthorsContainerSearchParams {
     pub query: String,
 }
 
+#[cfg(feature = "client")]
 #[async_trait(?Send)]
 impl RequestableItem<ExternalListContainerParams<()>> for API<AuthorsContainer> {
     async fn request(params: ExternalListContainerParams<()>) -> Result<Request, Error> {
@@ -85,6 +88,7 @@ impl RequestableItem<ExternalListContainerParams<()>> for API<AuthorsContainer> 
     }
 }
 
+#[cfg(feature = "client")]
 #[async_trait(?Send)]
 impl RequestableItem<ExternalListContainerParams<AuthorsContainerSearchParams>>
     for API<AuthorsContainer>
@@ -158,6 +162,7 @@ impl Identifiable for Author {
     }
 }
 
+#[cfg(feature = "client")]
 #[async_trait(?Send)]
 impl RequestableItem<AuthorSlugParams> for API<AuthorContainer> {
     async fn request(params: AuthorSlugParams) -> Result<Request, Error> {
@@ -170,6 +175,7 @@ impl RequestableItem<AuthorSlugParams> for API<AuthorContainer> {
     }
 }
 
+#[cfg(feature = "client")]
 #[async_trait(?Send)]
 impl RequestableItem<Tokened<AuthorMeParams>> for API<AuthorContainer> {
     async fn request(params: Tokened<AuthorMeParams>) -> Result<Request, Error> {
@@ -201,6 +207,7 @@ pub struct PostsContainerSearchParam {
     pub query: String,
 }
 
+#[cfg(feature = "client")]
 #[async_trait(?Send)]
 impl RequestableItem<ExternalListContainerParams<()>> for API<PostsContainer> {
     async fn request(params: ExternalListContainerParams<()>) -> Result<Request, Error> {
@@ -216,6 +223,7 @@ impl RequestableItem<ExternalListContainerParams<()>> for API<PostsContainer> {
     }
 }
 
+#[cfg(feature = "client")]
 #[async_trait(?Send)]
 impl RequestableItem<ExternalListContainerParams<PostsContainerSearchParam>>
     for API<PostsContainer>
@@ -298,6 +306,7 @@ impl Identifiable for Post {
     }
 }
 
+#[cfg(feature = "client")]
 #[async_trait(?Send)]
 impl RequestableItem<PostIdParams> for API<PostContainer> {
     async fn request(params: PostIdParams) -> Result<Request, Error> {
@@ -310,6 +319,7 @@ impl RequestableItem<PostIdParams> for API<PostContainer> {
     }
 }
 
+#[cfg(feature = "client")]
 #[async_trait(?Send)]
 impl RequestableItem<Tokened<NewPostParams>> for API<PostContainer> {
     async fn request(params: Tokened<NewPostParams>) -> Result<Request, Error> {
@@ -328,6 +338,7 @@ impl RequestableItem<Tokened<NewPostParams>> for API<PostContainer> {
     }
 }
 
+#[cfg(feature = "client")]
 #[async_trait(?Send)]
 impl RequestableItem<Tokened<UpdatePostParams>> for API<PostContainer> {
     async fn request(params: Tokened<UpdatePostParams>) -> Result<Request, Error> {
@@ -363,6 +374,7 @@ pub struct CommentsContainerPostIdParams {
     pub post_id: u64,
 }
 
+#[cfg(feature = "client")]
 #[async_trait(?Send)]
 impl RequestableItem<ExternalListContainerParams<CommentsContainerPostIdParams>>
     for API<CommentsContainer>
@@ -415,6 +427,7 @@ impl ExternalResultContainer for CommentsContainer {
 //
 //
 
+#[cfg(feature = "client")]
 #[async_trait(?Send)]
 impl RequestableItem<LoginQuestion> for API<LoginAnswer> {
     async fn request(params: LoginQuestion) -> Result<Request, Error> {

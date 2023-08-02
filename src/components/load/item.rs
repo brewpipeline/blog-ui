@@ -36,7 +36,14 @@ where
 
     let location = use_location().unwrap();
 
-    let item_result = use_state_eq(|| None);
+    let item_result: UseStateHandle<
+        Option<
+            Result<
+                <<C as ExternalResultContainer>::Inner as ExternalItemContainer>::Item,
+                ExternalError<<C as ExternalResultContainer>::Error>,
+            >,
+        >,
+    > = use_state_eq(|| None);
     {
         let location = location.clone();
         let item_result = item_result.clone();
@@ -63,6 +70,7 @@ where
 
             let params = params.clone();
             let item_result = item_result.clone();
+            #[cfg(feature = "client")]
             wasm_bindgen_futures::spawn_local(async move {
                 match C::get(params).await {
                     Ok(item_result_container) => {

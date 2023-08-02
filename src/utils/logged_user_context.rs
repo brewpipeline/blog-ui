@@ -1,6 +1,4 @@
 use std::rc::Rc;
-#[cfg(target_arch = "wasm32")]
-use wasm_cookies::CookieOptions;
 use yew::{Reducible, UseReducerHandle};
 
 use crate::content::*;
@@ -43,15 +41,15 @@ pub struct LoggedUser {
 }
 
 impl LoggedUser {
-    #[cfg(target_arch = "wasm32")]
+    #[cfg(all(feature = "client", target_arch = "wasm32"))]
     fn load_token() -> Option<String> {
         Some(wasm_cookies::get("Token")?.ok()?)
     }
 
-    #[cfg(target_arch = "wasm32")]
+    #[cfg(all(feature = "client", target_arch = "wasm32"))]
     fn save_token(token: Option<&String>) -> Option<()> {
         if let Some(token) = &token {
-            wasm_cookies::set("Token", &token, &CookieOptions::default());
+            wasm_cookies::set("Token", &token, &wasm_cookies::CookieOptions::default());
         } else {
             wasm_cookies::delete("Token")
         }
@@ -61,23 +59,24 @@ impl LoggedUser {
 
 impl Default for LoggedUser {
     fn default() -> Self {
-        #[cfg(target_arch = "wasm32")]
-        let token = Self::load_token();
-        #[cfg(not(target_arch = "wasm32"))]
-        let token = None;
-        Self {
-            state: match token {
+        #[cfg(all(feature = "client", target_arch = "wasm32"))]
+        return Self {
+            state: match Self::load_token() {
                 Some(token) => LoggedUserState::Active { token },
                 None => LoggedUserState::None,
             },
-        }
+        };
+        #[cfg(any(not(feature = "client"), not(target_arch = "wasm32")))]
+        return Self {
+            state: LoggedUserState::None,
+        };
     }
 }
 
 impl Reducible for LoggedUser {
     type Action = LoggedUserState;
     fn reduce(self: Rc<Self>, new_state: LoggedUserState) -> Rc<Self> {
-        #[cfg(target_arch = "wasm32")]
+        #[cfg(all(feature = "client", target_arch = "wasm32"))]
         Self::save_token(new_state.token());
         LoggedUser { state: new_state }.into()
     }

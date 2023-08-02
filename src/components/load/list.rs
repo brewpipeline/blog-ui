@@ -55,7 +55,14 @@ where
     let page = location.query::<PageQuery>().map(|it| it.page).unwrap_or(1);
     let offset = (page - 1) * items_per_page;
 
-    let list_result = use_state_eq(|| None);
+    let list_result: UseStateHandle<
+        Option<
+            Result<
+                <C as ExternalResultContainer>::Inner,
+                ExternalError<<C as ExternalResultContainer>::Error>,
+            >,
+        >,
+    > = use_state_eq(|| None);
     {
         let list_result = list_result.clone();
         use_effect_with(
@@ -66,6 +73,7 @@ where
                 let params = params.clone();
                 let items_per_page = *items_per_page;
                 let offset = *offset;
+                #[cfg(feature = "client")]
                 wasm_bindgen_futures::spawn_local(async move {
                     match C::get(ExternalListContainerParams {
                         params,

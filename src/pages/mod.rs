@@ -1,15 +1,19 @@
 pub mod author;
 pub mod authors;
+#[cfg(feature = "client")]
 pub mod edit_post;
 pub mod page_not_found;
 pub mod post;
 pub mod posts;
+#[cfg(feature = "client")]
 pub mod search;
 
 pub use author::*;
 pub use authors::*;
+#[cfg(feature = "client")]
 pub use edit_post::*;
 pub use page_not_found::*;
 pub use post::*;
 pub use posts::*;
+#[cfg(feature = "client")]
 pub use search::*;

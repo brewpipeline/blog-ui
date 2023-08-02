@@ -1,9 +1,12 @@
+#![allow(dead_code, unused_variables)]
+
 mod app;
 mod components;
 mod content;
 mod pages;
 mod utils;
 
+#[cfg(feature = "client")]
 #[macro_use]
 extern crate async_trait;
 

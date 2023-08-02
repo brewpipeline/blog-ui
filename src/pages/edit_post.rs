@@ -36,8 +36,8 @@ pub struct EditPostProps {
 #[function_component(EditPost)]
 pub fn edit_post(props: &EditPostProps) -> Html {
     let EditPostProps { id } = props.clone();
-    html_document::reset_title_and_meta();
-    html_document::set_prefix_default_title(
+    head::reset_title_and_meta();
+    head::set_prefix_default_title(
         {
             if id == None {
                 "Новая публикация"

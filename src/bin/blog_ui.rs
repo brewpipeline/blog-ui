@@ -5,5 +5,7 @@ fn main() {
         wasm_logger::init(wasm_logger::Config::default());
     }
 
-    app_renderer().render();
+    let document = gloo::utils::document();
+    let element = document.query_selector("#app").unwrap().unwrap();
+    yew::Renderer::<App>::with_root(element).render();
 }

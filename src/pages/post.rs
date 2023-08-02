@@ -6,7 +6,7 @@ use crate::components::list::*;
 use crate::components::post_card::*;
 use crate::components::warning::*;
 use crate::content;
-use crate::utils::html_document;
+use crate::utils::head;
 
 use crate::Route;
 
@@ -19,8 +19,8 @@ pub struct PostProps {
 #[function_component(Post)]
 pub fn post(props: &PostProps) -> Html {
     let PostProps { slug, id } = props.clone();
-    html_document::reset_title_and_meta();
-    html_document::set_prefix_default_title("Публикация".to_string());
+    head::reset_title_and_meta();
+    head::set_prefix_default_title("Публикация".to_string());
     html! {
         <Item<content::API<content::PostContainer>, content::PostIdParams>
             params={ content::PostIdParams { id } }
@@ -29,16 +29,16 @@ pub fn post(props: &PostProps) -> Html {
                     if post.id != id || post.slug != slug {
                         return html! { <Warning text="Ссылка на публикацию повреждена" /> }
                     }
-                    html_document::reset_title_and_meta();
-                    html_document::set_prefix_default_title(
+                    head::reset_title_and_meta();
+                    head::set_prefix_default_title(
                         format!("{} - Публикация", post.title.clone())
                     );
-                    html_document::set_meta(
-                        html_document::MetaTag::Description,
+                    head::set_meta(
+                        head::MetaTag::Description,
                         post.summary.clone()
                     );
-                    html_document::set_meta(
-                        html_document::MetaTag::Keywords,
+                    head::set_meta(
+                        head::MetaTag::Keywords,
                         post.tags_string()
                     );
                 }
