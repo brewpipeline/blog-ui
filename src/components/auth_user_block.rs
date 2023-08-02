@@ -29,6 +29,13 @@ pub fn auth_user_block() -> Html {
         }
     };
 
+    {
+        let logged_user_context = logged_user_context.clone();
+        use_effect_with((), move |_| {
+            logged_user_context.dispatch(LoggedUserState::load());
+        });
+    }
+
     let params = Tokened {
         token: token.clone(),
         params: AuthorMeParams,

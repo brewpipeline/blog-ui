@@ -1,5 +1,7 @@
+#[cfg(feature = "client")]
 use web_sys::HtmlInputElement;
 use yew::prelude::*;
+#[cfg(feature = "client")]
 use yew_hooks::prelude::*;
 use yew_router::prelude::*;
 
@@ -82,6 +84,7 @@ pub fn search_field() -> Html {
         })
     }
 
+    #[cfg(feature = "client")]
     let debounce = {
         let mode = mode.clone();
         let query = query.clone();
@@ -99,6 +102,7 @@ pub fn search_field() -> Html {
         )
     };
 
+    #[cfg(feature = "client")]
     let oninput = {
         let query = query.clone();
         Callback::from(move |e: InputEvent| {
@@ -109,6 +113,8 @@ pub fn search_field() -> Html {
             debounce.run();
         })
     };
+    #[cfg(not(eature = "client"))]
+    let oninput = Callback::from(|_| {});
 
     html! {
         <input

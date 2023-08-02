@@ -85,7 +85,9 @@ impl Route {
 
 #[function_component(Main)]
 fn main() -> Html {
-    let logged_user = use_reducer(|| Default::default());
+    let logged_user = use_reducer(|| LoggedUser {
+        state: LoggedUserState::None,
+    });
     html! {
         <ContextProvider<LoggedUserContext> context={logged_user}>
             <Header />

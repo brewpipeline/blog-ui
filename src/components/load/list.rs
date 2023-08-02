@@ -63,6 +63,7 @@ where
             >,
         >,
     > = use_state_eq(|| None);
+    #[cfg(feature = "client")]
     {
         let list_result = list_result.clone();
         use_effect_with(
@@ -73,7 +74,6 @@ where
                 let params = params.clone();
                 let items_per_page = *items_per_page;
                 let offset = *offset;
-                #[cfg(feature = "client")]
                 wasm_bindgen_futures::spawn_local(async move {
                     match C::get(ExternalListContainerParams {
                         params,

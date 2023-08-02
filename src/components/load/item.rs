@@ -44,6 +44,7 @@ where
             >,
         >,
     > = use_state_eq(|| None);
+    #[cfg(feature = "client")]
     {
         let location = location.clone();
         let item_result = item_result.clone();
@@ -70,7 +71,6 @@ where
 
             let params = params.clone();
             let item_result = item_result.clone();
-            #[cfg(feature = "client")]
             wasm_bindgen_futures::spawn_local(async move {
                 match C::get(params).await {
                     Ok(item_result_container) => {
