@@ -1,4 +1,6 @@
+#[cfg(feature = "client")]
 use gloo::utils::document;
+#[cfg(feature = "client")]
 use web_sys::{Element, HtmlInputElement, Node};
 use yew::prelude::*;
 use yew_router::prelude::*;
@@ -60,6 +62,7 @@ pub fn edit_post(props: &EditPostProps) -> Html {
     let tags_node_ref = use_node_ref();
     let published_node_ref = use_node_ref();
 
+    #[cfg(feature = "client")]
     {
         let navigator = navigator.clone();
         let logged_user_context = logged_user_context.clone();
@@ -129,6 +132,7 @@ pub fn edit_post(props: &EditPostProps) -> Html {
         }
     };
 
+    #[cfg(feature = "client")]
     let onclick = {
         let state = state.clone();
         let title_node_ref = title_node_ref.clone();
@@ -166,7 +170,10 @@ pub fn edit_post(props: &EditPostProps) -> Html {
             }))
         })
     };
+    #[cfg(not(feature = "client"))]
+    let onclick = Callback::from(|_| {});
 
+    #[cfg(feature = "client")]
     let editor_script = {
         let script: Element = document().create_element("script").unwrap();
         script.set_inner_html(
@@ -179,6 +186,8 @@ pub fn edit_post(props: &EditPostProps) -> Html {
         let node: Node = script.into();
         Html::VRef(node)
     };
+    #[cfg(not(feature = "client"))]
+    let editor_script = html! {};
 
     let main_content = move |post: Option<content::Post>| {
         html! {

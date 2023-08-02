@@ -80,7 +80,7 @@ pub fn login_modal(props: &LoginModalProps) -> Html {
             }));
         })
     };
-    #[cfg(not(eature = "client"))]
+    #[cfg(not(feature = "client"))]
     let onclick = Callback::from(|_| {});
 
     let modal_node_ref = use_node_ref();

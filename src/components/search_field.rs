@@ -113,7 +113,7 @@ pub fn search_field() -> Html {
             debounce.run();
         })
     };
-    #[cfg(not(eature = "client"))]
+    #[cfg(not(feature = "client"))]
     let oninput = Callback::from(|_| {});
 
     html! {
