@@ -96,7 +96,7 @@ fn main() -> Html {
 
 #[cfg(feature = "client")]
 #[function_component(App)]
-pub fn app() -> Html {
+fn app() -> Html {
     html! {
         <BrowserRouter>
             <Main />
@@ -104,16 +104,23 @@ pub fn app() -> Html {
     }
 }
 
+#[cfg(feature = "client")]
+pub fn app_renderer() -> yew::Renderer<impl BaseComponent> {
+    let document = gloo::utils::document();
+    let element = document.query_selector("#app").unwrap().unwrap();
+    yew::Renderer::<App>::with_root(element)
+}
+
 #[cfg(feature = "server")]
 #[derive(Properties, PartialEq, Eq, Debug)]
-pub struct ServerAppProps {
+struct ServerAppProps {
     pub url: AttrValue,
     pub queries: std::collections::HashMap<String, String>,
 }
 
 #[cfg(feature = "server")]
 #[function_component(ServerApp)]
-pub fn server_app(props: &ServerAppProps) -> Html {
+fn server_app(props: &ServerAppProps) -> Html {
     let history = gloo_history::AnyHistory::from(MemoryHistory::new());
     history
         .push_with_query(&*props.url, &props.queries)
@@ -124,4 +131,15 @@ pub fn server_app(props: &ServerAppProps) -> Html {
             <Main />
         </Router>
     }
+}
+
+#[cfg(feature = "server")]
+pub fn server_renderer(
+    url: String,
+    query: std::collections::HashMap<String, String>,
+) -> yew::ServerRenderer<impl BaseComponent> {
+    yew::ServerRenderer::<ServerApp>::with_props(move || ServerAppProps {
+        url: url.into(),
+        queries: query,
+    })
 }
