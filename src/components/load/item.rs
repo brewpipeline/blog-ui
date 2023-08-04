@@ -1,6 +1,5 @@
 use super::*;
 use yew::prelude::*;
-use yew_router::prelude::*;
 
 use crate::utils::*;
 
@@ -15,7 +14,7 @@ where
 {
     pub params: P,
     pub component: Callback<Option<<C::Inner as ExternalItemContainer>::Item>, Html>,
-    pub error_component: Callback<ExternalError<C::Error>, Html>,
+    pub error_component: Callback<LoadError<C::Error>, Html>,
 }
 
 #[function_component(Item)]
@@ -33,46 +32,10 @@ where
         error_component,
     } = props.clone();
 
-    let location = use_location().unwrap();
-
-    let item_result: UseStateHandle<
-        Option<
-            Result<
-                <C::Inner as ExternalItemContainer>::Item,
-                ExternalError<C::Error>,
-            >,
-        >,
-    > = use_state_eq(|| None);
-    #[cfg(feature = "client")]
-    {
-        let location = location.clone();
-        let item_result = item_result.clone();
-        use_effect_with(params, move |params| {
-            if let Some(cached_item) = location
-                .state::<<C::Inner as ExternalItemContainer>::Item>()
-                .map(|i| (*i).clone())
-            {
-                item_result.set(Some(Ok(cached_item)));
-                return;
-            } else {
-                item_result.set(None);
-            }
-
-            let params = params.clone();
-            let item_result = item_result.clone();
-            wasm_bindgen_futures::spawn_local(async move {
-                let fetched_item_result = C::get(params)
-                    .await
-                    .map_err(|err| ExternalError::Net(err.to_string()))
-                    .and_then(|r| {
-                        r.result()
-                            .map(|i| i.item())
-                            .map_err(|e| ExternalError::Content(e))
-                    });
-                item_result.set(Some(fetched_item_result));
-            });
+    let item_result =
+        use_load_and_map::<C, P, _, <C::Inner as ExternalItemContainer>::Item>(params, |i| {
+            i.item()
         });
-    }
 
     let Some(item_result) = (*item_result).clone() else {
         return component.emit(None)

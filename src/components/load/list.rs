@@ -25,7 +25,7 @@ where
     pub items_per_page: u64,
     pub route_to_page: Route,
     pub component: Callback<Option<<C::Inner as ExternalListContainer>::Item>, Html>,
-    pub error_component: Callback<ExternalError<C::Error>, Html>,
+    pub error_component: Callback<LoadError<C::Error>, Html>,
     pub children: Children,
 }
 
@@ -55,47 +55,12 @@ where
     let page = location.query::<PageQuery>().map(|it| it.page).unwrap_or(1);
     let offset = (page - 1) * items_per_page;
 
-    let list_result_container: UseStateHandle<
-        Option<
-            Result<
-                C::Inner,
-                ExternalError<C::Error>,
-            >,
-        >,
-    > = use_state_eq(|| None);
-    #[cfg(feature = "client")]
-    {
-        let list_result_container = list_result_container.clone();
-        use_effect_with(
-            (params, items_per_page, offset),
-            move |(params, items_per_page, offset)| {
-                if let Some(cached_list_container) = location
-                    .state::<C::Inner>()
-                    .map(|i| (*i).clone())
-                {
-                    list_result_container.set(Some(Ok(cached_list_container)));
-                    return;
-                } else {
-                    list_result_container.set(None);
-                }
-
-                let params = params.clone();
-                let items_per_page = *items_per_page;
-                let offset = *offset;
-                wasm_bindgen_futures::spawn_local(async move {
-                    let fetched_list_result_container = C::get(ExternalListContainerParams {
-                        params,
-                        limit: items_per_page,
-                        skip: offset,
-                    })
-                    .await
-                    .map_err(|err| ExternalError::Net(err.to_string()))
-                    .and_then(|r| r.result().map_err(|e| ExternalError::Content(e)));
-                    list_result_container.set(Some(fetched_list_result_container));
-                });
-            },
-        );
-    }
+    let list_result_container =
+        use_load::<C, ExternalListContainerParams<P>>(ExternalListContainerParams {
+            params,
+            limit: items_per_page,
+            skip: offset,
+        });
 
     let Some(list_result_container) = (*list_result_container).clone() else {
         return (0..items_per_page).map(|_| {
