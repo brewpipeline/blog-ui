@@ -58,8 +58,8 @@ where
     let list_result_container: UseStateHandle<
         Option<
             Result<
-                <C as ExternalResultContainer>::Inner,
-                ExternalError<<C as ExternalResultContainer>::Error>,
+                C::Inner,
+                ExternalError<C::Error>,
             >,
         >,
     > = use_state_eq(|| None);
@@ -69,8 +69,16 @@ where
         use_effect_with(
             (params, items_per_page, offset),
             move |(params, items_per_page, offset)| {
-                list_result_container.set(None);
-                let list_result_container = list_result_container.clone();
+                if let Some(cached_list_container) = location
+                    .state::<C::Inner>()
+                    .map(|i| (*i).clone())
+                {
+                    list_result_container.set(Some(Ok(cached_list_container)));
+                    return;
+                } else {
+                    list_result_container.set(None);
+                }
+
                 let params = params.clone();
                 let items_per_page = *items_per_page;
                 let offset = *offset;

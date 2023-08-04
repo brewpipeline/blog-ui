@@ -38,8 +38,8 @@ where
     let item_result: UseStateHandle<
         Option<
             Result<
-                <<C as ExternalResultContainer>::Inner as ExternalItemContainer>::Item,
-                ExternalError<<C as ExternalResultContainer>::Error>,
+                <C::Inner as ExternalItemContainer>::Item,
+                ExternalError<C::Error>,
             >,
         >,
     > = use_state_eq(|| None);
