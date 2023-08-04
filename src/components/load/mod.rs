@@ -22,7 +22,7 @@ where
     C::Inner: Clone + PartialEq + 'static,
     C::Error: Clone + PartialEq + 'static,
     P: Clone + PartialEq + 'static,
-    F: Fn(C::Inner) -> I + 'static,
+    F: FnOnce(C::Inner) -> I + 'static,
     I: Clone + PartialEq + 'static,
 {
     let location = use_location().unwrap();
