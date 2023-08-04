@@ -55,7 +55,7 @@ where
     let page = location.query::<PageQuery>().map(|it| it.page).unwrap_or(1);
     let offset = (page - 1) * items_per_page;
 
-    let list_result: UseStateHandle<
+    let list_result_container: UseStateHandle<
         Option<
             Result<
                 <C as ExternalResultContainer>::Inner,
@@ -65,46 +65,36 @@ where
     > = use_state_eq(|| None);
     #[cfg(feature = "client")]
     {
-        let list_result = list_result.clone();
+        let list_result_container = list_result_container.clone();
         use_effect_with(
             (params, items_per_page, offset),
             move |(params, items_per_page, offset)| {
-                list_result.set(None);
-                let list_result = list_result.clone();
+                list_result_container.set(None);
+                let list_result_container = list_result_container.clone();
                 let params = params.clone();
                 let items_per_page = *items_per_page;
                 let offset = *offset;
                 wasm_bindgen_futures::spawn_local(async move {
-                    match C::get(ExternalListContainerParams {
+                    let fetched_list_result_container = C::get(ExternalListContainerParams {
                         params,
                         limit: items_per_page,
                         skip: offset,
                     })
                     .await
-                    {
-                        Ok(list_result_container) => {
-                            list_result.set(Some(
-                                list_result_container
-                                    .result()
-                                    .map_err(|e| ExternalError::Content(e)),
-                            ));
-                        }
-                        Err(err) => {
-                            list_result.set(Some(Err(ExternalError::Net(err.to_string()))));
-                        }
-                    }
+                    .map_err(|err| ExternalError::Net(err.to_string()))
+                    .and_then(|r| r.result().map_err(|e| ExternalError::Content(e)));
+                    list_result_container.set(Some(fetched_list_result_container));
                 });
-                || ()
             },
         );
     }
 
-    let Some(list_result) = (*list_result).clone() else {
+    let Some(list_result_container) = (*list_result_container).clone() else {
         return (0..items_per_page).map(|_| {
             component.emit(None)
         }).collect::<Html>()
     };
-    match list_result {
+    match list_result_container {
         Ok(list_container) => {
             let total_pages = (list_container.total() as f64 / items_per_page as f64).ceil() as u64;
             let items = list_container.items();

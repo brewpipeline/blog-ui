@@ -72,19 +72,15 @@ where
             let params = params.clone();
             let item_result = item_result.clone();
             wasm_bindgen_futures::spawn_local(async move {
-                match C::get(params).await {
-                    Ok(item_result_container) => {
-                        item_result.set(Some(
-                            item_result_container
-                                .result()
-                                .map(|i| i.item())
-                                .map_err(|e| ExternalError::Content(e)),
-                        ));
-                    }
-                    Err(err) => {
-                        item_result.set(Some(Err(ExternalError::Net(err.to_string()))));
-                    }
-                }
+                let fetched_item_result = C::get(params)
+                    .await
+                    .map_err(|err| ExternalError::Net(err.to_string()))
+                    .and_then(|r| {
+                        r.result()
+                            .map(|i| i.item())
+                            .map_err(|e| ExternalError::Content(e))
+                    });
+                item_result.set(Some(fetched_item_result));
             });
         });
     }
