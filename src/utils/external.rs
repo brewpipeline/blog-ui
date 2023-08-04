@@ -4,18 +4,6 @@ pub trait ExternalResultContainer {
     fn result(self) -> Result<Self::Inner, Self::Error>;
 }
 
-pub trait Identifiable {
-    type Id: Eq + std::hash::Hash;
-    fn id(&self) -> &Self::Id;
-}
-
-impl Identifiable for () {
-    type Id = Self;
-    fn id(&self) -> &Self::Id {
-        self
-    }
-}
-
 pub trait ExternalItemContainer {
     type Item;
     fn item(self) -> Self::Item;

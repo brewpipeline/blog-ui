@@ -10,8 +10,8 @@ where
     C: ExternalResultContainer + RequestableItem<P> + Clone + PartialEq + 'static,
     C::Inner: ExternalItemContainer + Clone + PartialEq + 'static,
     C::Error: Clone + PartialEq + 'static,
-    <C::Inner as ExternalItemContainer>::Item: Identifiable + Clone + PartialEq + 'static,
-    P: Identifiable + Clone + PartialEq + 'static,
+    <C::Inner as ExternalItemContainer>::Item: Clone + PartialEq + 'static,
+    P: Clone + PartialEq + 'static,
 {
     pub params: P,
     pub component: Callback<Option<<C::Inner as ExternalItemContainer>::Item>, Html>,
@@ -24,9 +24,8 @@ where
     C: ExternalResultContainer + RequestableItem<P> + Clone + PartialEq + 'static,
     C::Inner: ExternalItemContainer + Clone + PartialEq + 'static,
     C::Error: Clone + PartialEq + 'static,
-    <C::Inner as ExternalItemContainer>::Item:
-        Identifiable<Id = P::Id> + Clone + PartialEq + 'static,
-    P: Identifiable + Clone + PartialEq + 'static,
+    <C::Inner as ExternalItemContainer>::Item: Clone + PartialEq + 'static,
+    P: Clone + PartialEq + 'static,
 {
     let ItemProps {
         params,
@@ -52,16 +51,6 @@ where
             if let Some(cached_item) = location
                 .state::<<C::Inner as ExternalItemContainer>::Item>()
                 .map(|i| (*i).clone())
-                .or_else(|| {
-                    location
-                        .state::<std::collections::HashMap<
-                            P::Id,
-                            <C::Inner as ExternalItemContainer>::Item,
-                        >>()
-                        .map(|i| (*i).get(params.id()).cloned())
-                        .flatten()
-                })
-                .filter(|i| i.id() == params.id())
             {
                 item_result.set(Some(Ok(cached_item)));
                 return;

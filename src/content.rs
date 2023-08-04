@@ -52,16 +52,6 @@ pub struct Tokened<P> {
     pub params: P,
 }
 
-impl<T: Identifiable> Identifiable for Tokened<T> {
-    type Id = T::Id;
-    fn id(&self) -> &Self::Id {
-        if core::any::type_name::<T>() == core::any::type_name::<Tokened<T>>() {
-            panic!("recursion")
-        }
-        self.id()
-    }
-}
-
 //
 // Authors
 //
@@ -138,29 +128,8 @@ pub struct AuthorSlugParams {
     pub slug: String,
 }
 
-impl Identifiable for AuthorSlugParams {
-    type Id = String;
-    fn id(&self) -> &Self::Id {
-        &self.slug
-    }
-}
-
 #[derive(Clone, PartialEq)]
 pub struct AuthorMeParams;
-
-impl Identifiable for AuthorMeParams {
-    type Id = String;
-    fn id(&self) -> &Self::Id {
-        unreachable!()
-    }
-}
-
-impl Identifiable for Author {
-    type Id = String;
-    fn id(&self) -> &Self::Id {
-        &self.base.slug
-    }
-}
 
 #[cfg(feature = "client")]
 #[async_trait(?Send)]
@@ -290,20 +259,6 @@ pub struct NewPostParams {
 pub struct UpdatePostParams {
     pub id: u64,
     pub update_post: CommonPost,
-}
-
-impl Identifiable for PostIdParams {
-    type Id = u64;
-    fn id(&self) -> &Self::Id {
-        &self.id
-    }
-}
-
-impl Identifiable for Post {
-    type Id = u64;
-    fn id(&self) -> &Self::Id {
-        &self.id
-    }
 }
 
 #[cfg(feature = "client")]

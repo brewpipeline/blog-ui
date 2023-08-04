@@ -81,7 +81,7 @@ pub fn author_card(props: &AuthorCardProps) -> Html {
                 <Link<Route, Author>
                     classes="text-decoration-none"
                     to={ Route::Author { slug: author.base.slug.clone() } }
-                    state= { Some(author.clone()) }
+                    state={ Some(author.clone()) }
                 >
                     { main_content }
                 </Link<Route, Author>>
