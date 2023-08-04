@@ -314,6 +314,7 @@ pub fn edit_post(props: &EditPostProps) -> Html {
         html! {
             <Item<content::API<content::PostContainer>, content::PostIdParams>
                 params={ content::PostIdParams { id } }
+                use_route_cache=true
                 component={ move |post: Option<content::Post>| {
                     if let Some(post) = post {
                         if post.short_author.slug == author.base.slug {

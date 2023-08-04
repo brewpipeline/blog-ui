@@ -13,6 +13,8 @@ where
     P: Clone + PartialEq + 'static,
 {
     pub params: P,
+    #[prop_or_default]
+    pub use_route_cache: bool,
     pub component: Callback<Option<<C::Inner as ExternalItemContainer>::Item>, Html>,
     pub error_component: Callback<LoadError<C::Error>, Html>,
 }
@@ -28,14 +30,16 @@ where
 {
     let ItemProps {
         params,
+        use_route_cache,
         component,
         error_component,
     } = props.clone();
 
-    let item_result =
-        use_load_and_map::<C, P, _, <C::Inner as ExternalItemContainer>::Item>(params, |i| {
-            i.item()
-        });
+    let item_result = use_load_and_map::<C, P, _, <C::Inner as ExternalItemContainer>::Item>(
+        params,
+        use_route_cache,
+        |i| i.item(),
+    );
 
     let Some(item_result) = (*item_result).clone() else {
         return component.emit(None)

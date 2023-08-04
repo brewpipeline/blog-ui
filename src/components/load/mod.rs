@@ -15,6 +15,7 @@ pub enum LoadError<E: Clone + PartialEq> {
 #[hook]
 pub fn use_load_and_map<C, P, F, I>(
     params: P,
+    use_route_cache: bool,
     inner_map: F,
 ) -> UseStateHandle<Option<Result<I, LoadError<C::Error>>>>
 where
@@ -31,7 +32,9 @@ where
     {
         let container_inner_result = container_inner_result.clone();
         use_effect_with(params, move |params| {
-            if let Some(cached_container_inner) = location.state::<I>().map(|i| (*i).clone()) {
+            if let (true, Some(cached_container_inner)) =
+                (use_route_cache, location.state::<I>().map(|i| (*i).clone()))
+            {
                 container_inner_result.set(Some(Ok(cached_container_inner)));
                 return;
             } else {
@@ -51,12 +54,15 @@ where
 }
 
 #[hook]
-pub fn use_load<C, P>(params: P) -> UseStateHandle<Option<Result<C::Inner, LoadError<C::Error>>>>
+pub fn use_load<C, P>(
+    params: P,
+    use_route_cache: bool,
+) -> UseStateHandle<Option<Result<C::Inner, LoadError<C::Error>>>>
 where
     C: ExternalResultContainer + RequestableItem<P> + Clone + PartialEq + 'static,
     C::Inner: Clone + PartialEq + 'static,
     C::Error: Clone + PartialEq + 'static,
     P: Clone + PartialEq + 'static,
 {
-    use_load_and_map::<C, P, _, C::Inner>(params, |i| i)
+    use_load_and_map::<C, P, _, C::Inner>(params, use_route_cache, |i| i)
 }

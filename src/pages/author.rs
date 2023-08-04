@@ -19,6 +19,7 @@ pub fn author(props: &AuthorProps) -> Html {
     html! {
         <Item<content::API<content::AuthorContainer>, content::AuthorSlugParams>
             params={ content::AuthorSlugParams { slug: slug.clone() } }
+            use_route_cache=true
             component={ |author: Option<content::Author>| {
                 if let Some(author) = &author {
                     head::reset_title_and_meta();

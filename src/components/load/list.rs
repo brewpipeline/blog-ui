@@ -21,6 +21,8 @@ where
     P: Clone + PartialEq + 'static,
 {
     pub params: P,
+    #[prop_or_default]
+    pub use_route_cache: bool,
     #[prop_or(10)]
     pub items_per_page: u64,
     pub route_to_page: Route,
@@ -44,6 +46,7 @@ where
 {
     let ListProps {
         params,
+        use_route_cache,
         items_per_page,
         route_to_page,
         component,
@@ -55,12 +58,14 @@ where
     let page = location.query::<PageQuery>().map(|it| it.page).unwrap_or(1);
     let offset = (page - 1) * items_per_page;
 
-    let list_result_container =
-        use_load::<C, ExternalListContainerParams<P>>(ExternalListContainerParams {
+    let list_result_container = use_load::<C, ExternalListContainerParams<P>>(
+        ExternalListContainerParams {
             params,
             limit: items_per_page,
             skip: offset,
-        });
+        },
+        use_route_cache,
+    );
 
     let Some(list_result_container) = (*list_result_container).clone() else {
         return (0..items_per_page).map(|_| {
