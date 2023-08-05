@@ -3,9 +3,26 @@ pub use blog_generic::entities::*;
 use gloo_net::http::{Request, Response};
 #[cfg(feature = "client")]
 use gloo_net::Error;
-use serde::Deserialize;
+use serde::{Deserialize, Serialize};
 
 use crate::utils::*;
+
+//
+// ExternalCodable impl
+//
+//
+
+impl<T> ExternalCodable for T
+where
+    T: for<'de> Deserialize<'de> + Serialize,
+{
+    fn encode(&self) -> Option<AppContent> {
+        AppContent::json_encode(self)
+    }
+    fn decode(app_content: AppContent) -> Option<Self> {
+        app_content.json_decode()
+    }
+}
 
 //
 // API

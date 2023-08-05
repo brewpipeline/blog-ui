@@ -6,7 +6,7 @@ use crate::components::list::*;
 use crate::components::post_card::*;
 use crate::components::warning::*;
 use crate::content;
-use crate::utils::head;
+use crate::utils::*;
 
 use crate::Route;
 
@@ -19,29 +19,22 @@ pub struct PostProps {
 #[function_component(Post)]
 pub fn post(props: &PostProps) -> Html {
     let PostProps { slug, id } = props.clone();
-    head::reset_title_and_meta();
-    head::set_prefix_default_title("Публикация".to_string());
+    let app_meta = use_context::<AppMetaContext>().unwrap();
     html! {
         <Item<content::API<content::PostContainer>, content::PostIdParams>
             params={ content::PostIdParams { id } }
-            use_route_cache=true
+            use_caches=true
             component={ move |post: Option<content::Post>| {
+                app_meta.dispatch([AppMetaAction::Title("Публикация".to_string())].into());
                 if let Some(post) = &post {
                     if post.id != id || post.slug != slug {
                         return html! { <Warning text="Ссылка на публикацию повреждена" /> }
                     }
-                    head::reset_title_and_meta();
-                    head::set_prefix_default_title(
-                        format!("{} - Публикация", post.title.clone())
-                    );
-                    head::set_meta(
-                        head::MetaTag::Description,
-                        post.summary.clone()
-                    );
-                    head::set_meta(
-                        head::MetaTag::Keywords,
-                        post.tags_string()
-                    );
+                    app_meta.dispatch([
+                        AppMetaAction::Title(format!("{} - Публикация", post.title.clone())),
+                        AppMetaAction::Description(post.summary.clone()),
+                        AppMetaAction::Keywords(post.tags_string())
+                    ].into());
                 }
                 html! {
                     <>

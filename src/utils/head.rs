@@ -34,24 +34,14 @@ fn meta_element(meta_type: MetaTag) -> Element {
         .unwrap()
 }
 
-pub fn set_meta(meta_type: MetaTag, value: String) {
+pub fn set_meta(meta_type: MetaTag, value: &String) {
     #[cfg(feature = "client")]
     meta_element(meta_type)
         .set_attribute("content", value.as_str())
         .unwrap()
 }
 
-pub fn set_title(value: String) {
+pub fn set_title(value: &String) {
     #[cfg(feature = "client")]
     html_document().set_title(value.as_str())
-}
-
-pub fn set_prefix_default_title(value: String) {
-    set_title(format!("{} - {}", value, crate::TITLE))
-}
-
-pub fn reset_title_and_meta() {
-    set_title(crate::TITLE.to_string());
-    set_meta(MetaTag::Description, crate::DESCRIPTION.to_string());
-    set_meta(MetaTag::Keywords, crate::KEYWORDS.to_string());
 }

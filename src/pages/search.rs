@@ -6,8 +6,8 @@ use crate::components::post_card::*;
 use crate::components::search_field::*;
 use crate::components::warning::*;
 use crate::content::*;
-use crate::utils::head;
 use crate::utils::not_empty::*;
+use crate::utils::*;
 
 use crate::Route;
 
@@ -19,8 +19,8 @@ pub struct SearchProps {
 #[function_component(Search)]
 pub fn search(props: &SearchProps) -> Html {
     let SearchProps { mode } = props.clone();
-    head::reset_title_and_meta();
-    head::set_prefix_default_title(mode.title());
+    let app_meta = use_context::<AppMetaContext>().unwrap();
+    app_meta.dispatch([AppMetaAction::Title(mode.title())].into());
     html! {
         <>
             <div class="mb-3 d-block d-lg-none">

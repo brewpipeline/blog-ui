@@ -4,7 +4,7 @@ use crate::components::author_card::*;
 use crate::components::item::*;
 use crate::components::warning::*;
 use crate::content;
-use crate::utils::head;
+use crate::utils::*;
 
 #[derive(PartialEq, Properties, Clone)]
 pub struct AuthorProps {
@@ -14,16 +14,15 @@ pub struct AuthorProps {
 #[function_component(Author)]
 pub fn author(props: &AuthorProps) -> Html {
     let AuthorProps { slug } = props.clone();
-    head::reset_title_and_meta();
-    head::set_prefix_default_title("Автор".to_string());
+    let app_meta = use_context::<AppMetaContext>().unwrap();
     html! {
         <Item<content::API<content::AuthorContainer>, content::AuthorSlugParams>
             params={ content::AuthorSlugParams { slug: slug.clone() } }
-            use_route_cache=true
-            component={ |author: Option<content::Author>| {
+            use_caches=true
+            component={ move |author: Option<content::Author>| {
+                app_meta.dispatch([AppMetaAction::Title("Автор".to_string())].into());
                 if let Some(author) = &author {
-                    head::reset_title_and_meta();
-                    head::set_prefix_default_title(format!("{} - Автор", author.base.slug.clone()));
+                    app_meta.dispatch([AppMetaAction::Title(format!("{} - Автор", author.base.slug.clone()))].into());
                 }
                 html! { <AuthorCard { author } link_to=false /> }
             } }

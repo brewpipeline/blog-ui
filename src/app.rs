@@ -64,41 +64,88 @@ impl Route {
     }
 }
 
+#[derive(Properties, PartialEq, Debug)]
+struct MainProps {
+    app_content: Option<AppContent>,
+}
+
 #[function_component(Main)]
-fn main() -> Html {
-    let logged_user = use_reducer(|| LoggedUser {
+fn main(props: &MainProps) -> Html {
+    let app_meta = use_reducer_eq(|| AppMeta::default());
+    let app_content_container = use_reducer_eq(|| AppContentContainer {
+        is_used: false,
+        app_content: props.app_content.clone(),
+    });
+    let logged_user = use_reducer_eq(|| LoggedUser {
         state: LoggedUserState::None,
     });
     html! {
-        <ContextProvider<LoggedUserContext> context={logged_user}>
-            <Header />
-            <Body />
-        </ContextProvider<LoggedUserContext>>
+        <>
+            <script id="app-title" type="text/plain"> { app_meta.title.clone() } </script>
+            <script id="app-description" type="text/plain"> { app_meta.description.clone() } </script>
+            <script id="app-keywords" type="text/plain"> { app_meta.keywords.clone() } </script>
+            <script
+                id="app-content"
+                type={ app_content_container.app_content.as_ref().map(|c| c.r#type.clone()) }
+            >
+                { app_content_container.app_content.as_ref().map(|c| c.value.clone()) }
+            </script>
+            <ContextProvider<AppMetaContext> context={ app_meta }>
+                <ContextProvider<AppContentContext> context={ app_content_container }>
+                    <ContextProvider<LoggedUserContext> context={logged_user}>
+                        <Header />
+                        <Body />
+                    </ContextProvider<LoggedUserContext>>
+                </ContextProvider<AppContentContext>>
+            </ContextProvider<AppMetaContext>>
+        </>
     }
 }
 
 #[cfg(feature = "client")]
 #[function_component(App)]
 fn app() -> Html {
+    let app_content = gloo::utils::document()
+        .query_selector("#app-content")
+        .ok()
+        .flatten()
+        .map(|e| {
+            let (
+                "script",
+                Some(r#type),
+                Some(value)
+            ) = (
+                e.tag_name().to_lowercase().as_str(),
+                e.get_attribute("type"),
+                e.text_content().map(|s| s.trim().to_owned())
+            ) else {
+                return None
+            };
+            Some(AppContent { r#type, value })
+        })
+        .flatten();
     html! {
         <BrowserRouter>
-            <Main />
+            <Main { app_content } />
         </BrowserRouter>
     }
 }
 
 #[cfg(feature = "client")]
 pub fn app_renderer() -> yew::Renderer<impl BaseComponent> {
-    let document = gloo::utils::document();
-    let element = document.query_selector("#app").unwrap().unwrap();
+    let element = gloo::utils::document()
+        .query_selector("#app")
+        .unwrap()
+        .unwrap();
     yew::Renderer::<App>::with_root(element)
 }
 
 #[cfg(feature = "server")]
-#[derive(Properties, PartialEq, Eq, Debug)]
+#[derive(Clone, Debug, PartialEq, Eq, Properties)]
 struct ServerAppProps {
     pub url: AttrValue,
     pub queries: std::collections::HashMap<String, String>,
+    pub app_content: Option<AppContent>,
 }
 
 #[cfg(feature = "server")]
@@ -108,10 +155,10 @@ fn server_app(props: &ServerAppProps) -> Html {
     history
         .push_with_query(&*props.url, &props.queries)
         .unwrap();
-
+    let app_content = props.app_content.clone();
     html! {
         <Router history={history}>
-            <Main />
+            <Main { app_content } />
         </Router>
     }
 }
@@ -120,9 +167,11 @@ fn server_app(props: &ServerAppProps) -> Html {
 pub fn server_renderer(
     url: String,
     query: std::collections::HashMap<String, String>,
+    app_content: Option<AppContent>,
 ) -> yew::ServerRenderer<impl BaseComponent> {
     yew::ServerRenderer::<ServerApp>::with_props(move || ServerAppProps {
         url: url.into(),
         queries: query,
+        app_content,
     })
 }

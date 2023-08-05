@@ -4,14 +4,14 @@ use crate::components::list::*;
 use crate::components::post_card::*;
 use crate::components::warning::*;
 use crate::content::*;
-use crate::utils::head;
+use crate::utils::*;
 
 use crate::Route;
 
 #[function_component(Posts)]
 pub fn posts() -> Html {
-    head::reset_title_and_meta();
-    head::set_prefix_default_title("Публикации".to_string());
+    let app_meta = use_context::<AppMetaContext>().unwrap();
+    app_meta.dispatch([AppMetaAction::Title("Публикации".to_string())].into());
     html! {
         <List<API<PostsContainer>>
             params={ () }

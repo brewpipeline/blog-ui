@@ -11,6 +11,7 @@ use crate::components::warning::*;
 use crate::content;
 use crate::utils::*;
 
+#[cfg(feature = "client")]
 use crate::Route;
 
 #[derive(Clone, Debug, PartialEq, Eq)]
@@ -38,16 +39,19 @@ pub struct EditPostProps {
 #[function_component(EditPost)]
 pub fn edit_post(props: &EditPostProps) -> Html {
     let EditPostProps { id } = props.clone();
-    head::reset_title_and_meta();
-    head::set_prefix_default_title(
-        {
-            if id == None {
-                "Новая публикация"
-            } else {
-                "Редактирование публикации"
+    let app_meta = use_context::<AppMetaContext>().unwrap();
+    app_meta.dispatch(
+        [AppMetaAction::Title(
+            {
+                if id == None {
+                    "Новая публикация"
+                } else {
+                    "Редактирование публикации"
+                }
             }
-        }
-        .to_string(),
+            .to_string(),
+        )]
+        .into(),
     );
 
     let navigator = use_navigator().unwrap();
@@ -314,7 +318,7 @@ pub fn edit_post(props: &EditPostProps) -> Html {
         html! {
             <Item<content::API<content::PostContainer>, content::PostIdParams>
                 params={ content::PostIdParams { id } }
-                use_route_cache=true
+                use_caches=true
                 component={ move |post: Option<content::Post>| {
                     if let Some(post) = post {
                         if post.short_author.slug == author.base.slug {

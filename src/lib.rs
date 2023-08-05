@@ -1,4 +1,4 @@
-#![allow(dead_code, unused_variables)]
+#![allow(dead_code, unused_variables, unused_mut)]
 
 mod app;
 mod components;
@@ -11,6 +11,7 @@ mod utils;
 extern crate async_trait;
 
 pub use app::*;
+pub use utils::AppContent;
 
 pub const TITLE: &'static str = "BLOG";
 pub const DESCRIPTION: &'static str = "BLOG DESCRIPTION";

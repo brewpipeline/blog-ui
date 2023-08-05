@@ -4,14 +4,14 @@ use crate::components::author_card::*;
 use crate::components::list::*;
 use crate::components::warning::*;
 use crate::content::*;
-use crate::utils::head;
+use crate::utils::*;
 
 use crate::Route;
 
 #[function_component(Authors)]
 pub fn authors() -> Html {
-    head::reset_title_and_meta();
-    head::set_prefix_default_title("Авторы".to_string());
+    let app_meta = use_context::<AppMetaContext>().unwrap();
+    app_meta.dispatch([AppMetaAction::Title("Авторы".to_string())].into());
     html! {
         <List<API<AuthorsContainer>>
             params={ () }

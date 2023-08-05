@@ -14,14 +14,14 @@ where
         + Clone
         + PartialEq
         + 'static,
-    C::Inner: ExternalListContainer + Clone + PartialEq + 'static,
+    C::Inner: ExternalCodable + ExternalListContainer + Clone + PartialEq + 'static,
     C::Error: Clone + PartialEq + 'static,
     <C::Inner as ExternalListContainer>::Item: Clone + PartialEq + 'static,
     P: Clone + PartialEq + 'static,
 {
     pub params: P,
     #[prop_or_default]
-    pub use_route_cache: bool,
+    pub use_caches: bool,
     #[prop_or(10)]
     pub items_per_page: u64,
     pub route_to_page: Route,
@@ -38,14 +38,14 @@ where
         + Clone
         + PartialEq
         + 'static,
-    C::Inner: ExternalListContainer + Clone + PartialEq + 'static,
+    C::Inner: ExternalCodable + ExternalListContainer + Clone + PartialEq + 'static,
     C::Error: Clone + PartialEq + 'static,
     <C::Inner as ExternalListContainer>::Item: Clone + PartialEq + 'static,
     P: Clone + PartialEq + 'static,
 {
     let ListProps {
         params,
-        use_route_cache,
+        use_caches,
         items_per_page,
         route_to_page,
         component,
@@ -63,7 +63,7 @@ where
             limit: items_per_page,
             skip: offset,
         },
-        use_route_cache,
+        use_caches,
     );
 
     let Some(list_result_container) = (*list_result_container).clone() else {
