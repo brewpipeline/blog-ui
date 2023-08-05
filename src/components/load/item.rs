@@ -1,4 +1,3 @@
-use super::*;
 use yew::prelude::*;
 
 use crate::utils::*;
@@ -37,8 +36,8 @@ where
 
     let item_result = use_load_and_map::<C, P, _, <C::Inner as ExternalItemContainer>::Item>(
         params,
-        use_route_cache,
         |i| i.item(),
+        use_route_cache,
     );
 
     let Some(item_result) = (*item_result).clone() else {

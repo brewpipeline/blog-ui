@@ -4,12 +4,14 @@ pub mod get;
 pub mod head;
 pub mod logged_user_context;
 pub mod not_empty;
+pub mod use_load;
 
 pub use external::*;
 #[cfg(feature = "client")]
 pub use get::*;
 pub use logged_user_context::*;
 pub use not_empty::*;
+pub use use_load::*;
 
 #[cfg(not(feature = "client"))]
 pub trait RequestableItem<P> {}
