@@ -96,7 +96,7 @@ fn server_app(props: &ServerAppProps) -> Html {
         .unwrap();
     let app_content = props.app_content.clone();
     html! {
-        <Router history={history}>
+        <Router { history }>
             <Main { app_content } />
         </Router>
     }
