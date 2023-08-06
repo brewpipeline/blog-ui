@@ -6,6 +6,7 @@ use yew::prelude::*;
 use yew_router::prelude::*;
 
 use crate::components::item::*;
+use crate::components::meta::*;
 use crate::components::svg_image::*;
 use crate::components::warning::*;
 use crate::content;
@@ -39,20 +40,16 @@ pub struct EditPostProps {
 #[function_component(EditPost)]
 pub fn edit_post(props: &EditPostProps) -> Html {
     let EditPostProps { id } = props.clone();
-    let app_meta = use_context::<AppMetaContext>().unwrap();
-    app_meta.dispatch(
-        [AppMetaAction::Title(
-            {
-                if id == None {
-                    "Новая публикация"
-                } else {
-                    "Редактирование публикации"
-                }
+
+    let meta = html! {
+        <Meta title={
+            if id == None {
+                "Новая публикация"
+            } else {
+                "Редактирование публикации"
             }
-            .to_string(),
-        )]
-        .into(),
-    );
+        } />
+    };
 
     let navigator = use_navigator().unwrap();
 
@@ -126,13 +123,16 @@ pub fn edit_post(props: &EditPostProps) -> Html {
 
     let LoggedUserState::ActiveAndLoaded { token: _, author } = logged_user_context.state.clone() else {
         return html! {
-            <Warning text={
-                if id == None {
-                    "Создавать публикации можно только авторизованным авторам"
-                } else {
-                    "Редактировать публикации можно только авторизованным авторам"
-                }
-            } />
+            <>
+                { meta }
+                <Warning text={
+                    if id == None {
+                        "Создавать публикации можно только авторизованным авторам!"
+                    } else {
+                        "Редактировать публикации можно только авторизованным авторам!"
+                    }
+                } />
+            </>
         }
     };
 
@@ -314,27 +314,30 @@ pub fn edit_post(props: &EditPostProps) -> Html {
         }
     };
 
-    if let Some(id) = id {
-        html! {
-            <Item<content::API<content::PostContainer>, content::PostIdParams>
-                params={ content::PostIdParams { id } }
-                use_caches=true
-                component={ move |post: Option<content::Post>| {
-                    if let Some(post) = post {
-                        if post.short_author.slug == author.base.slug {
-                            let main_content = main_content.clone();
-                            main_content(Some(post))
+    html! {
+        <>
+            { meta }
+            if let Some(id) = id {
+                <Item<content::API<content::PostContainer>, content::PostIdParams>
+                    params={ content::PostIdParams { id } }
+                    use_caches=true
+                    component={ move |post: Option<content::Post>| {
+                        if let Some(post) = post {
+                            if post.short_author.slug == author.base.slug {
+                                let main_content = main_content.clone();
+                                main_content(Some(post))
+                            } else {
+                                html! { <Warning text="Только автор может редактировать публикацию!" /> }
+                            }
                         } else {
-                            html! { <Warning text="Только автор может редактировать публикацию" /> }
+                            html! { <Warning text="Загрузка публикации для редактирования..." /> }
                         }
-                    } else {
-                        html! { <Warning text="Загрузка публикации для редактирования..." /> }
-                    }
-                } }
-                error_component={ |_| html! { <Warning text="Ошибка загрузки публикации для редактирования" /> } }
-            />
-        }
-    } else {
-        main_content(None)
+                    } }
+                    error_component={ |_| html! { <Warning text="Ошибка загрузки публикации для редактирования!" /> } }
+                />
+            } else {
+                { main_content(None) }
+            }
+        </>
     }
 }

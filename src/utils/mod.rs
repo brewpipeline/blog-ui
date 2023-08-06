@@ -1,15 +1,13 @@
 pub mod app_content_context;
-pub mod app_meta_context;
 pub mod external;
 #[cfg(feature = "client")]
 pub mod get;
-mod head;
+pub mod head;
 pub mod logged_user_context;
 pub mod not_empty;
 pub mod use_load;
 
 pub use app_content_context::*;
-pub use app_meta_context::*;
 pub use external::*;
 #[cfg(feature = "client")]
 pub use get::*;

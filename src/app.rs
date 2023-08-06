@@ -5,6 +5,7 @@ use yew_router::prelude::*;
 
 use crate::components::body::*;
 use crate::components::header::*;
+use crate::components::meta::*;
 use crate::components::search_field::*;
 use crate::pages::*;
 use crate::utils::*;
@@ -71,7 +72,6 @@ struct MainProps {
 
 #[function_component(Main)]
 fn main(props: &MainProps) -> Html {
-    let app_meta = use_reducer_eq(|| AppMeta::default());
     let app_content_container = use_reducer_eq(|| AppContentContainer {
         is_used: false,
         app_content: props.app_content.clone(),
@@ -81,23 +81,19 @@ fn main(props: &MainProps) -> Html {
     });
     html! {
         <>
-            <script id="app-title" type="text/plain"> { app_meta.title.clone() } </script>
-            <script id="app-description" type="text/plain"> { app_meta.description.clone() } </script>
-            <script id="app-keywords" type="text/plain"> { app_meta.keywords.clone() } </script>
             <script
-                id="app-content"
+                id="page-content"
                 type={ app_content_container.app_content.as_ref().map(|c| c.r#type.clone()) }
             >
                 { app_content_container.app_content.as_ref().map(|c| c.value.clone()) }
             </script>
-            <ContextProvider<AppMetaContext> context={ app_meta }>
-                <ContextProvider<AppContentContext> context={ app_content_container }>
-                    <ContextProvider<LoggedUserContext> context={ logged_user }>
-                        <Header />
-                        <Body />
-                    </ContextProvider<LoggedUserContext>>
-                </ContextProvider<AppContentContext>>
-            </ContextProvider<AppMetaContext>>
+            <Meta />
+            <ContextProvider<AppContentContext> context={ app_content_container }>
+                <ContextProvider<LoggedUserContext> context={ logged_user }>
+                    <Header />
+                    <Body />
+                </ContextProvider<LoggedUserContext>>
+            </ContextProvider<AppContentContext>>
         </>
     }
 }
@@ -106,7 +102,7 @@ fn main(props: &MainProps) -> Html {
 #[function_component(App)]
 fn app() -> Html {
     let app_content = gloo::utils::document()
-        .query_selector("#app-content")
+        .query_selector("#page-content")
         .ok()
         .flatten()
         .map(|e| {
