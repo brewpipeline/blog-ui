@@ -4,6 +4,7 @@ mod app;
 mod components;
 mod content;
 mod pages;
+mod route;
 mod utils;
 
 #[cfg(feature = "client")]
@@ -11,6 +12,7 @@ mod utils;
 extern crate async_trait;
 
 pub use app::*;
+pub use route::*;
 pub use utils::AppContent;
 
 pub const TITLE: &'static str = "BLOG";
