@@ -92,7 +92,7 @@ fn main(props: &MainProps) -> Html {
             </script>
             <ContextProvider<AppMetaContext> context={ app_meta }>
                 <ContextProvider<AppContentContext> context={ app_content_container }>
-                    <ContextProvider<LoggedUserContext> context={logged_user}>
+                    <ContextProvider<LoggedUserContext> context={ logged_user }>
                         <Header />
                         <Body />
                     </ContextProvider<LoggedUserContext>>

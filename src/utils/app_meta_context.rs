@@ -1,4 +1,5 @@
-use std::{collections::HashSet, rc::Rc};
+use std::collections::HashSet;
+use std::rc::Rc;
 use yew::{Reducible, UseReducerHandle};
 
 use super::head::{self, MetaTag};
