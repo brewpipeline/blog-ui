@@ -1,6 +1,7 @@
 use yew::prelude::*;
 #[cfg(feature = "server")]
 use yew_router::history::*;
+#[cfg(any(feature = "client", feature = "server"))]
 use yew_router::prelude::*;
 
 use crate::components::body::*;
