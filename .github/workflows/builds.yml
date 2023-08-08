@@ -3,6 +3,8 @@ name: Builds
 on:
   push:
     branches: [ "main" ]
+  pull_request:
+    branches: [ "main" ]
 
   workflow_dispatch:
 
@@ -12,10 +14,10 @@ env:
 jobs:
   build:
     runs-on: ubuntu-latest
-    name: Build ${{ matrix.features_list }}
+    name: "Build | Features: ${{ matrix.features_list }}"
     strategy:
       matrix:
-        features_list: ["server", "client", "hydration"]
+        features_list: ["", "server, client, hydration", "server", "client", "hydration"]
     steps:
       - name: Checkout
         uses: actions/checkout@v3
