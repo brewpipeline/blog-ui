@@ -14,14 +14,20 @@ env:
 jobs:
   build:
     runs-on: ubuntu-latest
-    name: "Build | Features: ${{ matrix.features_list }}"
+    name: "Build | Features: ${{ matrix.features }}"
     strategy:
+      fail-fast: false
       matrix:
-        features_list: ["", "server, client, hydration", "server", "client", "hydration"]
+        features: 
+          - ""
+          - "server, client, hydration"
+          - "server"
+          - "client"
+          - "hydration"
     steps:
       - name: Checkout
         uses: actions/checkout@v3
       - name: Target Add `wasm32-unknown-unknown`
         run: rustup target add wasm32-unknown-unknown
       - name: Build
-        run: cargo build --target wasm32-unknown-unknown --no-default-features --features "${{ matrix.features_list }}"
+        run: cargo build --target wasm32-unknown-unknown --no-default-features --features "${{ matrix.features }}"
