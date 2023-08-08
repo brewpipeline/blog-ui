@@ -1,19 +1,14 @@
+use super::*;
+
 pub trait ExternalResultContainer {
     type Inner;
     type Error;
     fn result(self) -> Result<Self::Inner, Self::Error>;
 }
 
-pub trait Identifiable {
-    type Id: Eq + std::hash::Hash;
-    fn id(&self) -> &Self::Id;
-}
-
-impl Identifiable for () {
-    type Id = Self;
-    fn id(&self) -> &Self::Id {
-        self
-    }
+pub trait ExternalCodable: Sized {
+    fn encode(&self) -> Option<AppContent>;
+    fn decode(app_content: AppContent) -> Option<Self>;
 }
 
 pub trait ExternalItemContainer {

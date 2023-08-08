@@ -5,5 +5,10 @@ fn main() {
         wasm_logger::init(wasm_logger::Config::default());
     }
 
-    app_renderer().render();
+    let renderer = app_renderer();
+
+    #[cfg(feature = "hydration")]
+    renderer.hydrate();
+    #[cfg(not(feature = "hydration"))]
+    renderer.render();
 }

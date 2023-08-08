@@ -1,6 +1,4 @@
-use super::*;
 use yew::prelude::*;
-use yew_router::prelude::*;
 
 use crate::utils::*;
 
@@ -10,12 +8,14 @@ where
     C: ExternalResultContainer + RequestableItem<P> + Clone + PartialEq + 'static,
     C::Inner: ExternalItemContainer + Clone + PartialEq + 'static,
     C::Error: Clone + PartialEq + 'static,
-    <C::Inner as ExternalItemContainer>::Item: Identifiable + Clone + PartialEq + 'static,
-    P: Identifiable + Clone + PartialEq + 'static,
+    <C::Inner as ExternalItemContainer>::Item: ExternalCodable + Clone + PartialEq + 'static,
+    P: Clone + PartialEq + 'static,
 {
     pub params: P,
+    #[prop_or_default]
+    pub use_caches: bool,
     pub component: Callback<Option<<C::Inner as ExternalItemContainer>::Item>, Html>,
-    pub error_component: Callback<ExternalError<C::Error>, Html>,
+    pub error_component: Callback<LoadError<C::Error>, Html>,
 }
 
 #[function_component(Item)]
@@ -24,62 +24,21 @@ where
     C: ExternalResultContainer + RequestableItem<P> + Clone + PartialEq + 'static,
     C::Inner: ExternalItemContainer + Clone + PartialEq + 'static,
     C::Error: Clone + PartialEq + 'static,
-    <C::Inner as ExternalItemContainer>::Item:
-        Identifiable<Id = P::Id> + Clone + PartialEq + 'static,
-    P: Identifiable + Clone + PartialEq + 'static,
+    <C::Inner as ExternalItemContainer>::Item: ExternalCodable + Clone + PartialEq + 'static,
+    P: Clone + PartialEq + 'static,
 {
     let ItemProps {
         params,
+        use_caches,
         component,
         error_component,
     } = props.clone();
 
-    let location = use_location().unwrap();
-
-    let item_result = use_state_eq(|| None);
-    {
-        let location = location.clone();
-        let item_result = item_result.clone();
-        use_effect_with(params, move |params| {
-            if let Some(cached_item) = location
-                .state::<<C::Inner as ExternalItemContainer>::Item>()
-                .map(|i| (*i).clone())
-                .or_else(|| {
-                    location
-                        .state::<std::collections::HashMap<
-                            P::Id,
-                            <C::Inner as ExternalItemContainer>::Item,
-                        >>()
-                        .map(|i| (*i).get(params.id()).cloned())
-                        .flatten()
-                })
-                .filter(|i| i.id() == params.id())
-            {
-                item_result.set(Some(Ok(cached_item)));
-                return;
-            } else {
-                item_result.set(None);
-            }
-
-            let params = params.clone();
-            let item_result = item_result.clone();
-            wasm_bindgen_futures::spawn_local(async move {
-                match C::get(params).await {
-                    Ok(item_result_container) => {
-                        item_result.set(Some(
-                            item_result_container
-                                .result()
-                                .map(|i| i.item())
-                                .map_err(|e| ExternalError::Content(e)),
-                        ));
-                    }
-                    Err(err) => {
-                        item_result.set(Some(Err(ExternalError::Net(err.to_string()))));
-                    }
-                }
-            });
-        });
-    }
+    let item_result = use_load_and_map::<C, P, _, <C::Inner as ExternalItemContainer>::Item>(
+        params,
+        |i| i.item(),
+        use_caches,
+    );
 
     let Some(item_result) = (*item_result).clone() else {
         return component.emit(None)

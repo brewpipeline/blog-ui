@@ -1,4 +1,3 @@
-use super::*;
 use yew::prelude::*;
 use yew_router::prelude::*;
 
@@ -15,17 +14,19 @@ where
         + Clone
         + PartialEq
         + 'static,
-    C::Inner: ExternalListContainer + Clone + PartialEq + 'static,
+    C::Inner: ExternalCodable + ExternalListContainer + Clone + PartialEq + 'static,
     C::Error: Clone + PartialEq + 'static,
     <C::Inner as ExternalListContainer>::Item: Clone + PartialEq + 'static,
     P: Clone + PartialEq + 'static,
 {
     pub params: P,
+    #[prop_or_default]
+    pub use_caches: bool,
     #[prop_or(10)]
     pub items_per_page: u64,
     pub route_to_page: Route,
     pub component: Callback<Option<<C::Inner as ExternalListContainer>::Item>, Html>,
-    pub error_component: Callback<ExternalError<C::Error>, Html>,
+    pub error_component: Callback<LoadError<C::Error>, Html>,
     pub children: Children,
 }
 
@@ -37,13 +38,14 @@ where
         + Clone
         + PartialEq
         + 'static,
-    C::Inner: ExternalListContainer + Clone + PartialEq + 'static,
+    C::Inner: ExternalCodable + ExternalListContainer + Clone + PartialEq + 'static,
     C::Error: Clone + PartialEq + 'static,
     <C::Inner as ExternalListContainer>::Item: Clone + PartialEq + 'static,
     P: Clone + PartialEq + 'static,
 {
     let ListProps {
         params,
+        use_caches,
         items_per_page,
         route_to_page,
         component,
@@ -55,48 +57,21 @@ where
     let page = location.query::<PageQuery>().map(|it| it.page).unwrap_or(1);
     let offset = (page - 1) * items_per_page;
 
-    let list_result = use_state_eq(|| None);
-    {
-        let list_result = list_result.clone();
-        use_effect_with(
-            (params, items_per_page, offset),
-            move |(params, items_per_page, offset)| {
-                list_result.set(None);
-                let list_result = list_result.clone();
-                let params = params.clone();
-                let items_per_page = *items_per_page;
-                let offset = *offset;
-                wasm_bindgen_futures::spawn_local(async move {
-                    match C::get(ExternalListContainerParams {
-                        params,
-                        limit: items_per_page,
-                        skip: offset,
-                    })
-                    .await
-                    {
-                        Ok(list_result_container) => {
-                            list_result.set(Some(
-                                list_result_container
-                                    .result()
-                                    .map_err(|e| ExternalError::Content(e)),
-                            ));
-                        }
-                        Err(err) => {
-                            list_result.set(Some(Err(ExternalError::Net(err.to_string()))));
-                        }
-                    }
-                });
-                || ()
-            },
-        );
-    }
+    let list_result_container = use_load::<C, ExternalListContainerParams<P>>(
+        ExternalListContainerParams {
+            params,
+            limit: items_per_page,
+            skip: offset,
+        },
+        use_caches,
+    );
 
-    let Some(list_result) = (*list_result).clone() else {
+    let Some(list_result_container) = (*list_result_container).clone() else {
         return (0..items_per_page).map(|_| {
             component.emit(None)
         }).collect::<Html>()
     };
-    match list_result {
+    match list_result_container {
         Ok(list_container) => {
             let total_pages = (list_container.total() as f64 / items_per_page as f64).ceil() as u64;
             let items = list_container.items();

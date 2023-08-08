@@ -1,14 +1,18 @@
+#[cfg(feature = "client")]
 use gloo::utils::document;
+#[cfg(feature = "client")]
 use web_sys::{Element, HtmlInputElement, Node};
 use yew::prelude::*;
 use yew_router::prelude::*;
 
 use crate::components::item::*;
+use crate::components::meta::*;
 use crate::components::svg_image::*;
 use crate::components::warning::*;
 use crate::content;
 use crate::utils::*;
 
+#[cfg(feature = "client")]
 use crate::Route;
 
 #[derive(Clone, Debug, PartialEq, Eq)]
@@ -36,17 +40,16 @@ pub struct EditPostProps {
 #[function_component(EditPost)]
 pub fn edit_post(props: &EditPostProps) -> Html {
     let EditPostProps { id } = props.clone();
-    html_document::reset_title_and_meta();
-    html_document::set_prefix_default_title(
-        {
+
+    let meta = html! {
+        <Meta title={
             if id == None {
                 "Новая публикация"
             } else {
                 "Редактирование публикации"
             }
-        }
-        .to_string(),
-    );
+        } />
+    };
 
     let navigator = use_navigator().unwrap();
 
@@ -60,6 +63,7 @@ pub fn edit_post(props: &EditPostProps) -> Html {
     let tags_node_ref = use_node_ref();
     let published_node_ref = use_node_ref();
 
+    #[cfg(feature = "client")]
     {
         let navigator = navigator.clone();
         let logged_user_context = logged_user_context.clone();
@@ -119,16 +123,20 @@ pub fn edit_post(props: &EditPostProps) -> Html {
 
     let LoggedUserState::ActiveAndLoaded { token: _, author } = logged_user_context.state.clone() else {
         return html! {
-            <Warning text={
-                if id == None {
-                    "Создавать публикации можно только авторизованным авторам"
-                } else {
-                    "Редактировать публикации можно только авторизованным авторам"
-                }
-            } />
+            <>
+                { meta }
+                <Warning text={
+                    if id == None {
+                        "Создавать публикации можно только авторизованным авторам!"
+                    } else {
+                        "Редактировать публикации можно только авторизованным авторам!"
+                    }
+                } />
+            </>
         }
     };
 
+    #[cfg(feature = "client")]
     let onclick = {
         let state = state.clone();
         let title_node_ref = title_node_ref.clone();
@@ -166,7 +174,10 @@ pub fn edit_post(props: &EditPostProps) -> Html {
             }))
         })
     };
+    #[cfg(not(feature = "client"))]
+    let onclick = Callback::from(|_| {});
 
+    #[cfg(feature = "client")]
     let editor_script = {
         let script: Element = document().create_element("script").unwrap();
         script.set_inner_html(
@@ -179,8 +190,11 @@ pub fn edit_post(props: &EditPostProps) -> Html {
         let node: Node = script.into();
         Html::VRef(node)
     };
+    // TODO: Panic on hydration
+    #[cfg(not(feature = "client"))]
+    let editor_script = html! {};
 
-    let main_content = move |post: Option<content::Post>| {
+    let main_content = Callback::from(move |post: Option<content::Post>| {
         html! {
             <>
                 <form>
@@ -222,7 +236,7 @@ pub fn edit_post(props: &EditPostProps) -> Html {
                             id="validationTitle1"
                             placeholder="Что-то захватывающее внимание..."
                             value={ post.as_ref().map(|p| p.title.clone()) }
-                            ref={ title_node_ref }
+                            ref={ title_node_ref.clone() }
                         />
                         <div class="invalid-feedback">
                             { "Пожалуйста, введите заголовок публикации, это обязательное поле!" }
@@ -238,7 +252,7 @@ pub fn edit_post(props: &EditPostProps) -> Html {
                             id="validationTextarea1"
                             placeholder="Что-то короткое, но важное!"
                             value={ post.as_ref().map(|p| p.summary.clone()) }
-                            ref={ summary_node_ref }
+                            ref={ summary_node_ref.clone() }
                         ></textarea>
                         <div class="invalid-feedback">
                             { "Пожалуйста, введите короткую версию публикации, это обязательное поле!" }
@@ -254,7 +268,7 @@ pub fn edit_post(props: &EditPostProps) -> Html {
                             id="validationTextarea2"
                             placeholder="Что-то динное и скучн... веселое!"
                             value={ post.as_ref().map(|p| p.content.clone()).flatten() }
-                            ref={ content_node_ref }
+                            ref={ content_node_ref.clone() }
                         ></textarea>
                     </div>
 
@@ -268,7 +282,7 @@ pub fn edit_post(props: &EditPostProps) -> Html {
                             id="validationTitle2"
                             placeholder="Что-то напоминающее о..."
                             value={ post.as_ref().map(|p| p.tags_string()) }
-                            ref={ tags_node_ref }
+                            ref={ tags_node_ref.clone() }
                         />
                     </div>
 
@@ -277,7 +291,7 @@ pub fn edit_post(props: &EditPostProps) -> Html {
                             type="checkbox"
                             class="form-check-input"
                             id="validationFormCheck1"
-                            ref={ published_node_ref }
+                            ref={ published_node_ref.clone() }
                         />
                         <label class="form-check-label" for="validationFormCheck1">
                             { "Опубликовать" }
@@ -288,38 +302,41 @@ pub fn edit_post(props: &EditPostProps) -> Html {
                         <button
                             class="btn btn-light"
                             type="submit"
-                            { onclick }
+                            onclick={ onclick.clone() }
                             disabled={ !state.action_available() }
                         >
                             { "Отправить" }
                         </button>
                     </div>
                 </form>
-                { editor_script }
+                { editor_script.clone() }
             </>
         }
-    };
+    });
 
-    if let Some(id) = id {
-        html! {
-            <Item<content::API<content::PostContainer>, content::PostIdParams>
-                params={ content::PostIdParams { id } }
-                component={ move |post: Option<content::Post>| {
-                    if let Some(post) = post {
-                        if post.short_author.slug == author.base.slug {
-                            let main_content = main_content.clone();
-                            main_content(Some(post))
+    html! {
+        <>
+            { meta }
+            if let Some(id) = id {
+                <Item<content::API<content::PostContainer>, content::PostIdParams>
+                    params={ content::PostIdParams { id } }
+                    use_caches=true
+                    component={ move |post: Option<content::Post>| {
+                        if let Some(post) = post {
+                            if post.short_author.slug == author.base.slug {
+                                main_content.emit(Some(post))
+                            } else {
+                                html! { <Warning text="Только автор может редактировать публикацию!" /> }
+                            }
                         } else {
-                            html! { <Warning text="Только автор может редактировать публикацию" /> }
+                            html! { <Warning text="Загрузка публикации для редактирования..." /> }
                         }
-                    } else {
-                        html! { <Warning text="Загрузка публикации для редактирования..." /> }
-                    }
-                } }
-                error_component={ |_| html! { <Warning text="Ошибка загрузки публикации для редактирования" /> } }
-            />
-        }
-    } else {
-        main_content(None)
+                    } }
+                    error_component={ |_| html! { <Warning text="Ошибка загрузки публикации для редактирования!" /> } }
+                />
+            } else {
+                { main_content.emit(None) }
+            }
+        </>
     }
 }

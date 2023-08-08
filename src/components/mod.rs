@@ -7,6 +7,7 @@ pub mod information_menu;
 mod load;
 pub mod login_modal;
 pub mod logout_modal;
+pub mod meta;
 pub mod navigation_menu;
 pub mod pagination;
 pub mod post_card;

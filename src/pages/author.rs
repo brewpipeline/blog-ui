@@ -2,9 +2,9 @@ use yew::prelude::*;
 
 use crate::components::author_card::*;
 use crate::components::item::*;
+use crate::components::meta::*;
 use crate::components::warning::*;
 use crate::content;
-use crate::utils::html_document;
 
 #[derive(PartialEq, Properties, Clone)]
 pub struct AuthorProps {
@@ -14,19 +14,28 @@ pub struct AuthorProps {
 #[function_component(Author)]
 pub fn author(props: &AuthorProps) -> Html {
     let AuthorProps { slug } = props.clone();
-    html_document::reset_title_and_meta();
-    html_document::set_prefix_default_title("Автор".to_string());
     html! {
         <Item<content::API<content::AuthorContainer>, content::AuthorSlugParams>
             params={ content::AuthorSlugParams { slug: slug.clone() } }
-            component={ |author: Option<content::Author>| {
-                if let Some(author) = &author {
-                    html_document::reset_title_and_meta();
-                    html_document::set_prefix_default_title(format!("{} - Автор", author.base.slug.clone()));
+            use_caches=true
+            component={ move |author: Option<content::Author>| {
+                html! {
+                    <>
+                        if let Some(author) = &author {
+                            <Meta title={ format!("{} - Автор", author.base.slug.clone()) } />
+                        } else {
+                            <Meta title="Автор" />
+                        }
+                        <AuthorCard { author } link_to=false />
+                    </>
                 }
-                html! { <AuthorCard { author } link_to=false /> }
             } }
-            error_component={ |_| html! { <Warning text="Ошибка загрузки автора" /> } }
+            error_component={ |_| html! {
+                <>
+                    <Meta title="Ошибка загрузки автора" />
+                    <Warning text="Ошибка загрузки автора!" />
+                </>
+            } }
         />
     }
 }

@@ -1,0 +1,41 @@
+name: Builds
+
+on:
+  push:
+    branches: [ "main" ]
+  pull_request:
+    branches: [ "main" ]
+
+  workflow_dispatch:
+
+env:
+  CARGO_TERM_COLOR: always
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    name: "Build | Features: ${{ matrix.features }}"
+    strategy:
+      fail-fast: false
+      matrix:
+        include:
+          - features: ""
+            is_wasm: false
+          - features: "server"
+            is_wasm: false
+          - features: "client"
+            is_wasm: true
+          - features: "client, hydration"
+            is_wasm: true
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v3
+      - name: Target Add `wasm32-unknown-unknown`
+        if: matrix.is_wasm == true
+        run: rustup target add wasm32-unknown-unknown
+      - name: Default build
+        if: matrix.is_wasm == false
+        run: cargo build --no-default-features --features "${{ matrix.features }}"
+      - name: WASM build
+        if: matrix.is_wasm == true
+        run: cargo build --no-default-features --features "${{ matrix.features }}" --target wasm32-unknown-unknown

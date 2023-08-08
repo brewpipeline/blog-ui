@@ -11,19 +11,20 @@ blog-generic = { git = "https://github.com/tikitko/blog-server.git", package = "
 log = "0.4"
 async-trait = "0.1"
 
-yew = { git = "https://github.com/tikitko/yew", branch = "master", features = ["csr"] }
+yew = { git = "https://github.com/tikitko/yew", branch = "master" }
 yew-router = { git = "https://github.com/tikitko/yew", branch = "master" }
-yew-hooks = { git = "https://github.com/tikitko/yew-hooks", branch = "main" }
+yew-hooks = { git = "https://github.com/tikitko/yew-hooks", branch = "main", optional = true }
 
-wasm-bindgen-futures = "0.4"
-wasm-bindgen = "0.2"
-wasm-cookies = "0.2"
-wasm-logger = "0.2"
+wasm-bindgen-futures = { version = "0.4", optional = true }
+wasm-bindgen = { version = "0.2", optional = true }
+wasm-cookies = { version = "0.2", optional = true }
+wasm-logger = { version = "0.2", optional = true }
 
-web-sys = { version = "0.3", features = ["HtmlDocument","console","Document","HtmlElement","MouseEvent","DomRect","ScrollToOptions","ScrollBehavior","Element","MouseEvent","CssStyleDeclaration","MutationObserver","MutationObserverInit","Node"] }
+web-sys = { version = "0.3", features = ["HtmlDocument","console","Document","HtmlElement","MouseEvent","DomRect","ScrollToOptions","ScrollBehavior","Element","MouseEvent","CssStyleDeclaration","MutationObserver","MutationObserverInit","Node"], optional = true }
 
-gloo = "0.9"
-gloo-net = "0.3"
+gloo-history = "0.1"
+gloo = { version = "0.9", optional = true }
+gloo-net = { version = "0.3", optional = true }
 
 serde = { version = "1.0", features = ["derive"] }
 serde_json = "1.0"
@@ -31,9 +32,16 @@ serde_json = "1.0"
 urlencoding = "2.1"
 
 
+[features]
+default = ["client"]
+server = ["yew/ssr"]
+client = ["yew/csr", "yew-hooks", "wasm-bindgen-futures", "wasm-bindgen", "wasm-cookies", "wasm-logger", "web-sys", "gloo", "gloo-net"]
+hydration = ["client", "yew/hydration"]
+
+
 [[bin]]
 name = "blog_ui"
-required-features = ["yew/csr"]
+required-features = ["client"]
 
 
 [profile.release]

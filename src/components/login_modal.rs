@@ -1,7 +1,10 @@
+#[cfg(feature = "client")]
 use gloo::events::EventListener;
+#[cfg(feature = "client")]
 use web_sys::{HtmlElement, HtmlInputElement};
 use yew::prelude::*;
 
+#[cfg(feature = "client")]
 use crate::content::*;
 use crate::utils::*;
 
@@ -18,6 +21,7 @@ pub fn login_modal(props: &LoginModalProps) -> Html {
 
     let close_node_ref = use_node_ref();
 
+    #[cfg(feature = "client")]
     {
         let logged_user_context = logged_user_context.clone();
         let close_node_ref = close_node_ref.clone();
@@ -56,11 +60,12 @@ pub fn login_modal(props: &LoginModalProps) -> Html {
     let username_node_ref = use_node_ref();
     let password_node_ref = use_node_ref();
 
+    #[cfg(feature = "client")]
     let onclick = {
         let logged_user_context = logged_user_context.clone();
         let username_node_ref = username_node_ref.clone();
         let password_node_ref = password_node_ref.clone();
-        Callback::from(move |_event| {
+        Callback::from(move |_event: MouseEvent| {
             let username = username_node_ref
                 .cast::<HtmlInputElement>()
                 .unwrap()
@@ -75,9 +80,12 @@ pub fn login_modal(props: &LoginModalProps) -> Html {
             }));
         })
     };
+    #[cfg(not(feature = "client"))]
+    let onclick = Callback::from(|_| {});
 
     let modal_node_ref = use_node_ref();
 
+    #[cfg(feature = "client")]
     {
         let logged_user_context = logged_user_context.clone();
         let username_node_ref = username_node_ref.clone();

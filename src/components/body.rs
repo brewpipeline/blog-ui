@@ -1,4 +1,6 @@
+#[cfg(feature = "client")]
 use gloo::utils::window;
+#[cfg(feature = "client")]
 use web_sys::{ScrollBehavior, ScrollToOptions};
 use yew::prelude::*;
 use yew_router::prelude::*;
@@ -18,6 +20,7 @@ pub enum EnabledMenu {
 
 #[function_component(Body)]
 pub fn body() -> Html {
+    #[cfg(feature = "client")]
     window().scroll_to_with_scroll_to_options(
         ScrollToOptions::new()
             .left(0.0)
