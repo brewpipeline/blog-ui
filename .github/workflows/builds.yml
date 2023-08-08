@@ -20,17 +20,22 @@ jobs:
       matrix:
         include:
           - features: ""
-            args: ""
+            is_wasm: false
           - features: "server"
-            args: ""
+            is_wasm: false
           - features: "client"
-            args: "--target wasm32-unknown-unknown"
+            is_wasm: true
           - features: "client, hydration"
-            args: "--target wasm32-unknown-unknown"
+            is_wasm: true
     steps:
       - name: Checkout
         uses: actions/checkout@v3
       - name: Target Add `wasm32-unknown-unknown`
+        if: matrix.is_wasm == true
         run: rustup target add wasm32-unknown-unknown
-      - name: Build
-        run: cargo build --no-default-features --features "${{ matrix.features }}" ${{ matrix.args }}
+      - name: Default build
+        if: matrix.is_wasm == false
+        run: cargo build --no-default-features --features "${{ matrix.features }}" --target wasm32-unknown-unknown
+      - name: WASM build
+        if: matrix.is_wasm == true
+        run: cargo build --no-default-features --features "${{ matrix.features }}"
