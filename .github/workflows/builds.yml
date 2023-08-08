@@ -1,0 +1,23 @@
+name: Builds
+
+on:
+  push:
+    branches: [ "main" ]
+
+  workflow_dispatch:
+
+env:
+  CARGO_TERM_COLOR: always
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    name: Build ${{ matrix.features_list }}
+    strategy:
+      matrix:
+        features_list: ["server", "client", "hydration"]
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v3
+      - name: Build
+        run: cargo build --no-default-features --features "${{ matrix.features_list }}"
