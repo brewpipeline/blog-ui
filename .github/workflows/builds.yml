@@ -35,7 +35,7 @@ jobs:
         run: rustup target add wasm32-unknown-unknown
       - name: Default build
         if: matrix.is_wasm == false
-        run: cargo build --no-default-features --features "${{ matrix.features }}" --target wasm32-unknown-unknown
+        run: cargo build --no-default-features --features "${{ matrix.features }}"
       - name: WASM build
         if: matrix.is_wasm == true
-        run: cargo build --no-default-features --features "${{ matrix.features }}"
+        run: cargo build --no-default-features --features "${{ matrix.features }}" --target wasm32-unknown-unknown
