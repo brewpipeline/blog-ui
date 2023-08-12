@@ -78,13 +78,13 @@ pub fn author_card(props: &AuthorCardProps) -> Html {
     html! {
         <div class="card mb-3">
             if let (Some(author), true) = (author.as_ref(), link_to) {
-                <Link<Route, Author>
+                <Link<Route, (), Author>
                     classes="text-decoration-none"
                     to={ Route::Author { slug: author.base.slug.clone() } }
                     state={ Some(author.clone()) }
                 >
                     { main_content }
-                </Link<Route, Author>>
+                </Link<Route, (), Author>>
             } else {
                 { main_content }
             }

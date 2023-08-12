@@ -83,13 +83,13 @@ pub fn post_card(props: &PostCardProps) -> Html {
     html! {
         <div class="card mb-3">
             if let (Some(post), true) = (post.as_ref(), link_to) {
-                <Link<Route, Post>
+                <Link<Route, (), Post>
                     classes="text-decoration-none"
                     to={ Route::Post { slug: post.slug.clone(), id: post.id } }
                     state={ Some(post.clone()) }
                 >
                     { main_content }
-                </Link<Route, Post>>
+                </Link<Route, (), Post>>
             } else {
                 { main_content }
             }
@@ -118,13 +118,13 @@ pub fn post_card(props: &PostCardProps) -> Html {
                             if let LoggedUserState::ActiveAndLoaded { token: _, author } = logged_user_context.state.clone() {
                                 if author.base.slug == post.short_author.slug {
                                     { " | " }
-                                    <Link<Route, Post>
+                                    <Link<Route, (), Post>
                                         classes="title is-block col-6 text-decoration-none"
                                         to={ Route::EditPost { id: post.id } }
                                         state={ Some(post.clone()) }
                                     >
                                         <PencilSquareImg />
-                                    </Link<Route, Post>>
+                                    </Link<Route, (), Post>>
                                 }
                             }
                         } else {

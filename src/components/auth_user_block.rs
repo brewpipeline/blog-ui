@@ -74,13 +74,13 @@ pub fn auth_user_block() -> Html {
                     if let Some(author) = author.as_ref() {
                         <ul class="dropdown-menu text-small" >
                             <li>
-                                <Link<Route, Author>
+                                <Link<Route, (), Author>
                                     classes="dropdown-item"
                                     to={ Route::Author { slug: author.base.slug.clone() } }
                                     state={ Some(author.clone()) }
                                 >
                                     { &author.base.slug }
-                                </Link<Route, Author>>
+                                </Link<Route, (), Author>>
                             </li>
                             // <li><a class="dropdown-item" href="#"> { "Настройки" } </a></li>
                             <li><hr class="dropdown-divider" /></li>
