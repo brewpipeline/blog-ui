@@ -323,7 +323,7 @@ pub fn edit_post(props: &EditPostProps) -> Html {
                     use_caches=true
                     component={ move |post: Option<content::Post>| {
                         if let Some(post) = post {
-                            if post.short_author.slug == author.base.slug {
+                            if post.author.slug == author.slug {
                                 main_content.emit(Some(post))
                             } else {
                                 html! { <Warning text="Только автор может редактировать публикацию!" /> }
