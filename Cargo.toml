@@ -11,7 +11,7 @@ blog-generic = { git = "https://github.com/tikitko/blog-server.git", package = "
 log = "0.4"
 async-trait = "0.1"
 
-chrono = "0.4"
+chrono = { version = "0.4", features = ["unstable-locales"] }
 
 yew = { git = "https://github.com/tikitko/yew", branch = "master" }
 yew-router = { git = "https://github.com/tikitko/yew", branch = "master" }
