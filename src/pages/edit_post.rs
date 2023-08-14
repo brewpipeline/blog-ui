@@ -190,7 +190,7 @@ pub fn edit_post(props: &EditPostProps) -> Html {
         let node: Node = script.into();
         Html::VRef(node)
     };
-    // TODO: Panic on hydration
+    // TODO: Panic on hydration, for now it's ok...
     #[cfg(not(feature = "client"))]
     let editor_script = html! {};
 
@@ -235,7 +235,16 @@ pub fn edit_post(props: &EditPostProps) -> Html {
                             class="form-control"
                             id="validationTitle1"
                             placeholder="Что-то захватывающее внимание..."
-                            value={ post.as_ref().map(|p| p.title.clone()) }
+                            value={
+                                title_node_ref
+                                    .cast::<HtmlInputElement>()
+                                    .map(|h| h.value())
+                                    .or(
+                                        post
+                                            .as_ref()
+                                            .map(|p| p.title.clone())
+                                    )
+                            }
                             ref={ title_node_ref.clone() }
                         />
                         <div class="invalid-feedback">
@@ -251,7 +260,16 @@ pub fn edit_post(props: &EditPostProps) -> Html {
                             class="form-control"
                             id="validationTextarea1"
                             placeholder="Что-то короткое, но важное!"
-                            value={ post.as_ref().map(|p| p.summary.clone()) }
+                            value={
+                                summary_node_ref
+                                    .cast::<HtmlInputElement>()
+                                    .map(|h| h.value())
+                                    .or(
+                                        post
+                                            .as_ref()
+                                            .map(|p| p.summary.clone())
+                                    )
+                            }
                             ref={ summary_node_ref.clone() }
                         ></textarea>
                         <div class="invalid-feedback">
@@ -267,7 +285,17 @@ pub fn edit_post(props: &EditPostProps) -> Html {
                             class="form-control"
                             id="validationTextarea2"
                             placeholder="Что-то динное и скучн... веселое!"
-                            value={ post.as_ref().map(|p| p.content.clone()).flatten() }
+                            value={
+                                content_node_ref
+                                    .cast::<HtmlInputElement>()
+                                    .map(|h| h.value())
+                                    .or(
+                                        post
+                                            .as_ref()
+                                            .map(|p| p.content.clone())
+                                            .flatten()
+                                    )
+                            }
                             ref={ content_node_ref.clone() }
                         ></textarea>
                     </div>
@@ -281,7 +309,16 @@ pub fn edit_post(props: &EditPostProps) -> Html {
                             class="form-control"
                             id="validationTitle2"
                             placeholder="Что-то напоминающее о..."
-                            value={ post.as_ref().map(|p| p.tags_string()) }
+                            value={
+                                tags_node_ref
+                                    .cast::<HtmlInputElement>()
+                                    .map(|h| h.value())
+                                    .or(
+                                        post
+                                            .as_ref()
+                                            .map(|p| p.tags_string())
+                                    )
+                            }
                             ref={ tags_node_ref.clone() }
                         />
                     </div>

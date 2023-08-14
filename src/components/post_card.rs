@@ -36,7 +36,7 @@ pub fn post_card(props: &PostCardProps) -> Html {
                             .unwrap_or_default()
                     )
                 }
-                class="img-block bd-placeholder-img card-img-top"
+                class="img-block bd-placeholder-img"
                 role="img"
             />
             <div class="card-body">
@@ -82,6 +82,48 @@ pub fn post_card(props: &PostCardProps) -> Html {
     };
     html! {
         <div class="card mb-3">
+            <div class="card-header">
+                <div class="row align-items-center">
+                    <div class="d-flex col align-items-center justify-content-start" style="height: 24px;">
+                        <img
+                            width="24"
+                            height="24"
+                            src={
+                                post
+                                    .as_ref()
+                                    .map(|c| c.author.image_url())
+                                    .unwrap_or_default()
+                            }
+                            alt={
+                                post
+                                    .as_ref()
+                                    .map(|c| c.author.slug.clone())
+                            }
+                            class="img-block rounded me-1"
+                        />
+                        if let Some(post) = &post {
+                            <Link<Route, (), Author>
+                                classes={ classes!("text-decoration-none") }
+                                to={ Route::Author { slug: post.author.slug.clone() } }
+                                state={ Some(post.author.clone()) }
+                            >
+                                <strong>
+                                    { &post.author.slug }
+                                </strong>
+                            </Link<Route, (), Author>>
+                        } else {
+                            <span class="placeholder col-3"></span>
+                        }
+                    </div>
+                    <div class="d-flex col align-items-center justify-content-end" style="height: 24px;">
+                        if let Some(post) = &post {
+                            <small> { date::format(post.created_at) } </small>
+                        } else {
+                            <span class="placeholder col-3"></span>
+                        }
+                    </div>
+                </div>
+            </div>
             if let (Some(post), true) = (post.as_ref(), link_to) {
                 <Link<Route, (), Post>
                     classes="text-decoration-none"
@@ -95,41 +137,30 @@ pub fn post_card(props: &PostCardProps) -> Html {
             }
             <div class="card-footer">
                 <div class="row align-items-center">
-                    <div class="col placeholder-glow">
-                        if let Some(tags) = post
-                            .as_ref()
-                            .map(|p| p.tags_string())
-                        {
-                            { tags }
+                    <div class="d-flex col align-items-center justify-content-start" style="height: 24px;">
+                        if let Some(post) = post.as_ref() {
+                            { not_empty(Some(post.tags_string())).unwrap_or("Нет тегов".to_string()) }
                         } else {
                             <span class="placeholder col-6"></span>
                         }
                     </div>
-                    <div class="col-6 text-end placeholder-glow">
-                        if let Some(post) = post.as_ref() {
-                            <Link<Route, (), Author>
-                                classes="title is-block col-6 text-decoration-none"
-                                to={ Route::Author {
-                                    slug: post.author.slug.clone()
-                                } }
-                                state={ Some(post.author.clone()) }
-                            >
-                                { &post.author.slug }
-                            </Link<Route, (), Author>>
-                            if let LoggedUserState::ActiveAndLoaded { token: _, author } = logged_user_context.state.clone() {
-                                if author.slug == post.author.slug {
-                                    { " | " }
-                                    <Link<Route, (), Post>
-                                        classes="title is-block col-6 text-decoration-none"
-                                        to={ Route::EditPost { id: post.id } }
-                                        state={ Some(post.clone()) }
-                                    >
-                                        <PencilSquareImg />
-                                    </Link<Route, (), Post>>
-                                }
+                    <div class="d-flex col align-items-center justify-content-end" style="height: 24px;">
+                        if let (
+                            Some(post),
+                            LoggedUserState::ActiveAndLoaded { token: _, author },
+                        ) = (
+                            post.as_ref(),
+                            logged_user_context.state.clone(),
+                        ) {
+                            if author.slug == post.author.slug {
+                                <Link<Route, (), Post>
+                                    classes="text-decoration-none"
+                                    to={ Route::EditPost { id: post.id } }
+                                    state={ Some(post.clone()) }
+                                >
+                                    <PencilSquareImg />
+                                </Link<Route, (), Post>>
                             }
-                        } else {
-                            <span class="placeholder col-4"></span>
                         }
                     </div>
                 </div>
