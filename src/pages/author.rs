@@ -22,7 +22,7 @@ pub fn author(props: &AuthorProps) -> Html {
                 html! {
                     <>
                         if let Some(author) = &author {
-                            <Meta title={ format!("{} - Автор", author.base.slug.clone()) } />
+                            <Meta title={ format!("{} - Автор", author.slug.clone()) } />
                         } else {
                             <Meta title="Автор" />
                         }

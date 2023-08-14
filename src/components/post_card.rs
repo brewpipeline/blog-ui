@@ -107,16 +107,17 @@ pub fn post_card(props: &PostCardProps) -> Html {
                     </div>
                     <div class="col-6 text-end placeholder-glow">
                         if let Some(post) = post.as_ref() {
-                            <Link<Route>
+                            <Link<Route, (), Author>
                                 classes="title is-block col-6 text-decoration-none"
                                 to={ Route::Author {
-                                    slug: post.short_author.slug.clone()
+                                    slug: post.author.slug.clone()
                                 } }
+                                state={ Some(post.author.clone()) }
                             >
-                                { &post.short_author.slug }
-                            </Link<Route>>
+                                { &post.author.slug }
+                            </Link<Route, (), Author>>
                             if let LoggedUserState::ActiveAndLoaded { token: _, author } = logged_user_context.state.clone() {
-                                if author.base.slug == post.short_author.slug {
+                                if author.slug == post.author.slug {
                                     { " | " }
                                     <Link<Route, (), Post>
                                         classes="title is-block col-6 text-decoration-none"

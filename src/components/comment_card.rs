@@ -20,14 +20,15 @@ pub fn comment_card(props: &CommentCardProps) -> Html {
             <div class="card-header d-flex placeholder-glow">
                 <PlaceholderImg />
                 if let Some(comment) = &comment {
-                    <Link<Route>
+                    <Link<Route, (), Author>
                         classes={ classes!("text-decoration-none", "me-auto") }
-                        to={ Route::Author { slug: comment.short_author.slug.clone() } }
+                        to={ Route::Author { slug: comment.author.slug.clone() } }
+                        state={ Some(comment.author.clone()) }
                     >
                         <strong>
-                            { &comment.short_author.slug }
+                            { &comment.author.slug }
                         </strong>
-                    </Link<Route>>
+                    </Link<Route, (), Author>>
                 } else {
                     <span class="me-auto placeholder col-3"></span>
                 }
