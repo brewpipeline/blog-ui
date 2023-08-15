@@ -195,6 +195,30 @@ pub fn edit_post(props: &EditPostProps) -> Html {
     let editor_script = html! {};
 
     let main_content = Callback::from(move |post: Option<content::Post>| {
+        let post_title = post.as_ref().map(|p| p.title.clone());
+        let post_summary = post.as_ref().map(|p| p.summary.clone());
+        let post_content = post.as_ref().map(|p| p.content.clone()).flatten();
+        let post_tags = post.as_ref().map(|p| p.tags_string());
+        #[cfg(feature = "client")]
+        let post_title = title_node_ref
+            .cast::<HtmlInputElement>()
+            .map(|h| h.value())
+            .or(post_title);
+        #[cfg(feature = "client")]
+        let post_summary = summary_node_ref
+            .cast::<HtmlInputElement>()
+            .map(|h| h.value())
+            .or(post_summary);
+        #[cfg(feature = "client")]
+        let post_content = content_node_ref
+            .cast::<HtmlInputElement>()
+            .map(|h| h.value())
+            .or(post_content);
+        #[cfg(feature = "client")]
+        let post_tags = tags_node_ref
+            .cast::<HtmlInputElement>()
+            .map(|h| h.value())
+            .or(post_tags);
         html! {
             <>
                 <form>
@@ -235,16 +259,7 @@ pub fn edit_post(props: &EditPostProps) -> Html {
                             class="form-control"
                             id="validationTitle1"
                             placeholder="Что-то захватывающее внимание..."
-                            value={
-                                title_node_ref
-                                    .cast::<HtmlInputElement>()
-                                    .map(|h| h.value())
-                                    .or(
-                                        post
-                                            .as_ref()
-                                            .map(|p| p.title.clone())
-                                    )
-                            }
+                            value={ post_title }
                             ref={ title_node_ref.clone() }
                         />
                         <div class="invalid-feedback">
@@ -260,16 +275,7 @@ pub fn edit_post(props: &EditPostProps) -> Html {
                             class="form-control"
                             id="validationTextarea1"
                             placeholder="Что-то короткое, но важное!"
-                            value={
-                                summary_node_ref
-                                    .cast::<HtmlInputElement>()
-                                    .map(|h| h.value())
-                                    .or(
-                                        post
-                                            .as_ref()
-                                            .map(|p| p.summary.clone())
-                                    )
-                            }
+                            value={ post_summary }
                             ref={ summary_node_ref.clone() }
                         ></textarea>
                         <div class="invalid-feedback">
@@ -285,17 +291,7 @@ pub fn edit_post(props: &EditPostProps) -> Html {
                             class="form-control"
                             id="validationTextarea2"
                             placeholder="Что-то динное и скучн... веселое!"
-                            value={
-                                content_node_ref
-                                    .cast::<HtmlInputElement>()
-                                    .map(|h| h.value())
-                                    .or(
-                                        post
-                                            .as_ref()
-                                            .map(|p| p.content.clone())
-                                            .flatten()
-                                    )
-                            }
+                            value={ post_content }
                             ref={ content_node_ref.clone() }
                         ></textarea>
                     </div>
@@ -309,16 +305,7 @@ pub fn edit_post(props: &EditPostProps) -> Html {
                             class="form-control"
                             id="validationTitle2"
                             placeholder="Что-то напоминающее о..."
-                            value={
-                                tags_node_ref
-                                    .cast::<HtmlInputElement>()
-                                    .map(|h| h.value())
-                                    .or(
-                                        post
-                                            .as_ref()
-                                            .map(|p| p.tags_string())
-                                    )
-                            }
+                            value={ post_tags }
                             ref={ tags_node_ref.clone() }
                         />
                     </div>
