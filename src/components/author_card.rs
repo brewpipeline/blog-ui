@@ -2,6 +2,7 @@ use yew::prelude::*;
 use yew_router::prelude::*;
 
 use crate::content::*;
+use crate::utils::*;
 
 use crate::Route;
 
@@ -38,13 +39,13 @@ pub fn author_card(props: &AuthorCardProps) -> Html {
                             {
                                 format!(
                                     "{} {}",
-                                    author
+                                    not_empty(author
                                         .first_name
-                                        .clone()
+                                        .clone())
                                         .unwrap_or("(Имя не указано)".to_owned()),
-                                    author
+                                    not_empty(author
                                         .last_name
-                                        .clone()
+                                        .clone())
                                         .unwrap_or("(Фамилия не указанa)".to_owned())
                                 )
                             }
