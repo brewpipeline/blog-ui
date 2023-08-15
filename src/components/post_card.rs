@@ -44,7 +44,7 @@ pub fn post_card(props: &PostCardProps) -> Html {
                     if let Some(title) = post.as_ref().map(|p| p.title.clone()) {
                         { title }
                     } else {
-                        <span class="placeholder col-6"></span>
+                        <span class="placeholder col-6 bg-secondary"></span>
                     }
                 </h5>
                 <p class="card-text placeholder-glow">
@@ -57,23 +57,23 @@ pub fn post_card(props: &PostCardProps) -> Html {
                     }) {
                         { text }
                     } else {
-                        <span class="placeholder col-7"></span> { " " }
-                        <span class="placeholder col-4"></span> { " " }
-                        <span class="placeholder col-4"></span> { " " }
-                        <span class="placeholder col-6"></span> { " " }
-                        <span class="placeholder col-6"></span> { " " }
-                        <span class="placeholder col-5"></span> { " " }
-                        <span class="placeholder col-5"></span> { " " }
-                        <span class="placeholder col-3"></span> { " " }
+                        <span class="placeholder col-7 bg-secondary"></span> { " " }
+                        <span class="placeholder col-4 bg-secondary"></span> { " " }
+                        <span class="placeholder col-4 bg-secondary"></span> { " " }
+                        <span class="placeholder col-6 bg-secondary"></span> { " " }
+                        <span class="placeholder col-6 bg-secondary"></span> { " " }
+                        <span class="placeholder col-5 bg-secondary"></span> { " " }
+                        <span class="placeholder col-5 bg-secondary"></span> { " " }
+                        <span class="placeholder col-3 bg-secondary"></span> { " " }
                         if is_full {
-                            <span class="placeholder col-7"></span> { " " }
-                            <span class="placeholder col-4"></span> { " " }
-                            <span class="placeholder col-4"></span> { " " }
-                            <span class="placeholder col-6"></span> { " " }
-                            <span class="placeholder col-6"></span> { " " }
-                            <span class="placeholder col-5"></span> { " " }
-                            <span class="placeholder col-5"></span> { " " }
-                            <span class="placeholder col-3"></span> { " " }
+                            <span class="placeholder col-7 bg-secondary"></span> { " " }
+                            <span class="placeholder col-4 bg-secondary"></span> { " " }
+                            <span class="placeholder col-4 bg-secondary"></span> { " " }
+                            <span class="placeholder col-6 bg-secondary"></span> { " " }
+                            <span class="placeholder col-6 bg-secondary"></span> { " " }
+                            <span class="placeholder col-5 bg-secondary"></span> { " " }
+                            <span class="placeholder col-5 bg-secondary"></span> { " " }
+                            <span class="placeholder col-3 bg-secondary"></span> { " " }
                         }
                     }
                 </p>
@@ -82,7 +82,7 @@ pub fn post_card(props: &PostCardProps) -> Html {
     };
     html! {
         <div class="card mb-3">
-            <div class="card-header">
+            <div class="card-header placeholder-glow">
                 <div class="row align-items-center">
                     <div class="d-flex col align-items-center justify-content-start" style="height: 24px;">
                         <img
@@ -112,14 +112,14 @@ pub fn post_card(props: &PostCardProps) -> Html {
                                 </strong>
                             </Link<Route, (), Author>>
                         } else {
-                            <span class="placeholder col-3"></span>
+                            <span class="placeholder col-3 bg-secondary"></span>
                         }
                     </div>
                     <div class="d-flex col align-items-center justify-content-end" style="height: 24px;">
                         if let Some(post) = &post {
                             <small> { date::format(post.created_at) } </small>
                         } else {
-                            <span class="placeholder col-3"></span>
+                            <span class="placeholder col-3 bg-secondary"></span>
                         }
                     </div>
                 </div>
@@ -135,13 +135,13 @@ pub fn post_card(props: &PostCardProps) -> Html {
             } else {
                 { main_content }
             }
-            <div class="card-footer">
+            <div class="card-footer placeholder-glow">
                 <div class="row align-items-center">
                     <div class="d-flex col align-items-center justify-content-start" style="height: 24px;">
                         if let Some(post) = post.as_ref() {
                             { not_empty(Some(post.tags_string())).unwrap_or("Нет тегов".to_string()) }
                         } else {
-                            <span class="placeholder col-6"></span>
+                            <span class="placeholder col-6 bg-secondary"></span>
                         }
                     </div>
                     <div class="d-flex col align-items-center justify-content-end" style="height: 24px;">

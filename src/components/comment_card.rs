@@ -16,7 +16,7 @@ pub fn comment_card(props: &CommentCardProps) -> Html {
     let CommentCardProps { comment } = props.clone();
     html! {
         <div class="card mb-3">
-            <div class="card-header">
+            <div class="card-header placeholder-glow">
                 <div class="row align-items-center">
                     <div class="d-flex col align-items-center justify-content-start" style="height: 24px;">
                         <img
@@ -46,14 +46,14 @@ pub fn comment_card(props: &CommentCardProps) -> Html {
                                 </strong>
                             </Link<Route, (), Author>>
                         } else {
-                            <span class="placeholder col-3"></span>
+                            <span class="placeholder col-3 bg-secondary"></span>
                         }
                     </div>
                     <div class="d-flex col align-items-center justify-content-end" style="height: 24px;">
                         if let Some(comment) = &comment {
                             <small> { date::format(comment.created_at) } </small>
                         } else {
-                            <span class="placeholder col-3"></span>
+                            <span class="placeholder col-3 bg-secondary"></span>
                         }
                     </div>
                 </div>
@@ -63,13 +63,13 @@ pub fn comment_card(props: &CommentCardProps) -> Html {
                     if let Some(comment) = &comment {
                         { &comment.content }
                     } else {
-                        <span class="placeholder col-3"></span> { " " }
-                        <span class="placeholder col-4"></span> { " " }
-                        <span class="placeholder col-2"></span> { " " }
-                        <span class="placeholder col-2"></span> { " " }
-                        <span class="placeholder col-4"></span> { " " }
-                        <span class="placeholder col-2"></span> { " " }
-                        <span class="placeholder col-2"></span> { " " }
+                        <span class="placeholder col-3 bg-secondary"></span> { " " }
+                        <span class="placeholder col-4 bg-secondary"></span> { " " }
+                        <span class="placeholder col-2 bg-secondary"></span> { " " }
+                        <span class="placeholder col-2 bg-secondary"></span> { " " }
+                        <span class="placeholder col-4 bg-secondary"></span> { " " }
+                        <span class="placeholder col-2 bg-secondary"></span> { " " }
+                        <span class="placeholder col-2 bg-secondary"></span> { " " }
                     }
                 </p>
             </div>

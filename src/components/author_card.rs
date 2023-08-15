@@ -49,8 +49,8 @@ pub fn author_card(props: &AuthorCardProps) -> Html {
                                 )
                             }
                         } else {
-                            <span class="placeholder col-3"></span> { " " }
-                            <span class="placeholder col-3"></span>
+                            <span class="placeholder col-3 bg-secondary"></span> { " " }
+                            <span class="placeholder col-3 bg-secondary"></span>
                         }
                     </h5>
                     <p class="card-text placeholder-glow">
@@ -58,7 +58,7 @@ pub fn author_card(props: &AuthorCardProps) -> Html {
                             if let Some(slug) = author.as_ref().map(|a| a.slug.clone()) {
                                 { slug }
                             } else {
-                                <span class="placeholder col-2"></span>
+                                <span class="placeholder col-2 bg-secondary"></span>
                             }
                         </small>
                     </p>
@@ -66,7 +66,7 @@ pub fn author_card(props: &AuthorCardProps) -> Html {
                         if let Some(email) = author.as_ref().map(|a| a.email.clone()) {
                             { email }
                         } else {
-                            <span class="placeholder col-4"></span>
+                            <span class="placeholder col-4 bg-secondary"></span>
                         }
                     </p>
                 </div>
