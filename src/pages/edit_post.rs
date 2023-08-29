@@ -18,16 +18,24 @@ use crate::Route;
 #[derive(Clone, Debug, PartialEq, Eq)]
 enum EditPostState {
     None,
-    InProgress(content::CommonPost),
-    Error(String),
-    Created(content::Post),
+    EditError(String),
+    EditedInProgress(content::CommonPost),
+    Edited(content::Post),
+    DeleteError(String),
+    DeleteInProgress,
+    Deleted,
 }
 
 impl EditPostState {
     pub fn action_available(&self) -> bool {
         match self {
-            EditPostState::None | EditPostState::Error(_) => true,
-            EditPostState::InProgress(_) | EditPostState::Created(_) => false,
+            EditPostState::None | EditPostState::EditError(_) | EditPostState::DeleteError(_) => {
+                true
+            }
+            EditPostState::EditedInProgress(_)
+            | EditPostState::Edited(_)
+            | EditPostState::DeleteInProgress
+            | EditPostState::Deleted => false,
         }
     }
 }
@@ -69,8 +77,11 @@ pub fn edit_post(props: &EditPostProps) -> Html {
         let logged_user_context = logged_user_context.clone();
         let state = state.clone();
         use_effect_with(state, move |state| match (**state).clone() {
-            EditPostState::None | EditPostState::Error(_) => {}
-            EditPostState::InProgress(common_post) => {
+            EditPostState::None
+            | EditPostState::EditError(_)
+            | EditPostState::DeleteError(_)
+            | EditPostState::Deleted => {}
+            EditPostState::EditedInProgress(common_post) => {
                 let Some(token) = logged_user_context.state.token().cloned() else {
                     return;
                 };
@@ -99,25 +110,55 @@ pub fn edit_post(props: &EditPostProps) -> Html {
                                 description: _,
                                 data: content::PostContainer { post },
                             } => {
-                                state.set(EditPostState::Created(post.clone()));
+                                state.set(EditPostState::Edited(post.clone()));
                             }
                             content::API::Failure { identifier, reason } => {
-                                state.set(EditPostState::Error(reason.unwrap_or(identifier)));
+                                state.set(EditPostState::EditError(reason.unwrap_or(identifier)));
                             }
                         },
                         Err(err) => {
-                            state.set(EditPostState::Error(err.to_string()));
+                            state.set(EditPostState::EditError(err.to_string()));
                         }
                     }
                 });
             }
-            EditPostState::Created(post) => navigator.push_with_state(
+            EditPostState::Edited(post) => navigator.push_with_state(
                 &Route::Post {
                     slug: post.slug.clone(),
                     id: post.id,
                 },
                 post,
             ),
+            EditPostState::DeleteInProgress => {
+                let (Some(id), Some(token)) = (id, logged_user_context.state.token().cloned())
+                else {
+                    return;
+                };
+                let state = state.clone();
+                wasm_bindgen_futures::spawn_local(async move {
+                    let delete_post_request = content::API::<()>::get(content::Tokened {
+                        token,
+                        params: content::DeletePostParams { id },
+                    });
+                    match delete_post_request.await {
+                        Ok(delete_post_result) => match delete_post_result {
+                            content::API::Success {
+                                identifier: _,
+                                description: _,
+                                data: _,
+                            } => {
+                                state.set(EditPostState::Deleted);
+                            }
+                            content::API::Failure { identifier, reason } => {
+                                state.set(EditPostState::DeleteError(reason.unwrap_or(identifier)));
+                            }
+                        },
+                        Err(err) => {
+                            state.set(EditPostState::DeleteError(err.to_string()));
+                        }
+                    }
+                });
+            }
         })
     }
 
@@ -137,8 +178,16 @@ pub fn edit_post(props: &EditPostProps) -> Html {
         };
     };
 
+    if let EditPostState::Deleted = *state {
+        return html! {
+            <div class="alert alert-success d-flex align-items-center" role="alert">
+                { "Публикация удалена!" }
+            </div>
+        };
+    }
+
     #[cfg(feature = "client")]
-    let onclick = {
+    let save_onclick = {
         let state = state.clone();
         let title_node_ref = title_node_ref.clone();
         let summary_node_ref = summary_node_ref.clone();
@@ -166,17 +215,24 @@ pub fn edit_post(props: &EditPostProps) -> Html {
                 .cast::<HtmlInputElement>()
                 .unwrap()
                 .checked() as u8;
-            state.set(EditPostState::InProgress(content::CommonPost {
+            state.set(EditPostState::EditedInProgress(content::CommonPost {
                 title,
                 published,
                 summary,
                 content,
                 tags,
-            }))
+            }));
         })
     };
     #[cfg(not(feature = "client"))]
-    let onclick = Callback::from(|_| {});
+    let save_onclick = Callback::from(|_| {});
+
+    let delete_onclick = {
+        let state = state.clone();
+        Callback::from(move |_| {
+            state.set(EditPostState::DeleteInProgress);
+        })
+    };
 
     #[cfg(feature = "client")]
     let editor_script = {
@@ -231,17 +287,6 @@ pub fn edit_post(props: &EditPostProps) -> Html {
                             { "Новая публикация" }
                         }
                     </h5>
-
-                    if let EditPostState::Error(message) = (*state).clone() {
-                        <div class="alert alert-danger d-flex align-items-center" role="alert">
-                            if post == None {
-                                { "Ошибка добавления публикации: " }
-                            } else {
-                                { "Ошибка редактирования публикации: " }
-                            }
-                            { message }
-                        </div>
-                    }
 
                     <div
                         class="mb-4 border rounded-3 d-flex align-items-center justify-content-center p-3 py-6"
@@ -323,15 +368,42 @@ pub fn edit_post(props: &EditPostProps) -> Html {
                         </label>
                     </div>
 
+                    if let EditPostState::EditError(message) = (*state).clone() {
+                        <div class="alert alert-danger d-flex align-items-center" role="alert">
+                            if post == None {
+                                { "Ошибка добавления публикации: " }
+                            } else {
+                                { "Ошибка редактирования публикации: " }
+                            }
+                            { message }
+                        </div>
+                    }
+
+                    if let EditPostState::DeleteError(message) = (*state).clone() {
+                        <div class="alert alert-danger d-flex align-items-center" role="alert">
+                            { "Ошибка удаления публикации: " }
+                            { message }
+                        </div>
+                    }
+
                     <div class="mb-3">
                         <button
                             class="btn btn-light"
                             type="submit"
-                            onclick={ onclick.clone() }
+                            onclick={ save_onclick.clone() }
                             disabled={ !state.action_available() }
                         >
-                            { "Отправить" }
+                            { "Сохранить" }
                         </button>
+                        if post != None {
+                            <button
+                                class="btn btn-danger float-end"
+                                onclick={ delete_onclick.clone() }
+                                disabled={ !state.action_available() }
+                            >
+                                { "Удалить" }
+                            </button>
+                        }
                     </div>
                 </form>
                 { editor_script.clone() }
@@ -343,8 +415,8 @@ pub fn edit_post(props: &EditPostProps) -> Html {
         <>
             { meta }
             if let Some(id) = id {
-                <Item<content::API<content::PostContainer>, content::PostIdParams>
-                    params={ content::PostIdParams { id } }
+                <Item<content::API<content::PostContainer>, content::PostParams>
+                    params={ content::PostParams { id } }
                     use_caches=true
                     component={ move |post: Option<content::Post>| {
                         if let Some(post) = post {
