@@ -24,7 +24,8 @@ impl SearchMode {
             | Route::NewPost
             | Route::EditPost { id: _ }
             | Route::Post { slug: _, id: _ }
-            | Route::Posts => Self::Posts { query: None },
+            | Route::Posts
+            | Route::Tag { slug: _, id: _ } => Self::Posts { query: None },
             Route::AuthorsSearchRoot | Route::Author { slug: _ } | Route::Authors => {
                 Self::Authors { query: None }
             }

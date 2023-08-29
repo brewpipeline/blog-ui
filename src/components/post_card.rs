@@ -139,7 +139,20 @@ pub fn post_card(props: &PostCardProps) -> Html {
                 <div class="row align-items-center">
                     <div class="d-flex col align-items-center justify-content-start" style="height: 24px;">
                         if let Some(post) = post.as_ref() {
-                            { not_empty(Some(post.tags_string())).unwrap_or("Нет тегов".to_string()) }
+                            <p class="mt-0 mb-0">
+                                { post.tags.iter().map(|tag| { html! {
+                                    <>
+                                        <Link<Route, (), Tag>
+                                            classes="link-dark link-underline-opacity-25 link-underline-opacity-100-hover"
+                                            to={ Route::Tag { id: tag.id, slug: tag.slug.clone() } }
+                                            state={ Some(tag.clone()) }
+                                        >
+                                            { tag.title.clone() }
+                                        </Link<Route, (), Tag>>
+                                        { " " }
+                                    </>
+                                } }).collect::<Html>() }
+                            </p>
                         } else {
                             <span class="placeholder col-6 bg-secondary"></span>
                         }

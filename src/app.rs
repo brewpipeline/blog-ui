@@ -50,16 +50,12 @@ fn app() -> Html {
         .ok()
         .flatten()
         .map(|e| {
-            let (
-                "script",
-                Some(r#type),
-                Some(value)
-            ) = (
+            let ("script", Some(r#type), Some(value)) = (
                 e.tag_name().to_lowercase().as_str(),
                 e.get_attribute("type"),
-                e.text_content().map(|s| s.trim().to_owned())
+                e.text_content().map(|s| s.trim().to_owned()),
             ) else {
-                return None
+                return None;
             };
             Some(AppContent { r#type, value })
         })
