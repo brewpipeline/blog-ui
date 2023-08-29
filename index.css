@@ -9,6 +9,7 @@
     --bs-card-border-color: #dee2e6;
     --bs-card-title-color: var(--bs-body-color);
     --bs-card-color: var(--bs-body-color);
+    --bs-card-cap-bg: ;
 }
 
 .dropdown-menu {
@@ -24,17 +25,55 @@
     --bs-btn-bg: #fff;
 }
 
-.accordion-item {
-    --bs-accordion-border-width: 1px;
-    --bs-accordion-border-color: #dee2e6;
+.btn-light.active {
+    --bs-btn-active-border-color: #cfe2ff;
 }
 
-.border-bottom {
-    --bs-border-color: #dee2e6;
+.alert-primary {
+    --bs-alert-bg: #cfe2ff;
+    --bs-alert-border-color: #cfe2ff;
+}
+
+.accordion-item {
+    --bs-accordion-border-width: 0px;
+}
+
+.accordion-button {
+    margin-top: -1px;
+    --bs-accordion-border-width: 1px;
+    border-top-width: var(--bs-accordion-border-width);
+    border-bottom-width: var(--bs-accordion-border-width);
+    border-left-width: var(--bs-accordion-border-width);
+    border-right-width: var(--bs-accordion-border-width);
+    border-style: solid;
+    border-color: #cfe2ff;
+    box-shadow: none!important;
+}
+
+.accordion-item:first-of-type .accordion-button {
+    margin-top: 0px;
+}
+
+.accordion-button.collapsed {
+    border-color: var(--bs-accordion-border-color);
+}
+
+.accordion-collapse {
+    --bs-accordion-border-width: 1px;
+    border-top-width: 0;
+    border-bottom-width: 0;
+    border-left-width: var(--bs-accordion-border-width);
+    border-right-width: var(--bs-accordion-border-width);
+    border-style: solid;
+    border-color: var(--bs-accordion-border-color);
+}
+
+.accordion-item:last-of-type .accordion-collapse {
+    border-bottom-width: var(--bs-accordion-border-width);
 }
 
 .form-control {
-    --bs-border-color: #dee2e6;
+    --bs-border-color: #cfe2ff;
 }
 
 .placeholder {
