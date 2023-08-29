@@ -21,6 +21,13 @@ pub fn login_modal(props: &LoginModalProps) -> Html {
 
     let close_node_ref = use_node_ref();
 
+    let image_url = use_memo((), |_| {
+        format!(
+            "https://api.dicebear.com/7.x/shapes/svg?seed={seed}",
+            seed = date::now_timestamp(),
+        )
+    });
+
     #[cfg(feature = "client")]
     {
         let logged_user_context = logged_user_context.clone();
@@ -128,6 +135,19 @@ pub fn login_modal(props: &LoginModalProps) -> Html {
                         <h1 class="modal-title fs-5" id="loginModalLabel"> { "Войти" } </h1>
                         <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                     </div>
+                    <script>
+                        {
+                            Html::from_html_unchecked(AttrValue::from(format!("
+                                let img = new Image();
+                                img.src = \"{image_url}\";
+                            ")))
+                        }
+                    </script>
+                    <div
+                        style={ format!("height:160px;width:100%;--image-url:url({image_url});",) }
+                        class="img-block bd-placeholder-img"
+                        role="img"
+                    />
                     <div class="modal-body">
                         if let LoggedUserState::Error(message) = logged_user_context.state.clone() {
                             <div class="alert alert-danger d-flex align-items-center" role="alert">

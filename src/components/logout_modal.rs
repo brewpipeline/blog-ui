@@ -24,7 +24,7 @@ pub fn logout_modal(props: &LogoutModalProps) -> Html {
                     <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                 </div>
                 <div class="modal-body">
-                    <p>
+                    <p class="mb-0">
                         { "Вы точно хотите выйти?" }
                     </p>
                 </div>
