@@ -319,7 +319,7 @@ impl ExternalResultContainer for PostsContainer {
 //
 
 #[derive(Clone, PartialEq)]
-pub struct PostIdParams {
+pub struct PostParams {
     pub id: u64,
 }
 
@@ -334,11 +334,16 @@ pub struct UpdatePostParams {
     pub update_post: CommonPost,
 }
 
+#[derive(Clone, PartialEq)]
+pub struct DeletePostParams {
+    pub id: u64,
+}
+
 #[cfg(feature = "client")]
 #[async_trait(?Send)]
-impl RequestableItem<PostIdParams> for API<PostContainer> {
-    async fn request(params: PostIdParams) -> Result<Request, Error> {
-        let PostIdParams { id } = params;
+impl RequestableItem<PostParams> for API<PostContainer> {
+    async fn request(params: PostParams) -> Result<Request, Error> {
+        let PostParams { id } = params;
         let url = format!("{url}/api/post/{id}", url = crate::API_URL);
         Ok(Request::get(url.as_str()).build()?)
     }
@@ -379,6 +384,24 @@ impl RequestableItem<Tokened<UpdatePostParams>> for API<PostContainer> {
             .header("Token", token.as_str())
             .header("Content-Type", "application/json")
             .body(serde_json::to_string(&update_post).map_err(|e| Error::SerdeError(e))?)?)
+    }
+    async fn response(response: Response) -> Result<Self, Error> {
+        response.json().await
+    }
+}
+
+#[cfg(feature = "client")]
+#[async_trait(?Send)]
+impl RequestableItem<Tokened<DeletePostParams>> for API<()> {
+    async fn request(params: Tokened<DeletePostParams>) -> Result<Request, Error> {
+        let Tokened {
+            token,
+            params: DeletePostParams { id },
+        } = params;
+        let url = format!("{url}/api/post/{id}", url = crate::API_URL);
+        Ok(Request::delete(url.as_str())
+            .header("Token", token.as_str())
+            .build()?)
     }
     async fn response(response: Response) -> Result<Self, Error> {
         response.json().await

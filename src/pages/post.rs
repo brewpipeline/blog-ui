@@ -20,8 +20,8 @@ pub struct PostProps {
 pub fn post(props: &PostProps) -> Html {
     let PostProps { slug, id } = props.clone();
     html! {
-        <Item<content::API<content::PostContainer>, content::PostIdParams>
-            params={ content::PostIdParams { id } }
+        <Item<content::API<content::PostContainer>, content::PostParams>
+            params={ content::PostParams { id } }
             use_caches=true
             component={ move |post: Option<content::Post>| {
                 if let Some(post) = &post {
