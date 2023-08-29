@@ -65,6 +65,7 @@ pub fn edit_post(props: &EditPostProps) -> Html {
 
     let state = use_state_eq(|| EditPostState::None);
 
+    let image_node_ref = use_node_ref();
     let title_node_ref = use_node_ref();
     let summary_node_ref = use_node_ref();
     let content_node_ref = use_node_ref();
@@ -189,6 +190,7 @@ pub fn edit_post(props: &EditPostProps) -> Html {
     #[cfg(feature = "client")]
     let save_onclick = {
         let state = state.clone();
+        let image_node_ref = image_node_ref.clone();
         let title_node_ref = title_node_ref.clone();
         let summary_node_ref = summary_node_ref.clone();
         let content_node_ref = content_node_ref.clone();
@@ -197,6 +199,10 @@ pub fn edit_post(props: &EditPostProps) -> Html {
         Callback::from(move |e: MouseEvent| {
             e.prevent_default();
 
+            let image_url = image_node_ref
+                .cast::<HtmlInputElement>()
+                .map(|v| v.value())
+                .filter(|s| !s.is_empty());
             let title = title_node_ref.cast::<HtmlInputElement>().unwrap().value();
             let summary = summary_node_ref.cast::<HtmlInputElement>().unwrap().value();
             let content = content_node_ref
@@ -221,6 +227,7 @@ pub fn edit_post(props: &EditPostProps) -> Html {
                 summary,
                 content,
                 tags,
+                image_url,
             }));
         })
     };
@@ -252,10 +259,16 @@ pub fn edit_post(props: &EditPostProps) -> Html {
     let editor_script = html! {};
 
     let main_content = Callback::from(move |post: Option<content::Post>| {
+        let post_image = post.as_ref().map(|p| p.image_url.clone()).flatten();
         let post_title = post.as_ref().map(|p| p.title.clone());
         let post_summary = post.as_ref().map(|p| p.summary.clone());
         let post_content = post.as_ref().map(|p| p.content.clone()).flatten();
-        let post_tags = post.as_ref().map(|p| p.tags_string());
+        let post_tags = post.as_ref().map(|p| p.joined_tags_string(", "));
+        #[cfg(feature = "client")]
+        let post_image = image_node_ref
+            .cast::<HtmlInputElement>()
+            .map(|h| h.value())
+            .or(post_image);
         #[cfg(feature = "client")]
         let post_title = title_node_ref
             .cast::<HtmlInputElement>()
@@ -294,6 +307,20 @@ pub fn edit_post(props: &EditPostProps) -> Html {
                         role="img"
                     >
                         <FilePostImg />
+                    </div>
+
+                    <div class="mb-3">
+                        <label for="validationImage1" class="form-label">
+                            { "Изображение (Cсылка) (Опциональное)" }
+                        </label>
+                        <input
+                            type="text"
+                            class="form-control"
+                            id="validationImage1"
+                            placeholder="Что-то визуально приятное..."
+                            value={ post_image }
+                            ref={ image_node_ref.clone() }
+                        />
                     </div>
 
                     <div class="mb-3">

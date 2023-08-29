@@ -32,7 +32,8 @@ pub fn post_card(props: &PostCardProps) -> Html {
                         "height:194px;width:100%;--image-url:url({});",
                         post
                             .as_ref()
-                            .map(|p| p.image_url())
+                            .map(|p| p.image_url.clone())
+                            .flatten()
                             .unwrap_or_default()
                     )
                 }

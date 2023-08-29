@@ -40,7 +40,7 @@ pub fn post(props: &PostProps) -> Html {
                             <Meta
                                 title={ format!("{} - Публикация", post.title.clone()) }
                                 description={ post.summary.clone() }
-                                keywords={ post.tags_string() }
+                                keywords={ post.joined_tags_string(", ") }
                             />
                         } else {
                             <Meta title="Публикация" />
