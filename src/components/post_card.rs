@@ -82,7 +82,7 @@ pub fn post_card(props: &PostCardProps) -> Html {
     };
     html! {
         <div class="card mb-3">
-            <div class="card-header placeholder-glow">
+            <div class="card-header placeholder-glow border-0">
                 <div class="row align-items-center">
                     <div class="d-flex col align-items-center justify-content-start" style="height: 24px;">
                         <img

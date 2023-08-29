@@ -72,8 +72,24 @@
     border-bottom-width: var(--bs-accordion-border-width);
 }
 
-.form-control {
+.header .form-control {
     --bs-border-color: #cfe2ff;
+}
+
+.page-link {
+    --bs-pagination-border-width: 1px;
+
+    --bs-pagination-bg: #fff;
+    --bs-pagination-active-bg: #cfe2ff;
+    --bs-pagination-hover-bg: #f5f5f5;
+
+    --bs-pagination-border-color: #dee2e6;
+    --bs-pagination-active-border-color: #cfe2ff;
+    --bs-pagination-hover-border-color: #c6c7c8;
+
+    --bs-pagination-color: black;
+    --bs-pagination-active-color: black;
+    --bs-pagination-hover-color: black;
 }
 
 .placeholder {
