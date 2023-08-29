@@ -26,8 +26,9 @@ pub fn login_modal(props: &LoginModalProps) -> Html {
         let logged_user_context = logged_user_context.clone();
         let close_node_ref = close_node_ref.clone();
         use_effect_with(logged_user_context, move |logged_user_context| {
-            let LoggedUserState::InProgress(login_question) = (**logged_user_context).state.clone() else {
-                return
+            let LoggedUserState::InProgress(login_question) = (**logged_user_context).state.clone()
+            else {
+                return;
             };
             let logged_user_context = logged_user_context.clone();
             let close_node_ref = close_node_ref.clone();

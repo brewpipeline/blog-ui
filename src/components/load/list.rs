@@ -67,9 +67,9 @@ where
     );
 
     let Some(list_result_container) = (*list_result_container).clone() else {
-        return (0..items_per_page).map(|_| {
-            component.emit(None)
-        }).collect::<Html>()
+        return (0..items_per_page)
+            .map(|_| component.emit(None))
+            .collect::<Html>();
     };
     match list_result_container {
         Ok(list_container) => {

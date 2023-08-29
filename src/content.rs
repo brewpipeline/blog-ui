@@ -109,7 +109,7 @@ impl RequestableItem<ExternalListContainerParams<AuthorsContainerSearchParams>>
             params: AuthorsContainerSearchParams { query },
         } = params;
         let url = format!(
-            "{url}/api/search/authors/{query}?limit={limit}&offset={skip}",
+            "{url}/api/authors/search/{query}?limit={limit}&offset={skip}",
             url = crate::API_URL
         );
         Ok(Request::get(url.as_str()).build()?)
@@ -153,7 +153,7 @@ pub struct AuthorMeParams;
 impl RequestableItem<AuthorSlugParams> for API<AuthorContainer> {
     async fn request(params: AuthorSlugParams) -> Result<Request, Error> {
         let AuthorSlugParams { slug } = params;
-        let url = format!("{url}/api/author/{slug}", url = crate::API_URL);
+        let url = format!("{url}/api/author/slug/{slug}", url = crate::API_URL);
         Ok(Request::get(url.as_str()).build()?)
     }
     async fn response(response: Response) -> Result<Self, Error> {
@@ -193,6 +193,16 @@ pub struct PostsContainerSearchParam {
     pub query: String,
 }
 
+#[derive(Clone, PartialEq)]
+pub struct PostsContainerAuthorParam {
+    pub author_id: u64,
+}
+
+#[derive(Clone, PartialEq)]
+pub struct PostsContainerTagParam {
+    pub tag_id: u64,
+}
+
 #[cfg(feature = "client")]
 #[async_trait(?Send)]
 impl RequestableItem<ExternalListContainerParams<()>> for API<PostsContainer> {
@@ -223,7 +233,53 @@ impl RequestableItem<ExternalListContainerParams<PostsContainerSearchParam>>
             params: PostsContainerSearchParam { query },
         } = params;
         let url = format!(
-            "{url}/api/search/posts/{query}?limit={limit}&offset={skip}",
+            "{url}/api/posts/search/{query}?limit={limit}&offset={skip}",
+            url = crate::API_URL,
+        );
+        Ok(Request::get(url.as_str()).build()?)
+    }
+    async fn response(response: Response) -> Result<Self, Error> {
+        response.json().await
+    }
+}
+
+#[cfg(feature = "client")]
+#[async_trait(?Send)]
+impl RequestableItem<ExternalListContainerParams<PostsContainerAuthorParam>>
+    for API<PostsContainer>
+{
+    async fn request(
+        params: ExternalListContainerParams<PostsContainerAuthorParam>,
+    ) -> Result<Request, Error> {
+        let ExternalListContainerParams {
+            limit,
+            skip,
+            params: PostsContainerAuthorParam { author_id },
+        } = params;
+        let url = format!(
+            "{url}/api/posts/author/id/{author_id}?limit={limit}&offset={skip}",
+            url = crate::API_URL,
+        );
+        Ok(Request::get(url.as_str()).build()?)
+    }
+    async fn response(response: Response) -> Result<Self, Error> {
+        response.json().await
+    }
+}
+
+#[cfg(feature = "client")]
+#[async_trait(?Send)]
+impl RequestableItem<ExternalListContainerParams<PostsContainerTagParam>> for API<PostsContainer> {
+    async fn request(
+        params: ExternalListContainerParams<PostsContainerTagParam>,
+    ) -> Result<Request, Error> {
+        let ExternalListContainerParams {
+            limit,
+            skip,
+            params: PostsContainerTagParam { tag_id },
+        } = params;
+        let url = format!(
+            "{url}/api/posts/tag/{tag_id}?limit={limit}&offset={skip}",
             url = crate::API_URL,
         );
         Ok(Request::get(url.as_str()).build()?)
@@ -333,6 +389,36 @@ impl ExternalItemContainer for PostContainer {
     type Item = Post;
     fn item(self) -> Self::Item {
         self.post
+    }
+}
+
+//
+// Tag
+//
+//
+
+#[derive(Clone, PartialEq)]
+pub struct TagIdParams {
+    pub id: u64,
+}
+
+#[cfg(feature = "client")]
+#[async_trait(?Send)]
+impl RequestableItem<TagIdParams> for API<TagContainer> {
+    async fn request(params: TagIdParams) -> Result<Request, Error> {
+        let TagIdParams { id } = params;
+        let url = format!("{url}/api/tag/{id}", url = crate::API_URL);
+        Ok(Request::get(url.as_str()).build()?)
+    }
+    async fn response(response: Response) -> Result<Self, Error> {
+        response.json().await
+    }
+}
+
+impl ExternalItemContainer for TagContainer {
+    type Item = Tag;
+    fn item(self) -> Self::Item {
+        self.tag
     }
 }
 

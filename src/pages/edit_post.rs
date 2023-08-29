@@ -72,7 +72,7 @@ pub fn edit_post(props: &EditPostProps) -> Html {
             EditPostState::None | EditPostState::Error(_) => {}
             EditPostState::InProgress(common_post) => {
                 let Some(token) = logged_user_context.state.token().cloned() else {
-                    return
+                    return;
                 };
                 let state = state.clone();
                 wasm_bindgen_futures::spawn_local(async move {
@@ -121,7 +121,8 @@ pub fn edit_post(props: &EditPostProps) -> Html {
         })
     }
 
-    let LoggedUserState::ActiveAndLoaded { token: _, author } = logged_user_context.state.clone() else {
+    let LoggedUserState::ActiveAndLoaded { token: _, author } = logged_user_context.state.clone()
+    else {
         return html! {
             <>
                 { meta }
@@ -133,7 +134,7 @@ pub fn edit_post(props: &EditPostProps) -> Html {
                     }
                 } />
             </>
-        }
+        };
     };
 
     #[cfg(feature = "client")]

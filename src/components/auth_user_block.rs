@@ -20,7 +20,7 @@ pub fn auth_user_block() -> Html {
     }
 
     let Some(token) = logged_user_context.state.token().cloned() else {
-       return html! {
+        return html! {
             <button
                 aria-label="Войти"
                 type="button"
@@ -33,7 +33,7 @@ pub fn auth_user_block() -> Html {
                 </div>
                 <div class="d-none d-lg-block"> { "Войти" } </div>
             </button>
-        }
+        };
     };
 
     let params = Tokened {

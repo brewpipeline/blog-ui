@@ -41,7 +41,7 @@ where
     );
 
     let Some(item_result) = (*item_result).clone() else {
-        return component.emit(None)
+        return component.emit(None);
     };
     match item_result {
         Ok(item) => component.emit(Some(item)),

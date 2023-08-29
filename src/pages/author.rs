@@ -2,9 +2,13 @@ use yew::prelude::*;
 
 use crate::components::author_card::*;
 use crate::components::item::*;
+use crate::components::list::*;
 use crate::components::meta::*;
+use crate::components::post_card::*;
 use crate::components::warning::*;
 use crate::content;
+
+use crate::Route;
 
 #[derive(PartialEq, Properties, Clone)]
 pub struct AuthorProps {
@@ -26,7 +30,17 @@ pub fn author(props: &AuthorProps) -> Html {
                         } else {
                             <Meta title="Автор" />
                         }
-                        <AuthorCard { author } link_to=false />
+                        <AuthorCard author={ author.clone() } link_to=false />
+                        if let Some(author) = &author {
+                            <List<content::API<content::PostsContainer>, content::PostsContainerAuthorParam>
+                                params={ content::PostsContainerAuthorParam { author_id: author.id } }
+                                route_to_page={ Route::Author { slug: author.slug.clone() } }
+                                component={ |post| html! { <PostCard { post } is_full=false link_to=true /> } }
+                                error_component={ |_| html! { <Warning text="Ошибка загрузки публикаций автора!" /> } }
+                            >
+                                <Warning text="У автора нет публикаций." />
+                            </List<content::API<content::PostsContainer>, content::PostsContainerAuthorParam>>
+                        }
                     </>
                 }
             } }
