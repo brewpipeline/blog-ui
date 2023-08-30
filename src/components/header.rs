@@ -21,7 +21,9 @@ pub fn header() -> Html {
 
                         <div class="col col-lg-2 d-flex justify-content-start justify-content-lg-center align-items-center">
                             <Link<Route> classes="d-flex link-body-emphasis text-decoration-none" to={ Route::Home }>
-                                <img height="38" class="item" src="logo.svg" alt="LOGO" />
+                                <h2 class="item mb-0">
+                                    { crate::TITLE }
+                                </h2>
                             </Link<Route>>
                         </div>
 

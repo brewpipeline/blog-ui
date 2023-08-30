@@ -3,66 +3,44 @@ use yew::prelude::*;
 #[function_component(InformationMenu)]
 pub fn information_menu() -> Html {
     html! {
-        <div class="accordion" id="accordionExample">
-            <div class="accordion-item">
-                <h2 class="accordion-header">
-                    <button
-                        class="accordion-button" type="button"
-                        data-bs-toggle="collapse"
-                        data-bs-target="#collapseOne"
-                        aria-expanded="true"
-                        aria-controls="collapseOne"
-                    >
-                        { "О блоге" }
-                    </button>
-                </h2>
-                <div id="collapseOne" class="accordion-collapse collapse show" data-bs-parent="#accordionExample">
-                    <div class="accordion-body">
-                        <strong>
-                            { "Ты ошибка эволюции." }
-                        </strong>
-                        <br/>
-                        { "А блог этот про хороших людей в плохое время." }
-                    </div>
-                </div>
-                </div>
-                <div class="accordion-item">
-                <h2 class="accordion-header">
-                    <button
-                        class="accordion-button collapsed"
-                        type="button"
-                        data-bs-toggle="collapse"
-                        data-bs-target="#collapseTwo"
-                        aria-expanded="false"
-                        aria-controls="collapseTwo"
-                    >
-                    { "Accordion Item #2" }
-                    </button>
-                </h2>
-                <div id="collapseTwo" class="accordion-collapse collapse" data-bs-parent="#accordionExample">
-                    <div class="accordion-body">
-                    <strong />
-                    { "This is the second item's accordion body." }
-                    <strong/>
-                    { " It is hidden by default, until the collapse plugin adds the appropriate classes that we use to style each element. These classes control the overall appearance, as well as the showing and hiding via CSS transitions. You can modify any of this with custom CSS or overriding our default variables. It's also worth noting that just about any HTML can go within the <code>.accordion-body</code>, though the transition does limit overflow." }
-                    </div>
-                </div>
-                </div>
-                <div class="accordion-item">
-                <h2 class="accordion-header">
-                    <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#collapseThree" aria-expanded="false" aria-controls="collapseThree">
-                        { "Accordion Item #3" }
-                    </button>
-                </h2>
-                <div id="collapseThree" class="accordion-collapse collapse" data-bs-parent="#accordionExample">
-                    <div class="accordion-body">
-                        <strong />
-                        { "This is the third item's accordion body." }
-                        <strong/>
-                        { " It is hidden by default, until the collapse plugin adds the appropriate classes that we use to style each element. These classes control the overall appearance, as well as the showing and hiding via CSS transitions. You can modify any of this with custom CSS or overriding our default variables. It's also worth noting that just about any HTML can go within the <code>.accordion-body</code>, though the transition does limit overflow." }
-                    </div>
-                </div>
-            </div>
+        <div class="accordion" id="accordionMain">
+            {
+                crate::ACCORDION_ITEMS.iter().enumerate().map(|(index, item)| {
+                    let id = format!("collapse{index}");
+                    let target = format!("#collapse{index}");
+                    let expanded;
+                    let mut button_classes = "accordion-button".to_string();
+                    let mut content_classes = "accordion-collapse collapse".to_string();
+                    if index == 0 {
+                        expanded = "true";
+                        content_classes += " show"
+                     } else {
+                        expanded = "false";
+                        button_classes += " collapsed";
+                    };
+                    html! {
+                        <div class="accordion-item">
+                            <h2 class="accordion-header">
+                                <button
+                                    class={ button_classes }
+                                    type="button"
+                                    data-bs-toggle="collapse"
+                                    data-bs-target={ target }
+                                    aria-expanded={ expanded }
+                                    aria-controls={ id.clone() }
+                                >
+                                    { item.0 }
+                                </button>
+                            </h2>
+                            <div { id } class={ content_classes } data-bs-parent="#accordionMain">
+                                <div class="accordion-body">
+                                    { Html::from_html_unchecked(AttrValue::from(item.1)) }
+                                </div>
+                            </div>
+                        </div>
+                    }
+                }).collect::<Html>()
+            }
         </div>
     }
 }
