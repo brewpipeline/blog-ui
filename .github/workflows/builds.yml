@@ -11,15 +11,15 @@ on:
 env:
   CARGO_TERM_COLOR: always
 
-  API_URL: ""
-  TITLE: ""
-  DESCRIPTION: ""
-  KEYWORDS: ""
-  ACCORDION_JSON: ""
-
 jobs:
   build:
     runs-on: ubuntu-latest
+    env:
+      API_URL: ""
+      TITLE: ""
+      DESCRIPTION: ""
+      KEYWORDS: ""
+      ACCORDION_JSON: ""
     name: "Build | Features: ${{ matrix.features }}"
     strategy:
       fail-fast: false
