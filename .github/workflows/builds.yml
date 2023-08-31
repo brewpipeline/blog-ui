@@ -11,6 +11,12 @@ on:
 env:
   CARGO_TERM_COLOR: always
 
+  API_URL: ""
+  TITLE: ""
+  DESCRIPTION: ""
+  KEYWORDS: ""
+  ACCORDION_JSON: ""
+
 jobs:
   build:
     runs-on: ubuntu-latest

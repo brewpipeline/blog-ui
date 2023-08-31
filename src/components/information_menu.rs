@@ -1,11 +1,22 @@
 use yew::prelude::*;
 
+#[derive(Clone, serde::Deserialize)]
+struct AccordionItem {
+    title: String,
+    body: String,
+}
+
 #[function_component(InformationMenu)]
 pub fn information_menu() -> Html {
+    let accordion_items = use_memo((), |_| {
+        serde_json::from_str::<Vec<AccordionItem>>(crate::ACCORDION_JSON)
+            .expect("wrong ACCORDION_JSON format")
+    });
     html! {
         <div class="accordion" id="accordionMain">
             {
-                crate::ACCORDION_ITEMS.iter().enumerate().map(|(index, item)| {
+                accordion_items.iter().enumerate().map(|(index, item)| {
+                    let item = item.clone();
                     let id = format!("collapse{index}");
                     let target = format!("#collapse{index}");
                     let expanded;
@@ -29,12 +40,12 @@ pub fn information_menu() -> Html {
                                     aria-expanded={ expanded }
                                     aria-controls={ id.clone() }
                                 >
-                                    { item.0 }
+                                    { item.title }
                                 </button>
                             </h2>
                             <div { id } class={ content_classes } data-bs-parent="#accordionMain">
                                 <div class="accordion-body">
-                                    { Html::from_html_unchecked(AttrValue::from(item.1)) }
+                                    { Html::from_html_unchecked(AttrValue::from(item.body)) }
                                 </div>
                             </div>
                         </div>
