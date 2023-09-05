@@ -48,7 +48,7 @@ pub fn post_card(props: &PostCardProps) -> Html {
                         <span class="placeholder col-6 bg-secondary"></span>
                     }
                 </h5>
-                <p class="card-text placeholder-glow">
+                <article class="card-text placeholder-glow">
                     if let Some(text) = post.as_ref().map(|post| {
                         if let (Some(content), true) = (post.content.clone(), is_full) {
                             Html::from_html_unchecked(AttrValue::from(content))
@@ -77,7 +77,7 @@ pub fn post_card(props: &PostCardProps) -> Html {
                             <span class="placeholder col-3 bg-secondary"></span> { " " }
                         }
                     }
-                </p>
+                </article>
             </div>
         </>
     };
