@@ -1,10 +1,11 @@
 #[cfg(feature = "client")]
 use gloo::utils::document;
 #[cfg(feature = "client")]
-use web_sys::{Element, HtmlInputElement, Node};
+use web_sys::{Element, HtmlInputElement};
 use yew::prelude::*;
 use yew_router::prelude::*;
 
+use crate::components::delayed_component::*;
 use crate::components::item::*;
 use crate::components::meta::*;
 use crate::components::svg_image::*;
@@ -241,23 +242,6 @@ pub fn edit_post(props: &EditPostProps) -> Html {
         })
     };
 
-    #[cfg(feature = "client")]
-    let editor_script = {
-        let script: Element = document().create_element("script").unwrap();
-        script.set_inner_html(
-            "
-            setTimeout(function() {
-                var editor = new FroalaEditor('#validationTextarea2');
-            }, 0)
-        ",
-        );
-        let node: Node = script.into();
-        Html::VRef(node)
-    };
-    // TODO: Panic on hydration, for now it's ok...
-    #[cfg(not(feature = "client"))]
-    let editor_script = html! {};
-
     let main_content = Callback::from(move |post: Option<content::Post>| {
         let post_image = post.as_ref().map(|p| p.image_url.clone()).flatten();
         let post_title = post.as_ref().map(|p| p.title.clone());
@@ -433,7 +417,21 @@ pub fn edit_post(props: &EditPostProps) -> Html {
                         }
                     </div>
                 </form>
-                { editor_script.clone() }
+                <DelayedComponent component={ |_| {
+                    #[cfg(feature = "client")]
+                    {
+                        let script: Element = document().create_element("script").unwrap();
+                        script.set_attribute("type", "text/javascript").unwrap();
+                        script.set_inner_html("
+                            setTimeout(function() {
+                                var editor = new FroalaEditor('#validationTextarea2');
+                            }, 0)
+                        ");
+                        Html::VRef(script.into())
+                    }
+                    #[cfg(not(feature = "client"))]
+                    unreachable!()
+                }} />
             </>
         }
     });

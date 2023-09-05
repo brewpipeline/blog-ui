@@ -1,9 +1,12 @@
 #[cfg(feature = "client")]
 use gloo::events::EventListener;
 #[cfg(feature = "client")]
-use web_sys::{HtmlElement, HtmlInputElement};
+use gloo::utils::document;
+#[cfg(feature = "client")]
+use web_sys::{Element, HtmlElement, HtmlInputElement};
 use yew::prelude::*;
 
+use crate::components::delayed_component::*;
 #[cfg(feature = "client")]
 use crate::content::*;
 use crate::utils::*;
@@ -20,13 +23,6 @@ pub fn login_modal(props: &LoginModalProps) -> Html {
     let logged_user_context = use_context::<LoggedUserContext>().unwrap();
 
     let close_node_ref = use_node_ref();
-
-    let image_url = use_memo((), |_| {
-        format!(
-            "https://api.dicebear.com/7.x/shapes/svg?seed={seed}",
-            seed = date::now_timestamp(),
-        )
-    });
 
     #[cfg(feature = "client")]
     {
@@ -135,19 +131,36 @@ pub fn login_modal(props: &LoginModalProps) -> Html {
                         <h1 class="modal-title fs-5" id="loginModalLabel"> { "Войти" } </h1>
                         <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                     </div>
-                    <script>
+                    <DelayedComponent component={ |_| {
+                        #[cfg(feature = "client")]
                         {
-                            Html::from_html_unchecked(AttrValue::from(format!("
-                                let img = new Image();
-                                img.src = \"{image_url}\";
-                            ")))
+                            let script: Element = document().create_element("script").unwrap();
+                            script.set_attribute("type", "text/javascript").unwrap();
+                            script.set_inner_html("
+                                setTimeout(function() {
+                                    const imageUrl = \"https://api.dicebear.com/7.x/shapes/svg?seed=\" + Date.now();
+        
+                                    let img = new Image();
+                                    img.src = imageUrl;
+            
+                                    document.getElementById(\"login-modal-image\").style.setProperty(\"--image-url\", \"url('\" + imageUrl + \"')\");
+                                }, 0)
+                            ");
+                            html! {
+                                <>
+                                    <div
+                                        id="login-modal-image"
+                                        style="height:160px;width:100%;--image-url:url('');"
+                                        class="img-block bd-placeholder-img"
+                                        role="img"
+                                    />
+                                    { Html::VRef(script.into()) }
+                                </>
+                            }
                         }
-                    </script>
-                    <div
-                        style={ format!("height:160px;width:100%;--image-url:url({image_url});",) }
-                        class="img-block bd-placeholder-img"
-                        role="img"
-                    />
+                        #[cfg(not(feature = "client"))]
+                        unreachable!()
+                    }} />
                     <div class="modal-body">
                         if let LoggedUserState::Error(message) = logged_user_context.state.clone() {
                             <div class="alert alert-danger d-flex align-items-center" role="alert">

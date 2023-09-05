@@ -2,6 +2,7 @@ pub mod auth_user_block;
 pub mod author_card;
 pub mod body;
 pub mod comment_card;
+pub mod delayed_component;
 pub mod header;
 pub mod information_menu;
 mod load;
