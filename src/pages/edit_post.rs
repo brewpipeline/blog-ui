@@ -424,7 +424,18 @@ pub fn edit_post(props: &EditPostProps) -> Html {
                         script.set_attribute("type", "text/javascript").unwrap();
                         script.set_inner_html("
                             setTimeout(function() {
-                                var editor = new FroalaEditor('#validationTextarea2');
+                                tinymce.remove();
+                                tinymce.init({
+                                    selector: '#validationTextarea2',
+                                    setup: function(editor) {
+                                        editor.on('Change Keyup', function () {
+                                            editor.save();
+                                        });
+                                    },
+                                    language: 'ru',
+                                    plugins: 'anchor autolink charmap codesample emoticons image link lists media searchreplace table visualblocks wordcount code',
+                                    toolbar: 'undo redo | blocks fontfamily fontsize | bold italic underline strikethrough | link image media table | align lineheight | numlist bullist indent outdent | emoticons charmap | removeformat',
+                                });
                             }, 0)
                         ");
                         Html::VRef(script.into())
