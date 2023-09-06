@@ -5,6 +5,7 @@ use web_sys::{ScrollBehavior, ScrollToOptions};
 use yew::prelude::*;
 use yew_router::prelude::*;
 
+use crate::components::delayed_component::*;
 use crate::components::information_menu::*;
 use crate::components::navigation_menu::*;
 use crate::components::svg_image::*;
@@ -96,25 +97,30 @@ pub fn body() -> Html {
                         "menu",
                         "gap-2",
                         "sticky-lg-top",
-                        "col",
+                        "col-12",
                         "col-lg-2",
                         "d-lg-grid",
                         { if *enabled_menu == EnabledMenu::First { "d-grid" } else { "d-none" } }
                     ) }
                 >
-                    <NavigationMenu />
-                    <div class="d-flex flex-wrap align-items-end justify-content-center">
-                        <a href="https://github.com/tikitko/blog-ui/blob/main/MADEWITHLOVE.md" class="text-decoration-none text-center">
-                            { "Сделано с ❤️" }
-                        </a>
-                    </div>
+                    <DelayedComponent<()> component={ |_| html! {
+                        <>
+                            <NavigationMenu />
+                            <div class="d-flex flex-wrap align-items-end justify-content-center">
+                                <a href="https://github.com/tikitko/blog-ui/blob/main/MADEWITHLOVE.md" class="text-decoration-none text-center">
+                                    { "Сделано с ❤️" }
+                                </a>
+                            </div>
+                        </>
+                    } } deps={ () } />
                 </div>
 
                 <div
                     id="menu2"
                     class={ classes!(
                         "menu",
-                        "col",
+                        "col-12",
+                        "col-lg-7",
                         "px-0",
                         "px-lg-3",
                         "d-lg-block",
@@ -130,13 +136,15 @@ pub fn body() -> Html {
                         "menu",
                         "gap-2",
                         "sticky-lg-top",
-                        "col",
+                        "col-12",
                         "col-lg-3",
                          "d-lg-grid",
                          { if *enabled_menu == EnabledMenu::Third { "d-grid" } else { "d-none" } }
                     ) }
                 >
-                    <InformationMenu />
+                    <DelayedComponent<()> component={ |_| html! {
+                        <InformationMenu />
+                    } } deps={ () } />
                 </div>
 
             </div>

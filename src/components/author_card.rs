@@ -39,13 +39,9 @@ pub fn author_card(props: &AuthorCardProps) -> Html {
                             {
                                 format!(
                                     "{} {}",
-                                    not_empty(author
-                                        .first_name
-                                        .clone())
+                                    not_empty(author.first_name.clone())
                                         .unwrap_or("(Имя не указано)".to_owned()),
-                                    not_empty(author
-                                        .last_name
-                                        .clone())
+                                    not_empty(author.last_name.clone())
                                         .unwrap_or("(Фамилия не указанa)".to_owned())
                                 )
                             }
@@ -64,8 +60,11 @@ pub fn author_card(props: &AuthorCardProps) -> Html {
                         </small>
                     </p>
                     <p class="card-text placeholder-glow">
-                        if let Some(email) = author.as_ref().map(|a| a.email.clone()) {
-                            { email }
+                        if let Some(author) = author.as_ref() {
+                            {
+                                not_empty(author.email.clone())
+                                    .unwrap_or("(e-mail не указан)".to_owned())
+                            }
                         } else {
                             <span class="placeholder col-4 bg-secondary"></span>
                         }

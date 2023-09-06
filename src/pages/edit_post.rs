@@ -417,7 +417,7 @@ pub fn edit_post(props: &EditPostProps) -> Html {
                         }
                     </div>
                 </form>
-                <DelayedComponent component={ |_| {
+                <DelayedComponent<()> component={ |_| {
                     #[cfg(feature = "client")]
                     {
                         let script: Element = document().create_element("script").unwrap();
@@ -431,7 +431,7 @@ pub fn edit_post(props: &EditPostProps) -> Html {
                     }
                     #[cfg(not(feature = "client"))]
                     unreachable!()
-                }} />
+                }} deps={ () } />
             </>
         }
     });

@@ -8,7 +8,3 @@ pub fn format(milliseconds: u64) -> String {
     dt.format_localized("%H:%M | %e %B %Y", Locale::ru_RU)
         .to_string()
 }
-
-pub fn now_timestamp() -> i64 {
-    Local::now().timestamp()
-}

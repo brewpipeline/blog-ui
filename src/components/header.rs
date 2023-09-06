@@ -2,6 +2,7 @@ use yew::prelude::*;
 use yew_router::prelude::*;
 
 use crate::components::auth_user_block::*;
+use crate::components::delayed_component::*;
 use crate::components::login_modal::*;
 use crate::components::logout_modal::*;
 use crate::components::search_button::*;
@@ -28,12 +29,18 @@ pub fn header() -> Html {
                         </div>
 
                         <div class="col px-lg-3 d-none d-lg-block">
-                            <SearchField />
+                            <DelayedComponent<()> component={ |_| html! {
+                                <SearchField />
+                            } } deps={ () } />
                         </div>
 
                         <div class="col col-lg-3 gap-2 d-flex justify-content-end align-items-center">
-                            <SearchButton />
-                            <AuthUserBlock />
+                            <DelayedComponent<()> component={ |_| html! {
+                                <>
+                                    <SearchButton />
+                                    <AuthUserBlock />
+                                </>
+                            } } deps={ () } />
                         </div>
 
                     </div>

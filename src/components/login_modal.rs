@@ -131,7 +131,7 @@ pub fn login_modal(props: &LoginModalProps) -> Html {
                         <h1 class="modal-title fs-5" id="loginModalLabel"> { "Войти" } </h1>
                         <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                     </div>
-                    <DelayedComponent component={ |_| {
+                    <DelayedComponent<()> component={ |_| {
                         #[cfg(feature = "client")]
                         {
                             let script: Element = document().create_element("script").unwrap();
@@ -160,7 +160,7 @@ pub fn login_modal(props: &LoginModalProps) -> Html {
                         }
                         #[cfg(not(feature = "client"))]
                         unreachable!()
-                    }} />
+                    }} deps={ () } />
                     <div class="modal-body">
                         if let LoggedUserState::Error(message) = logged_user_context.state.clone() {
                             <div class="alert alert-danger d-flex align-items-center" role="alert">

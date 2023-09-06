@@ -22,7 +22,7 @@ pub fn author(props: &AuthorProps) -> Html {
         <Item<content::API<content::AuthorContainer>, content::AuthorSlugParams>
             params={ content::AuthorSlugParams { slug: slug.clone() } }
             use_caches=true
-            component={ move |author: Option<content::Author>| {
+            component={ |author: Option<content::Author>| {
                 html! {
                     <>
                         if let Some(author) = &author {

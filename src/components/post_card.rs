@@ -1,6 +1,7 @@
 use yew::prelude::*;
 use yew_router::prelude::*;
 
+use crate::components::delayed_component::*;
 use crate::components::svg_image::*;
 use crate::content::*;
 use crate::utils::*;
@@ -144,11 +145,13 @@ pub fn post_card(props: &PostCardProps) -> Html {
                         }
                     </div>
                     <div class="d-flex col-8 align-items-center justify-content-end" style="height: 24px;">
-                        if let Some(post) = &post {
-                            <small> { date::format(post.created_at) } </small>
-                        } else {
-                            <span class="placeholder col-3 bg-secondary"></span>
-                        }
+                        <DelayedComponent<Option<Post>> component={ |post: Option<Post>| html! {
+                            if let Some(post) = post {
+                                <small> { date::format(post.created_at) } </small>
+                            } else {
+                                <span class="placeholder col-3 bg-secondary"></span>
+                            }
+                        } } deps={ post.clone() } />
                     </div>
                 </div>
             </div>
