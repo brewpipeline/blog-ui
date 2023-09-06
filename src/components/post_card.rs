@@ -81,11 +81,38 @@ pub fn post_card(props: &PostCardProps) -> Html {
             </div>
         </>
     };
+    let tags_content = {
+        if let Some(post) = post.as_ref() {
+            let mut tags_len = 0;
+            let tags = post.tags.iter().filter(|t| {
+                tags_len += t.slug.len() + 1;
+                tags_len < 30
+            }).map(|tag| { html! {
+                <>
+                    <Link<Route, (), Tag>
+                        classes="link-dark link-underline-opacity-25 link-underline-opacity-100-hover"
+                        to={ Route::Tag { id: tag.id, slug: tag.slug.clone() } }
+                        state={ Some(tag.clone()) }
+                    >
+                        { tag.title.clone() }
+                    </Link<Route, (), Tag>>
+                    { " " }
+                </>
+            } }).collect::<Html>();
+            html! {
+                <p class="mt-0 mb-0">{ tags }</p>
+            }
+        } else {
+            html! {
+                <span class="placeholder col-6 bg-secondary"></span>
+            }
+        }
+    };
     html! {
         <div class="card mb-3">
             <div class="card-header placeholder-glow border-0">
                 <div class="row align-items-center">
-                    <div class="d-flex col align-items-center justify-content-start" style="height: 24px;">
+                    <div class="d-flex col-4 align-items-center justify-content-start" style="height: 24px;">
                         <img
                             width="24"
                             height="24"
@@ -116,7 +143,7 @@ pub fn post_card(props: &PostCardProps) -> Html {
                             <span class="placeholder col-3 bg-secondary"></span>
                         }
                     </div>
-                    <div class="d-flex col align-items-center justify-content-end" style="height: 24px;">
+                    <div class="d-flex col-8 align-items-center justify-content-end" style="height: 24px;">
                         if let Some(post) = &post {
                             <small> { date::format(post.created_at) } </small>
                         } else {
@@ -138,27 +165,10 @@ pub fn post_card(props: &PostCardProps) -> Html {
             }
             <div class="card-footer placeholder-glow">
                 <div class="row align-items-center">
-                    <div class="d-flex col align-items-center justify-content-start" style="height: 24px;">
-                        if let Some(post) = post.as_ref() {
-                            <p class="mt-0 mb-0">
-                                { post.tags.iter().map(|tag| { html! {
-                                    <>
-                                        <Link<Route, (), Tag>
-                                            classes="link-dark link-underline-opacity-25 link-underline-opacity-100-hover"
-                                            to={ Route::Tag { id: tag.id, slug: tag.slug.clone() } }
-                                            state={ Some(tag.clone()) }
-                                        >
-                                            { tag.title.clone() }
-                                        </Link<Route, (), Tag>>
-                                        { " " }
-                                    </>
-                                } }).collect::<Html>() }
-                            </p>
-                        } else {
-                            <span class="placeholder col-6 bg-secondary"></span>
-                        }
+                    <div class="d-flex col-10 align-items-center justify-content-start" style="height: 24px;">
+                        { tags_content }
                     </div>
-                    <div class="d-flex col align-items-center justify-content-end" style="height: 24px;">
+                    <div class="d-flex col-2 align-items-center justify-content-end" style="height: 24px;">
                         if let (
                             Some(post),
                             LoggedUserState::ActiveAndLoaded { token: _, author },

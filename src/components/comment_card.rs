@@ -18,7 +18,7 @@ pub fn comment_card(props: &CommentCardProps) -> Html {
         <div class="card mb-3">
             <div class="card-header placeholder-glow">
                 <div class="row align-items-center">
-                    <div class="d-flex col align-items-center justify-content-start" style="height: 24px;">
+                    <div class="d-flex col-4 align-items-center justify-content-start" style="height: 24px;">
                         <img
                             width="24"
                             height="24"
@@ -49,7 +49,7 @@ pub fn comment_card(props: &CommentCardProps) -> Html {
                             <span class="placeholder col-3 bg-secondary"></span>
                         }
                     </div>
-                    <div class="d-flex col align-items-center justify-content-end" style="height: 24px;">
+                    <div class="d-flex col-8 align-items-center justify-content-end" style="height: 24px;">
                         if let Some(comment) = &comment {
                             <small> { date::format(comment.created_at) } </small>
                         } else {

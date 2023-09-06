@@ -43,7 +43,9 @@ pub fn navigation_menu() -> Html {
                 }
                 to={ Route::NewPost }
             >
-                { "Новая публикации" }
+                { "Новая" }
+                <br />
+                { "публикация" }
             </Link<Route>>
         </div>
     }

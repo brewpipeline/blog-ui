@@ -104,6 +104,10 @@
     height: 38px;
 }
 
+.header h1 {
+    font-size: 32px;
+}
+
 .body {
     top: var(--header-height);
 }
