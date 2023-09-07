@@ -49,7 +49,7 @@ pub fn post(props: &PostProps) -> Html {
                         if let Some(post) = post {
                             <List<content::API<content::CommentsContainer>, content::CommentsContainerPostIdParams>
                                 params={ content::CommentsContainerPostIdParams { post_id: post.id } }
-                                items_per_page={ 100 }
+                                items_per_page={ 50 }
                                 route_to_page={ Route::Post { slug: post.slug, id: post.id } }
                                 component={ |comment| html! { <CommentCard { comment } /> } }
                                 error_component={ |_| html! { <Warning text="Ошибка загрузки комментариев!" /> } }
