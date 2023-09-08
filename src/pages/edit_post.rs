@@ -417,13 +417,14 @@ pub fn edit_post(props: &EditPostProps) -> Html {
                         }
                     </div>
                 </form>
+                <script id="tinymceScript" src="https://cdn.tiny.cloud/1/o40kmyk68yh2km1wxwntfx69sodri6r5jrqfip730ivhfcb7/tinymce/6/tinymce.min.js" referrerpolicy="origin"></script>
                 <DelayedComponent<()> component={ |_| {
                     #[cfg(feature = "client")]
                     {
                         let script: Element = document().create_element("script").unwrap();
                         script.set_attribute("type", "text/javascript").unwrap();
                         script.set_inner_html("
-                            setTimeout(function() {
+                            document.getElementById('tinymceScript').onload = function() {
                                 tinymce.remove();
                                 tinymce.init({
                                     selector: '#validationTextarea2',
@@ -433,10 +434,9 @@ pub fn edit_post(props: &EditPostProps) -> Html {
                                         });
                                     },
                                     language: 'ru',
-                                    plugins: 'anchor autolink charmap codesample emoticons image link lists media searchreplace table visualblocks wordcount code',
-                                    toolbar: 'undo redo | blocks fontfamily fontsize | bold italic underline strikethrough | link image media table | align lineheight | numlist bullist indent outdent | emoticons charmap | removeformat',
+                                    plugins: 'anchor autolink charmap codesample emoticons image link lists media searchreplace table visualblocks wordcount code codesample',
                                 });
-                            }, 0)
+                            }
                         ");
                         Html::VRef(script.into())
                     }
