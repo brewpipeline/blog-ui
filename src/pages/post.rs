@@ -5,6 +5,7 @@ use crate::components::item::*;
 use crate::components::list::*;
 use crate::components::meta::*;
 use crate::components::post_card::*;
+use crate::components::simple_title_card::*;
 use crate::components::warning::*;
 use crate::content;
 
@@ -47,6 +48,9 @@ pub fn post(props: &PostProps) -> Html {
                         }
                         <PostCard post={ post.clone() } is_full=true link_to=false />
                         if let Some(post) = post {
+                            <SimpleTitleCard>
+                                { "Комментарии" }
+                            </SimpleTitleCard>
                             <List<content::API<content::CommentsContainer>, content::CommentsContainerPostIdParams>
                                 params={ content::CommentsContainerPostIdParams { post_id: post.id } }
                                 items_per_page={ 50 }

@@ -5,6 +5,7 @@ use crate::components::item::*;
 use crate::components::list::*;
 use crate::components::meta::*;
 use crate::components::post_card::*;
+use crate::components::simple_title_card::*;
 use crate::components::warning::*;
 use crate::content;
 
@@ -32,6 +33,9 @@ pub fn author(props: &AuthorProps) -> Html {
                         }
                         <AuthorCard author={ author.clone() } link_to=false />
                         if let Some(author) = &author {
+                            <SimpleTitleCard>
+                                { "Публикации автора " }
+                            </SimpleTitleCard>
                             <List<content::API<content::PostsContainer>, content::PostsContainerAuthorParam>
                                 params={ content::PostsContainerAuthorParam { author_id: author.id } }
                                 route_to_page={ Route::Author { slug: author.slug.clone() } }

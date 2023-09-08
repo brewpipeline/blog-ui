@@ -4,6 +4,7 @@ use crate::components::item::*;
 use crate::components::list::*;
 use crate::components::meta::*;
 use crate::components::post_card::*;
+use crate::components::simple_title_card::*;
 use crate::components::warning::*;
 use crate::content;
 
@@ -43,18 +44,14 @@ pub fn post(props: &TagProps) -> Html {
                             <Meta title="Тег" />
                         }
 
-                        <div class="card mb-3">
-                            <div class="card-body">
-                                <h5 class="card-title mb-0 placeholder-glow">
-                                    { "Тег: " }
-                                    if let Some(tag) = &tag {
-                                        { &tag.title }
-                                    } else {
-                                        <span class="placeholder col-3 bg-secondary"></span>
-                                    }
-                                </h5>
-                            </div>
-                        </div>
+                        <SimpleTitleCard>
+                            { "Тег: " }
+                            if let Some(tag) = &tag {
+                                { &tag.title }
+                            } else {
+                                <span class="placeholder col-3 bg-secondary"></span>
+                            }
+                        </SimpleTitleCard>
 
                         if let Some(tag) = tag {
                             <List<content::API<content::PostsContainer>, content::PostsContainerTagParam>
