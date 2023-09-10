@@ -12,7 +12,7 @@ pub enum Route {
     EditPost { id: u64 },
     #[at("/post/:slug/:id")]
     Post { slug: String, id: u64 },
-    #[at("/posts")]
+    #[at("/")]
     Posts,
     #[at("/posts/search")]
     PostsSearchRoot,
@@ -28,8 +28,6 @@ pub enum Route {
     AuthorsSearchRoot,
     #[at("/authors/search/:query")]
     AuthorsSearch { query: String },
-    #[at("/")]
-    Home,
     #[not_found]
     #[at("/404")]
     NotFound,
@@ -44,21 +42,21 @@ impl Route {
             Route::NewPost => html! { <EditPost id={ None } /> },
             Route::EditPost { id } => html! { <EditPost { id } /> },
             Route::Post { slug, id } => html! { <Post { slug } { id } /> },
-            Route::Home | Route::Posts => html! { <Posts />},
+            Route::Posts => html! { <Posts /> },
             Route::PostsSearchRoot => {
-                html! { <Search mode={ SearchMode::Posts { query: None } } />}
+                html! { <Search mode={ SearchMode::Posts { query: None } } /> }
             }
             Route::PostsSearch { query } => {
-                html! { <Search mode={ SearchMode::Posts { query: Some(query) } } />}
+                html! { <Search mode={ SearchMode::Posts { query: Some(query) } } /> }
             }
             Route::Tag { slug, id } => html! { <Tag { slug } { id } /> },
             Route::Author { slug } => html! { <Author { slug } /> },
             Route::Authors => html! { <Authors /> },
             Route::AuthorsSearchRoot => {
-                html! { <Search mode={ SearchMode::Authors { query: None } } />}
+                html! { <Search mode={ SearchMode::Authors { query: None } } /> }
             }
             Route::AuthorsSearch { query } => {
-                html! { <Search mode={ SearchMode::Authors { query: Some(query) } } />}
+                html! { <Search mode={ SearchMode::Authors { query: Some(query) } } /> }
             }
             Route::NotFound => html! { <PageNotFound /> },
         }

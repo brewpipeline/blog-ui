@@ -21,7 +21,7 @@ pub fn header() -> Html {
                     <div class="d-flex flex-wrap align-items-center justify-content-center">
 
                         <div class="col col-lg-2 d-flex justify-content-start justify-content-lg-center align-items-center">
-                            <Link<Route> classes="d-flex link-body-emphasis text-decoration-none" to={ Route::Home }>
+                            <Link<Route> classes="d-flex link-body-emphasis text-decoration-none" to={ Route::Posts }>
                                 <h1 class="item mb-0">
                                     { crate::TITLE }
                                 </h1>

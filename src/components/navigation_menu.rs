@@ -14,7 +14,7 @@ pub fn navigation_menu() -> Html {
                     classes!(
                         "btn",
                         "btn-light",
-                        if route == Route::Posts || route == Route::Home { "active" } else { "" }
+                        if route == Route::Posts { "active" } else { "" }
                     )
                 }
                 to={ Route::Posts }
