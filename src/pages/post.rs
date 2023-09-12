@@ -46,7 +46,7 @@ pub fn post(props: &PostProps) -> Html {
                         } else {
                             <Meta title="Публикация" />
                         }
-                        <PostCard post={ post.clone() } is_full=true link_to=false />
+                        <PostCard post={ post.clone() } is_full=true />
                         if let Some(post) = post {
                             <SimpleTitleCard>
                                 { "Комментарии" }

@@ -32,7 +32,7 @@ pub fn search(props: &SearchProps) -> Html {
                             <List<API<PostsContainer>, PostsContainerSearchParam>
                                 params={ PostsContainerSearchParam { query: query.clone() } }
                                 route_to_page={ Route::PostsSearch { query: query.clone() } }
-                                component={ |post| html! { <PostCard { post } is_full=false link_to=true /> } }
+                                component={ |post| html! { <PostCard { post } is_full=false /> } }
                                 error_component={ |_| html! { <Warning text="Ошибка загрузки результатов поиска публикаций!" /> } }
                             >
                                 <Warning text="Публикаций не найдено!" />

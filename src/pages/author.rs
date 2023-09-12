@@ -39,7 +39,7 @@ pub fn author(props: &AuthorProps) -> Html {
                             <List<content::API<content::PostsContainer>, content::PostsContainerAuthorParam>
                                 params={ content::PostsContainerAuthorParam { author_id: author.id } }
                                 route_to_page={ Route::Author { slug: author.slug.clone() } }
-                                component={ |post| html! { <PostCard { post } is_full=false link_to=true /> } }
+                                component={ |post| html! { <PostCard { post } is_full=false /> } }
                                 error_component={ |_| html! { <Warning text="Ошибка загрузки публикаций автора!" /> } }
                             >
                                 <Warning text="У автора нет публикаций." />

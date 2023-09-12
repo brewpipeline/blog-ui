@@ -12,7 +12,6 @@ use crate::Route;
 pub struct PostCardProps {
     pub post: Option<Post>,
     pub is_full: bool,
-    pub link_to: bool,
 }
 
 #[function_component(PostCard)]
@@ -20,7 +19,6 @@ pub fn post_card(props: &PostCardProps) -> Html {
     let PostCardProps {
         post,
         is_full,
-        link_to,
     } = props.clone();
 
     let logged_user_context = use_context::<LoggedUserContext>().unwrap();
@@ -155,7 +153,7 @@ pub fn post_card(props: &PostCardProps) -> Html {
                     </div>
                 </div>
             </div>
-            if let (Some(post), true) = (post.as_ref(), link_to) {
+            if let (Some(post), false) = (post.as_ref(), is_full) {
                 <Link<Route, (), Post>
                     classes="text-decoration-none"
                     to={ Route::Post { slug: post.slug.clone(), id: post.id } }

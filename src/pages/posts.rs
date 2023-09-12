@@ -16,7 +16,7 @@ pub fn posts() -> Html {
             <List<API<PostsContainer>>
                 params={ () }
                 route_to_page={ Route::Posts }
-                component={ |post| html! { <PostCard { post } is_full=false link_to=true /> } }
+                component={ |post| html! { <PostCard { post } is_full=false /> } }
                 error_component={ |_| html! { <Warning text="Ошибка загрузки публикаций!" /> } }
             >
                 <Warning text="Нет публикаций." />

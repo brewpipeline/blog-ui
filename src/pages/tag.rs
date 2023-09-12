@@ -57,7 +57,7 @@ pub fn post(props: &TagProps) -> Html {
                             <List<content::API<content::PostsContainer>, content::PostsContainerTagParam>
                                 params={ content::PostsContainerTagParam { tag_id: tag.id } }
                                 route_to_page={ Route::Tag { slug: tag.slug, id: tag.id } }
-                                component={ |post| html! { <PostCard { post } is_full=false link_to=true /> } }
+                                component={ |post| html! { <PostCard { post } is_full=false /> } }
                                 error_component={ |_| html! { <Warning text="Ошибка загрузки публикаций по тегу!" /> } }
                             >
                                 <Warning text="Нет публикаций по тегу." />
