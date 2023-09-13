@@ -36,14 +36,14 @@ pub fn author(props: &AuthorProps) -> Html {
                             <SimpleTitleCard>
                                 { "Публикации автора " }
                             </SimpleTitleCard>
-                            <List<content::API<content::PostsContainer>, content::PostsContainerAuthorParam>
-                                params={ content::PostsContainerAuthorParam { author_id: author.id } }
+                            <List<content::API<content::PostsContainer>, content::PostsContainerAuthorParams>
+                                params={ content::PostsContainerAuthorParams { author_id: author.id } }
                                 route_to_page={ Route::Author { slug: author.slug.clone() } }
                                 component={ |post| html! { <PostCard { post } is_full=false /> } }
                                 error_component={ |_| html! { <Warning text="Ошибка загрузки публикаций автора!" /> } }
                             >
                                 <Warning text="У автора нет публикаций." />
-                            </List<content::API<content::PostsContainer>, content::PostsContainerAuthorParam>>
+                            </List<content::API<content::PostsContainer>, content::PostsContainerAuthorParams>>
                         }
                     </>
                 }

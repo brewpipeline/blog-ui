@@ -6,6 +6,7 @@ pub mod post;
 pub mod posts;
 pub mod search;
 pub mod tag;
+pub mod unpublished_posts;
 
 pub use author::*;
 pub use authors::*;
@@ -15,3 +16,4 @@ pub use post::*;
 pub use posts::*;
 pub use search::*;
 pub use tag::*;
+pub use unpublished_posts::*;

@@ -29,14 +29,14 @@ pub fn search(props: &SearchProps) -> Html {
                 match mode {
                     SearchMode::Posts { query } => html! {
                         if let Some(query) = not_empty(query) {
-                            <List<API<PostsContainer>, PostsContainerSearchParam>
-                                params={ PostsContainerSearchParam { query: query.clone() } }
+                            <List<API<PostsContainer>, PostsContainerSearchParams>
+                                params={ PostsContainerSearchParams { query: query.clone() } }
                                 route_to_page={ Route::PostsSearch { query: query.clone() } }
                                 component={ |post| html! { <PostCard { post } is_full=false /> } }
                                 error_component={ |_| html! { <Warning text="Ошибка загрузки результатов поиска публикаций!" /> } }
                             >
                                 <Warning text="Публикаций не найдено!" />
-                            </List<API<PostsContainer>, PostsContainerSearchParam>>
+                            </List<API<PostsContainer>, PostsContainerSearchParams>>
                         } else {
                             <Warning text="Начните ввод для поиска публикаций..." />
                         }

@@ -19,7 +19,15 @@ pub fn auth_user_block() -> Html {
         });
     }
 
-    let Some(token) = logged_user_context.state.token().cloned() else {
+    let Some(token) = ({
+        match logged_user_context.state.clone() {
+            LoggedUserState::None | LoggedUserState::InProgress(_) | LoggedUserState::Error(_) => {
+                None
+            }
+            LoggedUserState::Active { token }
+            | LoggedUserState::ActiveAndLoaded { token, author: _ } => Some(token),
+        }
+    }) else {
         return html! {
             <button
                 aria-label="Войти"
@@ -82,6 +90,16 @@ pub fn auth_user_block() -> Html {
                                     { &author.slug }
                                 </Link<Route, (), Author>>
                             </li>
+                            if author.editor == 1 {
+                                <li>
+                                    <Link<Route, ()>
+                                        classes="dropdown-item"
+                                        to={ Route::UnpublishedPosts }
+                                    >
+                                        { "Неопубликованное" }
+                                    </Link<Route, ()>>
+                                </li>
+                            }
                             // <li><a class="dropdown-item" href="#"> { "Настройки" } </a></li>
                             <li><hr class="dropdown-divider" /></li>
                             <li>

@@ -84,7 +84,9 @@ pub fn edit_post(props: &EditPostProps) -> Html {
             | EditPostState::DeleteError(_)
             | EditPostState::Deleted => {}
             EditPostState::EditedInProgress(common_post) => {
-                let Some(token) = logged_user_context.state.token().cloned() else {
+                let LoggedUserState::ActiveAndLoaded { token, .. } =
+                    logged_user_context.state.clone()
+                else {
                     return;
                 };
                 let state = state.clone();
@@ -132,7 +134,8 @@ pub fn edit_post(props: &EditPostProps) -> Html {
                 post,
             ),
             EditPostState::DeleteInProgress => {
-                let (Some(id), Some(token)) = (id, logged_user_context.state.token().cloned())
+                let (Some(id), LoggedUserState::ActiveAndLoaded { token, .. }) =
+                    (id, logged_user_context.state.clone())
                 else {
                     return;
                 };
@@ -164,7 +167,7 @@ pub fn edit_post(props: &EditPostProps) -> Html {
         })
     }
 
-    let LoggedUserState::ActiveAndLoaded { token: _, author } = logged_user_context.state.clone()
+    let LoggedUserState::ActiveAndLoaded { token, author } = logged_user_context.state.clone()
     else {
         return html! {
             <>
@@ -451,8 +454,8 @@ pub fn edit_post(props: &EditPostProps) -> Html {
         <>
             { meta }
             if let Some(id) = id {
-                <Item<content::API<content::PostContainer>, content::PostParams>
-                    params={ content::PostParams { id } }
+                <Item<content::API<content::PostContainer>, content::OptionTokened<content::PostParams>>
+                    params={ content::OptionTokened { token: Some(token), params: content::PostParams { id } } }
                     use_caches=true
                     component={ move |post: Option<content::Post>| {
                         if let Some(post) = post {

@@ -54,14 +54,14 @@ pub fn post(props: &TagProps) -> Html {
                         </SimpleTitleCard>
 
                         if let Some(tag) = tag {
-                            <List<content::API<content::PostsContainer>, content::PostsContainerTagParam>
-                                params={ content::PostsContainerTagParam { tag_id: tag.id } }
+                            <List<content::API<content::PostsContainer>, content::PostsContainerTagParams>
+                                params={ content::PostsContainerTagParams { tag_id: tag.id } }
                                 route_to_page={ Route::Tag { slug: tag.slug, id: tag.id } }
                                 component={ |post| html! { <PostCard { post } is_full=false /> } }
                                 error_component={ |_| html! { <Warning text="Ошибка загрузки публикаций по тегу!" /> } }
                             >
                                 <Warning text="Нет публикаций по тегу." />
-                            </List<content::API<content::PostsContainer>, content::PostsContainerTagParam>>
+                            </List<content::API<content::PostsContainer>, content::PostsContainerTagParams>>
                         }
                     </>
                 }
