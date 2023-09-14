@@ -55,7 +55,9 @@ where
                 true
             };
             let is_app_content_used = app_content_container.is_used;
-            app_content_container.dispatch(AppContentContainerAction::MarkAsUsed);
+            if use_caches {
+                app_content_container.dispatch(AppContentContainerAction::MarkAsUsed);
+            }
             if use_caches && !is_app_content_used && *container_inner_result != None {
                 return;
             }
