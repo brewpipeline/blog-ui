@@ -21,7 +21,7 @@ fn main(props: &MainProps) -> Html {
         app_content: props.app_content.clone(),
     });
     let logged_user = use_reducer_eq(|| LoggedUser {
-        state: LoggedUserState::None,
+        state: LoggedUserState::load(),
     });
     html! {
         <>
@@ -42,9 +42,28 @@ fn main(props: &MainProps) -> Html {
     }
 }
 
+#[derive(Properties, PartialEq, Debug)]
+struct AppProps {
+    app_content: Option<AppContent>,
+}
+
 #[cfg(feature = "client")]
 #[function_component(App)]
-fn app() -> Html {
+fn app(props: &AppProps) -> Html {
+    let app_content = props.app_content.clone();
+    html! {
+        <BrowserRouter>
+            <Main { app_content } />
+        </BrowserRouter>
+    }
+}
+
+#[cfg(feature = "client")]
+pub fn app_renderer() -> yew::Renderer<impl BaseComponent> {
+    let element = gloo::utils::document()
+        .query_selector("#app")
+        .unwrap()
+        .unwrap();
     let app_content = gloo::utils::document()
         .query_selector("#page-content")
         .ok()
@@ -60,20 +79,7 @@ fn app() -> Html {
             Some(AppContent { r#type, value })
         })
         .flatten();
-    html! {
-        <BrowserRouter>
-            <Main { app_content } />
-        </BrowserRouter>
-    }
-}
-
-#[cfg(feature = "client")]
-pub fn app_renderer() -> yew::Renderer<impl BaseComponent> {
-    let element = gloo::utils::document()
-        .query_selector("#app")
-        .unwrap()
-        .unwrap();
-    yew::Renderer::<App>::with_root(element)
+    yew::Renderer::<App>::with_root_and_props(element, AppProps { app_content })
 }
 
 #[cfg(feature = "server")]

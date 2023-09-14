@@ -28,7 +28,7 @@ pub enum LoggedUserState {
 }
 
 impl LoggedUserState {
-    fn token(&self) -> Option<&String> {
+    pub fn token(&self) -> Option<&String> {
         match self {
             LoggedUserState::None | LoggedUserState::Error(_) | LoggedUserState::InProgress(_) => {
                 None

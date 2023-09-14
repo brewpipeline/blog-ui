@@ -178,7 +178,7 @@ pub fn post_card(props: &PostCardProps) -> Html {
                                 post.as_ref(),
                                 logged_user_context.state.clone(),
                             ) {
-                                if author.slug == post.author.slug {
+                                if author.id == post.author.id || author.editor == 1 {
                                     { " " }
                                     <Link<Route, (), Post>
                                         classes="text-decoration-none"

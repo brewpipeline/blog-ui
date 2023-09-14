@@ -310,14 +310,14 @@ impl RequestableItem<ExternalListContainerParams<PostsContainerTagParams>> for A
 
 #[cfg(feature = "client")]
 #[async_trait(?Send)]
-impl RequestableItem<ExternalListContainerParams<Tokened<UnpublishedPostsContainerParams>>>
+impl RequestableItem<ExternalListContainerParams<OptionTokened<UnpublishedPostsContainerParams>>>
     for API<PostsContainer>
 {
     async fn request(
-        params: ExternalListContainerParams<Tokened<UnpublishedPostsContainerParams>>,
+        params: ExternalListContainerParams<OptionTokened<UnpublishedPostsContainerParams>>,
     ) -> Result<Request, Error> {
         let ExternalListContainerParams {
-            params: Tokened { token, .. },
+            params: OptionTokened { token, .. },
             limit,
             skip,
         } = params;
@@ -325,9 +325,11 @@ impl RequestableItem<ExternalListContainerParams<Tokened<UnpublishedPostsContain
             "{url}/api/posts/unpublished?limit={limit}&offset={skip}",
             url = crate::API_URL
         );
-        Ok(Request::get(url.as_str())
-            .header("Token", token.as_str())
-            .build()?)
+        let mut request = Request::get(url.as_str());
+        if let Some(token) = token {
+            request = request.header("Token", token.as_str());
+        }
+        Ok(request.build()?)
     }
     async fn response(response: Response) -> Result<Self, Error> {
         response.json().await
@@ -336,15 +338,17 @@ impl RequestableItem<ExternalListContainerParams<Tokened<UnpublishedPostsContain
 
 #[cfg(feature = "client")]
 #[async_trait(?Send)]
-impl RequestableItem<ExternalListContainerParams<Tokened<UnpublishedPostsContainerAuthorParams>>>
-    for API<PostsContainer>
+impl
+    RequestableItem<
+        ExternalListContainerParams<OptionTokened<UnpublishedPostsContainerAuthorParams>>,
+    > for API<PostsContainer>
 {
     async fn request(
-        params: ExternalListContainerParams<Tokened<UnpublishedPostsContainerAuthorParams>>,
+        params: ExternalListContainerParams<OptionTokened<UnpublishedPostsContainerAuthorParams>>,
     ) -> Result<Request, Error> {
         let ExternalListContainerParams {
             params:
-                Tokened {
+                OptionTokened {
                     token,
                     params: UnpublishedPostsContainerAuthorParams { author_id },
                 },
@@ -355,9 +359,11 @@ impl RequestableItem<ExternalListContainerParams<Tokened<UnpublishedPostsContain
             "{url}/api/posts/unpublished/author/id/{author_id}?limit={limit}&offset={skip}",
             url = crate::API_URL
         );
-        Ok(Request::get(url.as_str())
-            .header("Token", token.as_str())
-            .build()?)
+        let mut request = Request::get(url.as_str());
+        if let Some(token) = token {
+            request = request.header("Token", token.as_str());
+        }
+        Ok(request.build()?)
     }
     async fn response(response: Response) -> Result<Self, Error> {
         response.json().await

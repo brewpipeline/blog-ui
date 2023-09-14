@@ -84,9 +84,7 @@ pub fn edit_post(props: &EditPostProps) -> Html {
             | EditPostState::DeleteError(_)
             | EditPostState::Deleted => {}
             EditPostState::EditedInProgress(common_post) => {
-                let LoggedUserState::ActiveAndLoaded { token, .. } =
-                    logged_user_context.state.clone()
-                else {
+                let Some(token) = logged_user_context.state.token().cloned() else {
                     return;
                 };
                 let state = state.clone();
@@ -134,8 +132,7 @@ pub fn edit_post(props: &EditPostProps) -> Html {
                 post,
             ),
             EditPostState::DeleteInProgress => {
-                let (Some(id), LoggedUserState::ActiveAndLoaded { token, .. }) =
-                    (id, logged_user_context.state.clone())
+                let (Some(id), Some(token)) = (id, logged_user_context.state.token().cloned())
                 else {
                     return;
                 };
@@ -459,10 +456,10 @@ pub fn edit_post(props: &EditPostProps) -> Html {
                     use_caches=true
                     component={ move |post: Option<content::Post>| {
                         if let Some(post) = post {
-                            if post.author.slug == author.slug {
+                            if post.author.id == author.id || author.editor == 1 {
                                 main_content.emit(Some(post))
                             } else {
-                                html! { <Warning text="Только автор может редактировать публикацию!" /> }
+                                html! { <Warning text="Только автор или редактор может редактировать публикацию!" /> }
                             }
                         } else {
                             html! { <Warning text="Загрузка публикации для редактирования..." /> }

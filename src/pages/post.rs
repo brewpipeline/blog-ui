@@ -21,20 +21,13 @@ pub struct PostProps {
 #[function_component(Post)]
 pub fn post(props: &PostProps) -> Html {
     let PostProps { slug, id } = props.clone();
-
     let logged_user_context = use_context::<LoggedUserContext>().unwrap();
-
-    let token = {
-        if let LoggedUserState::ActiveAndLoaded { token, .. } = logged_user_context.state.clone() {
-            Some(token)
-        } else {
-            None
-        }
-    };
-
     html! {
         <Item<content::API<content::PostContainer>, content::OptionTokened<content::PostParams>>
-            params={ content::OptionTokened { token, params: content::PostParams { id } } }
+            params={ content::OptionTokened {
+                token: logged_user_context.state.token().cloned(),
+                params: content::PostParams { id }
+            } }
             use_caches=true
             component={ move |post: Option<content::Post>| {
                 if let Some(post) = &post {
