@@ -12,17 +12,7 @@ use crate::Route;
 pub fn auth_user_block() -> Html {
     let logged_user_context = use_context::<LoggedUserContext>().unwrap();
 
-    let token = use_state_eq(|| None);
-
-    {
-        let logged_user_context = logged_user_context.clone();
-        let token = token.clone();
-        use_effect_with(logged_user_context, move |logged_user_context| {
-            token.set((**logged_user_context).state.token().cloned());
-        });
-    }
-
-    let Some(token) = (*token).clone() else {
+    let Some(token) = logged_user_context.state.token().cloned() else {
         return html! {
             <button
                 aria-label="Войти"

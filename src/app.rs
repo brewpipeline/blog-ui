@@ -42,28 +42,9 @@ fn main(props: &MainProps) -> Html {
     }
 }
 
-#[derive(Properties, PartialEq, Debug)]
-struct AppProps {
-    app_content: Option<AppContent>,
-}
-
 #[cfg(feature = "client")]
 #[function_component(App)]
-fn app(props: &AppProps) -> Html {
-    let app_content = props.app_content.clone();
-    html! {
-        <BrowserRouter>
-            <Main { app_content } />
-        </BrowserRouter>
-    }
-}
-
-#[cfg(feature = "client")]
-pub fn app_renderer() -> yew::Renderer<impl BaseComponent> {
-    let element = gloo::utils::document()
-        .query_selector("#app")
-        .unwrap()
-        .unwrap();
+fn app() -> Html {
     let app_content = gloo::utils::document()
         .query_selector("#page-content")
         .ok()
@@ -79,7 +60,20 @@ pub fn app_renderer() -> yew::Renderer<impl BaseComponent> {
             Some(AppContent { r#type, value })
         })
         .flatten();
-    yew::Renderer::<App>::with_root_and_props(element, AppProps { app_content })
+    html! {
+        <BrowserRouter>
+            <Main { app_content } />
+        </BrowserRouter>
+    }
+}
+
+#[cfg(feature = "client")]
+pub fn app_renderer() -> yew::Renderer<impl BaseComponent> {
+    let app_element = gloo::utils::document()
+        .query_selector("#app")
+        .unwrap()
+        .unwrap();
+    yew::Renderer::<App>::with_root(app_element)
 }
 
 #[cfg(feature = "server")]
