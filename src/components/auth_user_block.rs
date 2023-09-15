@@ -79,16 +79,14 @@ pub fn auth_user_block() -> Html {
                                     { &author.slug }
                                 </Link<Route, (), Author>>
                             </li>
-                            if author.editor == 1 {
-                                <li>
-                                    <Link<Route, ()>
-                                        classes="dropdown-item"
-                                        to={ Route::UnpublishedPosts }
-                                    >
-                                        { "Неопубликованное" }
-                                    </Link<Route, ()>>
-                                </li>
-                            }
+                            <li>
+                                <Link<Route, ()>
+                                    classes="dropdown-item"
+                                    to={ Route::MyUnpublishedPosts }
+                                >
+                                    { "Неопубликованное" }
+                                </Link<Route, ()>>
+                            </li>
                             // <li><a class="dropdown-item" href="#"> { "Настройки" } </a></li>
                             <li><hr class="dropdown-divider" /></li>
                             <li>

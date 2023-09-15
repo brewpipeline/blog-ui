@@ -3,6 +3,7 @@ use yew::prelude::*;
 use crate::components::list::*;
 use crate::components::meta::*;
 use crate::components::post_card::*;
+use crate::components::simple_title_card::*;
 use crate::components::warning::*;
 use crate::content::*;
 use crate::utils::*;
@@ -14,7 +15,10 @@ pub fn unpublished_posts() -> Html {
     let logged_user_context = use_context::<LoggedUserContext>().unwrap();
     html! {
         <>
-        <Meta title="Неопубликованное" />
+            <Meta title="Неопубликованное" />
+            <SimpleTitleCard>
+                { "Неопубликованное" }
+            </SimpleTitleCard>
             <List<API<PostsContainer>, OptionTokened<UnpublishedPostsContainerParams>>
                 r#type={
                     if !logged_user_context.is_not_inited() {
