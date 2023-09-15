@@ -253,6 +253,7 @@ pub fn edit_post(props: &EditPostProps) -> Html {
         let post_summary = post.as_ref().map(|p| p.summary.clone());
         let post_content = post.as_ref().map(|p| p.content.clone()).flatten();
         let post_tags = post.as_ref().map(|p| p.joined_tags_string(", "));
+        let post_published = post.as_ref().map(|p| p.published == 1).unwrap_or(false);
         #[cfg(feature = "client")]
         let post_image = image_node_ref
             .cast::<HtmlInputElement>()
@@ -278,6 +279,11 @@ pub fn edit_post(props: &EditPostProps) -> Html {
             .cast::<HtmlInputElement>()
             .map(|h| h.value())
             .or(post_tags);
+        #[cfg(feature = "client")]
+        let post_published = published_node_ref
+            .cast::<HtmlInputElement>()
+            .map(|h| h.checked())
+            .unwrap_or(post_published);
         html! {
             <>
                 <form>
@@ -372,11 +378,12 @@ pub fn edit_post(props: &EditPostProps) -> Html {
                         />
                     </div>
 
-                    <div class="form-check mb-3">
+                    <div class={ classes!("form-check", "mb-3", if author.editor == 0 { "d-none" } else { "" }) }>
                         <input
                             type="checkbox"
                             class="form-check-input"
                             id="validationFormCheck1"
+                            checked={ post_published }
                             ref={ published_node_ref.clone() }
                         />
                         <label class="form-check-label" for="validationFormCheck1">
