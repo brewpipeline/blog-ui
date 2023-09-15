@@ -36,7 +36,7 @@ where
     C: ExternalResultContainer + RequestableItem<P> + Clone + PartialEq + 'static,
     C::Inner: Clone + PartialEq + 'static,
     C::Error: Clone + PartialEq + 'static,
-    P: Clone + PartialEq + 'static, // TODO: optional params?
+    P: Clone + PartialEq + 'static,
     F: FnOnce(C::Inner) -> I + 'static,
     I: ExternalCodable + Clone + PartialEq + 'static,
 {
