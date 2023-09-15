@@ -42,7 +42,7 @@ where
 {
     let location = use_location().unwrap();
     let app_content_container = use_context::<AppContentContext>().unwrap();
-    let last_used_route_cache = use_state_eq(|| None);
+    let last_used_route_cache = use_state_eq::<Option<I>, _>(|| None);
     let container_inner_result = {
         let app_content_context = app_content_container.clone();
         use_state_eq(|| {
