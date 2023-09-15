@@ -30,7 +30,7 @@ pub fn search(props: &SearchProps) -> Html {
                     SearchMode::Posts { query } => html! {
                         if let Some(query) = not_empty(query) {
                             <List<API<PostsContainer>, PostsContainerSearchParams>
-                                r#type={ LoadType::Request { params: PostsContainerSearchParams { query: query.clone() } } }
+                                r#type={ LoadType::Params(PostsContainerSearchParams { query: query.clone() }) }
                                 route_to_page={ Route::PostsSearch { query: query.clone() } }
                                 component={ |post| html! { <PostCard { post } is_full=false /> } }
                                 error_component={ |_| html! { <Warning text="Ошибка загрузки результатов поиска публикаций!" /> } }
@@ -44,7 +44,7 @@ pub fn search(props: &SearchProps) -> Html {
                     SearchMode::Authors { query } => html! {
                         if let Some(query) = not_empty(query) {
                             <List<API<AuthorsContainer>, AuthorsContainerSearchParams>
-                                r#type={ LoadType::Request { params: AuthorsContainerSearchParams { query: query.clone() } } }
+                                r#type={ LoadType::Params(AuthorsContainerSearchParams { query: query.clone() }) }
                                 route_to_page={ Route::AuthorsSearch { query: query.clone() } }
                                 component={ |author| html! { <AuthorCard { author } link_to=true /> } }
                                 error_component={ |_| html! { <Warning text="Ошибка загрузки результатов поиска авторов!" /> } }

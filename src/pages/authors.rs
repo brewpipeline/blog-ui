@@ -15,7 +15,7 @@ pub fn authors() -> Html {
         <>
             <Meta title="Авторы" />
             <List<API<AuthorsContainer>>
-                r#type={ LoadType::Request { params: () } }
+                r#type={ LoadType::Params(()) }
                 route_to_page={ Route::Authors }
                 component={ |author| html! { <AuthorCard { author } link_to=true /> } }
                 error_component={ |_| html! { <Warning text="Ошибка загрузки авторов!" /> } }

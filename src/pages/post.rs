@@ -26,12 +26,12 @@ pub fn post(props: &PostProps) -> Html {
         <Item<content::API<content::PostContainer>, content::OptionTokened<content::PostParams>>
             r#type={
                 if !logged_user_context.is_not_inited() {
-                    LoadType::Request { params: content::OptionTokened {
+                    LoadType::Params(content::OptionTokened {
                         token: logged_user_context.token().cloned(),
                         params: content::PostParams { id }
-                    } }
+                    })
                 } else {
-                    LoadType::NoRequest
+                    LoadType::Placeholder
                 }
             }
             use_caches=true
@@ -63,7 +63,7 @@ pub fn post(props: &PostProps) -> Html {
                                 { "Комментарии" }
                             </SimpleTitleCard>
                             <List<content::API<content::CommentsContainer>, content::CommentsContainerPostIdParams>
-                                r#type={ LoadType::Request { params: content::CommentsContainerPostIdParams { post_id: post.id } } }
+                                r#type={ LoadType::Params(content::CommentsContainerPostIdParams { post_id: post.id }) }
                                 items_per_page={ 50 }
                                 route_to_page={ Route::Post { slug: post.slug, id: post.id } }
                                 component={ |comment| html! { <CommentCard { comment } /> } }

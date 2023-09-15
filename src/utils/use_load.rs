@@ -5,17 +5,15 @@ use crate::utils::*;
 
 #[derive(Clone, PartialEq)]
 pub enum LoadType<P: Clone + PartialEq> {
-    NoRequest,
-    Request { params: P },
+    Placeholder,
+    Params(P),
 }
 
 impl<P: Clone + PartialEq> LoadType<P> {
     pub fn map_params<NP: Clone + PartialEq, F: FnOnce(P) -> NP>(self, map_fn: F) -> LoadType<NP> {
         match self {
-            LoadType::NoRequest => LoadType::NoRequest,
-            LoadType::Request { params } => LoadType::Request {
-                params: map_fn(params),
-            },
+            LoadType::Placeholder => LoadType::Placeholder,
+            LoadType::Params(params) => LoadType::Params(map_fn(params)),
         }
     }
 }
@@ -64,6 +62,9 @@ where
     {
         let container_inner_result = container_inner_result.clone();
         use_effect_with(r#type, move |r#type| {
+            let LoadType::Params(params) = r#type else {
+                return;
+            };
             let is_app_content_used = app_content_container.is_used;
             if use_caches {
                 app_content_container.dispatch(AppContentContainerAction::MarkAsUsed);
@@ -89,35 +90,28 @@ where
                     last_used_route_cache.set(None);
                 }
             }
-            match r#type {
-                LoadType::Request { params } => {
-                    if use_caches {
-                        app_content_container.dispatch(AppContentContainerAction::NewContent(None));
-                    }
-                    container_inner_result.set(None);
-                    let app_content_container = app_content_container.clone();
-                    let params = params.clone();
-                    wasm_bindgen_futures::spawn_local(async move {
-                        let fetched_container_inner_result = C::get(params)
-                            .await
-                            .map_err(|err| LoadError::Net(err.to_string()))
-                            .and_then(|r| {
-                                r.result().map(inner_map).map_err(|e| LoadError::Content(e))
-                            });
-                        if use_caches {
-                            app_content_container.dispatch(AppContentContainerAction::NewContent(
-                                fetched_container_inner_result
-                                    .as_ref()
-                                    .map(|r| r.encode())
-                                    .ok()
-                                    .flatten(),
-                            ));
-                        }
-                        container_inner_result.set(Some(fetched_container_inner_result));
-                    });
-                }
-                LoadType::NoRequest => {}
+            if use_caches {
+                app_content_container.dispatch(AppContentContainerAction::NewContent(None));
             }
+            container_inner_result.set(None);
+            let app_content_container = app_content_container.clone();
+            let params = params.clone();
+            wasm_bindgen_futures::spawn_local(async move {
+                let fetched_container_inner_result = C::get(params)
+                    .await
+                    .map_err(|err| LoadError::Net(err.to_string()))
+                    .and_then(|r| r.result().map(inner_map).map_err(|e| LoadError::Content(e)));
+                if use_caches {
+                    app_content_container.dispatch(AppContentContainerAction::NewContent(
+                        fetched_container_inner_result
+                            .as_ref()
+                            .map(|r| r.encode())
+                            .ok()
+                            .flatten(),
+                    ));
+                }
+                container_inner_result.set(Some(fetched_container_inner_result));
+            });
         });
     }
     container_inner_result

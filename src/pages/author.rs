@@ -22,7 +22,7 @@ pub fn author(props: &AuthorProps) -> Html {
     let AuthorProps { slug } = props.clone();
     html! {
         <Item<content::API<content::AuthorContainer>, content::AuthorSlugParams>
-            r#type={ LoadType::Request { params: content::AuthorSlugParams { slug: slug.clone() } } }
+            r#type={ LoadType::Params(content::AuthorSlugParams { slug: slug.clone() }) }
             use_caches=true
             component={ |author: Option<content::Author>| html! {
                 <>
@@ -37,7 +37,7 @@ pub fn author(props: &AuthorProps) -> Html {
                             { "Публикации автора " }
                         </SimpleTitleCard>
                         <List<content::API<content::PostsContainer>, content::PostsContainerAuthorParams>
-                            r#type={ LoadType::Request { params: content::PostsContainerAuthorParams { author_id: author.id } } }
+                            r#type={ LoadType::Params(content::PostsContainerAuthorParams { author_id: author.id }) }
                             route_to_page={ Route::Author { slug: author.slug.clone() } }
                             component={ |post| html! { <PostCard { post } is_full=false /> } }
                             error_component={ |_| html! { <Warning text="Ошибка загрузки публикаций автора!" /> } }

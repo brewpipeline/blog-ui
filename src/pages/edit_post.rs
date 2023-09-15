@@ -464,10 +464,10 @@ pub fn edit_post(props: &EditPostProps) -> Html {
             { meta }
             if let Some(id) = id {
                 <Item<content::API<content::PostContainer>, content::OptionTokened<content::PostParams>>
-                    r#type={ LoadType::Request { params: content::OptionTokened {
+                    r#type={ LoadType::Params(content::OptionTokened {
                         token: Some(token),
                         params: content::PostParams { id }
-                    } } }
+                    }) }
                     use_caches=true
                     component={ move |post: Option<content::Post>| {
                         if let Some(post) = post {

@@ -22,7 +22,7 @@ pub fn post(props: &TagProps) -> Html {
     let TagProps { slug, id } = props.clone();
     html! {
         <Item<content::API<content::TagContainer>, content::TagIdParams>
-            r#type={ LoadType::Request { params: content::TagIdParams { id } } }
+            r#type={ LoadType::Params(content::TagIdParams { id }) }
             use_caches=true
             component={ move |tag: Option<content::Tag>| {
                 if let Some(tag) = &tag {
@@ -56,7 +56,7 @@ pub fn post(props: &TagProps) -> Html {
 
                         if let Some(tag) = tag {
                             <List<content::API<content::PostsContainer>, content::PostsContainerTagParams>
-                                r#type={ LoadType::Request { params: content::PostsContainerTagParams { tag_id: tag.id } } }
+                                r#type={ LoadType::Params(content::PostsContainerTagParams { tag_id: tag.id }) }
                                 route_to_page={ Route::Tag { slug: tag.slug, id: tag.id } }
                                 component={ |post| html! { <PostCard { post } is_full=false /> } }
                                 error_component={ |_| html! { <Warning text="Ошибка загрузки публикаций по тегу!" /> } }

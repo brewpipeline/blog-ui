@@ -18,12 +18,12 @@ pub fn unpublished_posts() -> Html {
             <List<API<PostsContainer>, OptionTokened<UnpublishedPostsContainerParams>>
                 r#type={
                     if !logged_user_context.is_not_inited() {
-                        LoadType::Request { params: OptionTokened {
+                        LoadType::Params(OptionTokened {
                             token: logged_user_context.token().cloned(),
                             params: UnpublishedPostsContainerParams
-                        } }
+                        })
                     } else {
-                        LoadType::NoRequest
+                        LoadType::Placeholder
                     }
                 }
                 route_to_page={ Route::UnpublishedPosts }

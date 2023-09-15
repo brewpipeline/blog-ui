@@ -118,7 +118,7 @@ pub fn auth_user_block() -> Html {
 
     html! {
         <Item<API<AuthorContainer>, Tokened<AuthorMeParams>>
-            r#type={ LoadType::Request { params } }
+            r#type={ LoadType::Params(params) }
             { component }
             { error_component }
         />
