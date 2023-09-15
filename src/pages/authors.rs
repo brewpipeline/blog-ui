@@ -5,6 +5,7 @@ use crate::components::list::*;
 use crate::components::meta::*;
 use crate::components::warning::*;
 use crate::content::*;
+use crate::utils::*;
 
 use crate::Route;
 
@@ -14,7 +15,7 @@ pub fn authors() -> Html {
         <>
             <Meta title="Авторы" />
             <List<API<AuthorsContainer>>
-                params={ () }
+                r#type={ LoadType::Request { params: () } }
                 route_to_page={ Route::Authors }
                 component={ |author| html! { <AuthorCard { author } link_to=true /> } }
                 error_component={ |_| html! { <Warning text="Ошибка загрузки авторов!" /> } }

@@ -4,6 +4,23 @@ use yew_router::prelude::*;
 use crate::utils::*;
 
 #[derive(Clone, PartialEq)]
+pub enum LoadType<P: Clone + PartialEq> {
+    NoRequest,
+    Request { params: P },
+}
+
+impl<P: Clone + PartialEq> LoadType<P> {
+    pub fn map_params<NP: Clone + PartialEq, F: FnOnce(P) -> NP>(self, map_fn: F) -> LoadType<NP> {
+        match self {
+            LoadType::NoRequest => LoadType::NoRequest,
+            LoadType::Request { params } => LoadType::Request {
+                params: map_fn(params),
+            },
+        }
+    }
+}
+
+#[derive(Clone, PartialEq)]
 pub enum LoadError<E: Clone + PartialEq> {
     Net(String),
     Content(E),
@@ -11,7 +28,7 @@ pub enum LoadError<E: Clone + PartialEq> {
 
 #[hook]
 pub fn use_load_and_map<C, P, F, I>(
-    params: P,
+    r#type: LoadType<P>,
     inner_map: F,
     use_caches: bool,
 ) -> UseStateHandle<Option<Result<I, LoadError<C::Error>>>>
@@ -19,7 +36,7 @@ where
     C: ExternalResultContainer + RequestableItem<P> + Clone + PartialEq + 'static,
     C::Inner: Clone + PartialEq + 'static,
     C::Error: Clone + PartialEq + 'static,
-    P: Clone + PartialEq + 'static,
+    P: Clone + PartialEq + 'static, // TODO: optional params?
     F: FnOnce(C::Inner) -> I + 'static,
     I: ExternalCodable + Clone + PartialEq + 'static,
 {
@@ -45,9 +62,8 @@ where
     };
     #[cfg(feature = "client")]
     {
-        let is_once_loaded = is_once_loaded.clone();
         let container_inner_result = container_inner_result.clone();
-        use_effect_with(params, move |params| {
+        use_effect_with(r#type, move |r#type| {
             let is_once_loaded = if !(*is_once_loaded) {
                 is_once_loaded.set(true);
                 false
@@ -63,14 +79,14 @@ where
             }
             if let (true, false, Some(route_container_inner)) = (
                 use_caches,
-                is_once_loaded,
+                is_once_loaded, // TODO: check post eq
                 location.state::<I>().map(|i| (*i).clone()),
             ) {
                 app_content_container.dispatch(AppContentContainerAction::NewContent(
                     route_container_inner.encode(),
                 ));
                 container_inner_result.set(Some(Ok(route_container_inner)));
-            } else {
+            } else if let LoadType::Request { params } = r#type {
                 if use_caches {
                     app_content_container.dispatch(AppContentContainerAction::NewContent(None));
                 }
@@ -101,8 +117,8 @@ where
 
 #[hook]
 pub fn use_load<C, P>(
-    params: P,
-    use_route_cache: bool,
+    r#type: LoadType<P>,
+    use_caches: bool,
 ) -> UseStateHandle<Option<Result<C::Inner, LoadError<C::Error>>>>
 where
     C: ExternalResultContainer + RequestableItem<P> + Clone + PartialEq + 'static,
@@ -110,5 +126,5 @@ where
     C::Error: Clone + PartialEq + 'static,
     P: Clone + PartialEq + 'static,
 {
-    use_load_and_map::<C, P, _, C::Inner>(params, |i| i, use_route_cache)
+    use_load_and_map::<C, P, _, C::Inner>(r#type, |i| i, use_caches)
 }

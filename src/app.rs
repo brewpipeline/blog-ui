@@ -20,9 +20,13 @@ fn main(props: &MainProps) -> Html {
         is_used: false,
         app_content: props.app_content.clone(),
     });
-    let logged_user = use_reducer_eq(|| LoggedUser {
-        state: LoggedUserState::load(),
-    });
+    let logged_user_context = use_reducer_eq(|| LoggedUser::default());
+    {
+        let logged_user_context = logged_user_context.clone();
+        use_effect_with((), move |_| {
+            logged_user_context.dispatch(LoggedUserState::load());
+        });
+    }
     html! {
         <>
             <script
@@ -33,7 +37,7 @@ fn main(props: &MainProps) -> Html {
             </script>
             <Meta />
             <ContextProvider<AppContentContext> context={ app_content_container }>
-                <ContextProvider<LoggedUserContext> context={ logged_user }>
+                <ContextProvider<LoggedUserContext> context={ logged_user_context }>
                     <Header />
                     <Body />
                 </ContextProvider<LoggedUserContext>>

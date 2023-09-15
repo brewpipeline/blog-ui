@@ -11,18 +11,21 @@ use crate::Route;
 
 #[function_component(UnpublishedPosts)]
 pub fn unpublished_posts() -> Html {
-    let meta = html! {
-        <Meta title="Неопубликованное" />
-    };
     let logged_user_context = use_context::<LoggedUserContext>().unwrap();
     html! {
         <>
-            { meta }
+        <Meta title="Неопубликованное" />
             <List<API<PostsContainer>, OptionTokened<UnpublishedPostsContainerParams>>
-                params={ OptionTokened {
-                    token: logged_user_context.state.token().cloned(),
-                    params: UnpublishedPostsContainerParams
-                } }
+                r#type={
+                    if !logged_user_context.is_not_inited() {
+                        LoadType::Request { params: OptionTokened {
+                            token: logged_user_context.token().cloned(),
+                            params: UnpublishedPostsContainerParams
+                        } }
+                    } else {
+                        LoadType::NoRequest
+                    }
+                }
                 route_to_page={ Route::UnpublishedPosts }
                 component={ |post| html! { <PostCard { post } is_full=false /> } }
                 error_component={ |_| html! { <Warning text="Ошибка загрузки неопубликованного!" /> } }

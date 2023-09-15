@@ -4,7 +4,7 @@ use yew_router::prelude::*;
 use crate::components::item::*;
 use crate::components::svg_image::*;
 use crate::content::*;
-use crate::utils::logged_user_context::*;
+use crate::utils::*;
 
 use crate::Route;
 
@@ -12,7 +12,11 @@ use crate::Route;
 pub fn auth_user_block() -> Html {
     let logged_user_context = use_context::<LoggedUserContext>().unwrap();
 
-    let Some(token) = logged_user_context.state.token().cloned() else {
+    if logged_user_context.is_not_inited() {
+        return html! {};
+    }
+
+    let Some(token) = logged_user_context.token().cloned() else {
         return html! {
             <button
                 aria-label="Войти"
@@ -96,7 +100,7 @@ pub fn auth_user_block() -> Html {
                                 >
                                     { "Выход" }
                                 </button>
-                                </li>
+                            </li>
                         </ul>
                     }
                 </div>
@@ -107,14 +111,14 @@ pub fn auth_user_block() -> Html {
     let error_component = {
         let logged_user_context = logged_user_context.clone();
         move |_| {
-            logged_user_context.dispatch(LoggedUserState::None);
+            logged_user_context.dispatch(LoggedUserState::LoggedOut);
             html! {}
         }
     };
 
     html! {
         <Item<API<AuthorContainer>, Tokened<AuthorMeParams>>
-            { params }
+            r#type={ LoadType::Request { params } }
             { component }
             { error_component }
         />

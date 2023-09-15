@@ -84,7 +84,7 @@ pub fn edit_post(props: &EditPostProps) -> Html {
             | EditPostState::DeleteError(_)
             | EditPostState::Deleted => {}
             EditPostState::EditedInProgress(common_post) => {
-                let Some(token) = logged_user_context.state.token().cloned() else {
+                let Some(token) = logged_user_context.token().cloned() else {
                     return;
                 };
                 let state = state.clone();
@@ -132,8 +132,7 @@ pub fn edit_post(props: &EditPostProps) -> Html {
                 post,
             ),
             EditPostState::DeleteInProgress => {
-                let (Some(id), Some(token)) = (id, logged_user_context.state.token().cloned())
-                else {
+                let (Some(id), Some(token)) = (id, logged_user_context.token().cloned()) else {
                     return;
                 };
                 let state = state.clone();
@@ -164,20 +163,26 @@ pub fn edit_post(props: &EditPostProps) -> Html {
         })
     }
 
-    let LoggedUserState::ActiveAndLoaded { token, author } = logged_user_context.state.clone()
+    let not_auth_content = html! {
+        <>
+            { meta.clone() }
+            <Warning text={
+                if id == None {
+                    "Создавать публикации можно только авторизованным авторам!"
+                } else {
+                    "Редактировать публикации можно только авторизованным авторам!"
+                }
+            } />
+        </>
+    };
+
+    if logged_user_context.is_not_inited() {
+        return not_auth_content;
+    }
+
+    let LoggedUserState::ActiveAndLoaded { token, author } = logged_user_context.state().clone()
     else {
-        return html! {
-            <>
-                { meta }
-                <Warning text={
-                    if id == None {
-                        "Создавать публикации можно только авторизованным авторам!"
-                    } else {
-                        "Редактировать публикации можно только авторизованным авторам!"
-                    }
-                } />
-            </>
-        };
+        return not_auth_content;
     };
 
     if let EditPostState::Deleted = *state {
@@ -452,7 +457,10 @@ pub fn edit_post(props: &EditPostProps) -> Html {
             { meta }
             if let Some(id) = id {
                 <Item<content::API<content::PostContainer>, content::OptionTokened<content::PostParams>>
-                    params={ content::OptionTokened { token: Some(token), params: content::PostParams { id } } }
+                    r#type={ LoadType::Request { params: content::OptionTokened {
+                        token: Some(token),
+                        params: content::PostParams { id }
+                    } } }
                     use_caches=true
                     component={ move |post: Option<content::Post>| {
                         if let Some(post) = post {

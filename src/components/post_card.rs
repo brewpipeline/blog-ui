@@ -171,22 +171,24 @@ pub fn post_card(props: &PostCardProps) -> Html {
                             if let Some(0) = post.as_ref().map(|p| p.published) {
                                 <EyeSlashFillImg />
                             }
-                            if let (
-                                Some(post),
-                                LoggedUserState::ActiveAndLoaded { token: _, author },
-                            ) = (
-                                post.as_ref(),
-                                logged_user_context.state.clone(),
-                            ) {
-                                if author.id == post.author.id || author.editor == 1 {
-                                    { " " }
-                                    <Link<Route, (), Post>
-                                        classes="text-decoration-none"
-                                        to={ Route::EditPost { id: post.id } }
-                                        state={ Some(post.clone()) }
-                                    >
-                                        <PencilSquareImg />
-                                    </Link<Route, (), Post>>
+                            if !logged_user_context.is_not_inited() {
+                                if let (
+                                    Some(post),
+                                    Some(author),
+                                ) = (
+                                    post.as_ref(),
+                                    logged_user_context.author(),
+                                ) {
+                                    if author.id == post.author.id || author.editor == 1 {
+                                        { " " }
+                                        <Link<Route, (), Post>
+                                            classes="text-decoration-none"
+                                            to={ Route::EditPost { id: post.id } }
+                                            state={ Some(post.clone()) }
+                                        >
+                                            <PencilSquareImg />
+                                        </Link<Route, (), Post>>
+                                    }
                                 }
                             }
                         </p>

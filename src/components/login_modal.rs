@@ -29,7 +29,11 @@ pub fn login_modal(props: &LoginModalProps) -> Html {
         let logged_user_context = logged_user_context.clone();
         let close_node_ref = close_node_ref.clone();
         use_effect_with(logged_user_context, move |logged_user_context| {
-            let LoggedUserState::InProgress(login_question) = (**logged_user_context).state.clone()
+            if logged_user_context.is_not_inited() {
+                return;
+            }
+            let LoggedUserState::InProgress(login_question) =
+                (**logged_user_context).state().clone()
             else {
                 return;
             };
@@ -108,8 +112,8 @@ pub fn login_modal(props: &LoginModalProps) -> Html {
                     .cast::<HtmlInputElement>()
                     .unwrap()
                     .set_value("");
-                if logged_user_context.state.action_available() {
-                    logged_user_context.dispatch(LoggedUserState::None);
+                if logged_user_context.action_available() {
+                    logged_user_context.dispatch(LoggedUserState::LoggedOut);
                 };
             });
             move || drop(listener)
@@ -125,98 +129,100 @@ pub fn login_modal(props: &LoginModalProps) -> Html {
             aria-hidden="true"
             ref={ modal_node_ref }
         >
-            <div class="modal-dialog">
-                <div class="modal-content">
-                    <div class="modal-header">
-                        <h1 class="modal-title fs-5" id="loginModalLabel"> { "Войти" } </h1>
-                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-                    </div>
-                    <DelayedComponent<()> component={ |_| {
-                        #[cfg(feature = "client")]
-                        {
-                            let script: Element = document().create_element("script").unwrap();
-                            script.set_attribute("type", "text/javascript").unwrap();
-                            script.set_inner_html("
-                                setTimeout(function() {
-                                    const imageUrl = \"https://api.dicebear.com/7.x/shapes/svg?seed=\" + Date.now();
-        
-                                    let img = new Image();
-                                    img.src = imageUrl;
+            if !logged_user_context.is_not_inited() {
+                <div class="modal-dialog">
+                    <div class="modal-content">
+                        <div class="modal-header">
+                            <h1 class="modal-title fs-5" id="loginModalLabel"> { "Войти" } </h1>
+                            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                        </div>
+                        <DelayedComponent<()> component={ |_| {
+                            #[cfg(feature = "client")]
+                            {
+                                let script: Element = document().create_element("script").unwrap();
+                                script.set_attribute("type", "text/javascript").unwrap();
+                                script.set_inner_html("
+                                    setTimeout(function() {
+                                        const imageUrl = \"https://api.dicebear.com/7.x/shapes/svg?seed=\" + Date.now();
             
-                                    document.getElementById(\"login-modal-image\").style.setProperty(\"--image-url\", \"url('\" + imageUrl + \"')\");
-                                }, 0)
-                            ");
-                            html! {
-                                <>
-                                    <div
-                                        id="login-modal-image"
-                                        style="height:160px;width:100%;--image-url:url('');"
-                                        class="img-block bd-placeholder-img"
-                                        role="img"
-                                    />
-                                    { Html::VRef(script.into()) }
-                                </>
+                                        let img = new Image();
+                                        img.src = imageUrl;
+                
+                                        document.getElementById(\"login-modal-image\").style.setProperty(\"--image-url\", \"url('\" + imageUrl + \"')\");
+                                    }, 0)
+                                ");
+                                html! {
+                                    <>
+                                        <div
+                                            id="login-modal-image"
+                                            style="height:160px;width:100%;--image-url:url('');"
+                                            class="img-block bd-placeholder-img"
+                                            role="img"
+                                        />
+                                        { Html::VRef(script.into()) }
+                                    </>
+                                }
                             }
-                        }
-                        #[cfg(not(feature = "client"))]
-                        unreachable!()
-                    }} deps={ () } />
-                    <div class="modal-body">
-                        if let LoggedUserState::Error(message) = logged_user_context.state.clone() {
-                            <div class="alert alert-danger d-flex align-items-center" role="alert">
-                                { "Ошибка авторизации: " }
-                                { message }
-                            </div>
-                        }
-                        <div class="form-floating mb-3">
-                            <input
-                                type="email"
-                                class="form-control"
-                                id="floatingInput"
-                                placeholder="Имя пользователя"
-                                ref={ username_node_ref }
-                                disabled={ !logged_user_context.state.action_available() }
-                            />
-                            <label for="floatingInput"> { "Имя пользователя" } </label>
-                        </div>
-                        <div class="form-floating">
-                            <input
-                                type="password"
-                                class="form-control"
-                                id="floatingPassword"
-                                placeholder="Password"
-                                ref={ password_node_ref }
-                                disabled={ !logged_user_context.state.action_available() }
-                            />
-                            <label for="floatingPassword"> { "Пароль" } </label>
-                        </div>
-                    </div>
-                    <div class="modal-footer">
-                        <button
-                            type="button"
-                            class="btn btn-secondary"
-                            data-bs-dismiss="modal"
-                            ref={ close_node_ref }
-                        >
-                            { "Закрыть" }
-                        </button>
-                        <button
-                            type="button"
-                            class="btn btn-primary"
-                            { onclick }
-                            disabled={ !logged_user_context.state.action_available() }
-                        >
-                            if let LoggedUserState::InProgress(_) = (*logged_user_context).state.clone() {
-                                <div class="spinner-border spinner-border-sm" role="status">
-                                    <span class="visually-hidden"> { "Загрузка..." } </span>
+                            #[cfg(not(feature = "client"))]
+                            unreachable!()
+                        }} deps={ () } />
+                        <div class="modal-body">
+                            if let LoggedUserState::Error(message) = logged_user_context.state().clone() {
+                                <div class="alert alert-danger d-flex align-items-center" role="alert">
+                                    { "Ошибка авторизации: " }
+                                    { message }
                                 </div>
-                                { " " }
                             }
-                            { "Войти" }
-                        </button>
+                            <div class="form-floating mb-3">
+                                <input
+                                    type="email"
+                                    class="form-control"
+                                    id="floatingInput"
+                                    placeholder="Имя пользователя"
+                                    ref={ username_node_ref }
+                                    disabled={ !logged_user_context.action_available() }
+                                />
+                                <label for="floatingInput"> { "Имя пользователя" } </label>
+                            </div>
+                            <div class="form-floating">
+                                <input
+                                    type="password"
+                                    class="form-control"
+                                    id="floatingPassword"
+                                    placeholder="Password"
+                                    ref={ password_node_ref }
+                                    disabled={ !logged_user_context.action_available() }
+                                />
+                                <label for="floatingPassword"> { "Пароль" } </label>
+                            </div>
+                        </div>
+                        <div class="modal-footer">
+                            <button
+                                type="button"
+                                class="btn btn-secondary"
+                                data-bs-dismiss="modal"
+                                ref={ close_node_ref }
+                            >
+                                { "Закрыть" }
+                            </button>
+                            <button
+                                type="button"
+                                class="btn btn-primary"
+                                { onclick }
+                                disabled={ !logged_user_context.action_available() }
+                            >
+                                if let LoggedUserState::InProgress(_) = (*logged_user_context).state() {
+                                    <div class="spinner-border spinner-border-sm" role="status">
+                                        <span class="visually-hidden"> { "Загрузка..." } </span>
+                                    </div>
+                                    { " " }
+                                }
+                                { "Войти" }
+                            </button>
+                        </div>
                     </div>
                 </div>
-            </div>
+            }
         </div>
     }
 }
