@@ -10,10 +10,17 @@ fn load_token() -> Option<String> {
 
 #[cfg(all(feature = "client", target_arch = "wasm32"))]
 fn save_token(token: Option<&String>) -> Option<()> {
+    let config = wasm_cookies::CookieOptions::default()
+        .with_path("/")
+        .with_same_site(wasm_cookies::SameSite::None);
     if let Some(token) = &token {
-        wasm_cookies::set("Token", &token, &wasm_cookies::CookieOptions::default());
+        wasm_cookies::set(
+            "Token",
+            &token,
+            &config.expires_after(std::time::Duration::new(60 * 60 * 24 * 30, 0)),
+        );
     } else {
-        wasm_cookies::delete("Token")
+        wasm_cookies::set("Token", &"", &config.expires_at_timestamp(0));
     }
     Some(())
 }
