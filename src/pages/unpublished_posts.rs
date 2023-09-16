@@ -27,7 +27,7 @@ pub fn unpublished_posts() -> Html {
                             params: UnpublishedPostsContainerParams
                         })
                     } else {
-                        LoadType::Placeholder
+                        LoadType::OnlyAppCacheIfApplicable
                     }
                 }
                 route_to_page={ Route::UnpublishedPosts }

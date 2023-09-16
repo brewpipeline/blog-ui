@@ -31,7 +31,7 @@ pub fn post(props: &PostProps) -> Html {
                         params: content::PostParams { id }
                     })
                 } else {
-                    LoadType::Placeholder
+                    LoadType::OnlyAppCacheIfApplicable
                 }
             }
             use_caches=true

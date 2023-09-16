@@ -47,7 +47,7 @@ pub fn my_unpublished_posts() -> Html {
                             params: UnpublishedPostsContainerAuthorParams { author_id: author.id }
                         })
                     } else {
-                        LoadType::Placeholder
+                        LoadType::OnlyAppCacheIfApplicable
                     }
                 }
                 route_to_page={ Route::UnpublishedPosts }

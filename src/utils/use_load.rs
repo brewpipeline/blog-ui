@@ -5,14 +5,14 @@ use crate::utils::*;
 
 #[derive(Clone, PartialEq)]
 pub enum LoadType<P: Clone + PartialEq> {
-    Placeholder,
+    OnlyAppCacheIfApplicable,
     Params(P),
 }
 
 impl<P: Clone + PartialEq> LoadType<P> {
     pub fn map_params<NP: Clone + PartialEq, F: FnOnce(P) -> NP>(self, map_fn: F) -> LoadType<NP> {
         match self {
-            LoadType::Placeholder => LoadType::Placeholder,
+            LoadType::OnlyAppCacheIfApplicable => LoadType::OnlyAppCacheIfApplicable,
             LoadType::Params(params) => LoadType::Params(map_fn(params)),
         }
     }
