@@ -12,7 +12,6 @@ pub fn delayed_component<D: PartialEq + Clone + 'static>(props: &DelayedComponen
 
     let component_state = use_state_eq(|| html! {});
 
-    #[cfg(feature = "client")]
     {
         let component_state = component_state.clone();
         use_effect_with(deps, move |deps| {

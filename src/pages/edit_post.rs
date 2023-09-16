@@ -84,7 +84,7 @@ pub fn edit_post(props: &EditPostProps) -> Html {
             | EditPostState::DeleteError(_)
             | EditPostState::Deleted => {}
             EditPostState::EditedInProgress(common_post) => {
-                let Some(token) = logged_user_context.state.token().cloned() else {
+                let Some(token) = logged_user_context.token().cloned() else {
                     return;
                 };
                 let state = state.clone();
@@ -132,8 +132,7 @@ pub fn edit_post(props: &EditPostProps) -> Html {
                 post,
             ),
             EditPostState::DeleteInProgress => {
-                let (Some(id), Some(token)) = (id, logged_user_context.state.token().cloned())
-                else {
+                let (Some(id), Some(token)) = (id, logged_user_context.token().cloned()) else {
                     return;
                 };
                 let state = state.clone();
@@ -164,20 +163,26 @@ pub fn edit_post(props: &EditPostProps) -> Html {
         })
     }
 
-    let LoggedUserState::ActiveAndLoaded { token: _, author } = logged_user_context.state.clone()
+    let not_auth_content = html! {
+        <>
+            { meta.clone() }
+            <Warning text={
+                if id == None {
+                    "Создавать публикации можно только авторизованным авторам!"
+                } else {
+                    "Редактировать публикации можно только авторизованным авторам!"
+                }
+            } />
+        </>
+    };
+
+    if logged_user_context.is_not_inited() {
+        return not_auth_content;
+    }
+
+    let LoggedUserState::ActiveAndLoaded { token, author } = logged_user_context.state().clone()
     else {
-        return html! {
-            <>
-                { meta }
-                <Warning text={
-                    if id == None {
-                        "Создавать публикации можно только авторизованным авторам!"
-                    } else {
-                        "Редактировать публикации можно только авторизованным авторам!"
-                    }
-                } />
-            </>
-        };
+        return not_auth_content;
     };
 
     if let EditPostState::Deleted = *state {
@@ -248,6 +253,7 @@ pub fn edit_post(props: &EditPostProps) -> Html {
         let post_summary = post.as_ref().map(|p| p.summary.clone());
         let post_content = post.as_ref().map(|p| p.content.clone()).flatten();
         let post_tags = post.as_ref().map(|p| p.joined_tags_string(", "));
+        let post_published = post.as_ref().map(|p| p.published == 1).unwrap_or(false);
         #[cfg(feature = "client")]
         let post_image = image_node_ref
             .cast::<HtmlInputElement>()
@@ -273,6 +279,11 @@ pub fn edit_post(props: &EditPostProps) -> Html {
             .cast::<HtmlInputElement>()
             .map(|h| h.value())
             .or(post_tags);
+        #[cfg(feature = "client")]
+        let post_published = published_node_ref
+            .cast::<HtmlInputElement>()
+            .map(|h| h.checked())
+            .unwrap_or(post_published);
         html! {
             <>
                 <form>
@@ -367,11 +378,12 @@ pub fn edit_post(props: &EditPostProps) -> Html {
                         />
                     </div>
 
-                    <div class="form-check mb-3">
+                    <div class={ classes!("form-check", "mb-3", if author.editor == 0 { "d-none" } else { "" }) }>
                         <input
                             type="checkbox"
                             class="form-check-input"
                             id="validationFormCheck1"
+                            checked={ post_published }
                             ref={ published_node_ref.clone() }
                         />
                         <label class="form-check-label" for="validationFormCheck1">
@@ -451,15 +463,18 @@ pub fn edit_post(props: &EditPostProps) -> Html {
         <>
             { meta }
             if let Some(id) = id {
-                <Item<content::API<content::PostContainer>, content::PostParams>
-                    params={ content::PostParams { id } }
+                <Item<content::API<content::PostContainer>, content::OptionTokened<content::PostParams>>
+                    r#type={ LoadType::Params(content::OptionTokened {
+                        token: Some(token),
+                        params: content::PostParams { id }
+                    }) }
                     use_caches=true
                     component={ move |post: Option<content::Post>| {
                         if let Some(post) = post {
-                            if post.author.slug == author.slug {
+                            if post.author.id == author.id || author.editor == 1 {
                                 main_content.emit(Some(post))
                             } else {
-                                html! { <Warning text="Только автор может редактировать публикацию!" /> }
+                                html! { <Warning text="Только автор или редактор может редактировать публикацию!" /> }
                             }
                         } else {
                             html! { <Warning text="Загрузка публикации для редактирования..." /> }

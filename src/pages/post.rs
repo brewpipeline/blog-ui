@@ -8,6 +8,7 @@ use crate::components::post_card::*;
 use crate::components::simple_title_card::*;
 use crate::components::warning::*;
 use crate::content;
+use crate::utils::*;
 
 use crate::Route;
 
@@ -20,9 +21,19 @@ pub struct PostProps {
 #[function_component(Post)]
 pub fn post(props: &PostProps) -> Html {
     let PostProps { slug, id } = props.clone();
+    let logged_user_context = use_context::<LoggedUserContext>().unwrap();
     html! {
-        <Item<content::API<content::PostContainer>, content::PostParams>
-            params={ content::PostParams { id } }
+        <Item<content::API<content::PostContainer>, content::OptionTokened<content::PostParams>>
+            r#type={
+                if !logged_user_context.is_not_inited() {
+                    LoadType::Params(content::OptionTokened {
+                        token: logged_user_context.token().cloned(),
+                        params: content::PostParams { id }
+                    })
+                } else {
+                    LoadType::OnlyAppCacheIfApplicable
+                }
+            }
             use_caches=true
             component={ move |post: Option<content::Post>| {
                 if let Some(post) = &post {
@@ -52,7 +63,7 @@ pub fn post(props: &PostProps) -> Html {
                                 { "Комментарии" }
                             </SimpleTitleCard>
                             <List<content::API<content::CommentsContainer>, content::CommentsContainerPostIdParams>
-                                params={ content::CommentsContainerPostIdParams { post_id: post.id } }
+                                r#type={ LoadType::Params(content::CommentsContainerPostIdParams { post_id: post.id }) }
                                 items_per_page={ 50 }
                                 route_to_page={ Route::Post { slug: post.slug, id: post.id } }
                                 component={ |comment| html! { <CommentCard { comment } /> } }

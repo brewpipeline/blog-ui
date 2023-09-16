@@ -7,7 +7,7 @@ use crate::components::post_card::*;
 use crate::components::search_field::*;
 use crate::components::warning::*;
 use crate::content::*;
-use crate::utils::not_empty::*;
+use crate::utils::*;
 
 use crate::Route;
 
@@ -29,14 +29,14 @@ pub fn search(props: &SearchProps) -> Html {
                 match mode {
                     SearchMode::Posts { query } => html! {
                         if let Some(query) = not_empty(query) {
-                            <List<API<PostsContainer>, PostsContainerSearchParam>
-                                params={ PostsContainerSearchParam { query: query.clone() } }
+                            <List<API<PostsContainer>, PostsContainerSearchParams>
+                                r#type={ LoadType::Params(PostsContainerSearchParams { query: query.clone() }) }
                                 route_to_page={ Route::PostsSearch { query: query.clone() } }
                                 component={ |post| html! { <PostCard { post } is_full=false /> } }
                                 error_component={ |_| html! { <Warning text="Ошибка загрузки результатов поиска публикаций!" /> } }
                             >
                                 <Warning text="Публикаций не найдено!" />
-                            </List<API<PostsContainer>, PostsContainerSearchParam>>
+                            </List<API<PostsContainer>, PostsContainerSearchParams>>
                         } else {
                             <Warning text="Начните ввод для поиска публикаций..." />
                         }
@@ -44,7 +44,7 @@ pub fn search(props: &SearchProps) -> Html {
                     SearchMode::Authors { query } => html! {
                         if let Some(query) = not_empty(query) {
                             <List<API<AuthorsContainer>, AuthorsContainerSearchParams>
-                                params={ AuthorsContainerSearchParams { query: query.clone() } }
+                                r#type={ LoadType::Params(AuthorsContainerSearchParams { query: query.clone() }) }
                                 route_to_page={ Route::AuthorsSearch { query: query.clone() } }
                                 component={ |author| html! { <AuthorCard { author } link_to=true /> } }
                                 error_component={ |_| html! { <Warning text="Ошибка загрузки результатов поиска авторов!" /> } }

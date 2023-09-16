@@ -19,7 +19,7 @@ where
     <C::Inner as ExternalListContainer>::Item: Clone + PartialEq + 'static,
     P: Clone + PartialEq + 'static,
 {
-    pub params: P,
+    pub r#type: LoadType<P>,
     #[prop_or_default]
     pub use_caches: bool,
     #[prop_or(10)]
@@ -44,7 +44,7 @@ where
     P: Clone + PartialEq + 'static,
 {
     let ListProps {
-        params,
+        r#type,
         use_caches,
         items_per_page,
         route_to_page,
@@ -58,11 +58,11 @@ where
     let offset = (page - 1) * items_per_page;
 
     let list_result_container = use_load::<C, ExternalListContainerParams<P>>(
-        ExternalListContainerParams {
+        r#type.map_params(|params| ExternalListContainerParams {
             params,
             limit: items_per_page,
             skip: offset,
-        },
+        }),
         use_caches,
     );
 

@@ -11,7 +11,7 @@ where
     <C::Inner as ExternalItemContainer>::Item: ExternalCodable + Clone + PartialEq + 'static,
     P: Clone + PartialEq + 'static,
 {
-    pub params: P,
+    pub r#type: LoadType<P>,
     #[prop_or_default]
     pub use_caches: bool,
     pub component: Callback<Option<<C::Inner as ExternalItemContainer>::Item>, Html>,
@@ -28,14 +28,14 @@ where
     P: Clone + PartialEq + 'static,
 {
     let ItemProps {
-        params,
+        r#type,
         use_caches,
         component,
         error_component,
     } = props.clone();
 
     let item_result = use_load_and_map::<C, P, _, <C::Inner as ExternalItemContainer>::Item>(
-        params,
+        r#type,
         |i| i.item(),
         use_caches,
     );

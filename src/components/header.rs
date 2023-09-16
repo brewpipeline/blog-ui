@@ -14,8 +14,12 @@ use crate::Route;
 pub fn header() -> Html {
     html! {
         <>
-            <LoginModal id="loginModal" />
-            <LogoutModal id="logoutModal" />
+            <DelayedComponent<()> component={ |_| html! {
+                <>
+                    <LoginModal id="loginModal" />
+                    <LogoutModal id="logoutModal" />
+                </>
+            } } deps={ () } />
             <header class="header fixed-top bg-primary-subtle d-flex flex-wrap align-items-center">
                 <div class="container">
                     <div class="d-flex flex-wrap align-items-center justify-content-center">
