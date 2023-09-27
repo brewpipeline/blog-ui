@@ -45,6 +45,14 @@ pub fn author_card(props: &AuthorCardProps) -> Html {
                                         .unwrap_or("(Фамилия не указанa)".to_owned())
                                 )
                             }
+                            if author.editor == 1 {
+                                { " " }
+                                <i style="color:#6ea5ff;font-size:1rem;"> { "Главный редактор" } </i>
+                            }
+                            if author.blocked == 1 {
+                                { " " }
+                                <i style="color:#ff5252;font-size:1rem;"> { "Заблокирован" } </i>
+                            }
                         } else {
                             <span class="placeholder col-3 bg-secondary"></span> { " " }
                             <span class="placeholder col-3 bg-secondary"></span>
