@@ -154,6 +154,12 @@ pub struct AuthorSlugParams {
 #[derive(Clone, PartialEq)]
 pub struct AuthorMeParams;
 
+#[derive(Clone, PartialEq)]
+pub struct BlockAuthorIdParams {
+    pub id: u64,
+    pub block: bool,
+}
+
 #[cfg(feature = "client")]
 #[async_trait(?Send)]
 impl RequestableItem<AuthorSlugParams> for API<AuthorContainer> {
@@ -173,6 +179,28 @@ impl RequestableItem<Tokened<AuthorMeParams>> for API<AuthorContainer> {
     async fn request(params: Tokened<AuthorMeParams>) -> Result<Request, Error> {
         let Tokened { token, params: _ } = params;
         let url = format!("{url}/api/author/me", url = crate::API_URL);
+        Ok(Request::get(url.as_str())
+            .header("Token", token.as_str())
+            .build()?)
+    }
+    async fn response(response: Response) -> Result<Self, Error> {
+        response.json().await
+    }
+}
+
+#[cfg(feature = "client")]
+#[async_trait(?Send)]
+impl RequestableItem<Tokened<BlockAuthorIdParams>> for API<()> {
+    async fn request(params: Tokened<BlockAuthorIdParams>) -> Result<Request, Error> {
+        let Tokened {
+            token,
+            params: BlockAuthorIdParams { id, block },
+        } = params;
+        let url = format!(
+            "{url}/api/author/id/{id}/{state}",
+            url = crate::API_URL,
+            state = if block { "block" } else { "unblock" }
+        );
         Ok(Request::get(url.as_str())
             .header("Token", token.as_str())
             .build()?)
@@ -541,6 +569,7 @@ impl ExternalItemContainer for TagContainer {
 #[derive(Clone, PartialEq)]
 pub struct CommentsContainerPostIdParams {
     pub post_id: u64,
+    pub request_index: u64,
 }
 
 #[cfg(feature = "client")]
@@ -552,12 +581,16 @@ impl RequestableItem<ExternalListContainerParams<CommentsContainerPostIdParams>>
         params: ExternalListContainerParams<CommentsContainerPostIdParams>,
     ) -> Result<Request, Error> {
         let ExternalListContainerParams {
-            params: CommentsContainerPostIdParams { post_id },
+            params:
+                CommentsContainerPostIdParams {
+                    post_id,
+                    request_index,
+                },
             limit,
             skip,
         } = params;
         let url = format!(
-            "{url}/api/comments/{post_id}?limit={limit}&offset={skip}",
+            "{url}/api/comments/{post_id}?limit={limit}&offset={skip}&request_index={request_index}",
             url = crate::API_URL,
         );
         Ok(Request::get(url.as_str()).build()?)
@@ -588,6 +621,58 @@ impl ExternalResultContainer for CommentsContainer {
     type Error = std::convert::Infallible;
     fn result(self) -> Result<Self::Inner, Self::Error> {
         Ok(self)
+    }
+}
+
+//
+// Comment
+//
+//
+
+#[derive(Clone, PartialEq)]
+pub struct CreateCommentParams {
+    pub comment: CommonComment,
+}
+
+#[cfg(feature = "client")]
+#[async_trait(?Send)]
+impl RequestableItem<Tokened<CreateCommentParams>> for API<()> {
+    async fn request(params: Tokened<CreateCommentParams>) -> Result<Request, Error> {
+        let Tokened {
+            token,
+            params: CreateCommentParams { comment },
+        } = params;
+        let url = format!("{url}/api/comment", url = crate::API_URL,);
+        Ok(Request::post(url.as_str())
+            .header("Token", token.as_str())
+            .header("Content-Type", "application/json")
+            .body(serde_json::to_string(&comment).map_err(|e| Error::SerdeError(e))?)?)
+    }
+    async fn response(response: Response) -> Result<Self, Error> {
+        response.json().await
+    }
+}
+
+#[derive(Clone, PartialEq)]
+pub struct DeleteCommentParams {
+    pub comment_id: u64,
+}
+
+#[cfg(feature = "client")]
+#[async_trait(?Send)]
+impl RequestableItem<Tokened<DeleteCommentParams>> for API<()> {
+    async fn request(params: Tokened<DeleteCommentParams>) -> Result<Request, Error> {
+        let Tokened {
+            token,
+            params: DeleteCommentParams { comment_id },
+        } = params;
+        let url = format!("{url}/api/comment/{comment_id}", url = crate::API_URL,);
+        Ok(Request::delete(url.as_str())
+            .header("Token", token.as_str())
+            .build()?)
+    }
+    async fn response(response: Response) -> Result<Self, Error> {
+        response.json().await
     }
 }
 

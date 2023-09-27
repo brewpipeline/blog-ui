@@ -462,7 +462,9 @@ pub fn edit_post(props: &EditPostProps) -> Html {
     html! {
         <>
             { meta }
-            if let Some(id) = id {
+            if author.blocked == 1 {
+                <Warning text="Вы заблокированы!" />
+            } else if let Some(id) = id {
                 <Item<content::API<content::PostContainer>, content::OptionTokened<content::PostParams>>
                     r#type={ LoadType::Params(content::OptionTokened {
                         token: Some(token),
