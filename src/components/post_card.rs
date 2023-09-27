@@ -179,7 +179,7 @@ pub fn post_card(props: &PostCardProps) -> Html {
                                     post.as_ref(),
                                     logged_user_context.author(),
                                 ) {
-                                    if author.id == post.author.id || author.editor == 1 {
+                                    if (author.id == post.author.id || author.editor == 1) && author.blocked == 0 {
                                         { " " }
                                         <Link<Route, (), Post>
                                             classes="text-decoration-none"

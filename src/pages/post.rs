@@ -1,16 +1,12 @@
 use yew::prelude::*;
 
-use crate::components::comment_card::*;
+use crate::components::comments::*;
 use crate::components::item::*;
-use crate::components::list::*;
 use crate::components::meta::*;
 use crate::components::post_card::*;
-use crate::components::simple_title_card::*;
 use crate::components::warning::*;
 use crate::content;
 use crate::utils::*;
-
-use crate::Route;
 
 #[derive(PartialEq, Properties, Clone)]
 pub struct PostProps {
@@ -59,18 +55,7 @@ pub fn post(props: &PostProps) -> Html {
                         }
                         <PostCard post={ post.clone() } is_full=true />
                         if let Some(post) = post {
-                            <SimpleTitleCard>
-                                { "Комментарии" }
-                            </SimpleTitleCard>
-                            <List<content::API<content::CommentsContainer>, content::CommentsContainerPostIdParams>
-                                r#type={ LoadType::Params(content::CommentsContainerPostIdParams { post_id: post.id }) }
-                                items_per_page={ 50 }
-                                route_to_page={ Route::Post { slug: post.slug, id: post.id } }
-                                component={ |comment| html! { <CommentCard { comment } /> } }
-                                error_component={ |_| html! { <Warning text="Ошибка загрузки комментариев!" /> } }
-                            >
-                                <Warning text="Нет комментариев." />
-                            </List<content::API<content::CommentsContainer>, content::CommentsContainerPostIdParams>>
+                            <Comments { post } />
                         }
                     </>
                 }
