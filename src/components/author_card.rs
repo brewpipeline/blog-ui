@@ -29,6 +29,7 @@ pub fn author_card(props: &AuthorCardProps) -> Html {
         })
     }
 
+    #[cfg(feature = "client")]
     {
         let author = author.clone();
         let logged_user_context = logged_user_context.clone();
@@ -75,7 +76,6 @@ pub fn author_card(props: &AuthorCardProps) -> Html {
         });
     }
 
-    #[cfg(feature = "client")]
     let onclick = {
         let in_progress = in_progress.clone();
         Callback::from(move |e: MouseEvent| {
@@ -87,8 +87,6 @@ pub fn author_card(props: &AuthorCardProps) -> Html {
             in_progress.set(true);
         })
     };
-    #[cfg(not(feature = "client"))]
-    let onclick = Callback::from(|_| {});
 
     let main_content = html! {
         <div class="row g-0">

@@ -48,6 +48,7 @@ pub fn comments(props: &CommentsProps) -> Html {
         });
     }
 
+    #[cfg(feature = "client")]
     {
         let state = state.clone();
         let field_ref = field_ref.clone();
@@ -97,10 +98,6 @@ pub fn comments(props: &CommentsProps) -> Html {
                 state.set(CommentsState::ReadyToSend);
             });
         });
-    }
-
-    if logged_user_context.is_not_inited() {
-        return html! {};
     }
 
     #[cfg(feature = "client")]
@@ -157,28 +154,30 @@ pub fn comments(props: &CommentsProps) -> Html {
             >
                 <Warning text="Нет комментариев." />
             </List<content::API<content::CommentsContainer>, content::CommentsContainerPostIdParams>>
-            if logged_user_context.author().map(|a| a.blocked == 0).unwrap_or(false) {
-                <div class="mb-3">
-                    <textarea
-                        class="form-control"
-                        rows="3"
-                        placeholder="Комментарий..."
-                        ref={ field_ref }
-                        { oninput }
-                        disabled={ *state == CommentsState::InProgress }
-                    ></textarea>
-                </div>
-                <div class="mb-3 d-grid gap-2">
-                    <button
-                        class="btn btn-light"
-                        type="submit"
-                        { onclick }
-                        ref={ button_ref }
-                        disabled={ *state != CommentsState::ReadyToSend }
-                    >
-                        { "Отправить" }
-                    </button>
-                </div>
+            if !logged_user_context.is_not_inited() {
+                if logged_user_context.author().map(|a| a.blocked == 0).unwrap_or(false) {
+                    <div class="mb-3">
+                        <textarea
+                            class="form-control"
+                            rows="3"
+                            placeholder="Комментарий..."
+                            ref={ field_ref }
+                            { oninput }
+                            disabled={ *state == CommentsState::InProgress }
+                        ></textarea>
+                    </div>
+                    <div class="mb-3 d-grid gap-2">
+                        <button
+                            class="btn btn-light"
+                            type="submit"
+                            { onclick }
+                            ref={ button_ref }
+                            disabled={ *state != CommentsState::ReadyToSend }
+                        >
+                            { "Отправить" }
+                        </button>
+                    </div>
+                }
             }
         </>
     }

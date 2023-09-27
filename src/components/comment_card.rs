@@ -27,6 +27,7 @@ pub fn comment_card(props: &CommentCardProps) -> Html {
 
     let logged_user_context = use_context::<LoggedUserContext>().unwrap();
 
+    #[cfg(feature = "client")]
     {
         let comment = comment.clone();
         let state = state.clone();
@@ -72,7 +73,6 @@ pub fn comment_card(props: &CommentCardProps) -> Html {
         });
     }
 
-    #[cfg(feature = "client")]
     let onclick = {
         let state = state.clone();
         Callback::from(move |e: MouseEvent| {
@@ -84,8 +84,6 @@ pub fn comment_card(props: &CommentCardProps) -> Html {
             state.set(CommentCardState::DeleteInProgress);
         })
     };
-    #[cfg(not(feature = "client"))]
-    let onclick = Callback::from(|_| {});
 
     html! {
         <div class="card mb-3">
