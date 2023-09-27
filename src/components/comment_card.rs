@@ -72,10 +72,6 @@ pub fn comment_card(props: &CommentCardProps) -> Html {
         });
     }
 
-    if logged_user_context.is_not_inited() {
-        return html! {};
-    }
-
     #[cfg(feature = "client")]
     let onclick = {
         let state = state.clone();
@@ -92,54 +88,55 @@ pub fn comment_card(props: &CommentCardProps) -> Html {
     let onclick = Callback::from(|_| {});
 
     html! {
-            <div class="card mb-3">
-                <div class="card-header placeholder-glow">
-                    <div class="row align-items-center">
-                        <div class="d-flex col-4 align-items-center justify-content-start" style="height: 24px;">
-                            <img
-                                width="24"
-                                height="24"
-                                src={
-                                    comment
-                                        .as_ref()
-                                        .map(|c| c.author.image_url())
-                                        .unwrap_or_default()
-                                }
-                                alt={
-                                    comment
-                                        .as_ref()
-                                        .map(|c| c.author.slug.clone())
-                                }
-                                class="img-block rounded me-1"
-                            />
-                            if let Some(comment) = &comment {
-                                <Link<Route, (), content::Author>
-                                    classes={ classes!("text-decoration-none") }
-                                    to={ Route::Author { slug: comment.author.slug.clone() } }
-                                    state={ Some(comment.author.clone()) }
-                                >
-                                    <strong>
-                                        { &comment.author.slug }
-                                    </strong>
-                                </Link<Route, (), content::Author>>
-                            } else {
-                                <span class="placeholder col-3 bg-secondary"></span>
+        <div class="card mb-3">
+            <div class="card-header placeholder-glow">
+                <div class="row align-items-center">
+                    <div class="d-flex col-4 align-items-center justify-content-start" style="height: 24px;">
+                        <img
+                            width="24"
+                            height="24"
+                            src={
+                                comment
+                                    .as_ref()
+                                    .map(|c| c.author.image_url())
+                                    .unwrap_or_default()
                             }
-                        </div>
-                        <div class="d-flex col-8 align-items-center justify-content-end" style="height: 24px;">
-                            if let Some(comment) = &comment {
-                                <small> { date::format(comment.created_at) } </small>
-                            } else {
-                                <span class="placeholder col-3 bg-secondary"></span>
+                            alt={
+                                comment
+                                    .as_ref()
+                                    .map(|c| c.author.slug.clone())
                             }
-                        </div>
+                            class="img-block rounded me-1"
+                        />
+                        if let Some(comment) = &comment {
+                            <Link<Route, (), content::Author>
+                                classes={ classes!("text-decoration-none") }
+                                to={ Route::Author { slug: comment.author.slug.clone() } }
+                                state={ Some(comment.author.clone()) }
+                            >
+                                <strong>
+                                    { &comment.author.slug }
+                                </strong>
+                            </Link<Route, (), content::Author>>
+                        } else {
+                            <span class="placeholder col-3 bg-secondary"></span>
+                        }
+                    </div>
+                    <div class="d-flex col-8 align-items-center justify-content-end" style="height: 24px;">
+                        if let Some(comment) = &comment {
+                            <small> { date::format(comment.created_at) } </small>
+                        } else {
+                            <span class="placeholder col-3 bg-secondary"></span>
+                        }
                     </div>
                 </div>
-                <div class="card-body">
-                    <p class="card-text placeholder-glow">
-                        if let Some(comment) = &comment {
-                            if let Some(content) = &comment.content {
-                                { content }
+            </div>
+            <div class="card-body">
+                <p class="card-text placeholder-glow">
+                    if let Some(comment) = &comment {
+                        if let Some(content) = &comment.content {
+                            { content }
+                            if !logged_user_context.is_not_inited() {
                                 if (*logged_user_context)
                                     .author()
                                     .map(|a| (a.editor == 1 || a.id == comment.author.id) && a.blocked == 0)
@@ -159,23 +156,24 @@ pub fn comment_card(props: &CommentCardProps) -> Html {
                                             CommentCardState::Deleted => html! {
                                                 <i style="color:#6c6c6c;"> { "Удален!" } </i>
                                             },
-    }
+                                        }
                                     }
                                 }
-                            } else {
-                                <i style="color:#6c6c6c;"> { "Комментарий удален." } </i>
                             }
                         } else {
-                            <span class="placeholder col-3 bg-secondary"></span> { " " }
-                            <span class="placeholder col-4 bg-secondary"></span> { " " }
-                            <span class="placeholder col-2 bg-secondary"></span> { " " }
-                            <span class="placeholder col-2 bg-secondary"></span> { " " }
-                            <span class="placeholder col-4 bg-secondary"></span> { " " }
-                            <span class="placeholder col-2 bg-secondary"></span> { " " }
-                            <span class="placeholder col-2 bg-secondary"></span> { " " }
+                            <i style="color:#6c6c6c;"> { "Комментарий удален." } </i>
                         }
-                    </p>
-                </div>
+                    } else {
+                        <span class="placeholder col-3 bg-secondary"></span> { " " }
+                        <span class="placeholder col-4 bg-secondary"></span> { " " }
+                        <span class="placeholder col-2 bg-secondary"></span> { " " }
+                        <span class="placeholder col-2 bg-secondary"></span> { " " }
+                        <span class="placeholder col-4 bg-secondary"></span> { " " }
+                        <span class="placeholder col-2 bg-secondary"></span> { " " }
+                        <span class="placeholder col-2 bg-secondary"></span> { " " }
+                    }
+                </p>
             </div>
-        }
+        </div>
+    }
 }
