@@ -154,6 +154,12 @@ pub struct AuthorSlugParams {
 #[derive(Clone, PartialEq)]
 pub struct AuthorMeParams;
 
+#[derive(Clone, PartialEq)]
+pub struct BlockAuthorIdParams {
+    pub id: u64,
+    pub block: bool,
+}
+
 #[cfg(feature = "client")]
 #[async_trait(?Send)]
 impl RequestableItem<AuthorSlugParams> for API<AuthorContainer> {
@@ -173,6 +179,28 @@ impl RequestableItem<Tokened<AuthorMeParams>> for API<AuthorContainer> {
     async fn request(params: Tokened<AuthorMeParams>) -> Result<Request, Error> {
         let Tokened { token, params: _ } = params;
         let url = format!("{url}/api/author/me", url = crate::API_URL);
+        Ok(Request::get(url.as_str())
+            .header("Token", token.as_str())
+            .build()?)
+    }
+    async fn response(response: Response) -> Result<Self, Error> {
+        response.json().await
+    }
+}
+
+#[cfg(feature = "client")]
+#[async_trait(?Send)]
+impl RequestableItem<Tokened<BlockAuthorIdParams>> for API<()> {
+    async fn request(params: Tokened<BlockAuthorIdParams>) -> Result<Request, Error> {
+        let Tokened {
+            token,
+            params: BlockAuthorIdParams { id, block },
+        } = params;
+        let url = format!(
+            "{url}/api/author/id/{id}/{state}",
+            url = crate::API_URL,
+            state = if block { "block" } else { "unblock" }
+        );
         Ok(Request::get(url.as_str())
             .header("Token", token.as_str())
             .build()?)

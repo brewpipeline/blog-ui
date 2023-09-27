@@ -51,7 +51,7 @@ pub fn comment_card(props: &CommentCardProps) -> Html {
                     },
                 });
                 match create_comment_request.await {
-                    Ok(delete_post_result) => match delete_post_result {
+                    Ok(create_comment_result) => match create_comment_result {
                         content::API::Success {
                             identifier: _,
                             description: _,
