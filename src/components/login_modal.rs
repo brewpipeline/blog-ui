@@ -3,11 +3,12 @@ use gloo::events::EventListener;
 #[cfg(feature = "client")]
 use gloo::utils::document;
 #[cfg(feature = "client")]
+use gloo::utils::window;
+#[cfg(feature = "client")]
 use wasm_bindgen::JsCast;
 #[cfg(feature = "client")]
 use web_sys::{CustomEvent, Element, HtmlElement, HtmlInputElement};
 use yew::prelude::*;
-use yew_hooks::*;
 
 use crate::components::delayed_component::*;
 #[cfg(feature = "client")]
@@ -22,8 +23,6 @@ pub struct LoginModalProps {
 #[function_component(LoginModal)]
 pub fn login_modal(props: &LoginModalProps) -> Html {
     let LoginModalProps { id } = props.clone();
-
-    let location = use_location();
 
     let logged_user_context = use_context::<LoggedUserContext>().unwrap();
 
@@ -268,7 +267,7 @@ pub fn login_modal(props: &LoginModalProps) -> Html {
                                                     new CustomEvent('yandex.auth.error', {{detail: JSON.stringify(error)}})
                                                 ))
                                             }}
-                                        ", modal_id = id, origin = location.origin, client_id = crate::YANDEX_CLIENT_ID).as_str());
+                                        ", modal_id = id, origin = window().origin(), client_id = crate::YANDEX_CLIENT_ID).as_str());
                                         Html::VRef(script.into())
                                     }
                                     #[cfg(not(feature = "client"))]
