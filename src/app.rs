@@ -4,8 +4,7 @@ use yew_router::history::*;
 #[cfg(any(feature = "client", feature = "server"))]
 use yew_router::prelude::*;
 
-use crate::components::body::*;
-use crate::components::header::*;
+use crate::components::content::*;
 use crate::components::meta::*;
 use crate::utils::*;
 
@@ -38,8 +37,7 @@ fn main(props: &MainProps) -> Html {
             <Meta />
             <ContextProvider<AppContentContext> context={ app_content_container }>
                 <ContextProvider<LoggedUserContext> context={ logged_user_context }>
-                    <Header />
-                    <Body />
+                    <Content />
                 </ContextProvider<LoggedUserContext>>
             </ContextProvider<AppContentContext>>
         </>

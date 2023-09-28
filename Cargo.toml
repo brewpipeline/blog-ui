@@ -22,7 +22,7 @@ wasm-bindgen = { version = "0.2", optional = true }
 wasm-cookies = { version = "0.2", optional = true }
 wasm-logger = { version = "0.2", optional = true }
 
-web-sys = { version = "0.3", features = ["HtmlDocument","console","Document","HtmlElement","MouseEvent","DomRect","ScrollToOptions","ScrollBehavior","Element","MouseEvent","CssStyleDeclaration","MutationObserver","MutationObserverInit","Node"], optional = true }
+web-sys = { version = "0.3", features = ["HtmlDocument","console","Document","HtmlElement","MouseEvent","DomRect","ScrollToOptions","ScrollBehavior","Element","MouseEvent","CssStyleDeclaration","MutationObserver","MutationObserverInit","Node","CustomEvent"], optional = true }
 
 gloo-history = "0.2"
 gloo = { version = "0.10", optional = true }

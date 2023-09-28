@@ -3,6 +3,7 @@ pub mod author_card;
 pub mod body;
 pub mod comment_card;
 pub mod comments;
+pub mod content;
 pub mod delayed_component;
 pub mod header;
 pub mod information_menu;
@@ -18,5 +19,6 @@ pub mod search_field;
 pub mod simple_title_card;
 pub mod svg_image;
 pub mod warning;
+pub mod yandex_token;
 
 pub use load::*;

@@ -3,8 +3,6 @@ use yew_router::prelude::*;
 
 use crate::components::auth_user_block::*;
 use crate::components::delayed_component::*;
-use crate::components::login_modal::*;
-use crate::components::logout_modal::*;
 use crate::components::search_button::*;
 use crate::components::search_field::*;
 
@@ -14,12 +12,6 @@ use crate::Route;
 pub fn header() -> Html {
     html! {
         <>
-            <DelayedComponent<()> component={ |_| html! {
-                <>
-                    <LoginModal id="loginModal" />
-                    <LogoutModal id="logoutModal" />
-                </>
-            } } deps={ () } />
             <header class="header fixed-top bg-primary-subtle d-flex flex-wrap align-items-center">
                 <div class="container">
                     <div class="d-flex flex-wrap align-items-center justify-content-center">

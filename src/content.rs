@@ -694,3 +694,17 @@ impl RequestableItem<LoginQuestion> for API<LoginAnswer> {
         response.json().await
     }
 }
+
+#[cfg(feature = "client")]
+#[async_trait(?Send)]
+impl RequestableItem<LoginYandexQuestion> for API<LoginAnswer> {
+    async fn request(params: LoginYandexQuestion) -> Result<Request, Error> {
+        let url = format!("{url}/api/ylogin", url = crate::API_URL);
+        Ok(Request::post(url.as_str())
+            .header("Content-Type", "application/json")
+            .body(serde_json::to_string(&params).map_err(|e| Error::SerdeError(e))?)?)
+    }
+    async fn response(response: Response) -> Result<Self, Error> {
+        response.json().await
+    }
+}
