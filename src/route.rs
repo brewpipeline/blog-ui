@@ -32,6 +32,8 @@ pub enum Route {
     AuthorsSearchRoot,
     #[at("/authors/search/:query")]
     AuthorsSearch { query: String },
+    #[at("/yandexToken")]
+    YandexToken,
     #[not_found]
     #[at("/404")]
     NotFound,
@@ -64,6 +66,7 @@ impl Route {
             Route::AuthorsSearch { query } => {
                 html! { <Search mode={ SearchMode::Authors { query: Some(query) } } /> }
             }
+            Route::YandexToken => unreachable!(),
             Route::NotFound => html! { <PageNotFound /> },
         }
     }

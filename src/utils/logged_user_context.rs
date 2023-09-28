@@ -32,9 +32,15 @@ enum LoggedUserInnerState {
 }
 
 #[derive(Debug, PartialEq, Eq, Clone)]
+pub enum InProgressStateType {
+    Default(LoginQuestion),
+    Yandex(LoginYandexQuestion),
+}
+
+#[derive(Debug, PartialEq, Eq, Clone)]
 pub enum LoggedUserState {
     LoggedOut,
-    InProgress(LoginQuestion),
+    InProgress(InProgressStateType),
     Error(String),
     Active { token: String },
     ActiveAndLoaded { token: String, author: Author },

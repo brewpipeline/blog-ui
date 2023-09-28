@@ -16,6 +16,7 @@ pub use route::*;
 pub use utils::AppContent;
 
 #[cfg(feature = "client")]
+const YANDEX_CLIENT_ID: &'static str = std::env!("YANDEX_CLIENT_ID"); // ee156ec6ee994a748e724f604db8e305
 const API_URL: &'static str = std::env!("API_URL"); // http://127.0.0.1:3000
 const TITLE: &'static str = std::env!("TITLE"); // BLOG
 const DESCRIPTION: &'static str = std::env!("DESCRIPTION"); // BLOG DESCRIPTION

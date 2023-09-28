@@ -19,6 +19,7 @@ impl SearchMode {
             Route::PostsSearch { query } => Self::Posts { query: Some(query) },
             Route::AuthorsSearch { query } => Self::Authors { query: Some(query) },
             Route::NotFound
+            | Route::YandexToken
             | Route::PostsSearchRoot
             | Route::NewPost
             | Route::EditPost { id: _ }

@@ -15,6 +15,7 @@ jobs:
   build:
     runs-on: ubuntu-latest
     env:
+      YANDEX_CLIENT_ID: ""
       API_URL: ""
       TITLE: ""
       DESCRIPTION: ""
