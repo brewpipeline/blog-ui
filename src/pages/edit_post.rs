@@ -436,19 +436,24 @@ pub fn edit_post(props: &EditPostProps) -> Html {
                         let script: Element = document().create_element("script").unwrap();
                         script.set_attribute("type", "text/javascript").unwrap();
                         script.set_inner_html("
-                            document.getElementById('tinymceScript').onload = function() {
-                                tinymce.remove();
+                            function tinymceAction() {
+                                tinymce.remove()
                                 tinymce.init({
                                     selector: '#validationTextarea2',
                                     setup: function(editor) {
                                         editor.on('Change Keyup', function () {
-                                            editor.save();
-                                        });
+                                            editor.save()
+                                        })
                                     },
                                     language: 'ru',
                                     plugins: 'anchor autolink charmap codesample emoticons image link lists media searchreplace table visualblocks wordcount code codesample',
-                                });
+                                })
                             }
+                            if (typeof tinymce === 'undefined') {{
+                                document.getElementById('tinymceScript').onload = tinymceAction
+                            }} else {{
+                                tinymceAction()
+                            }}
                         ");
                         Html::VRef(script.into())
                     }

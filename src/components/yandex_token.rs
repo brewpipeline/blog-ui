@@ -19,8 +19,13 @@ pub fn yandex_token() -> Html {
                     let script: Element = document().create_element("script").unwrap();
                     script.set_attribute("type", "text/javascript").unwrap();
                     script.set_inner_html(format!("
-                        document.getElementById('yandexTokenScript').onload = function() {{
+                        function yaSendSuggestTokenAction() {{
                             window.YaSendSuggestToken('{origin}', {{}})
+                        }}
+                        if (typeof window.YaSendSuggestToken === 'undefined') {{
+                            document.getElementById('yandexTokenScript').onload = yaSendSuggestTokenAction
+                        }} else {{
+                            yaSendSuggestTokenAction()
                         }}
                     ", origin = window().origin()).as_str());
                     Html::VRef(script.into())

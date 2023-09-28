@@ -121,12 +121,10 @@ pub fn login_modal(props: &LoginModalProps) -> Html {
                 e.prevent_default();
                 username_node_ref
                     .cast::<HtmlInputElement>()
-                    .unwrap()
-                    .set_value("");
+                    .map(|e| e.set_value(""));
                 password_node_ref
                     .cast::<HtmlInputElement>()
-                    .unwrap()
-                    .set_value("");
+                    .map(|e| e.set_value(""));
                 if logged_user_context.action_available() {
                     logged_user_context.dispatch(LoggedUserState::LoggedOut);
                 };
@@ -239,8 +237,8 @@ pub fn login_modal(props: &LoginModalProps) -> Html {
                                         let script: Element = document().create_element("script").unwrap();
                                         script.set_attribute("type", "text/javascript").unwrap();
                                         script.set_inner_html(format!("
-                                            const modalElement = document.getElementById('{modal_id}')
-                                            document.getElementById('yandexAuthScript').onload = function() {{
+                                            function yaAuthSuggestAction() {{
+                                                var modalElement = document.getElementById('{modal_id}')
                                                 YaAuthSuggest.init(
                                                     {{
                                                     client_id: '{client_id}',
@@ -266,6 +264,11 @@ pub fn login_modal(props: &LoginModalProps) -> Html {
                                                 .catch(error => modalElement.dispatchEvent(
                                                     new CustomEvent('yandex.auth.error', {{detail: JSON.stringify(error)}})
                                                 ))
+                                            }}
+                                            if (typeof YaAuthSuggest === 'undefined') {{
+                                                document.getElementById('yandexAuthScript').onload = yaAuthSuggestAction
+                                            }} else {{
+                                                yaAuthSuggestAction()
                                             }}
                                         ", modal_id = id, origin = window().origin(), client_id = crate::YANDEX_CLIENT_ID).as_str());
                                         Html::VRef(script.into())
