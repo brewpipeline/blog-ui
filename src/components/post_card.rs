@@ -86,7 +86,7 @@ pub fn post_card(props: &PostCardProps) -> Html {
             }).map(|tag| { html! {
                 <>
                     <Link<Route, (), Tag>
-                        classes="link-dark link-underline-opacity-25 link-underline-opacity-100-hover"
+                        classes="link link-underline-opacity-25 link-underline-opacity-100-hover"
                         to={ Route::Tag { id: tag.id, slug: tag.slug.clone() } }
                         state={ Some(tag.clone()) }
                     >

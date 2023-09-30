@@ -32,7 +32,7 @@ pub fn logout_modal(props: &LogoutModalProps) -> Html {
                                 <div class="d-grid gap-2">
                                     <button
                                         type="button"
-                                        class="btn btn-primary"
+                                        class="btn btn-info"
                                         data-bs-dismiss="modal"
                                         onclick={ move |_| logged_user_context.dispatch(LoggedUserState::LoggedOut) }
                                     >

@@ -445,6 +445,8 @@ pub fn edit_post(props: &EditPostProps) -> Html {
                                             editor.save()
                                         })
                                     },
+                                    skin: 'oxide-dark',
+                                    content_css: 'dark',
                                     language: 'ru',
                                     plugins: 'anchor autolink charmap codesample emoticons image link lists media searchreplace table visualblocks wordcount code codesample',
                                 })

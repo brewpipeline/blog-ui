@@ -278,7 +278,7 @@ pub fn login_modal(props: &LoginModalProps) -> Html {
                                 }} deps={ () } />
                                 <div id="yandexAuth" class="mb-4"></div>
                                 <div style="text-align: center; border-top: var(--bs-border-width) solid var(--bs-border-color);">
-                                    <div style="display: inline-block; position: relative; top: -12px; background-color: white; padding: 0px 10px; color: var(--bs-body-color);"> { "ИЛИ" } </div>
+                                    <div style="display: inline-block; position: relative; top: -12px; background-color: var(--bs-body-bg); padding: 0px 10px; color: var(--bs-body-color);"> { "ИЛИ" } </div>
                                 </div>
                                 <div class="form-floating mb-3">
                                     <input
@@ -305,7 +305,7 @@ pub fn login_modal(props: &LoginModalProps) -> Html {
                                 <div class="d-grid gap-2">
                                     <button
                                         type="button"
-                                        class="btn btn-primary"
+                                        class="btn btn-info"
                                         { onclick }
                                         disabled={ !logged_user_context.action_available() }
                                     >
