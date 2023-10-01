@@ -25,14 +25,12 @@ pub fn post(props: &TagProps) -> Html {
             r#type={ LoadType::Params(content::TagIdParams { id }) }
             use_caches=true
             component={ move |tag: Option<content::Tag>| {
-                if let Some(tag) = &tag {
-                    if tag.id != id || tag.slug != slug {
-                        return html! {
-                            <>
-                                <Meta title="Ссылка на тег повреждена" />
-                                <Warning text="Ссылка на тег повреждена!" />
-                            </>
-                        }
+                if tag.as_ref().map(|t| t.id != id || t.slug != slug).unwrap_or(false) {
+                    return html! {
+                        <>
+                            <Meta title="Ссылка на тег повреждена" noindex=true />
+                            <Warning text="Ссылка на тег повреждена!" />
+                        </>
                     }
                 }
                 html! {
@@ -42,7 +40,7 @@ pub fn post(props: &TagProps) -> Html {
                                 title={ format!("{} - Тег", tag.title.clone()) }
                             />
                         } else {
-                            <Meta title="Тег" />
+                            <Meta title="Тег" noindex=true />
                         }
 
                         <SimpleTitleCard>
@@ -69,7 +67,7 @@ pub fn post(props: &TagProps) -> Html {
             } }
             error_component={ |_| html! {
                 <>
-                    <Meta title="Ошибка загрузки тега" />
+                    <Meta title="Ошибка загрузки тега" noindex=true />
                     <Warning text="Ошибка загрузки тега!" />
                 </>
             } }

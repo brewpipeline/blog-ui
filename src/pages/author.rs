@@ -29,7 +29,7 @@ pub fn author(props: &AuthorProps) -> Html {
                     if let Some(author) = &author {
                         <Meta title={ format!("{} - Автор", author.slug.clone()) } />
                     } else {
-                        <Meta title="Автор" />
+                        <Meta title="Автор" noindex=true />
                     }
                     <AuthorCard author={ author.clone() } link_to=false />
                     if let Some(author) = &author {
@@ -49,7 +49,7 @@ pub fn author(props: &AuthorProps) -> Html {
             } }
             error_component={ |_| html! {
                 <>
-                    <Meta title="Ошибка загрузки автора" />
+                    <Meta title="Ошибка загрузки автора" noindex=true />
                     <Warning text="Ошибка загрузки автора!" />
                 </>
             } }

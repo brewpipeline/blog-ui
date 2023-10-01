@@ -15,7 +15,7 @@ pub fn unpublished_posts() -> Html {
     let logged_user_context = use_context::<LoggedUserContext>().unwrap();
     html! {
         <>
-            <Meta title="Неопубликованное" />
+            <Meta title="Неопубликованное" noindex=true />
             <SimpleTitleCard>
                 { "Неопубликованное" }
             </SimpleTitleCard>

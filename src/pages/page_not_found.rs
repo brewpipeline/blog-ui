@@ -7,7 +7,7 @@ use crate::components::warning::*;
 pub fn page_not_found() -> Html {
     html! {
         <>
-            <Meta title="Cтраница не найдена" />
+            <Meta title="Cтраница не найдена" noindex=true />
             <Warning text="Cтраница не найдена!" />
         </>
     }
