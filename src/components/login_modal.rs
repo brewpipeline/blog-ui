@@ -199,7 +199,7 @@ pub fn login_modal(props: &LoginModalProps) -> Html {
                                 script.set_attribute("type", "text/javascript").unwrap();
                                 script.set_inner_html("
                                     setTimeout(function() {
-                                        const imageUrl = \"https://api.dicebear.com/7.x/shapes/svg?seed=\" + Date.now();
+                                        const imageUrl = \"https://api.dicebear.com/7.x/shapes/svg?seed=\" + Date.now() + \"&backgroundColor[]&shape1Color=242424&shape2Color=0dcaf0\";
             
                                         let img = new Image();
                                         img.src = imageUrl;

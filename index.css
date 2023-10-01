@@ -6,6 +6,9 @@
     --bs-second-bg: #1c1b1b;
     --bs-light-color: #c6c7c8;
     --bs-light-shadow-color: rgba(172, 205, 255, 0.25);
+
+    --bs-body-font-family: 'Exo 2', var(--bs-font-sans-serif);
+    --bs-body-color: #f2f2f2;
 }
 
 .card {
@@ -177,7 +180,7 @@
 }
 
 .img-block {
-    background-color:#131313;
+    background-color:#1c1b1b;
     background-position: center;
     background-size: cover;
     background-image: var(--image-url);
@@ -189,4 +192,8 @@
 
 .page-item .page-link {
     margin: 0!important;
+}
+
+.modal-header {
+    --bs-modal-header-border-width: 0px;
 }
