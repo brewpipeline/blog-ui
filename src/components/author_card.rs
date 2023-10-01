@@ -97,7 +97,7 @@ pub fn author_card(props: &AuthorCardProps) -> Html {
                             "height:220px;width:100%;--image-url:url({});",
                             author
                                 .as_ref()
-                                .map(|a| a.image_url())
+                                .map(|a| author_image(a))
                                 .unwrap_or_default()
                         )
                     }

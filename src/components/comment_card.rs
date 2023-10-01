@@ -96,7 +96,7 @@ pub fn comment_card(props: &CommentCardProps) -> Html {
                             src={
                                 comment
                                     .as_ref()
-                                    .map(|c| c.author.image_url())
+                                    .map(|c| author_image(&c.author))
                                     .unwrap_or_default()
                             }
                             alt={
