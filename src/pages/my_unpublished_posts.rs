@@ -15,7 +15,7 @@ pub fn my_unpublished_posts() -> Html {
     let logged_user_context = use_context::<LoggedUserContext>().unwrap();
 
     let meta = html! {
-        <Meta title="Мое неопубликованное" />
+        <Meta title="Мое неопубликованное" noindex=true />
     };
 
     let not_auth_content = html! {

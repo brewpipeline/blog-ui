@@ -57,7 +57,7 @@ pub fn edit_post(props: &EditPostProps) -> Html {
             } else {
                 "Редактирование публикации"
             }
-        } />
+        } noindex=true />
     };
 
     let navigator = use_navigator().unwrap();

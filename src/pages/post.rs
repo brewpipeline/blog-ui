@@ -32,14 +32,12 @@ pub fn post(props: &PostProps) -> Html {
             }
             use_caches=true
             component={ move |post: Option<content::Post>| {
-                if let Some(post) = &post {
-                    if post.id != id || post.slug != slug {
-                        return html! {
-                            <>
-                                <Meta title="Ссылка на публикацию повреждена" />
-                                <Warning text="Ссылка на публикацию повреждена!" />
-                            </>
-                        }
+                if post.as_ref().map(|p| p.id != id || p.slug != slug).unwrap_or(false) {
+                    return html! {
+                        <>
+                            <Meta title="Ссылка на публикацию повреждена" noindex=true />
+                            <Warning text="Ссылка на публикацию повреждена!" />
+                        </>
                     }
                 }
                 html! {
@@ -51,7 +49,7 @@ pub fn post(props: &PostProps) -> Html {
                                 keywords={ post.joined_tags_string(", ") }
                             />
                         } else {
-                            <Meta title="Публикация" />
+                            <Meta title="Публикация" noindex=true />
                         }
                         <PostCard post={ post.clone() } is_full=true />
                         if let Some(post) = post {
@@ -62,7 +60,7 @@ pub fn post(props: &PostProps) -> Html {
             } }
             error_component={ |_| html! {
                 <>
-                    <Meta title="Ошибка загрузки публикации" />
+                    <Meta title="Ошибка загрузки публикации" noindex=true />
                     <Warning text="Ошибка загрузки публикации!" />
                 </>
             } }

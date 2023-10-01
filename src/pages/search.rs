@@ -21,7 +21,7 @@ pub fn search(props: &SearchProps) -> Html {
     let SearchProps { mode } = props.clone();
     html! {
         <>
-            <Meta title={ mode.title() } />
+            <Meta title={ mode.title() } noindex=true />
             <div class="mb-3 d-block d-lg-none">
                 <SearchField />
             </div>

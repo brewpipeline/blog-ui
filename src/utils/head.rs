@@ -14,6 +14,7 @@ pub fn html_document() -> HtmlDocument {
 pub enum MetaTag {
     Description,
     Keywords,
+    Robots,
 }
 
 impl std::fmt::Display for MetaTag {
@@ -21,6 +22,7 @@ impl std::fmt::Display for MetaTag {
         match self {
             MetaTag::Description => write!(f, "description"),
             MetaTag::Keywords => write!(f, "keywords"),
+            MetaTag::Robots => write!(f, "robots"),
         }
     }
 }
