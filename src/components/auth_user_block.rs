@@ -55,7 +55,7 @@ pub fn auth_user_block() -> Html {
                         src={
                             author
                                 .as_ref()
-                                .map(|a| a.image_url())
+                                .map(|a| author_image(a))
                                 .unwrap_or_default()
                         }
                         type="button"

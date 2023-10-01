@@ -115,13 +115,13 @@ pub fn post_card(props: &PostCardProps) -> Html {
                             src={
                                 post
                                     .as_ref()
-                                    .map(|c| c.author.image_url())
+                                    .map(|p| author_image(&p.author))
                                     .unwrap_or_default()
                             }
                             alt={
                                 post
                                     .as_ref()
-                                    .map(|c| c.author.slug.clone())
+                                    .map(|p| p.author.slug.clone())
                             }
                             class="img-block rounded me-1"
                         />

@@ -1,4 +1,5 @@
 pub mod app_content_context;
+pub mod author_image;
 pub mod date;
 pub mod external;
 #[cfg(feature = "client")]
@@ -9,6 +10,7 @@ pub mod not_empty;
 pub mod use_load;
 
 pub use app_content_context::*;
+pub use author_image::*;
 pub use external::*;
 #[cfg(feature = "client")]
 pub use get::*;
