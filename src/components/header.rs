@@ -18,7 +18,7 @@ pub fn header() -> Html {
 
                         <div class="col col-lg-2 d-flex justify-content-start justify-content-lg-center align-items-center">
                             <Link<Route> classes="d-flex link-body-emphasis text-decoration-none" to={ Route::Posts }>
-                                <object style="pointer-events:none;" class="item mb-0" id="logo-image" type="image/svg+xml" data="tikitko-light.svg" aria-label={ crate::TITLE }> { crate::TITLE } </object>
+                                <img id="logo-image" style="pointer-events:none;" class="item mb-0" alt={ crate::TITLE } src="tikitko-light.svg"/>
                             </Link<Route>>
                         </div>
 
