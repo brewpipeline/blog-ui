@@ -90,19 +90,15 @@ pub fn comment_card(props: &CommentCardProps) -> Html {
             <div class="card-header placeholder-glow">
                 <div class="row align-items-center">
                     <div class="d-flex col-4 align-items-center justify-content-start" style="height: 24px;">
-                        <img
-                            width="24"
-                            height="24"
-                            src={
-                                comment
-                                    .as_ref()
-                                    .map(|c| author_image(&c.author))
-                                    .unwrap_or_default()
-                            }
-                            alt={
-                                comment
-                                    .as_ref()
-                                    .map(|c| c.author.slug.clone())
+                        <div
+                            style={
+                                format!(
+                                    "height:24px;width:24px;--image-url:url({});",
+                                    comment
+                                        .as_ref()
+                                        .map(|c| author_image(&c.author))
+                                        .unwrap_or_default()
+                                )
                             }
                             class="img-block rounded me-1"
                         />
