@@ -197,3 +197,7 @@
 .modal-header {
     --bs-modal-header-border-width: 0px;
 }
+
+object, iframe {
+    color-scheme: light;
+}
