@@ -109,19 +109,15 @@ pub fn post_card(props: &PostCardProps) -> Html {
             <div class="card-header placeholder-glow border-0">
                 <div class="row align-items-center">
                     <div class="d-flex col-4 align-items-center justify-content-start" style="height: 24px;">
-                        <img
-                            width="24"
-                            height="24"
-                            src={
-                                post
-                                    .as_ref()
-                                    .map(|p| author_image(&p.author))
-                                    .unwrap_or_default()
-                            }
-                            alt={
-                                post
-                                    .as_ref()
-                                    .map(|p| p.author.slug.clone())
+                        <div
+                            style={
+                                format!(
+                                    "height:24px;width:24px;--image-url:url({});",
+                                    post
+                                        .as_ref()
+                                        .map(|p| author_image(&p.author))
+                                        .unwrap_or_default()
+                                )
                             }
                             class="img-block rounded me-1"
                         />
