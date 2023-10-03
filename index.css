@@ -157,3 +157,7 @@
 .btn svg {
     margin-bottom: 2.5px;
 }
+
+#yandexAuth iframe {
+    height: 56px;
+}
