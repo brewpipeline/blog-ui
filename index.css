@@ -212,3 +212,7 @@
 object, iframe {
     color-scheme: light;
 }
+
+#yandexAuth iframe {
+    height: 56px;
+}
