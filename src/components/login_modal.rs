@@ -276,7 +276,7 @@ pub fn login_modal(props: &LoginModalProps) -> Html {
                                     #[cfg(not(feature = "client"))]
                                     unreachable!()
                                 }} deps={ () } />
-                                <div id="yandexAuth" class="mb-4"></div>
+                                <div id="yandexAuth" class="mb-4" style="height:56px;"></div>
                                 <div style="text-align: center; border-top: var(--bs-border-width) solid var(--bs-border-color);">
                                     <div style="display: inline-block; position: relative; top: -12px; background-color: white; padding: 0px 10px; color: var(--bs-body-color);"> { "ИЛИ" } </div>
                                 </div>
