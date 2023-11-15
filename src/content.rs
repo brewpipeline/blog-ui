@@ -695,7 +695,7 @@ impl RequestableItem<LoginQuestion> for API<LoginAnswer> {
     }
 }
 
-#[cfg(feature = "client")]
+#[cfg(all(feature = "client", feature = "yandex"))]
 #[async_trait(?Send)]
 impl RequestableItem<LoginYandexQuestion> for API<LoginAnswer> {
     async fn request(params: LoginYandexQuestion) -> Result<Request, Error> {
@@ -709,7 +709,7 @@ impl RequestableItem<LoginYandexQuestion> for API<LoginAnswer> {
     }
 }
 
-#[cfg(feature = "client")]
+#[cfg(all(feature = "client", feature = "telegram"))]
 #[async_trait(?Send)]
 impl RequestableItem<LoginTelegramQuestion> for API<LoginAnswer> {
     async fn request(params: LoginTelegramQuestion) -> Result<Request, Error> {

@@ -32,7 +32,9 @@ enum LoggedUserInnerState {
 #[derive(Debug, PartialEq, Eq, Clone)]
 pub enum InProgressStateType {
     Default(LoginQuestion),
+    #[cfg(feature = "yandex")]
     Yandex(LoginYandexQuestion),
+    #[cfg(feature = "telegram")]
     Telegram(LoginTelegramQuestion),
 }
 
