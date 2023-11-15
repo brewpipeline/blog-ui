@@ -41,6 +41,8 @@ default = ["client"]
 server = ["yew/ssr"]
 client = ["yew/csr", "yew-hooks", "wasm-bindgen-futures", "wasm-bindgen", "wasm-cookies", "wasm-logger", "web-sys", "gloo", "gloo-net"]
 hydration = ["client", "yew/hydration"]
+yandex = []
+telegram = []
 
 
 [[bin]]

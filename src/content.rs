@@ -695,11 +695,25 @@ impl RequestableItem<LoginQuestion> for API<LoginAnswer> {
     }
 }
 
-#[cfg(feature = "client")]
+#[cfg(all(feature = "client", feature = "yandex"))]
 #[async_trait(?Send)]
 impl RequestableItem<LoginYandexQuestion> for API<LoginAnswer> {
     async fn request(params: LoginYandexQuestion) -> Result<Request, Error> {
         let url = format!("{url}/api/ylogin", url = crate::API_URL);
+        Ok(Request::post(url.as_str())
+            .header("Content-Type", "application/json")
+            .body(serde_json::to_string(&params).map_err(|e| Error::SerdeError(e))?)?)
+    }
+    async fn response(response: Response) -> Result<Self, Error> {
+        response.json().await
+    }
+}
+
+#[cfg(all(feature = "client", feature = "telegram"))]
+#[async_trait(?Send)]
+impl RequestableItem<LoginTelegramQuestion> for API<LoginAnswer> {
+    async fn request(params: LoginTelegramQuestion) -> Result<Request, Error> {
+        let url = format!("{url}/api/tlogin", url = crate::API_URL);
         Ok(Request::post(url.as_str())
             .header("Content-Type", "application/json")
             .body(serde_json::to_string(&params).map_err(|e| Error::SerdeError(e))?)?)

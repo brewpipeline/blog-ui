@@ -2,12 +2,14 @@
 use gloo::events::EventListener;
 #[cfg(feature = "client")]
 use gloo::utils::document;
-#[cfg(feature = "client")]
+#[cfg(all(feature = "client", feature = "yandex"))]
 use gloo::utils::window;
-#[cfg(feature = "client")]
+#[cfg(all(feature = "client", any(feature = "yandex", feature = "telegram")))]
 use wasm_bindgen::JsCast;
+#[cfg(all(feature = "client", any(feature = "yandex", feature = "telegram")))]
+use web_sys::CustomEvent;
 #[cfg(feature = "client")]
-use web_sys::{CustomEvent, Element, HtmlElement, HtmlInputElement};
+use web_sys::{Element, HtmlElement, HtmlInputElement};
 use yew::prelude::*;
 
 use crate::components::delayed_component::*;
@@ -48,8 +50,13 @@ pub fn login_modal(props: &LoginModalProps) -> Html {
                     InProgressStateType::Default(login_question) => {
                         API::<LoginAnswer>::get(login_question)
                     }
+                    #[cfg(feature = "yandex")]
                     InProgressStateType::Yandex(login_yandex_question) => {
                         API::<LoginAnswer>::get(login_yandex_question)
+                    }
+                    #[cfg(feature = "telegram")]
+                    InProgressStateType::Telegram(login_telegram_question) => {
+                        API::<LoginAnswer>::get(login_telegram_question)
                     }
                 }
                 .await;
@@ -133,7 +140,7 @@ pub fn login_modal(props: &LoginModalProps) -> Html {
         });
     }
 
-    #[cfg(feature = "client")]
+    #[cfg(all(feature = "client", feature = "yandex"))]
     {
         let logged_user_context = logged_user_context.clone();
         let modal_node_ref = modal_node_ref.clone();
@@ -175,6 +182,124 @@ pub fn login_modal(props: &LoginModalProps) -> Html {
             }
         });
     }
+
+    #[cfg(all(feature = "client", feature = "telegram"))]
+    {
+        let logged_user_context = logged_user_context.clone();
+        let modal_node_ref = modal_node_ref.clone();
+        use_effect_with((), move |_| {
+            let modal_element = modal_node_ref.cast::<HtmlElement>().unwrap();
+
+            let data_listener = {
+                let logged_user_context = logged_user_context.clone();
+                EventListener::new(&modal_element, "telegram.auth.data", move |e| {
+                    let e = e.dyn_ref::<CustomEvent>().unwrap();
+                    e.prevent_default();
+                    if let Some(login_telegram_question) = e
+                        .detail()
+                        .as_string()
+                        .map(|j| serde_json::from_str::<LoginTelegramQuestion>(j.as_str()).ok())
+                        .flatten()
+                    {
+                        logged_user_context.dispatch(LoggedUserState::InProgress(
+                            InProgressStateType::Telegram(login_telegram_question),
+                        ));
+                    } else {
+                        logged_user_context.dispatch(LoggedUserState::Error(
+                            "incorrect data from telegram".to_string(),
+                        ));
+                    }
+                })
+            };
+            move || drop(data_listener)
+        });
+    }
+
+    #[cfg(feature = "yandex")]
+    let yandex_html = html! {
+        <>
+            <script id="yandexAuthScript" src="https://yastatic.net/s3/passport-sdk/autofill/v1/sdk-suggest-with-polyfills-latest.js"></script>
+            <DelayedComponent<()> component={ move |_| {
+                #[cfg(feature = "client")]
+                {
+                    let script: Element = document().create_element("script").unwrap();
+                    script.set_attribute("type", "text/javascript").unwrap();
+                    script.set_inner_html(format!("
+                        function yaAuthSuggestAction() {{
+                            var modalElement = document.getElementById('{modal_id}')
+                            YaAuthSuggest.init(
+                                {{
+                                client_id: '{client_id}',
+                                response_type: 'token',
+                                redirect_uri: '{origin}/yandexToken'
+                                }},
+                                '{origin}', {{
+                                    parentId: 'yandexAuth',
+                                    view: 'button',
+                                    buttonSize: 'xxl',
+                                    buttonView: 'main',
+                                    buttonTheme: 'light',
+                                    buttonBorderRadius: '28',
+                                    buttonIcon: 'ya',
+                                }}
+                            )
+                            .then(({{
+                                handler
+                            }}) => handler())
+                            .then(data => modalElement.dispatchEvent(
+                                new CustomEvent('yandex.auth.data', {{detail: JSON.stringify(data)}})
+                            ))
+                            .catch(error => modalElement.dispatchEvent(
+                                new CustomEvent('yandex.auth.error', {{detail: JSON.stringify(error)}})
+                            ))
+                        }}
+                        if (typeof YaAuthSuggest === 'undefined') {{
+                            document.getElementById('yandexAuthScript').onload = yaAuthSuggestAction
+                        }} else {{
+                            yaAuthSuggestAction()
+                        }}
+                    ", modal_id = id, origin = window().origin(), client_id = crate::YANDEX_CLIENT_ID).as_str());
+                    Html::VRef(script.into())
+                }
+                #[cfg(not(feature = "client"))]
+                unreachable!()
+            }} deps={ () } />
+            <div id="yandexAuth" class="mb-4"></div>
+        </>
+    };
+    #[cfg(not(feature = "yandex"))]
+    let yandex_html = html! {};
+
+    #[cfg(feature = "telegram")]
+    let telegram_html = html! {
+        <div class="telegramAuth mb-4">
+            <div class="telegramAuthContainer">
+                <script
+                    async=true
+                    src="https://telegram.org/js/telegram-widget.js?22"
+                    data-telegram-login={ crate::TELEGRAM_BOT_LOGIN }
+                    data-size="large"
+                    data-radius="5"
+                    data-onauth={ format!(
+                        "document.getElementById('{modal_id}').dispatchEvent(new CustomEvent('telegram.auth.data', {{detail: JSON.stringify(user)}}))",
+                        modal_id = id
+                    ) }
+                    data-request-access="write"
+                ></script>
+            </div>
+        </div>
+    };
+    #[cfg(not(feature = "telegram"))]
+    let telegram_html = html! {};
+
+    #[cfg(any(feature = "yandex", feature = "telegram"))]
+    let split_html = html! {
+        <div style="text-align: center; border-top: var(--bs-border-width) solid var(--bs-border-color);">
+            <div style="display: inline-block; position: relative; top: -12px; background-color: var(--bs-body-bg); padding: 0px 10px; color: var(--bs-body-color);"> { "ИЛИ" } </div>
+        </div>
+    };
+    #[cfg(not(any(feature = "yandex", feature = "telegram")))]
+    let split_html = html! {};
 
     html! {
         <div
@@ -230,56 +355,9 @@ pub fn login_modal(props: &LoginModalProps) -> Html {
                                         { message }
                                     </div>
                                 }
-                                <script id="yandexAuthScript" src="https://yastatic.net/s3/passport-sdk/autofill/v1/sdk-suggest-with-polyfills-latest.js"></script>
-                                <DelayedComponent<()> component={ move |_| {
-                                    #[cfg(feature = "client")]
-                                    {
-                                        let script: Element = document().create_element("script").unwrap();
-                                        script.set_attribute("type", "text/javascript").unwrap();
-                                        script.set_inner_html(format!("
-                                            function yaAuthSuggestAction() {{
-                                                var modalElement = document.getElementById('{modal_id}')
-                                                YaAuthSuggest.init(
-                                                    {{
-                                                    client_id: '{client_id}',
-                                                    response_type: 'token',
-                                                    redirect_uri: '{origin}/yandexToken'
-                                                    }},
-                                                    '{origin}', {{
-                                                        parentId: 'yandexAuth',
-                                                        view: 'button',
-                                                        buttonSize: 'xxl',
-                                                        buttonView: 'main',
-                                                        buttonTheme: 'light',
-                                                        buttonBorderRadius: '28',
-                                                        buttonIcon: 'ya',
-                                                    }}
-                                                )
-                                                .then(({{
-                                                    handler
-                                                }}) => handler())
-                                                .then(data => modalElement.dispatchEvent(
-                                                    new CustomEvent('yandex.auth.data', {{detail: JSON.stringify(data)}})
-                                                ))
-                                                .catch(error => modalElement.dispatchEvent(
-                                                    new CustomEvent('yandex.auth.error', {{detail: JSON.stringify(error)}})
-                                                ))
-                                            }}
-                                            if (typeof YaAuthSuggest === 'undefined') {{
-                                                document.getElementById('yandexAuthScript').onload = yaAuthSuggestAction
-                                            }} else {{
-                                                yaAuthSuggestAction()
-                                            }}
-                                        ", modal_id = id, origin = window().origin(), client_id = crate::YANDEX_CLIENT_ID).as_str());
-                                        Html::VRef(script.into())
-                                    }
-                                    #[cfg(not(feature = "client"))]
-                                    unreachable!()
-                                }} deps={ () } />
-                                <div id="yandexAuth" class="mb-4"></div>
-                                <div style="text-align: center; border-top: var(--bs-border-width) solid var(--bs-border-color);">
-                                    <div style="display: inline-block; position: relative; top: -12px; background-color: var(--bs-body-bg); padding: 0px 10px; color: var(--bs-body-color);"> { "ИЛИ" } </div>
-                                </div>
+                                { yandex_html }
+                                { telegram_html }
+                                { split_html }
                                 <div class="form-floating mb-3">
                                     <input
                                         type="email"
