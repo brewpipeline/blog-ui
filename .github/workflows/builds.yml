@@ -17,6 +17,7 @@ jobs:
     env:
       YANDEX_CLIENT_ID: ""
       API_URL: ""
+      TELEGRAM_BOT_LOGIN: ""
       TITLE: ""
       DESCRIPTION: ""
       KEYWORDS: ""

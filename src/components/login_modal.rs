@@ -51,6 +51,9 @@ pub fn login_modal(props: &LoginModalProps) -> Html {
                     InProgressStateType::Yandex(login_yandex_question) => {
                         API::<LoginAnswer>::get(login_yandex_question)
                     }
+                    InProgressStateType::Telegram(login_telegram_question) => {
+                        API::<LoginAnswer>::get(login_telegram_question)
+                    }
                 }
                 .await;
                 match login_response {
@@ -176,6 +179,40 @@ pub fn login_modal(props: &LoginModalProps) -> Html {
         });
     }
 
+    #[cfg(feature = "client")]
+    {
+        let logged_user_context = logged_user_context.clone();
+        let modal_node_ref = modal_node_ref.clone();
+        use_effect_with((), move |_| {
+            let modal_element = modal_node_ref.cast::<HtmlElement>().unwrap();
+
+            let data_listener = {
+                let logged_user_context = logged_user_context.clone();
+                EventListener::new(&modal_element, "telegram.auth.data", move |e| {
+                    let e = e.dyn_ref::<CustomEvent>().unwrap();
+                    e.prevent_default();
+                    if let Some(login_telegram_question) = e
+                        .detail()
+                        .as_string()
+                        .map(|j| serde_json::from_str::<LoginTelegramQuestion>(j.as_str()).ok())
+                        .flatten()
+                    {
+                        logged_user_context.dispatch(LoggedUserState::InProgress(
+                            InProgressStateType::Telegram(login_telegram_question),
+                        ));
+                    } else {
+                        logged_user_context.dispatch(LoggedUserState::Error(
+                            "incorrect data from telegram".to_string(),
+                        ));
+                    }
+                })
+            };
+            move || {
+                drop(data_listener);
+            }
+        });
+    }
+
     html! {
         <div
             class="modal fade"
@@ -230,6 +267,22 @@ pub fn login_modal(props: &LoginModalProps) -> Html {
                                         { message }
                                     </div>
                                 }
+                                <div class="telegramAuth mb-4">
+                                    <div class="telegramAuthContainer">
+                                        <script 
+                                            async=true 
+                                            src="https://telegram.org/js/telegram-widget.js?22" 
+                                            data-telegram-login={ crate::TELEGRAM_BOT_LOGIN }
+                                            data-size="large" 
+                                            data-radius="5" 
+                                            data-onauth={ format!(
+                                                "document.getElementById('{modal_id}').dispatchEvent(new CustomEvent('telegram.auth.data', {{detail: JSON.stringify(user)}}))",
+                                                modal_id = id
+                                            ) }
+                                            data-request-access="write"
+                                        ></script>
+                                    </div>
+                                </div>
                                 <script id="yandexAuthScript" src="https://yastatic.net/s3/passport-sdk/autofill/v1/sdk-suggest-with-polyfills-latest.js"></script>
                                 <DelayedComponent<()> component={ move |_| {
                                     #[cfg(feature = "client")]
