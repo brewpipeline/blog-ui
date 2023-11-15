@@ -201,6 +201,10 @@
     background-image: var(--image-url);
 }
 
+.bd-placeholder-img {
+    background-color:#191919
+}
+
 .btn svg {
     margin-bottom: 2.5px;
 }
