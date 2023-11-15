@@ -1,6 +1,7 @@
+use noneifempty::*;
 use yew::prelude::*;
 
-use crate::utils::{head::*, not_empty};
+use crate::utils::head::*;
 
 #[derive(PartialEq, Properties, Clone)]
 pub struct MetaProps {
@@ -22,11 +23,16 @@ pub fn meta(props: &MetaProps) -> Html {
         keywords,
         noindex,
     } = props.clone();
-    let title = not_empty(Some(title))
+    let title = title
+        .none_if_empty()
         .map(|t| format!("{} - {}", t, crate::TITLE))
         .unwrap_or(crate::TITLE.to_owned());
-    let description = not_empty(Some(description)).unwrap_or(crate::DESCRIPTION.to_owned());
-    let keywords = not_empty(Some(keywords)).unwrap_or(crate::KEYWORDS.to_owned());
+    let description = description
+        .none_if_empty()
+        .unwrap_or(crate::DESCRIPTION.to_owned());
+    let keywords = keywords
+        .none_if_empty()
+        .unwrap_or(crate::KEYWORDS.to_owned());
     let robots = if noindex { "noindex" } else { "all" }.to_string();
     set_title(&title);
     set_meta(MetaTag::Description, &description);

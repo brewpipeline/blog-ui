@@ -50,9 +50,7 @@ pub fn navigation_menu() -> Html {
                 }
                 to={ Route::NewPost }
             >
-                { "Новая" }
-                <br />
-                { "публикация" }
+                { "Новая публикация" }
             </Link<Route>>
             if is_editor {
                 <Link<Route>

@@ -1,3 +1,4 @@
+use noneifempty::*;
 use yew::prelude::*;
 use yew_router::prelude::*;
 
@@ -111,9 +112,13 @@ pub fn author_card(props: &AuthorCardProps) -> Html {
                             {
                                 format!(
                                     "{} {}",
-                                    not_empty(author.first_name.clone())
+                                    author.first_name
+                                        .clone()
+                                        .none_if_empty()
                                         .unwrap_or("(Имя не указано)".to_owned()),
-                                    not_empty(author.last_name.clone())
+                                    author.last_name
+                                        .clone()
+                                        .none_if_empty()
                                         .unwrap_or("(Фамилия не указанa)".to_owned())
                                 )
                             }
@@ -142,7 +147,9 @@ pub fn author_card(props: &AuthorCardProps) -> Html {
                     <p class="card-text placeholder-glow">
                         if let Some(author) = author.as_ref() {
                             {
-                                not_empty(author.email.clone())
+                                author.email
+                                    .clone()
+                                    .none_if_empty()
                                     .unwrap_or("(e-mail не указан)".to_owned())
                             }
                         } else {

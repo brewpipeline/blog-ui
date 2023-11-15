@@ -136,6 +136,10 @@
     grid-template-rows: auto 1fr;
 }
 
+.menu .btn {
+    word-break: break-word;
+}
+
 .menu-nav {
     padding-top: 16px !important;
 }
@@ -160,4 +164,17 @@
 
 #yandexAuth iframe {
     height: 56px;
+}
+
+article .article-img {
+    position: relative!important;
+    left: -12px!important;
+    width: calc(100% + 24px)!important;
+}
+
+article .article-iframe {
+    position: relative!important;
+    left: -12px!important;
+    width: calc(100% + 24px)!important;
+    height: 450px!important;
 }

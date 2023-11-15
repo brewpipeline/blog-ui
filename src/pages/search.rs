@@ -1,3 +1,4 @@
+use noneifempty::*;
 use yew::prelude::*;
 
 use crate::components::author_card::*;
@@ -28,7 +29,7 @@ pub fn search(props: &SearchProps) -> Html {
             {
                 match mode {
                     SearchMode::Posts { query } => html! {
-                        if let Some(query) = not_empty(query) {
+                        if let Some(query) = query.none_if_empty() {
                             <List<API<PostsContainer>, PostsContainerSearchParams>
                                 r#type={ LoadType::Params(PostsContainerSearchParams { query: query.clone() }) }
                                 route_to_page={ Route::PostsSearch { query: query.clone() } }
@@ -42,7 +43,7 @@ pub fn search(props: &SearchProps) -> Html {
                         }
                     },
                     SearchMode::Authors { query } => html! {
-                        if let Some(query) = not_empty(query) {
+                        if let Some(query) = query.none_if_empty() {
                             <List<API<AuthorsContainer>, AuthorsContainerSearchParams>
                                 r#type={ LoadType::Params(AuthorsContainerSearchParams { query: query.clone() }) }
                                 route_to_page={ Route::AuthorsSearch { query: query.clone() } }
