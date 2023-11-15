@@ -269,12 +269,12 @@ pub fn login_modal(props: &LoginModalProps) -> Html {
                                 }
                                 <div class="telegramAuth mb-4">
                                     <div class="telegramAuthContainer">
-                                        <script 
-                                            async=true 
-                                            src="https://telegram.org/js/telegram-widget.js?22" 
+                                        <script
+                                            async=true
+                                            src="https://telegram.org/js/telegram-widget.js?22"
                                             data-telegram-login={ crate::TELEGRAM_BOT_LOGIN }
-                                            data-size="large" 
-                                            data-radius="5" 
+                                            data-size="large"
+                                            data-radius="5"
                                             data-onauth={ format!(
                                                 "document.getElementById('{modal_id}').dispatchEvent(new CustomEvent('telegram.auth.data', {{detail: JSON.stringify(user)}}))",
                                                 modal_id = id
