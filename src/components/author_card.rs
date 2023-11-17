@@ -118,8 +118,7 @@ pub fn author_card(props: &AuthorCardProps) -> Html {
                                         .unwrap_or("(Имя не указано)".to_owned()),
                                     author.last_name
                                         .clone()
-                                        .none_if_empty()
-                                        .unwrap_or("(Фамилия не указанa)".to_owned())
+                                        .unwrap_or_default()
                                 )
                             }
                             if author.editor == 1 {
