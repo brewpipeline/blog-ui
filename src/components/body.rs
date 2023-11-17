@@ -107,9 +107,15 @@ pub fn body() -> Html {
                         <>
                             <NavigationMenu />
                             <div class="d-flex flex-wrap align-items-end justify-content-center">
-                                <a href="https://about.tikitko.su/" class="text-decoration-none text-center">
-                                    { "О Tikitko" }
-                                </a>
+                                <p style="margin-bottom: 0;">
+                                    <a href="https://www.youtube.com/watch?v=dQw4w9WgXcQ" class="text-decoration-none text-center">
+                                        { "Правила" }
+                                    </a>
+                                    <br/>
+                                    <a href="https://about.tikitko.su/" class="text-decoration-none text-center">
+                                        { "О Tikitko" }
+                                    </a>
+                                </p>
                             </div>
                         </>
                     } } deps={ () } />
