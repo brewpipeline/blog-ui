@@ -108,7 +108,7 @@ pub fn body() -> Html {
                             <NavigationMenu />
                             <div class="d-flex flex-wrap align-items-end justify-content-center">
                                 <a href="https://about.tikitko.su/" class="text-decoration-none text-center">
-                                    { "About Tikitko" }
+                                    { "О Tikitko" }
                                 </a>
                             </div>
                         </>
