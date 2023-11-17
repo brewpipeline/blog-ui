@@ -114,6 +114,14 @@
     cursor: auto;
 }
 
+.modal-open #app header {
+    filter: blur(9px);
+}
+
+.modal-open #app main {
+    filter: blur(9px);
+}
+
 .header {
     height: var(--header-height);
 }
@@ -142,6 +150,34 @@
 
 .menu-nav {
     padding-top: 16px !important;
+}
+
+.modal {
+    --bs-modal-width: 500px;
+}
+
+@media (min-width:992px) {
+    .modal {
+        --bs-modal-width: 700px;
+    }
+}
+
+.modal-content {
+    overflow: hidden;
+}
+
+.modal-header {
+    --bs-modal-header-border-width: 0px;
+}
+
+.modal-body {
+    --bs-modal-padding: 0 1rem 1rem 1rem;
+}
+
+#login-modal-image h1 {
+    padding: 20px;
+    text-align: center;
+    color: var(--bs-body-bg);
 }
 
 @media (min-width:992px) {
