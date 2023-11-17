@@ -196,7 +196,7 @@
 }
 
 .modal {
-    --bs-modal-width: 400px;
+    --bs-modal-width: 450px;
 }
 
 @media (min-width:992px) {

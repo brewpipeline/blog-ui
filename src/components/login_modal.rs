@@ -334,7 +334,7 @@ pub fn login_modal(props: &LoginModalProps) -> Html {
                                             <div
                                                 id="login-modal-image"
                                                 style="--image-url:url('');"
-                                                class="img-block bd-placeholder-img d-none d-lg-block col-lg-5"
+                                                class="img-block bd-placeholder-img d-none d-lg-block col-lg-4"
                                                 role="img"
                                             >
                                                 <div class="logo-image-container">
@@ -348,7 +348,7 @@ pub fn login_modal(props: &LoginModalProps) -> Html {
                                 #[cfg(not(feature = "client"))]
                                 unreachable!()
                             }} deps={ () } />
-                            <div class="col-12 col-lg-7">
+                            <div class="col-12 col-lg-8">
                                 <div class="modal-header">
                                     <h1 class="modal-title fs-5" id="loginModalLabel"> { "Войти" } </h1>
                                     <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close" ref={ close_node_ref }></button>
