@@ -16,6 +16,8 @@ pub enum OpenGraph {
     Description,
     Type,
     Image,
+    ImageWidth,
+    ImageHeight,
     SiteName,
 }
 
@@ -26,6 +28,8 @@ impl std::fmt::Display for OpenGraph {
             OpenGraph::Description => write!(f, "og:description"),
             OpenGraph::Type => write!(f, "og:type"),
             OpenGraph::Image => write!(f, "og:image"),
+            OpenGraph::ImageWidth => write!(f, "og:image:width"),
+            OpenGraph::ImageHeight => write!(f, "og:image:height"),
             OpenGraph::SiteName => write!(f, "og:site_name"),
         }
     }
