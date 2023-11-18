@@ -3,6 +3,7 @@ use yew_router::prelude::*;
 
 use crate::components::author_image::*;
 use crate::components::delayed_component::*;
+use crate::components::optional_image::*;
 use crate::components::svg_image::*;
 use crate::content::*;
 use crate::utils::*;

@@ -5,7 +5,6 @@ pub mod external;
 pub mod get;
 pub mod head;
 pub mod logged_user_context;
-pub mod profile_image;
 pub mod use_load;
 
 pub use app_content_context::*;
@@ -13,7 +12,6 @@ pub use external::*;
 #[cfg(feature = "client")]
 pub use get::*;
 pub use logged_user_context::*;
-pub use profile_image::*;
 pub use use_load::*;
 
 #[cfg(not(feature = "client"))]
