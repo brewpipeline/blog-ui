@@ -31,6 +31,8 @@ pub fn author(props: &AuthorProps) -> Html {
                             r#type="profile"
                             title={ format!("{} - Автор", author.slug.clone()) }
                             image={ author.image_url.clone().unwrap_or_default() }
+                            image_width="200"
+                            image_height="200"
                         />
                     } else {
                         <Meta title="Автор" noindex=true />

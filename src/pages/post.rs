@@ -49,6 +49,8 @@ pub fn post(props: &PostProps) -> Html {
                                 description={ post.summary.clone() }
                                 keywords={ post.joined_tags_string(", ") }
                                 image={ post.image_url.clone().unwrap_or_default() }
+                                image_width="600"
+                                image_height="300"
                             />
                         } else {
                             <Meta title="Публикация" noindex=true />
