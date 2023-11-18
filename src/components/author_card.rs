@@ -93,7 +93,7 @@ pub fn author_card(props: &AuthorCardProps) -> Html {
     let main_content = html! {
         <div class="row g-0">
             <div class="col-4">
-                <div class="img-block rounded-start" style="height:220px;width:100%;">
+                <div class="img-block rounded-start" style="height:220px;width:100%;overflow:hidden;">
                     <OptionalImage
                         alt={ author.as_ref().map(|a| a.slug.clone()) }
                         image={ author.as_ref().map(|a| a.image_url.clone()).flatten() }

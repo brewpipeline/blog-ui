@@ -91,7 +91,7 @@ pub fn comment_card(props: &CommentCardProps) -> Html {
             <div class="card-header placeholder-glow">
                 <div class="row align-items-center">
                     <div class="d-flex col-4 align-items-center justify-content-start" style="height: 24px;">
-                        <div class="img-block rounded me-1" style="height:24px;width:24px;">
+                        <div class="img-block rounded me-1" style="height:24px;width:24px;overflow:hidden;">
                             <OptionalImage
                                 alt={ comment.as_ref().map(|c| c.author.slug.clone()) }
                                 image={ comment.as_ref().map(|c| c.author.image_url.clone()).flatten() }

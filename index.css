@@ -235,3 +235,18 @@ article .article-iframe {
     width: calc(100% + 24px)!important;
     height: 450px!important;
 }
+
+.optional-image-container {
+    height: 100%;
+    width: 100%;
+    overflow: hidden;
+    position: relative;
+}
+
+.optional-image-container img {
+    object-fit: cover;
+    object-position: center;
+    vertical-align: baseline;
+    height: 100%;
+    width: 100%;
+}

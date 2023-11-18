@@ -46,10 +46,9 @@ pub fn optional_image(props: &OptionalImageProps) -> Html {
     let error_handler = Callback::from(|_| {});
 
     html! {
-        <div style="height:100%;width:100%;overflow:hidden;position:relative;">
+        <div class="optional-image-container">
             <img
                 { alt }
-                style="object-fit:cover;object-position:center;vertical-align:baseline;height:100%;width:100%;"
                 ref={ image_ref }
                 src={
                     image

@@ -23,7 +23,7 @@ pub fn post_card(props: &PostCardProps) -> Html {
 
     let main_content = html! {
         <>
-            <div class="img-block bd-placeholder-img" style="height:194px;width:100%;">
+            <div class="img-block bd-placeholder-img" style="height:194px;width:100%;overflow:hidden;">
                 <OptionalImage
                     alt={ post.as_ref().map(|p| p.title.clone()) }
                     image={ post.as_ref().map(|p| p.image_url.clone()).flatten() }
@@ -101,8 +101,8 @@ pub fn post_card(props: &PostCardProps) -> Html {
         <div class="card mb-3">
             <div class="card-header placeholder-glow border-0">
                 <div class="row align-items-center">
-                    <div class="d-flex col-4 align-items-center justify-content-start" style="height: 24px;">
-                        <div class="img-block rounded me-1" style="height:24px;width:24px;">
+                    <div class="d-flex col-4 align-items-center justify-content-start" style="height:24px;">
+                        <div class="img-block rounded me-1" style="height:24px;width:24px;overflow:hidden;">
                             <OptionalImage
                                 alt={ post.as_ref().map(|p| p.author.slug.clone()) }
                                 image={ post.as_ref().map(|p| p.author.image_url.clone()).flatten() }
