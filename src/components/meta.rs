@@ -65,7 +65,8 @@ pub fn meta(props: &MetaProps) -> Html {
     html! {
         <>
             <script data-page-content="type" type="text/plain"> { r#type } </script>
-            <script data-page-content="title" type="text/plain"> { title.clone() } </script>
+            <script data-page-content="title" type="text/plain"> { title } </script>
+            <script data-page-content="short_title" type="text/plain"> { short_title } </script>
             <script data-page-content="description" type="text/plain"> { description } </script>
             <script data-page-content="keywords" type="text/plain"> { keywords } </script>
             <script data-page-content="image" type="text/plain"> { image } </script>
