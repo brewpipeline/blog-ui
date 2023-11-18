@@ -2,7 +2,7 @@ use yew::prelude::*;
 use yew_router::prelude::*;
 
 use crate::components::item::*;
-use crate::components::optional_image::*;
+use crate::components::author_image::*;
 use crate::components::svg_image::*;
 use crate::content::*;
 use crate::utils::*;
@@ -58,11 +58,7 @@ pub fn auth_user_block() -> Html {
                         aria-expanded="false"
                         type="button"
                     >
-                        <OptionalImage
-                            alt={ author.as_ref().map(|a| a.slug.clone()) }
-                            image={ author.as_ref().map(|a| a.image_url.clone()).flatten() }
-                            fallback_image={ author.as_ref().map(|a| profile_image(&a.slug)) }
-                        />
+                        <AuthorImage author={ author.clone() } />
                     </div>
                     if let Some(author) = author.as_ref() {
                         <ul class="dropdown-menu text-small" >

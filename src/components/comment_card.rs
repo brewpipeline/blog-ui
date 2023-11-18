@@ -1,7 +1,7 @@
 use yew::prelude::*;
 use yew_router::prelude::*;
 
-use crate::components::optional_image::*;
+use crate::components::author_image::*;
 use crate::components::svg_image::*;
 use crate::content;
 use crate::utils::*;
@@ -92,11 +92,7 @@ pub fn comment_card(props: &CommentCardProps) -> Html {
                 <div class="row align-items-center">
                     <div class="d-flex col-4 align-items-center justify-content-start" style="height: 24px;">
                         <div class="img-block rounded me-1" style="height:24px;width:24px;overflow:hidden;">
-                            <OptionalImage
-                                alt={ comment.as_ref().map(|c| c.author.slug.clone()) }
-                                image={ comment.as_ref().map(|c| c.author.image_url.clone()).flatten() }
-                                fallback_image={ comment.as_ref().map(|c| profile_image(&c.author.slug)) }
-                            />
+                            <AuthorImage author={ comment.as_ref().map(|c| c.author.clone()) } />
                         </div>
                         if let Some(comment) = &comment {
                             <Link<Route, (), content::Author>

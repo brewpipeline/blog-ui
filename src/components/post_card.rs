@@ -2,7 +2,7 @@ use yew::prelude::*;
 use yew_router::prelude::*;
 
 use crate::components::delayed_component::*;
-use crate::components::optional_image::*;
+use crate::components::author_image::*;
 use crate::components::svg_image::*;
 use crate::content::*;
 use crate::utils::*;
@@ -103,11 +103,7 @@ pub fn post_card(props: &PostCardProps) -> Html {
                 <div class="row align-items-center">
                     <div class="d-flex col-4 align-items-center justify-content-start" style="height:24px;">
                         <div class="img-block rounded me-1" style="height:24px;width:24px;overflow:hidden;">
-                            <OptionalImage
-                                alt={ post.as_ref().map(|p| p.author.slug.clone()) }
-                                image={ post.as_ref().map(|p| p.author.image_url.clone()).flatten() }
-                                fallback_image={ post.as_ref().map(|p| profile_image(&p.author.slug)) }
-                            />
+                            <AuthorImage author={ post.as_ref().map(|p| p.author.clone()) } />
                         </div>
                         if let Some(post) = &post {
                             <Link<Route, (), Author>
