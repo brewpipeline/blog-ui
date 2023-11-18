@@ -6,7 +6,7 @@ license = "MIT"
 
 
 [dependencies]
-blog-generic = { path = "../blog-server/blog-generic" }
+blog-generic = { git = "https://github.com/tikitko/blog-server.git", package = "blog-generic" }
 
 log = "0.4"
 async-trait = "0.1"
@@ -37,7 +37,7 @@ noneifempty = "0.1"
 
 
 [features]
-default = ["client", "telegram"]
+default = ["client"]
 server = ["yew/ssr"]
 client = ["yew/csr", "yew-hooks", "wasm-bindgen-futures", "wasm-bindgen", "wasm-cookies", "wasm-logger", "web-sys", "gloo", "gloo-net"]
 hydration = ["client", "yew/hydration"]
