@@ -1,6 +1,7 @@
 use yew::prelude::*;
 use yew_router::prelude::*;
 
+use crate::components::author_image::*;
 use crate::components::svg_image::*;
 use crate::content;
 use crate::utils::*;
@@ -90,18 +91,9 @@ pub fn comment_card(props: &CommentCardProps) -> Html {
             <div class="card-header placeholder-glow">
                 <div class="row align-items-center">
                     <div class="d-flex col-4 align-items-center justify-content-start" style="height: 24px;">
-                        <div
-                            style={
-                                format!(
-                                    "height:24px;width:24px;--image-url:url({});",
-                                    comment
-                                        .as_ref()
-                                        .map(|c| author_image(&c.author))
-                                        .unwrap_or_default()
-                                )
-                            }
-                            class="img-block rounded me-1"
-                        />
+                        <div class="img-block rounded me-1" style="height:24px;width:24px;overflow:hidden;">
+                            <AuthorImage author={ comment.as_ref().map(|c| c.author.clone()) } />
+                        </div>
                         if let Some(comment) = &comment {
                             <Link<Route, (), content::Author>
                                 classes={ classes!("text-decoration-none") }
