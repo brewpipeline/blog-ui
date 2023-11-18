@@ -2,6 +2,7 @@ use yew::prelude::*;
 use yew_router::prelude::*;
 
 use crate::components::delayed_component::*;
+use crate::components::optional_image::*;
 use crate::components::svg_image::*;
 use crate::content::*;
 use crate::utils::*;
@@ -22,20 +23,12 @@ pub fn post_card(props: &PostCardProps) -> Html {
 
     let main_content = html! {
         <>
-            <div
-                style={
-                    format!(
-                        "height:194px;width:100%;--image-url:url({});",
-                        post
-                            .as_ref()
-                            .map(|p| p.image_url.clone())
-                            .flatten()
-                            .unwrap_or_default()
-                    )
-                }
-                class="img-block bd-placeholder-img"
-                role="img"
-            />
+            <div class="img-block bd-placeholder-img" style="height:194px;width:100%;">
+                <OptionalImage
+                    alt={ post.as_ref().map(|p| p.title.clone()) }
+                    image={ post.as_ref().map(|p| p.image_url.clone()).flatten() }
+                />
+            </div>
             <div class="card-body">
                 <h5 class="card-title placeholder-glow">
                     if let Some(title) = post.as_ref().map(|p| p.title.clone()) {
@@ -109,18 +102,13 @@ pub fn post_card(props: &PostCardProps) -> Html {
             <div class="card-header placeholder-glow border-0">
                 <div class="row align-items-center">
                     <div class="d-flex col-4 align-items-center justify-content-start" style="height: 24px;">
-                        <div
-                            style={
-                                format!(
-                                    "height:24px;width:24px;--image-url:url({});",
-                                    post
-                                        .as_ref()
-                                        .map(|p| author_image(&p.author))
-                                        .unwrap_or_default()
-                                )
-                            }
-                            class="img-block rounded me-1"
-                        />
+                        <div class="img-block rounded me-1" style="height:24px;width:24px;">
+                            <OptionalImage
+                                alt={ post.as_ref().map(|p| p.author.slug.clone()) }
+                                image={ post.as_ref().map(|p| p.author.image_url.clone()).flatten() }
+                                fallback_image={ post.as_ref().map(|p| profile_image(&p.author.slug)) }
+                            />
+                        </div>
                         if let Some(post) = &post {
                             <Link<Route, (), Author>
                                 classes={ classes!("text-decoration-none") }

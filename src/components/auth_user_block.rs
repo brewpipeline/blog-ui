@@ -2,6 +2,7 @@ use yew::prelude::*;
 use yew_router::prelude::*;
 
 use crate::components::item::*;
+use crate::components::optional_image::*;
 use crate::components::svg_image::*;
 use crate::content::*;
 use crate::utils::*;
@@ -50,24 +51,19 @@ pub fn auth_user_block() -> Html {
             }
             html! {
                 <div class="d-flex dropdown dropdown-menu-end">
-                    <img
-                        height="38"
-                        src={
-                            author
-                                .as_ref()
-                                .map(|a| author_image(a))
-                                .unwrap_or_default()
-                        }
-                        type="button"
-                        alt={
-                            author
-                                .as_ref()
-                                .map(|a| a.slug.clone())
-                        }
+                    <div
                         class="img-block item d-flex rounded"
+                        style="height:38px;"
                         data-bs-toggle="dropdown"
                         aria-expanded="false"
-                    />
+                        type="button"
+                    >
+                        <OptionalImage
+                            alt={ author.as_ref().map(|a| a.slug.clone()) }
+                            image={ author.as_ref().map(|a| a.image_url.clone()).flatten() }
+                            fallback_image={ author.as_ref().map(|a| profile_image(&a.slug)) }
+                        />
+                    </div>
                     if let Some(author) = author.as_ref() {
                         <ul class="dropdown-menu text-small" >
                             <li>

@@ -6,7 +6,7 @@ license = "MIT"
 
 
 [dependencies]
-blog-generic = { git = "https://github.com/tikitko/blog-server.git", package = "blog-generic" }
+blog-generic = { path = "../blog-server/blog-generic" }
 
 log = "0.4"
 async-trait = "0.1"
@@ -22,7 +22,7 @@ wasm-bindgen = { version = "0.2", optional = true }
 wasm-cookies = { version = "0.2", optional = true }
 wasm-logger = { version = "0.2", optional = true }
 
-web-sys = { version = "0.3", features = ["HtmlDocument","console","Document","HtmlElement","MouseEvent","DomRect","ScrollToOptions","ScrollBehavior","Element","MouseEvent","CssStyleDeclaration","MutationObserver","MutationObserverInit","Node","CustomEvent"], optional = true }
+web-sys = { version = "0.3", features = ["HtmlDocument","console","Document","HtmlElement","MouseEvent","DomRect","ScrollToOptions","ScrollBehavior","Element","MouseEvent","CssStyleDeclaration","MutationObserver","MutationObserverInit","Node","CustomEvent","HtmlImageElement"], optional = true }
 
 gloo-history = "0.2"
 gloo = { version = "0.10", optional = true }
@@ -37,7 +37,7 @@ noneifempty = "0.1"
 
 
 [features]
-default = ["client"]
+default = ["client", "telegram"]
 server = ["yew/ssr"]
 client = ["yew/csr", "yew-hooks", "wasm-bindgen-futures", "wasm-bindgen", "wasm-cookies", "wasm-logger", "web-sys", "gloo", "gloo-net"]
 hydration = ["client", "yew/hydration"]

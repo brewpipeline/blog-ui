@@ -12,6 +12,7 @@ pub mod login_modal;
 pub mod logout_modal;
 pub mod meta;
 pub mod navigation_menu;
+pub mod optional_image;
 pub mod pagination;
 pub mod post_card;
 pub mod search_button;

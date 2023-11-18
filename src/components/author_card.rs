@@ -2,6 +2,7 @@ use noneifempty::*;
 use yew::prelude::*;
 use yew_router::prelude::*;
 
+use crate::components::optional_image::*;
 use crate::components::svg_image::*;
 use crate::content::*;
 use crate::utils::*;
@@ -92,18 +93,13 @@ pub fn author_card(props: &AuthorCardProps) -> Html {
     let main_content = html! {
         <div class="row g-0">
             <div class="col-4">
-                <div
-                    style={
-                        format!(
-                            "height:220px;width:100%;--image-url:url({});",
-                            author
-                                .as_ref()
-                                .map(|a| author_image(a))
-                                .unwrap_or_default()
-                        )
-                    }
-                    class="img-block img-fluid rounded-start" role="img"
-                />
+                <div class="img-block rounded-start" style="height:220px;width:100%;">
+                    <OptionalImage
+                        alt={ author.as_ref().map(|a| a.slug.clone()) }
+                        image={ author.as_ref().map(|a| a.image_url.clone()).flatten() }
+                        fallback_image={ author.as_ref().map(|a| profile_image(&a.slug)) }
+                    />
+                </div>
             </div>
             <div class="col">
                 <div class="card-body">
