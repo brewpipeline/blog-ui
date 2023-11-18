@@ -27,7 +27,11 @@ pub fn author(props: &AuthorProps) -> Html {
             component={ |author: Option<content::Author>| html! {
                 <>
                     if let Some(author) = &author {
-                        <Meta title={ format!("{} - Автор", author.slug.clone()) } />
+                        <Meta
+                            r#type="profile"
+                            title={ format!("{} - Автор", author.slug.clone()) }
+                            image={ author.image_url.clone().unwrap_or_default() }
+                        />
                     } else {
                         <Meta title="Автор" noindex=true />
                     }
