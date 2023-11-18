@@ -53,7 +53,7 @@ pub fn auth_user_block() -> Html {
                 <div class="d-flex dropdown dropdown-menu-end">
                     <div
                         class="img-block item d-flex rounded"
-                        style="overflow:hidden;"
+                        style="overflow:hidden;width:38px;"
                         data-bs-toggle="dropdown"
                         aria-expanded="false"
                         type="button"
