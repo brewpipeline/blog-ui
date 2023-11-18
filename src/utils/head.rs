@@ -11,10 +11,41 @@ pub fn html_document() -> HtmlDocument {
 }
 
 #[derive(Clone, Copy)]
+pub enum OpenGraph {
+    Title,
+    Description,
+    Type,
+    Image,
+    SiteName,
+}
+
+impl std::fmt::Display for OpenGraph {
+    fn fmt(&self, f: &mut std::fmt::Formatter) -> std::fmt::Result {
+        match self {
+            OpenGraph::Title => write!(f, "og:title"),
+            OpenGraph::Description => write!(f, "og:description"),
+            OpenGraph::Type => write!(f, "og:type"),
+            OpenGraph::Image => write!(f, "og:image"),
+            OpenGraph::SiteName => write!(f, "og:site_name"),
+        }
+    }
+}
+
+#[derive(Clone, Copy)]
 pub enum MetaTag {
     Description,
     Keywords,
+    OpenGraph(OpenGraph),
     Robots,
+}
+
+impl MetaTag {
+    fn key(&self) -> &'static str {
+        match self {
+            MetaTag::Description | MetaTag::Keywords | MetaTag::Robots => "name",
+            MetaTag::OpenGraph(_) => "property",
+        }
+    }
 }
 
 impl std::fmt::Display for MetaTag {
@@ -22,6 +53,7 @@ impl std::fmt::Display for MetaTag {
         match self {
             MetaTag::Description => write!(f, "description"),
             MetaTag::Keywords => write!(f, "keywords"),
+            MetaTag::OpenGraph(open_graph) => open_graph.fmt(f),
             MetaTag::Robots => write!(f, "robots"),
         }
     }
@@ -30,7 +62,14 @@ impl std::fmt::Display for MetaTag {
 #[cfg(feature = "client")]
 fn meta_element(meta_type: MetaTag) -> Element {
     html_document()
-        .query_selector(format!("meta[name=\"{name}\"]", name = meta_type.to_string()).as_str())
+        .query_selector(
+            format!(
+                "meta[{key}=\"{value}\"]",
+                key = meta_type.key(),
+                value = meta_type.to_string()
+            )
+            .as_str(),
+        )
         .ok()
         .flatten()
         .unwrap()

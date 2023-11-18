@@ -44,9 +44,11 @@ pub fn post(props: &PostProps) -> Html {
                     <>
                         if let Some(post) = post.as_ref() {
                             <Meta
+                                r#type="article"
                                 title={ format!("{} - Публикация", post.title.clone()) }
                                 description={ post.summary.clone() }
                                 keywords={ post.joined_tags_string(", ") }
+                                image={ post.image_url.clone().unwrap_or_default() }
                             />
                         } else {
                             <Meta title="Публикация" noindex=true />
