@@ -6,6 +6,8 @@ use crate::pages::*;
 
 #[derive(Routable, PartialEq, Eq, Clone, Debug)]
 pub enum Route {
+    #[at("/settings")]
+    Settings,
     #[at("/post/new")]
     NewPost,
     #[at("/post/edit/:id")]
@@ -45,6 +47,7 @@ impl Route {
     }
     pub(crate) fn switch(route: Route) -> Html {
         match route {
+            Route::Settings => html! { <Settings /> },
             Route::NewPost => html! { <EditPost id={ None } /> },
             Route::EditPost { id } => html! { <EditPost { id } /> },
             Route::Post { slug, id } => html! { <Post { slug } { id } /> },

@@ -79,7 +79,14 @@ pub fn auth_user_block() -> Html {
                                     { "Неопубликованное" }
                                 </Link<Route, ()>>
                             </li>
-                            // <li><a class="dropdown-item" href="#"> { "Настройки" } </a></li>
+                            <li>
+                                <Link<Route, ()>
+                                    classes="dropdown-item"
+                                    to={ Route::Settings }
+                                >
+                                    { "Настройки" }
+                                </Link<Route, ()>>
+                            </li>
                             <li><hr class="dropdown-divider" /></li>
                             <li>
                                 <button
