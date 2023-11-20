@@ -19,7 +19,6 @@ impl SearchMode {
             Route::PostsSearch { query } => Self::Posts { query: Some(query) },
             Route::AuthorsSearch { query } => Self::Authors { query: Some(query) },
             Route::NotFound
-            | Route::YandexToken
             | Route::PostsSearchRoot
             | Route::NewPost
             | Route::EditPost { id: _ }
@@ -28,6 +27,8 @@ impl SearchMode {
             | Route::UnpublishedPosts
             | Route::MyUnpublishedPosts
             | Route::Tag { slug: _, id: _ } => Self::Posts { query: None },
+            #[cfg(feature = "yandex")]
+            Route::YandexToken => Self::Posts { query: None },
             Route::AuthorsSearchRoot | Route::Author { slug: _ } | Route::Authors => {
                 Self::Authors { query: None }
             }
