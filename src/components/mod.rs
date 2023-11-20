@@ -21,6 +21,7 @@ pub mod search_field;
 pub mod simple_title_card;
 pub mod svg_image;
 pub mod warning;
+#[cfg(feature = "yandex")]
 pub mod yandex_token;
 
 pub use load::*;

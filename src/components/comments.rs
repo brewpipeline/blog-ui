@@ -147,7 +147,7 @@ pub fn comments(props: &CommentsProps) -> Html {
                     post_id: post.id,
                     request_index: *request_index
                 }) }
-                items_per_page={ 200 }
+                items_per_page={ 50 }
                 route_to_page={ Route::Post { slug: post.slug, id: post.id } }
                 component={ |comment| html! { <CommentCard { comment } /> } }
                 error_component={ |_| html! { <Warning text="Ошибка загрузки комментариев!" /> } }

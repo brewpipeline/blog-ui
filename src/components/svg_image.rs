@@ -78,6 +78,7 @@ pub fn hammer_img() -> Html {
     }
 }
 
+#[cfg(feature = "yandex")]
 #[function_component(YandexImg)]
 pub fn yandex_img() -> Html {
     html! {
