@@ -151,7 +151,6 @@ pub fn login_modal(props: &LoginModalProps) -> Html {
                 let logged_user_context = logged_user_context.clone();
                 EventListener::new(&modal_element, "yandex.auth.data", move |e| {
                     let e = e.dyn_ref::<CustomEvent>().unwrap();
-                    e.prevent_default();
                     if let Some(login_yandex_question) = e
                         .detail()
                         .as_string()
@@ -171,7 +170,6 @@ pub fn login_modal(props: &LoginModalProps) -> Html {
             let error_listener = {
                 let logged_user_context = logged_user_context.clone();
                 EventListener::new(&modal_element, "yandex.auth.error", move |e| {
-                    e.prevent_default();
                     logged_user_context
                         .dispatch(LoggedUserState::Error("yandex widget error".to_string()));
                 })
@@ -194,7 +192,6 @@ pub fn login_modal(props: &LoginModalProps) -> Html {
                 let logged_user_context = logged_user_context.clone();
                 EventListener::new(&modal_element, "telegram.auth.data", move |e| {
                     let e = e.dyn_ref::<CustomEvent>().unwrap();
-                    e.prevent_default();
                     if let Some(login_telegram_question) = e
                         .detail()
                         .as_string()
