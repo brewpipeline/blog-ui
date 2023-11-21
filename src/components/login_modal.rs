@@ -85,6 +85,46 @@ pub fn login_modal(props: &LoginModalProps) -> Html {
         });
     }
 
+    #[cfg(feature = "client")]
+    {
+        let logged_user_context = logged_user_context.clone();
+        let close_node_ref = close_node_ref.clone();
+        use_effect_with(logged_user_context, move |logged_user_context| {
+            if logged_user_context.is_not_inited() {
+                return;
+            }
+            let LoggedUserState::Active { token } = (**logged_user_context).state().clone() else {
+                return;
+            };
+            let logged_user_context = logged_user_context.clone();
+            wasm_bindgen_futures::spawn_local(async move {
+                match API::<AuthorContainer>::get(Tokened {
+                    token: token.clone(),
+                    params: AuthorMeParams,
+                })
+                .await
+                {
+                    Ok(active_author_result) => match active_author_result {
+                        API::Success {
+                            identifier: _,
+                            description: _,
+                            data: AuthorContainer { author },
+                        } => {
+                            logged_user_context
+                                .dispatch(LoggedUserState::ActiveAndLoaded { token, author });
+                        }
+                        API::Failure { identifier, reason } => {
+                            logged_user_context.dispatch(LoggedUserState::LoggedOut);
+                        }
+                    },
+                    Err(err) => {
+                        logged_user_context.dispatch(LoggedUserState::LoggedOut);
+                    }
+                }
+            })
+        });
+    }
+
     let username_node_ref = use_node_ref();
     let password_node_ref = use_node_ref();
 

@@ -2,7 +2,6 @@ use yew::prelude::*;
 use yew_router::prelude::*;
 
 use crate::components::author_image::*;
-use crate::components::item::*;
 use crate::components::svg_image::*;
 use crate::content::*;
 use crate::utils::*;
@@ -17,7 +16,7 @@ pub fn auth_user_block() -> Html {
         return html! {};
     }
 
-    let Some(token) = logged_user_context.token().cloned() else {
+    let Some(_) = logged_user_context.token().cloned() else {
         return html! {
             <button
                 aria-label="Войти"
@@ -34,90 +33,59 @@ pub fn auth_user_block() -> Html {
         };
     };
 
-    let params = Tokened {
-        token: token.clone(),
-        params: AuthorMeParams,
-    };
-
-    let component = {
-        let logged_user_context = logged_user_context.clone();
-        let token = token.clone();
-        move |author: Option<Author>| {
-            if let Some(author) = author.clone() {
-                logged_user_context.dispatch(LoggedUserState::ActiveAndLoaded {
-                    token: token.clone(),
-                    author,
-                });
-            }
-            html! {
-                <div class="d-flex dropdown dropdown-menu-end">
-                    <div
-                        class="img-block item d-flex rounded"
-                        style="overflow:hidden;width:38px;"
-                        data-bs-toggle="dropdown"
-                        aria-expanded="false"
-                        type="button"
-                    >
-                        <AuthorImage author={ author.clone() } />
-                    </div>
-                    if let Some(author) = author.as_ref() {
-                        <ul class="dropdown-menu text-small" >
-                            <li>
-                                <Link<Route, (), Author>
-                                    classes="dropdown-item"
-                                    to={ Route::Author { slug: author.slug.clone() } }
-                                    state={ Some(author.clone()) }
-                                >
-                                    { &author.slug }
-                                </Link<Route, (), Author>>
-                            </li>
-                            <li>
-                                <Link<Route, ()>
-                                    classes="dropdown-item"
-                                    to={ Route::MyUnpublishedPosts }
-                                >
-                                    { "Неопубликованное" }
-                                </Link<Route, ()>>
-                            </li>
-                            <li>
-                                <Link<Route, ()>
-                                    classes="dropdown-item"
-                                    to={ Route::Settings }
-                                >
-                                    { "Настройки" }
-                                </Link<Route, ()>>
-                            </li>
-                            <li><hr class="dropdown-divider" /></li>
-                            <li>
-                                <button
-                                    class="dropdown-item"
-                                    type="button"
-                                    data-bs-toggle="modal"
-                                    data-bs-target="#logoutModal"
-                                >
-                                    { "Выход" }
-                                </button>
-                            </li>
-                        </ul>
-                    }
-                </div>
-            }
-        }
-    };
-
-    let error_component = {
-        let logged_user_context = logged_user_context.clone();
-        move |_| {
-            logged_user_context.dispatch(LoggedUserState::LoggedOut);
-            html! {}
-        }
-    };
+    let author = logged_user_context.author().cloned();
 
     html! {
-        <Item<API<AuthorContainer>, Tokened<AuthorMeParams>>
-            r#type={ LoadType::Params(params) }
-            { component }
-            { error_component }
-        />
+        <div class="d-flex dropdown dropdown-menu-end">
+            <div
+                class="img-block item d-flex rounded"
+                style="overflow:hidden;width:38px;"
+                data-bs-toggle="dropdown"
+                aria-expanded="false"
+                type="button"
+            >
+                <AuthorImage author={ author.clone() } />
+            </div>
+            <ul class="dropdown-menu text-small" >
+                if let Some(author) = author.as_ref() {
+                    <li>
+                        <Link<Route, (), Author>
+                            classes="dropdown-item"
+                            to={ Route::Author { slug: author.slug.clone() } }
+                            state={ Some(author.clone()) }
+                        >
+                            { &author.slug }
+                        </Link<Route, (), Author>>
+                    </li>
+                    <li>
+                        <Link<Route, ()>
+                            classes="dropdown-item"
+                            to={ Route::MyUnpublishedPosts }
+                        >
+                            { "Неопубликованное" }
+                        </Link<Route, ()>>
+                    </li>
+                    <li>
+                        <Link<Route, ()>
+                            classes="dropdown-item"
+                            to={ Route::Settings }
+                        >
+                            { "Настройки" }
+                        </Link<Route, ()>>
+                    </li>
+                    <li><hr class="dropdown-divider" /></li>
+                    <li>
+                        <button
+                            class="dropdown-item"
+                            type="button"
+                            data-bs-toggle="modal"
+                            data-bs-target="#logoutModal"
+                        >
+                            { "Выход" }
+                        </button>
+                    </li>
+                }
+            </ul>
+        </div>
     }
 }
