@@ -210,15 +210,17 @@ pub fn settings() -> Html {
 
     #[cfg(feature = "telegram")]
     let telegram_button = ah! {
-        <script
-            async=true
-            src="https://telegram.org/js/telegram-widget.js?22"
-            data-telegram-login={ crate::TELEGRAM_BOT_LOGIN }
-            data-size="large"
-            data-radius="5"
-            data-onauth="document.getElementById('settingsPage').dispatchEvent(new CustomEvent('telegram.reauth.data', {detail: JSON.stringify(user)}))"
-            data-request-access="write"
-        ></script>
+        <div style="height: 46px;">
+            <script
+                async=true
+                src="https://telegram.org/js/telegram-widget.js?22"
+                data-telegram-login={ crate::TELEGRAM_BOT_LOGIN }
+                data-size="large"
+                data-radius="5"
+                data-onauth="document.getElementById('settingsPage').dispatchEvent(new CustomEvent('telegram.reauth.data', {detail: JSON.stringify(user)}))"
+                data-request-access="write"
+            ></script>
+        </div>
     };
     #[cfg(not(feature = "telegram"))]
     let telegram_button = ah! {};
@@ -243,7 +245,7 @@ pub fn settings() -> Html {
                                         type="radio"
                                         name="flexRadioDefault"
                                         id="flexRadioDefault1"
-                                        disabled={ *in_progress }
+                                        disabled=true
                                         checked={ *active_section == ActiveSection::Social }
                                         onclick={
                                             let active_section = active_section.clone();
