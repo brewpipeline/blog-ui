@@ -171,23 +171,23 @@ pub fn settings() -> Html {
             wasm_bindgen_futures::spawn_local(async move {
                 match API::<()>::get(Tokened {
                     token: token.clone(),
-                    params: UpdateMinimalAuthor { 
-                        update_minimal_author: CommonMinimalAuthor { 
-                            slug, 
-                            first_name, 
-                            last_name, 
+                    params: UpdateMinimalAuthor {
+                        update_minimal_author: CommonMinimalAuthor {
+                            slug,
+                            first_name,
+                            last_name,
                             image_url,
-                        }
+                        },
                     },
                 })
-                .await {
+                .await
+                {
                     Ok(result) => match result {
                         API::Success {
                             identifier: _,
                             description: _,
                             data: _,
                         } => {
-                            logged_user_context.dispatch(LoggedUserState::LoggedOut);
                             logged_user_context.dispatch(LoggedUserState::Active { token });
                         }
                         API::Failure {
