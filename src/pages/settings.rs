@@ -328,7 +328,7 @@ pub fn settings() -> Html {
                                         type="radio"
                                         name="flexRadioDefault"
                                         id="flexRadioDefault2"
-                                        disabled={ *main_active_section == ActiveSection::None|| *in_progress }
+                                        disabled={ *main_active_section == ActiveSection::None || *in_progress }
                                         checked={ *main_active_section == ActiveSection::Custom }
                                         onclick={
                                             let main_active_section = main_active_section.clone();
@@ -344,10 +344,10 @@ pub fn settings() -> Html {
                                             type="text"
                                             class="form-control"
                                             id="floatingInput1"
-                                            placeholder="Имя профиля (уникальное)"
-                                            disabled={ *main_active_section != ActiveSection::Custom|| *in_progress }
+                                            placeholder="Имя профиля"
+                                            disabled={ *main_active_section != ActiveSection::Custom || *in_progress }
                                         />
-                                        <label for="floatingInput1">"Имя аккаунта (уникальное)"</label>
+                                        <label for="floatingInput1">"Имя профиля"</label>
                                     </div>
                                     <div class="form-floating mb-2">
                                         <input
@@ -367,7 +367,7 @@ pub fn settings() -> Html {
                                             class="form-control"
                                             id="floatingInput3"
                                             placeholder="Имя"
-                                            disabled={ *main_active_section != ActiveSection::Custom|| *in_progress }
+                                            disabled={ *main_active_section != ActiveSection::Custom || *in_progress }
                                         />
                                         <label for="floatingInput3">"Имя"</label>
                                     </div>
@@ -378,7 +378,7 @@ pub fn settings() -> Html {
                                             class="form-control"
                                             id="floatingInput4"
                                             placeholder="Фамилия"
-                                            disabled={ *main_active_section != ActiveSection::Custom|| *in_progress }
+                                            disabled={ *main_active_section != ActiveSection::Custom || *in_progress }
                                         />
                                         <label for="floatingInput4">"Фамилия"</label>
                                     </div>
