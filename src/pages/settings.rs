@@ -434,7 +434,7 @@ pub fn settings() -> Html {
                                     </div>
                                     <button
                                         type="button"
-                                        class="btn btn-primary"
+                                        class="btn btn-info"
                                         { onclick }
                                         disabled={ *main_active_section != ActiveSection::Custom || *in_progress || !is_ready_for_save }
                                     >
