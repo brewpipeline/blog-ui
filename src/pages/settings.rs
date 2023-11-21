@@ -7,11 +7,13 @@ use wasm_bindgen::JsCast;
 #[cfg(all(feature = "client", any(feature = "yandex", feature = "telegram")))]
 use web_sys::CustomEvent;
 #[cfg(feature = "client")]
-use web_sys::{Element, HtmlElement, HtmlInputElement};
+use web_sys::{HtmlElement, HtmlInputElement};
 use yew::prelude::*;
 use yew_alt_html::*;
 
 use crate::components::meta::*;
+#[cfg(feature = "telegram")]
+use crate::components::telegram_button::*;
 use crate::components::warning::*;
 #[cfg(feature = "client")]
 use crate::content::*;
@@ -30,7 +32,9 @@ pub fn settings() -> Html {
 
     let in_progress = use_state(|| false);
 
-    let active_section = use_state(|| ActiveSection::None);
+    let main_active_section = use_state(|| ActiveSection::None);
+
+    let main_section_error = use_state::<Option<Result<String, String>>, _>(|| None);
 
     let settings_node_ref = use_node_ref();
 
@@ -42,12 +46,12 @@ pub fn settings() -> Html {
     #[cfg(feature = "client")]
     {
         let logged_user_context = logged_user_context.clone();
-        let active_section = active_section.clone();
+        let main_active_section = main_active_section.clone();
         use_effect_with(logged_user_context, move |logged_user_context| {
             if logged_user_context.is_not_inited() {
                 return;
             }
-            active_section.set(
+            main_active_section.set(
                 if let LoggedUserState::ActiveAndLoaded { token, author } =
                     logged_user_context.state().clone()
                 {
@@ -67,6 +71,7 @@ pub fn settings() -> Html {
     {
         let logged_user_context = logged_user_context.clone();
         let in_progress = in_progress.clone();
+        let main_section_error = main_section_error.clone();
         let settings_node_ref = settings_node_ref.clone();
         use_effect_with(logged_user_context, move |logged_user_context| {
             let settings_element = settings_node_ref.cast::<HtmlElement>().unwrap();
@@ -77,6 +82,7 @@ pub fn settings() -> Html {
                     if *in_progress || logged_user_context.is_not_inited() {
                         return;
                     }
+                    main_section_error.set(None);
                     in_progress.set(true);
                     let e = e.dyn_ref::<CustomEvent>().unwrap();
                     let Some(login_telegram_question) = e
@@ -85,17 +91,19 @@ pub fn settings() -> Html {
                         .map(|j| serde_json::from_str::<LoginTelegramQuestion>(j.as_str()).ok())
                         .flatten()
                     else {
+                        main_section_error
+                            .set(Some(Err("incorrect data from telegram".to_string())));
                         in_progress.set(false);
-                        // TODO TELEGRAM ERROR WITHOUT LOGOUT
                         return;
                     };
                     let Some(token) = logged_user_context.state().token().cloned() else {
+                        main_section_error.set(Some(Err("currently not logged in".to_string())));
                         in_progress.set(false);
-                        // TODO NOT LOGGED IN ERROR
                         return;
                     };
                     let logged_user_context = logged_user_context.clone();
                     let in_progress = in_progress.clone();
+                    let main_section_error = main_section_error.clone();
                     wasm_bindgen_futures::spawn_local(async move {
                         match API::<()>::get(Tokened {
                             token,
@@ -112,16 +120,15 @@ pub fn settings() -> Html {
                                     logged_user_context.dispatch(LoggedUserState::InProgress(
                                         InProgressStateType::Telegram(login_telegram_question),
                                     ));
+                                    main_section_error
+                                        .set(Some(Ok("telegram data applied".to_string())));
                                 }
-                                API::Failure {
-                                    identifier: _,
-                                    reason: _,
-                                } => {
-                                    // TODO RESET ERROR
+                                API::Failure { identifier, reason } => {
+                                    main_section_error.set(Some(Err(reason.unwrap_or(identifier))));
                                 }
                             },
-                            Err(_) => {
-                                // TODO NETWORK RESET ERROR
+                            Err(err) => {
+                                main_section_error.set(Some(Err(err.to_string())));
                             }
                         }
                         in_progress.set(false);
@@ -136,6 +143,7 @@ pub fn settings() -> Html {
     let onclick = {
         let logged_user_context = logged_user_context.clone();
         let in_progress = in_progress.clone();
+        let main_section_error = main_section_error.clone();
         let slug_node_ref = slug_node_ref.clone();
         let first_name_node_ref = first_name_node_ref.clone();
         let last_name_node_ref = last_name_node_ref.clone();
@@ -144,6 +152,7 @@ pub fn settings() -> Html {
             if *in_progress || logged_user_context.is_not_inited() {
                 return;
             }
+            main_section_error.set(None);
             in_progress.set(true);
             let slug = slug_node_ref.cast::<HtmlInputElement>().unwrap().value();
             let first_name = first_name_node_ref
@@ -162,12 +171,13 @@ pub fn settings() -> Html {
                 .value()
                 .none_if_empty();
             let Some(token) = logged_user_context.state().token().cloned() else {
-                // TODO NOT LOGGED IN ERROR
+                main_section_error.set(Some(Err("currently not logged in".to_string())));
                 in_progress.set(false);
                 return;
             };
             let logged_user_context = logged_user_context.clone();
             let in_progress = in_progress.clone();
+            let main_section_error = main_section_error.clone();
             wasm_bindgen_futures::spawn_local(async move {
                 match API::<()>::get(Tokened {
                     token: token.clone(),
@@ -189,16 +199,14 @@ pub fn settings() -> Html {
                             data: _,
                         } => {
                             logged_user_context.dispatch(LoggedUserState::Active { token });
+                            main_section_error.set(Some(Ok("custom data applied".to_string())));
                         }
-                        API::Failure {
-                            identifier: _,
-                            reason: _,
-                        } => {
-                            // TODO RESET ERROR
+                        API::Failure { identifier, reason } => {
+                            main_section_error.set(Some(Err(reason.unwrap_or(identifier))));
                         }
                     },
-                    Err(_) => {
-                        // TODO NETWORK RESET ERROR
+                    Err(err) => {
+                        main_section_error.set(Some(Err(err.to_string())));
                     }
                 }
                 in_progress.set(false);
@@ -210,17 +218,7 @@ pub fn settings() -> Html {
 
     #[cfg(feature = "telegram")]
     let telegram_button = ah! {
-        <div style="height: 46px;">
-            <script
-                async=true
-                src="https://telegram.org/js/telegram-widget.js?22"
-                data-telegram-login={ crate::TELEGRAM_BOT_LOGIN }
-                data-size="large"
-                data-radius="5"
-                data-onauth="document.getElementById('settingsPage').dispatchEvent(new CustomEvent('telegram.reauth.data', {detail: JSON.stringify(user)}))"
-                data-request-access="write"
-            ></script>
-        </div>
+        <TelegramButton onauth="document.getElementById('settingsPage').dispatchEvent(new CustomEvent('telegram.reauth.data', {detail: JSON.stringify(user)}))" />
     };
     #[cfg(not(feature = "telegram"))]
     let telegram_button = ah! {};
@@ -238,6 +236,22 @@ pub fn settings() -> Html {
                             <h6 class="card-title placeholder-glow mb-3">
                                 "Основные данные профиля"
                             </h6>
+                            if let Some(message) = main_section_error.as_ref() {
+                                match message {
+                                    Ok(ok_message) => {
+                                        <div class="alert alert-success d-flex align-items-center" role="alert">
+                                            { "Данные успешно обновлены: " }
+                                            { ok_message }
+                                        </div>
+                                    },
+                                    Err(err_message) => {
+                                        <div class="alert alert-danger d-flex align-items-center" role="alert">
+                                            { "Ошибка обновления данных: " }
+                                            { err_message }
+                                        </div>
+                                    }
+                                }
+                            }
                             <div class="mb-3">
                                 <div class="form-check mb-2">
                                     <input
@@ -246,10 +260,10 @@ pub fn settings() -> Html {
                                         name="flexRadioDefault"
                                         id="flexRadioDefault1"
                                         disabled=true
-                                        checked={ *active_section == ActiveSection::Social }
+                                        checked={ *main_active_section == ActiveSection::Social }
                                         onclick={
-                                            let active_section = active_section.clone();
-                                            Callback::from(move |_: MouseEvent| active_section.set(ActiveSection::Social))
+                                            let main_active_section = main_active_section.clone();
+                                            Callback::from(move |_: MouseEvent| main_active_section.set(ActiveSection::Social))
                                         }
                                     />
                                     <label class="form-check-label mb-2" for="flexRadioDefault1">
@@ -270,11 +284,11 @@ pub fn settings() -> Html {
                                         type="radio"
                                         name="flexRadioDefault"
                                         id="flexRadioDefault2"
-                                        disabled={ *active_section == ActiveSection::None|| *in_progress }
-                                        checked={ *active_section == ActiveSection::Custom }
+                                        disabled={ *main_active_section == ActiveSection::None|| *in_progress }
+                                        checked={ *main_active_section == ActiveSection::Custom }
                                         onclick={
-                                            let active_section = active_section.clone();
-                                            Callback::from(move |_: MouseEvent| active_section.set(ActiveSection::Custom))
+                                            let main_active_section = main_active_section.clone();
+                                            Callback::from(move |_: MouseEvent| main_active_section.set(ActiveSection::Custom))
                                         }
                                     />
                                     <label class="form-check-label mb-2" for="flexRadioDefault2">
@@ -287,7 +301,7 @@ pub fn settings() -> Html {
                                             class="form-control"
                                             id="floatingInput1"
                                             placeholder="Имя профиля (уникальное)"
-                                            disabled={ *active_section != ActiveSection::Custom|| *in_progress }
+                                            disabled={ *main_active_section != ActiveSection::Custom|| *in_progress }
                                         />
                                         <label for="floatingInput1">"Имя аккаунта (уникальное)"</label>
                                     </div>
@@ -298,7 +312,7 @@ pub fn settings() -> Html {
                                             class="form-control"
                                             id="floatingInput2"
                                             placeholder="Изображение профиля (ссылка)"
-                                            disabled={ *active_section != ActiveSection::Custom || *in_progress }
+                                            disabled={ *main_active_section != ActiveSection::Custom || *in_progress }
                                         />
                                         <label for="floatingInput2">"Изображение профиля (ссылка)"</label>
                                     </div>
@@ -309,7 +323,7 @@ pub fn settings() -> Html {
                                             class="form-control"
                                             id="floatingInput3"
                                             placeholder="Имя"
-                                            disabled={ *active_section != ActiveSection::Custom|| *in_progress }
+                                            disabled={ *main_active_section != ActiveSection::Custom|| *in_progress }
                                         />
                                         <label for="floatingInput3">"Имя"</label>
                                     </div>
@@ -320,7 +334,7 @@ pub fn settings() -> Html {
                                             class="form-control"
                                             id="floatingInput4"
                                             placeholder="Фамилия"
-                                            disabled={ *active_section != ActiveSection::Custom|| *in_progress }
+                                            disabled={ *main_active_section != ActiveSection::Custom|| *in_progress }
                                         />
                                         <label for="floatingInput4">"Фамилия"</label>
                                     </div>
@@ -328,7 +342,7 @@ pub fn settings() -> Html {
                                         type="button"
                                         class="btn btn-primary"
                                         { onclick }
-                                        disabled={ *active_section != ActiveSection::Custom || *in_progress }
+                                        disabled={ *main_active_section != ActiveSection::Custom || *in_progress }
                                     >
                                         { "Сохранить" }
                                         if *in_progress {

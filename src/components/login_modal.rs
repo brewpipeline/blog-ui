@@ -13,6 +13,8 @@ use web_sys::{Element, HtmlElement, HtmlInputElement};
 use yew::prelude::*;
 
 use crate::components::delayed_component::*;
+#[cfg(feature = "telegram")]
+use crate::components::telegram_button::*;
 #[cfg(feature = "client")]
 use crate::content::*;
 use crate::utils::*;
@@ -311,18 +313,10 @@ pub fn login_modal(props: &LoginModalProps) -> Html {
     let telegram_html = html! {
         <div class="telegramAuth mb-4">
             <div class="telegramAuthContainer">
-                <script
-                    async=true
-                    src="https://telegram.org/js/telegram-widget.js?22"
-                    data-telegram-login={ crate::TELEGRAM_BOT_LOGIN }
-                    data-size="large"
-                    data-radius="5"
-                    data-onauth={ format!(
-                        "document.getElementById('{modal_id}').dispatchEvent(new CustomEvent('telegram.auth.data', {{detail: JSON.stringify(user)}}))",
-                        modal_id = id
-                    ) }
-                    data-request-access="write"
-                ></script>
+                <TelegramButton onauth={ format!(
+                    "document.getElementById('{modal_id}').dispatchEvent(new CustomEvent('telegram.auth.data', {{detail: JSON.stringify(user)}}))",
+                    modal_id = id
+                ) } />
             </div>
         </div>
     };
