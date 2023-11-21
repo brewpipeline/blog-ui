@@ -255,15 +255,45 @@ pub fn settings() -> Html {
         <strong>"Кнопка еще разрабатывается..."</strong>
     };
 
-    let reset_onclick = {
-        let main_reset_counter = main_reset_counter.clone();
+    let oninput = {
         let main_section_error = main_section_error.clone();
-        move |e: MouseEvent| {
-            e.prevent_default();
-            main_reset_counter.set(*main_reset_counter + 1);
+        move |_| {
             main_section_error.set(None);
         }
     };
+
+    #[cfg(feature = "client")]
+    let is_ready_for_save = {
+        if logged_user_context.is_not_inited() {
+            false
+        } else if let Some(author) = logged_user_context.state().author().cloned() {
+            let slug = slug_node_ref.cast::<HtmlInputElement>().unwrap().value();
+            let first_name = first_name_node_ref
+                .cast::<HtmlInputElement>()
+                .unwrap()
+                .value()
+                .none_if_empty();
+            let last_name = last_name_node_ref
+                .cast::<HtmlInputElement>()
+                .unwrap()
+                .value()
+                .none_if_empty();
+            let image_url = image_url_node_ref
+                .cast::<HtmlInputElement>()
+                .unwrap()
+                .value()
+                .none_if_empty();
+            !(blog_generic::clean_author_slug(&author.slug) == slug
+                && author.first_name.none_if_empty() == first_name
+                && author.last_name.none_if_empty() == last_name
+                && author.image_url.none_if_empty() == image_url
+                && author.override_social_data == 1)
+        } else {
+            false
+        }
+    };
+    #[cfg(not(feature = "client"))]
+    let is_ready_for_save = false;
 
     ah! {
         <Meta title={ "Настройки" } noindex=true />
@@ -274,11 +304,21 @@ pub fn settings() -> Html {
                         <h5 class="card-title placeholder-glow mb-3">
                             "Настройки"
                         </h5>
-                        <div class="col-12 col-lg-10 col-xl-8">
+                        <div class="col-12 col-xl-10">
                             <h6 class="card-title placeholder-glow mb-3">
                                 "Основные данные профиля"
                                 " "
-                                <a href="#" onclick={ reset_onclick }><CounterclockwiseImg /></a>
+                                <a href="#" onclick={
+                                    let main_reset_counter = main_reset_counter.clone();
+                                    let main_section_error = main_section_error.clone();
+                                    move |e: MouseEvent| {
+                                        e.prevent_default();
+                                        main_reset_counter.set(*main_reset_counter + 1);
+                                        main_section_error.set(None);
+                                    }
+                                }>
+                                    <CounterclockwiseImg />
+                                </a>
                             </h6>
                             if let Some(message) = main_section_error.as_ref() {
                                 match message {
@@ -307,7 +347,11 @@ pub fn settings() -> Html {
                                         checked={ *main_active_section == ActiveSection::Social }
                                         onclick={
                                             let main_active_section = main_active_section.clone();
-                                            Callback::from(move |_: MouseEvent| main_active_section.set(ActiveSection::Social))
+                                            let main_section_error = main_section_error.clone();
+                                            Callback::from(move |_: MouseEvent| {
+                                                main_active_section.set(ActiveSection::Social);
+                                                main_section_error.set(None);
+                                            })
                                         }
                                     />
                                     <label class="form-check-label mb-2" for="flexRadioDefault1">
@@ -332,7 +376,11 @@ pub fn settings() -> Html {
                                         checked={ *main_active_section == ActiveSection::Custom }
                                         onclick={
                                             let main_active_section = main_active_section.clone();
-                                            Callback::from(move |_: MouseEvent| main_active_section.set(ActiveSection::Custom))
+                                            let main_section_error = main_section_error.clone();
+                                            Callback::from(move |_: MouseEvent| {
+                                                main_active_section.set(ActiveSection::Custom);
+                                                main_section_error.set(None);
+                                            })
                                         }
                                     />
                                     <label class="form-check-label mb-2" for="flexRadioDefault2">
@@ -340,18 +388,20 @@ pub fn settings() -> Html {
                                     </label>
                                     <div class="form-floating mb-2">
                                         <input
-                                            ref={ slug_node_ref }
+                                            ref={ slug_node_ref.clone() }
+                                            oninput={ oninput.clone() }
                                             type="text"
                                             class="form-control"
                                             id="floatingInput1"
-                                            placeholder="Имя профиля"
+                                            placeholder="Имя профиля (уникальное)"
                                             disabled={ *main_active_section != ActiveSection::Custom || *in_progress }
                                         />
-                                        <label for="floatingInput1">"Имя профиля"</label>
+                                        <label for="floatingInput1">"Имя профиля (уникальное)"</label>
                                     </div>
                                     <div class="form-floating mb-2">
                                         <input
-                                            ref={ image_url_node_ref }
+                                            ref={ image_url_node_ref.clone() }
+                                            oninput={ oninput.clone() }
                                             type="text"
                                             class="form-control"
                                             id="floatingInput2"
@@ -362,7 +412,8 @@ pub fn settings() -> Html {
                                     </div>
                                     <div class="form-floating mb-2">
                                         <input
-                                            ref={ first_name_node_ref }
+                                            ref={ first_name_node_ref.clone() }
+                                            oninput={ oninput.clone() }
                                             type="text"
                                             class="form-control"
                                             id="floatingInput3"
@@ -373,7 +424,8 @@ pub fn settings() -> Html {
                                     </div>
                                     <div class="form-floating mb-2">
                                         <input
-                                            ref={ last_name_node_ref }
+                                            ref={ last_name_node_ref.clone() }
+                                            oninput={ oninput.clone() }
                                             type="text"
                                             class="form-control"
                                             id="floatingInput4"
@@ -386,7 +438,7 @@ pub fn settings() -> Html {
                                         type="button"
                                         class="btn btn-primary"
                                         { onclick }
-                                        disabled={ *main_active_section != ActiveSection::Custom || *in_progress }
+                                        disabled={ *main_active_section != ActiveSection::Custom || *in_progress || !is_ready_for_save }
                                     >
                                         { "Сохранить" }
                                         if *in_progress {
