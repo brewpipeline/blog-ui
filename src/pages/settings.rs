@@ -4,9 +4,9 @@ use blog_generic::entities::LoginTelegramQuestion;
 use gloo::events::EventListener;
 #[cfg(feature = "client")]
 use noneifempty::NoneIfEmpty;
-#[cfg(all(feature = "client", any(feature = "yandex", feature = "telegram")))]
+#[cfg(all(feature = "client", feature = "telegram"))]
 use wasm_bindgen::JsCast;
-#[cfg(all(feature = "client", any(feature = "yandex", feature = "telegram")))]
+#[cfg(all(feature = "client", feature = "telegram"))]
 use web_sys::CustomEvent;
 #[cfg(all(feature = "client", feature = "telegram"))]
 use web_sys::HtmlElement;
