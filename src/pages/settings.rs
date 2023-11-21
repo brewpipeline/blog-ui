@@ -268,23 +268,20 @@ pub fn settings() -> Html {
         if logged_user_context.is_not_inited() {
             false
         } else if let Some(author) = logged_user_context.state().author().cloned() {
-            let slug = slug_node_ref.cast::<HtmlInputElement>().unwrap().value();
+            let slug = slug_node_ref.cast::<HtmlInputElement>().map(|v| v.value());
             let first_name = first_name_node_ref
                 .cast::<HtmlInputElement>()
-                .unwrap()
-                .value()
+                .map(|v| v.value())
                 .none_if_empty();
             let last_name = last_name_node_ref
                 .cast::<HtmlInputElement>()
-                .unwrap()
-                .value()
+                .map(|v| v.value())
                 .none_if_empty();
             let image_url = image_url_node_ref
                 .cast::<HtmlInputElement>()
-                .unwrap()
-                .value()
+                .map(|v| v.value())
                 .none_if_empty();
-            !(blog_generic::clean_author_slug(&author.slug) == slug
+            !(Some(blog_generic::clean_author_slug(&author.slug)) == slug
                 && author.first_name.none_if_empty() == first_name
                 && author.last_name.none_if_empty() == last_name
                 && author.image_url.none_if_empty() == image_url
