@@ -29,7 +29,7 @@ pub fn author(props: &AuthorProps) -> Html {
                     if let Some(author) = &author {
                         <Meta
                             r#type="profile"
-                            title={ format!("{} - Автор", author.slug.clone()) }
+                            title={ format!("{} - Автор", blog_generic::clean_author_slug(&author.slug)) }
                             image={ author.image_url.clone().unwrap_or_default() }
                             image_width="200"
                             image_height="200"

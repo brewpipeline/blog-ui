@@ -101,7 +101,7 @@ pub fn comment_card(props: &CommentCardProps) -> Html {
                                 state={ Some(comment.author.clone()) }
                             >
                                 <strong>
-                                    { &comment.author.slug }
+                                    { blog_generic::clean_author_slug(&comment.author.slug) }
                                 </strong>
                             </Link<Route, (), content::Author>>
                         } else {

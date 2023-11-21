@@ -6,6 +6,7 @@ pub mod page_not_found;
 pub mod post;
 pub mod posts;
 pub mod search;
+pub mod settings;
 pub mod tag;
 pub mod unpublished_posts;
 
@@ -17,5 +18,6 @@ pub use page_not_found::*;
 pub use post::*;
 pub use posts::*;
 pub use search::*;
+pub use settings::*;
 pub use tag::*;
 pub use unpublished_posts::*;
