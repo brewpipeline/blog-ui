@@ -13,6 +13,8 @@ use web_sys::{Element, HtmlElement, HtmlInputElement};
 use yew::prelude::*;
 
 use crate::components::delayed_component::*;
+#[cfg(feature = "telegram")]
+use crate::components::telegram_button::*;
 #[cfg(feature = "client")]
 use crate::content::*;
 use crate::utils::*;
@@ -85,6 +87,46 @@ pub fn login_modal(props: &LoginModalProps) -> Html {
         });
     }
 
+    #[cfg(feature = "client")]
+    {
+        let logged_user_context = logged_user_context.clone();
+        let close_node_ref = close_node_ref.clone();
+        use_effect_with(logged_user_context, move |logged_user_context| {
+            if logged_user_context.is_not_inited() {
+                return;
+            }
+            let LoggedUserState::Active { token } = (**logged_user_context).state().clone() else {
+                return;
+            };
+            let logged_user_context = logged_user_context.clone();
+            wasm_bindgen_futures::spawn_local(async move {
+                match API::<AuthorContainer>::get(Tokened {
+                    token: token.clone(),
+                    params: AuthorMeParams,
+                })
+                .await
+                {
+                    Ok(active_author_result) => match active_author_result {
+                        API::Success {
+                            identifier: _,
+                            description: _,
+                            data: AuthorContainer { author },
+                        } => {
+                            logged_user_context
+                                .dispatch(LoggedUserState::ActiveAndLoaded { token, author });
+                        }
+                        API::Failure { identifier, reason } => {
+                            logged_user_context.dispatch(LoggedUserState::LoggedOut);
+                        }
+                    },
+                    Err(err) => {
+                        logged_user_context.dispatch(LoggedUserState::LoggedOut);
+                    }
+                }
+            })
+        });
+    }
+
     let username_node_ref = use_node_ref();
     let password_node_ref = use_node_ref();
 
@@ -151,7 +193,6 @@ pub fn login_modal(props: &LoginModalProps) -> Html {
                 let logged_user_context = logged_user_context.clone();
                 EventListener::new(&modal_element, "yandex.auth.data", move |e| {
                     let e = e.dyn_ref::<CustomEvent>().unwrap();
-                    e.prevent_default();
                     if let Some(login_yandex_question) = e
                         .detail()
                         .as_string()
@@ -171,7 +212,6 @@ pub fn login_modal(props: &LoginModalProps) -> Html {
             let error_listener = {
                 let logged_user_context = logged_user_context.clone();
                 EventListener::new(&modal_element, "yandex.auth.error", move |e| {
-                    e.prevent_default();
                     logged_user_context
                         .dispatch(LoggedUserState::Error("yandex widget error".to_string()));
                 })
@@ -194,7 +234,6 @@ pub fn login_modal(props: &LoginModalProps) -> Html {
                 let logged_user_context = logged_user_context.clone();
                 EventListener::new(&modal_element, "telegram.auth.data", move |e| {
                     let e = e.dyn_ref::<CustomEvent>().unwrap();
-                    e.prevent_default();
                     if let Some(login_telegram_question) = e
                         .detail()
                         .as_string()
@@ -274,18 +313,10 @@ pub fn login_modal(props: &LoginModalProps) -> Html {
     let telegram_html = html! {
         <div class="telegramAuth mb-4">
             <div class="telegramAuthContainer">
-                <script
-                    async=true
-                    src="https://telegram.org/js/telegram-widget.js?22"
-                    data-telegram-login={ crate::TELEGRAM_BOT_LOGIN }
-                    data-size="large"
-                    data-radius="5"
-                    data-onauth={ format!(
-                        "document.getElementById('{modal_id}').dispatchEvent(new CustomEvent('telegram.auth.data', {{detail: JSON.stringify(user)}}))",
-                        modal_id = id
-                    ) }
-                    data-request-access="write"
-                ></script>
+                <TelegramButton onauth={ format!(
+                    "document.getElementById('{modal_id}').dispatchEvent(new CustomEvent('telegram.auth.data', {{detail: JSON.stringify(user)}}))",
+                    modal_id = id
+                ) } />
             </div>
         </div>
     };

@@ -15,6 +15,7 @@ chrono = { version = "0.4", features = ["unstable-locales"] }
 
 yew = { version = "0.21" }
 yew-router = { version = "0.18" }
+yew-alt-html = { version = "0.4" }
 yew-hooks = { version = "0.3", optional = true }
 
 wasm-bindgen-futures = { version = "0.4", optional = true }

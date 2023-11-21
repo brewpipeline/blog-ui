@@ -18,7 +18,8 @@ impl SearchMode {
         match route {
             Route::PostsSearch { query } => Self::Posts { query: Some(query) },
             Route::AuthorsSearch { query } => Self::Authors { query: Some(query) },
-            Route::NotFound
+            Route::Settings
+            | Route::NotFound
             | Route::PostsSearchRoot
             | Route::NewPost
             | Route::EditPost { id: _ }

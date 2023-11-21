@@ -129,7 +129,7 @@ pub fn author_card(props: &AuthorCardProps) -> Html {
                     <p class="card-text placeholder-glow">
                         <small class="text-body-secondary">
                             if let Some(slug) = author.as_ref().map(|a| a.slug.clone()) {
-                                { slug }
+                                { blog_generic::clean_author_slug(&slug) }
                             } else {
                                 <span class="placeholder col-2 bg-secondary"></span>
                             }

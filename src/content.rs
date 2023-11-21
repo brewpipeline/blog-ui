@@ -160,6 +160,14 @@ pub struct BlockAuthorIdParams {
     pub block: bool,
 }
 
+#[derive(Clone, PartialEq)]
+pub struct UpdateMinimalAuthor {
+    pub update_minimal_author: CommonMinimalAuthor,
+}
+
+#[derive(Clone, PartialEq)]
+pub struct AuthorResetOverrideSocialData;
+
 #[cfg(feature = "client")]
 #[async_trait(?Send)]
 impl RequestableItem<AuthorSlugParams> for API<AuthorContainer> {
@@ -204,6 +212,50 @@ impl RequestableItem<Tokened<BlockAuthorIdParams>> for API<()> {
         Ok(Request::get(url.as_str())
             .header("Token", token.as_str())
             .build()?)
+    }
+    async fn response(response: Response) -> Result<Self, Error> {
+        response.json().await
+    }
+}
+
+#[cfg(feature = "client")]
+#[async_trait(?Send)]
+impl RequestableItem<Tokened<AuthorResetOverrideSocialData>> for API<()> {
+    async fn request(params: Tokened<AuthorResetOverrideSocialData>) -> Result<Request, Error> {
+        let Tokened {
+            token,
+            params: AuthorResetOverrideSocialData,
+        } = params;
+        let url = format!(
+            "{url}/api/author/reset_override_social_data",
+            url = crate::API_URL
+        );
+        Ok(Request::patch(url.as_str())
+            .header("Token", token.as_str())
+            .build()?)
+    }
+    async fn response(response: Response) -> Result<Self, Error> {
+        response.json().await
+    }
+}
+
+#[cfg(feature = "client")]
+#[async_trait(?Send)]
+impl RequestableItem<Tokened<UpdateMinimalAuthor>> for API<()> {
+    async fn request(params: Tokened<UpdateMinimalAuthor>) -> Result<Request, Error> {
+        let Tokened {
+            token,
+            params: UpdateMinimalAuthor {
+                update_minimal_author,
+            },
+        } = params;
+        let url = format!("{url}/api/author/minimal", url = crate::API_URL);
+        Ok(Request::patch(url.as_str())
+            .header("Token", token.as_str())
+            .header("Content-Type", "application/json")
+            .body(
+                serde_json::to_string(&update_minimal_author).map_err(|e| Error::SerdeError(e))?,
+            )?)
     }
     async fn response(response: Response) -> Result<Self, Error> {
         response.json().await

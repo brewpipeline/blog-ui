@@ -113,7 +113,7 @@ pub fn post_card(props: &PostCardProps) -> Html {
                                 state={ Some(post.author.clone()) }
                             >
                                 <strong>
-                                    { &post.author.slug }
+                                    { blog_generic::clean_author_slug(&post.author.slug) }
                                 </strong>
                             </Link<Route, (), Author>>
                         } else {
