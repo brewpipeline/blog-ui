@@ -1,17 +1,21 @@
+#[cfg(feature = "telegram")]
 use blog_generic::entities::LoginTelegramQuestion;
-#[cfg(feature = "client")]
+#[cfg(all(feature = "client", feature = "telegram"))]
 use gloo::events::EventListener;
 use noneifempty::NoneIfEmpty;
 #[cfg(all(feature = "client", any(feature = "yandex", feature = "telegram")))]
 use wasm_bindgen::JsCast;
 #[cfg(all(feature = "client", any(feature = "yandex", feature = "telegram")))]
 use web_sys::CustomEvent;
+#[cfg(all(feature = "client", feature = "telegram"))]
+use web_sys::HtmlElement;
 #[cfg(feature = "client")]
-use web_sys::{HtmlElement, HtmlInputElement};
+use web_sys::HtmlInputElement;
 use yew::prelude::*;
 use yew_alt_html::*;
 
 use crate::components::meta::*;
+use crate::components::svg_image::*;
 #[cfg(feature = "telegram")]
 use crate::components::telegram_button::*;
 use crate::components::warning::*;
@@ -32,9 +36,11 @@ pub fn settings() -> Html {
 
     let in_progress = use_state(|| false);
 
+    let main_reset_counter = use_state(|| 0);
+
     let main_active_section = use_state(|| ActiveSection::None);
 
-    let main_section_error = use_state::<Option<Result<String, String>>, _>(|| None);
+    let main_section_error = use_state(|| None);
 
     let settings_node_ref = use_node_ref();
 
@@ -46,25 +52,49 @@ pub fn settings() -> Html {
     #[cfg(feature = "client")]
     {
         let logged_user_context = logged_user_context.clone();
+        let main_reset_counter = main_reset_counter.clone();
         let main_active_section = main_active_section.clone();
-        use_effect_with(logged_user_context, move |logged_user_context| {
-            if logged_user_context.is_not_inited() {
-                return;
-            }
-            main_active_section.set(
-                if let LoggedUserState::ActiveAndLoaded { token, author } =
-                    logged_user_context.state().clone()
-                {
-                    if author.override_social_data == 0 {
-                        ActiveSection::Social
+        let slug_node_ref = slug_node_ref.clone();
+        let first_name_node_ref = first_name_node_ref.clone();
+        let last_name_node_ref = last_name_node_ref.clone();
+        let image_url_node_ref = image_url_node_ref.clone();
+        use_effect_with(
+            (logged_user_context, main_reset_counter),
+            move |(logged_user_context, _)| {
+                if logged_user_context.is_not_inited() {
+                    return;
+                }
+                main_active_section.set(
+                    if let LoggedUserState::ActiveAndLoaded { token, author } =
+                        logged_user_context.state().clone()
+                    {
+                        slug_node_ref
+                            .cast::<HtmlInputElement>()
+                            .unwrap()
+                            .set_value(blog_generic::clean_author_slug(&author.slug).as_str());
+                        first_name_node_ref
+                            .cast::<HtmlInputElement>()
+                            .unwrap()
+                            .set_value(author.first_name.unwrap_or_default().as_str());
+                        last_name_node_ref
+                            .cast::<HtmlInputElement>()
+                            .unwrap()
+                            .set_value(author.last_name.unwrap_or_default().as_str());
+                        image_url_node_ref
+                            .cast::<HtmlInputElement>()
+                            .unwrap()
+                            .set_value(author.image_url.unwrap_or_default().as_str());
+                        if author.override_social_data == 0 {
+                            ActiveSection::Social
+                        } else {
+                            ActiveSection::Custom
+                        }
                     } else {
-                        ActiveSection::Custom
-                    }
-                } else {
-                    ActiveSection::None
-                },
-            )
-        });
+                        ActiveSection::None
+                    },
+                )
+            },
+        );
     }
 
     #[cfg(all(feature = "client", feature = "telegram"))]
@@ -221,7 +251,19 @@ pub fn settings() -> Html {
         <TelegramButton onauth="document.getElementById('settingsPage').dispatchEvent(new CustomEvent('telegram.reauth.data', {detail: JSON.stringify(user)}))" />
     };
     #[cfg(not(feature = "telegram"))]
-    let telegram_button = ah! {};
+    let telegram_button = ah! {
+        <strong>"Кнопка еще разрабатывается..."</strong>
+    };
+
+    let reset_onclick = {
+        let main_reset_counter = main_reset_counter.clone();
+        let main_section_error = main_section_error.clone();
+        move |e: MouseEvent| {
+            e.prevent_default();
+            main_reset_counter.set(*main_reset_counter + 1);
+            main_section_error.set(None);
+        }
+    };
 
     ah! {
         <Meta title={ "Настройки" } noindex=true />
@@ -235,6 +277,8 @@ pub fn settings() -> Html {
                         <div class="col-12 col-lg-10 col-xl-8">
                             <h6 class="card-title placeholder-glow mb-3">
                                 "Основные данные профиля"
+                                " "
+                                <a href="#" onclick={ reset_onclick }><CounterclockwiseImg /></a>
                             </h6>
                             if let Some(message) = main_section_error.as_ref() {
                                 match message {

@@ -54,7 +54,7 @@ pub fn auth_user_block() -> Html {
                             to={ Route::Author { slug: author.slug.clone() } }
                             state={ Some(author.clone()) }
                         >
-                            { &author.slug }
+                            { blog_generic::clean_author_slug(&author.slug) }
                         </Link<Route, (), Author>>
                     </li>
                     <li>
