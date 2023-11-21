@@ -1,7 +1,8 @@
-#[cfg(feature = "telegram")]
+#[cfg(all(feature = "client", feature = "telegram"))]
 use blog_generic::entities::LoginTelegramQuestion;
 #[cfg(all(feature = "client", feature = "telegram"))]
 use gloo::events::EventListener;
+#[cfg(feature = "client")]
 use noneifempty::NoneIfEmpty;
 #[cfg(all(feature = "client", any(feature = "yandex", feature = "telegram")))]
 use wasm_bindgen::JsCast;
@@ -40,7 +41,7 @@ pub fn settings() -> Html {
 
     let main_active_section = use_state(|| ActiveSection::None);
 
-    let main_section_error = use_state(|| None);
+    let main_section_error = use_state::<Option<Result<String, String>>, _>(|| None);
 
     let settings_node_ref = use_node_ref();
 
