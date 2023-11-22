@@ -102,16 +102,20 @@ pub fn author_card(props: &AuthorCardProps) -> Html {
                     <h5 class="card-title placeholder-glow">
                         if let Some(author) = author.as_ref() {
                             {
-                                format!(
-                                    "{} {}",
-                                    author.first_name
-                                        .clone()
-                                        .none_if_empty()
-                                        .unwrap_or("(Имя не указано)".to_owned()),
-                                    author.last_name
-                                        .clone()
-                                        .unwrap_or_default()
-                                )
+                                if author.blocked == 1 {
+                                    "(Имя скрыто)".to_owned()
+                                } else {
+                                    format!(
+                                        "{} {}",
+                                        author.first_name
+                                            .clone()
+                                            .none_if_empty()
+                                            .unwrap_or("(Имя не указано)".to_owned()),
+                                        author.last_name
+                                            .clone()
+                                            .unwrap_or_default()
+                                    )
+                                }
                             }
                             if author.editor == 1 {
                                 { " " }
@@ -128,23 +132,50 @@ pub fn author_card(props: &AuthorCardProps) -> Html {
                     </h5>
                     <p class="card-text placeholder-glow">
                         <small class="text-body-secondary">
-                            if let Some(slug) = author.as_ref().map(|a| a.slug.clone()) {
-                                { blog_generic::clean_author_slug(&slug) }
+                            if let Some(author) = author.as_ref() {
+                                { author_slug_formatter(&author) }
                             } else {
                                 <span class="placeholder col-2 bg-secondary"></span>
                             }
                         </small>
                     </p>
                     <p class="card-text placeholder-glow">
+                        { "Email: " }
                         if let Some(author) = author.as_ref() {
                             {
-                                author.email
-                                    .clone()
-                                    .none_if_empty()
-                                    .unwrap_or("(e-mail не указан)".to_owned())
+                                if author.blocked == 1 {
+                                    "(скрыт)".to_owned()
+                                } else {
+                                    author.email
+                                        .clone()
+                                        .none_if_empty()
+                                        .unwrap_or("(не указан)".to_owned())
+                                }
                             }
                         } else {
                             <span class="placeholder col-4 bg-secondary"></span>
+                        }
+                    </p>
+                    <p class="card-text placeholder-glow">
+                        if let Some(author) = author.as_ref() {
+                            {
+                                if author.blocked == 1 {
+                                    "(Информация о себе скрыта)".to_owned()
+                                } else {
+                                    author.status
+                                        .clone()
+                                        .none_if_empty()
+                                        .unwrap_or("(Информация о себе отсутствует)".to_owned())
+                                }
+                            }
+                        } else {
+                            <span class="placeholder col-4 bg-secondary"></span> { " " }
+                            <span class="placeholder col-2 bg-secondary"></span> { " " }
+                            <span class="placeholder col-3 bg-secondary"></span> { " " }
+                            <span class="placeholder col-2 bg-secondary"></span> { " " }
+                            <span class="placeholder col-5 bg-secondary"></span> { " " }
+                            <span class="placeholder col-2 bg-secondary"></span> { " " }
+                            <span class="placeholder col-3 bg-secondary"></span> { " " }
                         }
                     </p>
                     if !link_to && !logged_user_context.is_not_inited() && author != None {
