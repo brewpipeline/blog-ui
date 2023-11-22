@@ -166,6 +166,11 @@ pub struct UpdateMinimalAuthor {
 }
 
 #[derive(Clone, PartialEq)]
+pub struct UpdateSecondaryAuthor {
+    pub update_secondary_author: CommonSecondaryAuthor,
+}
+
+#[derive(Clone, PartialEq)]
 pub struct AuthorResetOverrideSocialData;
 
 #[cfg(feature = "client")]
@@ -255,6 +260,29 @@ impl RequestableItem<Tokened<UpdateMinimalAuthor>> for API<()> {
             .header("Content-Type", "application/json")
             .body(
                 serde_json::to_string(&update_minimal_author).map_err(|e| Error::SerdeError(e))?,
+            )?)
+    }
+    async fn response(response: Response) -> Result<Self, Error> {
+        response.json().await
+    }
+}
+
+#[cfg(feature = "client")]
+#[async_trait(?Send)]
+impl RequestableItem<Tokened<UpdateSecondaryAuthor>> for API<()> {
+    async fn request(params: Tokened<UpdateSecondaryAuthor>) -> Result<Request, Error> {
+        let Tokened {
+            token,
+            params: UpdateSecondaryAuthor {
+                update_secondary_author,
+            },
+        } = params;
+        let url = format!("{url}/api/author/secondary", url = crate::API_URL);
+        Ok(Request::patch(url.as_str())
+            .header("Token", token.as_str())
+            .header("Content-Type", "application/json")
+            .body(
+                serde_json::to_string(&update_secondary_author).map_err(|e| Error::SerdeError(e))?,
             )?)
     }
     async fn response(response: Response) -> Result<Self, Error> {
