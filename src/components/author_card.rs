@@ -95,6 +95,26 @@ pub fn author_card(props: &AuthorCardProps) -> Html {
             <div class="col-4">
                 <div class="img-block rounded-start" style="height:220px;width:100%;overflow:hidden;">
                     <AuthorImage author={ author.clone() } />
+                    if !link_to && !logged_user_context.is_not_inited() && author != None {
+                        if (*logged_user_context)
+                            .author()
+                            .map(|a| a.editor == 1)
+                            .unwrap_or(false)
+                        {
+                            <button
+                                type="button"
+                                style="position:absolute;left:5px;bottom:5px;"
+                                class={ classes!("btn", if *is_blocked { "btn-success" } else { "btn-danger" }) }
+                                disabled={ *in_progress }
+                                { onclick }
+                            >
+                                <HammerImg />
+                                {
+                                    if !(*is_blocked) { " Бан " } else { " Разбан " }
+                                }
+                            </button>
+                        }
+                    }
                 </div>
             </div>
             <div class="col">
@@ -178,25 +198,6 @@ pub fn author_card(props: &AuthorCardProps) -> Html {
                             <span class="placeholder col-3 bg-secondary"></span> { " " }
                         }
                     </p>
-                    if !link_to && !logged_user_context.is_not_inited() && author != None {
-                        if (*logged_user_context)
-                            .author()
-                            .map(|a| a.editor == 1)
-                            .unwrap_or(false)
-                        {
-                            <button
-                                type="button"
-                                class={ classes!("btn", if *is_blocked { "btn-success" } else { "btn-danger" }) }
-                                disabled={ *in_progress }
-                                { onclick }
-                            >
-                                <HammerImg />
-                                {
-                                    if !(*is_blocked) { " Заблокировать " } else { " Разблокировать " }
-                                }
-                            </button>
-                        }
-                    }
                 </div>
             </div>
         </div>
