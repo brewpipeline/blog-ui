@@ -282,7 +282,8 @@ impl RequestableItem<Tokened<UpdateSecondaryAuthor>> for API<()> {
             .header("Token", token.as_str())
             .header("Content-Type", "application/json")
             .body(
-                serde_json::to_string(&update_secondary_author).map_err(|e| Error::SerdeError(e))?,
+                serde_json::to_string(&update_secondary_author)
+                    .map_err(|e| Error::SerdeError(e))?,
             )?)
     }
     async fn response(response: Response) -> Result<Self, Error> {
