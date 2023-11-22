@@ -426,7 +426,8 @@ pub fn settings() -> Html {
                             data: _,
                         } => {
                             logged_user_context.dispatch(LoggedUserState::Active { token });
-                            secondary_section_error.set(Some(Ok("secondary data applied".to_string())));
+                            secondary_section_error
+                                .set(Some(Ok("secondary data applied".to_string())));
                         }
                         API::Failure { identifier, reason } => {
                             secondary_section_error.set(Some(Err(reason.unwrap_or(identifier))));
