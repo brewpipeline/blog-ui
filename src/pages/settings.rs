@@ -13,7 +13,6 @@ use web_sys::HtmlElement;
 #[cfg(feature = "client")]
 use web_sys::HtmlInputElement;
 use yew::prelude::*;
-use yew_alt_html::*;
 
 use crate::components::meta::*;
 use crate::components::svg_image::*;
@@ -252,12 +251,12 @@ pub fn settings() -> Html {
     let main_onclick = Callback::from(|_| {});
 
     #[cfg(feature = "telegram")]
-    let telegram_button = ah! {
+    let telegram_button = html! {
         <TelegramButton onauth="document.getElementById('settingsPage').dispatchEvent(new CustomEvent('telegram.reauth.data', {detail: JSON.stringify(user)}))" />
     };
     #[cfg(not(feature = "telegram"))]
-    let telegram_button = ah! {
-        <strong>"Кнопка еще разрабатывается..."</strong>
+    let telegram_button = html! {
+        <strong>{ "Кнопка еще разрабатывается..." }</strong>
     };
 
     let main_oninput = {
@@ -453,150 +452,243 @@ pub fn settings() -> Html {
 
     // MARK: Html
 
-    ah! {
-        <Meta title={ "Настройки" } noindex=true />
-        <div id="settingsPage" ref={ settings_node_ref }>
-            if !logged_user_context.is_not_inited() && !logged_user_context.state().action_available() {
-                <div class="card mb-3">
-                    <div class="card-body">
-                        <h5 class="card-title placeholder-glow mb-3">
-                            "Настройки"
-                        </h5>
-                        <div class="col-12 col-xl-10">
-                            <h6 class="card-title placeholder-glow mb-3">
-                                "Основные данные профиля"
-                                " "
-                                <a href="#" onclick={
-                                    let main_reset = main_reset.clone();
-                                    let main_section_error = main_section_error.clone();
-                                    move |e: MouseEvent| {
-                                        e.prevent_default();
-                                        main_reset.set(*main_reset + 1);
-                                        main_section_error.set(None);
-                                    }
-                                }>
-                                    <CounterclockwiseImg />
-                                </a>
-                            </h6>
-                            if let Some(message) = main_section_error.as_ref() {
-                                match message {
-                                    Ok(ok_message) => {
-                                        <div class="alert alert-success d-flex align-items-center" role="alert">
-                                            { "Данные успешно обновлены: " }
-                                            { ok_message }
-                                        </div>
-                                    },
-                                    Err(err_message) => {
-                                        <div class="alert alert-danger d-flex align-items-center" role="alert">
-                                            { "Ошибка обновления данных: " }
-                                            { err_message }
-                                        </div>
+    html! {
+        <>
+            <Meta title={ "Настройки" } noindex=true />
+            <div id="settingsPage" ref={ settings_node_ref }>
+                if !logged_user_context.is_not_inited() && !logged_user_context.state().action_available() {
+                    <div class="card mb-3">
+                        <div class="card-body">
+                            <h5 class="card-title placeholder-glow mb-3">
+                                { "Настройки" }
+                            </h5>
+                            <div class="col-12 col-xl-10">
+                                <h6 class="card-title placeholder-glow mb-3">
+                                    { "Основные данные профиля" }
+                                    { " " }
+                                    <a href="#" onclick={
+                                        let main_reset = main_reset.clone();
+                                        let main_section_error = main_section_error.clone();
+                                        move |e: MouseEvent| {
+                                            e.prevent_default();
+                                            main_reset.set(*main_reset + 1);
+                                            main_section_error.set(None);
+                                        }
+                                    }>
+                                        <CounterclockwiseImg />
+                                    </a>
+                                </h6>
+                                if let Some(message) = main_section_error.as_ref() {
+                                    {
+                                        match message {
+                                            Ok(ok_message) => html! {
+                                                <div class="alert alert-success d-flex align-items-center" role="alert">
+                                                    { "Данные успешно обновлены: " }
+                                                    { ok_message }
+                                                </div>
+                                            },
+                                            Err(err_message) => html! {
+                                                <div class="alert alert-danger d-flex align-items-center" role="alert">
+                                                    { "Ошибка обновления данных: " }
+                                                    { err_message }
+                                                </div>
+                                            }
+                                        }
                                     }
                                 }
-                            }
-                            <div class="mb-3">
-                                <div class="form-check mb-2">
-                                    <input
-                                        class="form-check-input"
-                                        type="radio"
-                                        name="flexRadioDefault"
-                                        id="flexRadioDefault1"
-                                        disabled=true
-                                        checked={ *main_active_section == ActiveSection::Social }
-                                        onclick={
-                                            let main_active_section = main_active_section.clone();
-                                            let main_section_error = main_section_error.clone();
-                                            Callback::from(move |_: MouseEvent| {
-                                                main_active_section.set(ActiveSection::Social);
-                                                main_section_error.set(None);
-                                            })
-                                        }
-                                    />
-                                    <label class="form-check-label mb-2" for="flexRadioDefault1">
-                                        "Использовать данные Telegram (используйте кнопку ниже, чтобы выбрать этот пункт)"
-                                    </label>
-                                    <div class="mb-2">
-                                        <div style={ if !*in_progress { "" } else { "pointer-events: none;" } }>
-                                            { telegram_button }
+                                <div class="mb-3">
+                                    <div class="form-check mb-2">
+                                        <input
+                                            class="form-check-input"
+                                            type="radio"
+                                            name="flexRadioDefault"
+                                            id="flexRadioDefault1"
+                                            disabled=true
+                                            checked={ *main_active_section == ActiveSection::Social }
+                                            onclick={
+                                                let main_active_section = main_active_section.clone();
+                                                let main_section_error = main_section_error.clone();
+                                                Callback::from(move |_: MouseEvent| {
+                                                    main_active_section.set(ActiveSection::Social);
+                                                    main_section_error.set(None);
+                                                })
+                                            }
+                                        />
+                                        <label class="form-check-label mb-2" for="flexRadioDefault1">
+                                            { "Использовать данные Telegram (используйте кнопку ниже, чтобы выбрать этот пункт)" }
+                                        </label>
+                                        <div class="mb-2">
+                                            <div style={ if !*in_progress { "" } else { "pointer-events: none;" } }>
+                                                { telegram_button }
+                                            </div>
+                                            <div class="form-text">
+                                                { "Также используйте кнопку для синхронизации данныx." }
+                                            </div>
                                         </div>
-                                        <div class="form-text">"Также используйте кнопку для синхронизации данныx."</div>
                                     </div>
                                 </div>
-                            </div>
-                            <div class="mb-3">
-                                <div class="form-check mb-2">
-                                    <input
-                                        class="form-check-input"
-                                        type="radio"
-                                        name="flexRadioDefault"
-                                        id="flexRadioDefault2"
-                                        disabled={ *main_active_section == ActiveSection::None || *in_progress }
-                                        checked={ *main_active_section == ActiveSection::Custom }
-                                        onclick={
-                                            let main_active_section = main_active_section.clone();
-                                            let main_section_error = main_section_error.clone();
-                                            Callback::from(move |_: MouseEvent| {
-                                                main_active_section.set(ActiveSection::Custom);
-                                                main_section_error.set(None);
-                                            })
+                                <div class="mb-3">
+                                    <div class="form-check mb-2">
+                                        <input
+                                            class="form-check-input"
+                                            type="radio"
+                                            name="flexRadioDefault"
+                                            id="flexRadioDefault2"
+                                            disabled={ *main_active_section == ActiveSection::None || *in_progress }
+                                            checked={ *main_active_section == ActiveSection::Custom }
+                                            onclick={
+                                                let main_active_section = main_active_section.clone();
+                                                let main_section_error = main_section_error.clone();
+                                                Callback::from(move |_: MouseEvent| {
+                                                    main_active_section.set(ActiveSection::Custom);
+                                                    main_section_error.set(None);
+                                                })
+                                            }
+                                        />
+                                        <label class="form-check-label mb-2" for="flexRadioDefault2">
+                                            { "Использовать пользовательские данные" }
+                                        </label>
+                                        <div class="form-floating mb-2">
+                                            <input
+                                                ref={ slug_node_ref.clone() }
+                                                oninput={ main_oninput.clone() }
+                                                type="text"
+                                                class="form-control"
+                                                id="floatingInput1"
+                                                placeholder="Имя профиля (уникальное)"
+                                                disabled={ *main_active_section != ActiveSection::Custom || *in_progress }
+                                            />
+                                            <label for="floatingInput1">{ "Имя профиля (уникальное)" }</label>
+                                        </div>
+                                        <div class="form-floating mb-2">
+                                            <input
+                                                ref={ image_url_node_ref.clone() }
+                                                oninput={ main_oninput.clone() }
+                                                type="text"
+                                                class="form-control"
+                                                id="floatingInput2"
+                                                placeholder="Изображение профиля (ссылка)"
+                                                disabled={ *main_active_section != ActiveSection::Custom || *in_progress }
+                                            />
+                                            <label for="floatingInput2">{ "Изображение профиля (ссылка)" }</label>
+                                        </div>
+                                        <div class="form-floating mb-2">
+                                            <input
+                                                ref={ first_name_node_ref.clone() }
+                                                oninput={ main_oninput.clone() }
+                                                type="text"
+                                                class="form-control"
+                                                id="floatingInput3"
+                                                placeholder="Имя"
+                                                disabled={ *main_active_section != ActiveSection::Custom || *in_progress }
+                                            />
+                                            <label for="floatingInput3">{ "Имя" }</label>
+                                        </div>
+                                        <div class="form-floating mb-2">
+                                            <input
+                                                ref={ last_name_node_ref.clone() }
+                                                oninput={ main_oninput.clone() }
+                                                type="text"
+                                                class="form-control"
+                                                id="floatingInput4"
+                                                placeholder="Фамилия"
+                                                disabled={ *main_active_section != ActiveSection::Custom || *in_progress }
+                                            />
+                                            <label for="floatingInput4">{ "Фамилия" }</label>
+                                        </div>
+                                        <button
+                                            type="button"
+                                            class="btn btn-info"
+                                            onclick={ main_onclick }
+                                            disabled={ *main_active_section != ActiveSection::Custom || *in_progress || !is_main_ready_for_save }
+                                        >
+                                            { "Сохранить" }
+                                            if *in_progress {
+                                                { " " }
+                                                <div class="spinner-border spinner-border-sm" role="status">
+                                                    <span class="visually-hidden"> { "Загрузка..." } </span>
+                                                </div>
+                                            }
+                                        </button>
+                                    </div>
+                                </div>
+                                <h6 class="card-title placeholder-glow mb-3">
+                                    { "Второстепенные данные профиля" }
+                                    { " " }
+                                    <a href="#" onclick={
+                                        let secondary_reset = secondary_reset.clone();
+                                        let secondary_section_error = main_section_error.clone();
+                                        move |e: MouseEvent| {
+                                            e.prevent_default();
+                                            secondary_reset.set(*secondary_reset + 1);
+                                            secondary_section_error.set(None);
                                         }
-                                    />
-                                    <label class="form-check-label mb-2" for="flexRadioDefault2">
-                                        "Использовать пользовательские данные"
-                                    </label>
+                                    }>
+                                        <CounterclockwiseImg />
+                                    </a>
+                                </h6>
+                                if let Some(message) = secondary_section_error.as_ref() {
+                                    {
+                                        match message {
+                                            Ok(ok_message) => html! {
+                                                <div class="alert alert-success d-flex align-items-center" role="alert">
+                                                    { "Данные успешно обновлены: " }
+                                                    { ok_message }
+                                                </div>
+                                            },
+                                            Err(err_message) => html! {
+                                                <div class="alert alert-danger d-flex align-items-center" role="alert">
+                                                    { "Ошибка обновления данных: " }
+                                                    { err_message }
+                                                </div>
+                                            }
+                                        }
+                                    }
+                                }
+                                <div class="mb-3">
                                     <div class="form-floating mb-2">
-                                        <input
-                                            ref={ slug_node_ref.clone() }
-                                            oninput={ main_oninput.clone() }
-                                            type="text"
+                                        <textarea
+                                            ref={ status_node_ref }
+                                            oninput={ secondary_oninput.clone() }
+                                            style="height: auto; height: 120px;"
+                                            row="4"
+                                            type="phone"
                                             class="form-control"
-                                            id="floatingInput1"
-                                            placeholder="Имя профиля (уникальное)"
-                                            disabled={ *main_active_section != ActiveSection::Custom || *in_progress }
+                                            id="floatingInput5"
+                                            placeholder="О себе"
+                                            disabled={ *in_progress }
                                         />
-                                        <label for="floatingInput1">"Имя профиля (уникальное)"</label>
+                                        <label for="floatingInput5">{ "О себе" }</label>
                                     </div>
                                     <div class="form-floating mb-2">
                                         <input
-                                            ref={ image_url_node_ref.clone() }
-                                            oninput={ main_oninput.clone() }
-                                            type="text"
+                                            ref={ email_node_ref }
+                                            oninput={ secondary_oninput.clone() }
+                                            type="email"
                                             class="form-control"
-                                            id="floatingInput2"
-                                            placeholder="Изображение профиля (ссылка)"
-                                            disabled={ *main_active_section != ActiveSection::Custom || *in_progress }
+                                            id="floatingInput6"
+                                            placeholder="Почта"
+                                            disabled={ *in_progress }
                                         />
-                                        <label for="floatingInput2">"Изображение профиля (ссылка)"</label>
+                                        <label for="floatingInput6">{ "Почта" }</label>
                                     </div>
                                     <div class="form-floating mb-2">
                                         <input
-                                            ref={ first_name_node_ref.clone() }
-                                            oninput={ main_oninput.clone() }
+                                            ref={ mobile_node_ref }
+                                            oninput={ secondary_oninput.clone() }
                                             type="text"
                                             class="form-control"
-                                            id="floatingInput3"
-                                            placeholder="Имя"
-                                            disabled={ *main_active_section != ActiveSection::Custom || *in_progress }
+                                            id="floatingInput7"
+                                            placeholder="Телефон"
+                                            disabled={ *in_progress }
                                         />
-                                        <label for="floatingInput3">"Имя"</label>
-                                    </div>
-                                    <div class="form-floating mb-2">
-                                        <input
-                                            ref={ last_name_node_ref.clone() }
-                                            oninput={ main_oninput.clone() }
-                                            type="text"
-                                            class="form-control"
-                                            id="floatingInput4"
-                                            placeholder="Фамилия"
-                                            disabled={ *main_active_section != ActiveSection::Custom || *in_progress }
-                                        />
-                                        <label for="floatingInput4">"Фамилия"</label>
+                                        <label for="floatingInput7">{ "Телефон" }</label>
                                     </div>
                                     <button
                                         type="button"
                                         class="btn btn-info"
-                                        onclick={ main_onclick }
-                                        disabled={ *main_active_section != ActiveSection::Custom || *in_progress || !is_main_ready_for_save }
+                                        onclick={ secondary_onclick }
+                                        disabled={ *in_progress || !is_secondary_ready_for_save }
                                     >
                                         { "Сохранить" }
                                         if *in_progress {
@@ -608,97 +700,12 @@ pub fn settings() -> Html {
                                     </button>
                                 </div>
                             </div>
-                            <h6 class="card-title placeholder-glow mb-3">
-                                "Второстепенные данные профиля"
-                                " "
-                                <a href="#" onclick={
-                                    let secondary_reset = secondary_reset.clone();
-                                    let secondary_section_error = main_section_error.clone();
-                                    move |e: MouseEvent| {
-                                        e.prevent_default();
-                                        secondary_reset.set(*secondary_reset + 1);
-                                        secondary_section_error.set(None);
-                                    }
-                                }>
-                                    <CounterclockwiseImg />
-                                </a>
-                            </h6>
-                            if let Some(message) = secondary_section_error.as_ref() {
-                                match message {
-                                    Ok(ok_message) => {
-                                        <div class="alert alert-success d-flex align-items-center" role="alert">
-                                            { "Данные успешно обновлены: " }
-                                            { ok_message }
-                                        </div>
-                                    },
-                                    Err(err_message) => {
-                                        <div class="alert alert-danger d-flex align-items-center" role="alert">
-                                            { "Ошибка обновления данных: " }
-                                            { err_message }
-                                        </div>
-                                    }
-                                }
-                            }
-                            <div class="mb-3">
-                                <div class="form-floating mb-2">
-                                    <textarea
-                                        ref={ status_node_ref }
-                                        oninput={ secondary_oninput.clone() }
-                                        style="height: auto; height: 120px;"
-                                        row="4"
-                                        type="phone"
-                                        class="form-control"
-                                        id="floatingInput5"
-                                        placeholder="О себе"
-                                        disabled={ *in_progress }
-                                    />
-                                    <label for="floatingInput5">"О себе"</label>
-                                </div>
-                                <div class="form-floating mb-2">
-                                    <input
-                                        ref={ email_node_ref }
-                                        oninput={ secondary_oninput.clone() }
-                                        type="email"
-                                        class="form-control"
-                                        id="floatingInput6"
-                                        placeholder="Почта"
-                                        disabled={ *in_progress }
-                                    />
-                                    <label for="floatingInput6">"Почта"</label>
-                                </div>
-                                <div class="form-floating mb-2">
-                                    <input
-                                        ref={ mobile_node_ref }
-                                        oninput={ secondary_oninput.clone() }
-                                        type="text"
-                                        class="form-control"
-                                        id="floatingInput7"
-                                        placeholder="Телефон"
-                                        disabled={ *in_progress }
-                                    />
-                                    <label for="floatingInput7">"Телефон"</label>
-                                </div>
-                                <button
-                                    type="button"
-                                    class="btn btn-info"
-                                    onclick={ secondary_onclick }
-                                    disabled={ *in_progress || !is_secondary_ready_for_save }
-                                >
-                                    { "Сохранить" }
-                                    if *in_progress {
-                                        { " " }
-                                        <div class="spinner-border spinner-border-sm" role="status">
-                                            <span class="visually-hidden"> { "Загрузка..." } </span>
-                                        </div>
-                                    }
-                                </button>
-                            </div>
                         </div>
                     </div>
-                </div>
-            } else {
-                <Warning text="Настройки доступны только авторизованным авторам!" />
-            }
-        </div>
+                } else {
+                    <Warning text="Настройки доступны только авторизованным авторам!" />
+                }
+            </div>
+        </>
     }
 }

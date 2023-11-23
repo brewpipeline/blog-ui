@@ -160,16 +160,15 @@ pub fn author_card(props: &AuthorCardProps) -> Html {
                         </small>
                     </p>
                     <p class="card-text placeholder-glow">
-                        { "Email: " }
                         if let Some(author) = author.as_ref() {
                             {
                                 if author.blocked == 1 {
-                                    "(скрыт)".to_owned()
+                                    "(Email скрыт)".to_owned()
                                 } else {
                                     author.email
                                         .clone()
                                         .none_if_empty()
-                                        .unwrap_or("(не указан)".to_owned())
+                                        .unwrap_or("(Email не указан)".to_owned())
                                 }
                             }
                         } else {
@@ -202,6 +201,7 @@ pub fn author_card(props: &AuthorCardProps) -> Html {
             </div>
         </div>
     };
+
     html! {
         <div class="card mb-3">
             if let (Some(author), true) = (author.as_ref(), link_to) {

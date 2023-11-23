@@ -205,6 +205,10 @@
     }
 }
 
+#logoutModal {
+    --bs-modal-width: 400px;
+}
+
 .modal-content {
     overflow: hidden;
 }
