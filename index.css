@@ -153,13 +153,17 @@
 }
 
 .modal {
-    --bs-modal-width: 500px;
+    --bs-modal-width: 450px;
 }
 
 @media (min-width:992px) {
     .modal {
-        --bs-modal-width: 700px;
+        --bs-modal-width: 650px;
     }
+}
+
+#logoutModal {
+    --bs-modal-width: 400px;
 }
 
 .modal-content {
