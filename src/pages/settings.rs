@@ -256,7 +256,7 @@ pub fn settings() -> Html {
     };
     #[cfg(not(feature = "telegram"))]
     let telegram_button = html! {
-        <strong>"Кнопка еще разрабатывается..."</strong>
+        <strong>{ "Кнопка еще разрабатывается..." }</strong>
     };
 
     let main_oninput = {
