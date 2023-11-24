@@ -90,7 +90,7 @@ pub fn comment_card(props: &CommentCardProps) -> Html {
         <div class="card mb-3">
             <div class="card-header placeholder-glow">
                 <div class="row align-items-center">
-                    <div class="d-flex col-4 align-items-center justify-content-start" style="height: 24px;">
+                    <div class="d-flex col-6 align-items-center justify-content-start" style="height: 24px;">
                         <div class="img-block rounded me-1" style="height:24px;width:24px;overflow:hidden;">
                             <AuthorImage author={ comment.as_ref().map(|c| c.author.clone()) } />
                         </div>
@@ -108,7 +108,7 @@ pub fn comment_card(props: &CommentCardProps) -> Html {
                             <span class="placeholder col-3 bg-secondary"></span>
                         }
                     </div>
-                    <div class="d-flex col-8 align-items-center justify-content-end" style="height: 24px;">
+                    <div class="d-flex col-6 align-items-center justify-content-end" style="height: 24px;">
                         if let Some(comment) = &comment {
                             <small> { date::format(comment.created_at) } </small>
                         } else {
