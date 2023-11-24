@@ -102,7 +102,7 @@ pub fn post_card(props: &PostCardProps) -> Html {
         <div class="card mb-3">
             <div class="card-header placeholder-glow border-0">
                 <div class="row align-items-center">
-                    <div class="d-flex col-4 align-items-center justify-content-start" style="height:24px;">
+                    <div class="d-flex col-6 align-items-center justify-content-start" style="height:24px;">
                         <div class="img-block rounded me-1" style="height:24px;width:24px;overflow:hidden;">
                             <AuthorImage author={ post.as_ref().map(|p| p.author.clone()) } />
                         </div>
@@ -120,7 +120,7 @@ pub fn post_card(props: &PostCardProps) -> Html {
                             <span class="placeholder col-3 bg-secondary"></span>
                         }
                     </div>
-                    <div class="d-flex col-8 align-items-center justify-content-end" style="height: 24px;">
+                    <div class="d-flex col-6 align-items-center justify-content-end" style="height: 24px;">
                         <DelayedComponent<Option<Post>> component={ |post: Option<Post>| html! {
                             if let Some(post) = post {
                                 <small> { date::format(post.created_at) } </small>
