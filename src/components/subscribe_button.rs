@@ -27,49 +27,52 @@ pub fn subscribe_button() -> Html {
         })
     }
 
-    let author = author.clone();
-    let logged_user_context = logged_user_context.clone();
-    let in_progress = in_progress.clone();
-    let is_subscribed = is_subscribed.clone();
-    use_effect_with(in_progress, move |in_progress| {
-        if logged_user_context.is_not_inited() || !**in_progress {
-            return;
-        }
-
-        let (Some(author), Some(token)) = (author, (*logged_user_context).token().cloned()) else {
-            return;
-        };
-
+    #[cfg(feature = "client")]
+    {
+        let author = author.clone();
+        let logged_user_context = logged_user_context.clone();
         let in_progress = in_progress.clone();
         let is_subscribed = is_subscribed.clone();
-        wasm_bindgen_futures::spawn_local(async move {
-            let subscribe_author_request = API::<()>::get(Tokened {
-                token,
-                params: SubscribeAuthorIdParams {
-                    id: author.id,
-                    subscribe: !*is_subscribed,
-                },
-            });
-            match subscribe_author_request.await {
-                Ok(subscribe_author_result) => match subscribe_author_result {
-                    API::Success {
-                        identifier: _,
-                        description: _,
-                        data: _,
-                    } => {
-                        is_subscribed.set(!*is_subscribed);
-                        show_popover.set(true);
-                    }
-                    API::Failure {
-                        identifier: _,
-                        reason: _,
-                    } => {}
-                },
-                Err(_) => {}
+        use_effect_with(in_progress, move |in_progress| {
+            if logged_user_context.is_not_inited() || !**in_progress {
+                return;
             }
-            in_progress.set(false);
+
+            let (Some(author), Some(token)) = (author, (*logged_user_context).token().cloned())
+            else {
+                return;
+            };
+
+            let in_progress = in_progress.clone();
+            let is_subscribed = is_subscribed.clone();
+            wasm_bindgen_futures::spawn_local(async move {
+                let subscribe_author_request = API::<()>::get(Tokened {
+                    token,
+                    params: SubscribeAuthorIdParams {
+                        id: author.id,
+                        subscribe: !*is_subscribed,
+                    },
+                });
+                match subscribe_author_request.await {
+                    Ok(subscribe_author_result) => match subscribe_author_result {
+                        API::Success {
+                            identifier: _,
+                            description: _,
+                            data: _,
+                        } => {
+                            is_subscribed.set(!*is_subscribed);
+                        }
+                        API::Failure {
+                            identifier: _,
+                            reason: _,
+                        } => {}
+                    },
+                    Err(_) => {}
+                }
+                in_progress.set(false);
+            });
         });
-    });
+    }
 
     let onclick = {
         let in_progress = in_progress.clone();
@@ -88,16 +91,20 @@ pub fn subscribe_button() -> Html {
     } else {
         html! {
             <button
-            type="button"
-            class={ classes!("btn","btn-light", if author.is_none() { "invisible"} else {"visible"}) }
-            disabled={ *in_progress }
-            { onclick }
+                type="button"
+                class={
+                    classes!(
+                        "btn",
+                        "btn-light",
+                        if author.is_none() { "invisible"} else {"visible"}) }
+                disabled={ *in_progress }
+                { onclick }
             >
-            if *is_subscribed {
-                <SubscribedImg />
-            } else {
-                <UnsubscribedImg />
-            }
+                if *is_subscribed {
+                    <FilledBellImg />
+                } else {
+                    <SlashedBellImg />
+                }
             </button>
         }
     }
