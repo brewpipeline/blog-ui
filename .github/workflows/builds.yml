@@ -45,7 +45,7 @@ jobs:
             is_wasm: true
           - features: "client,yandex,telegram"
             is_wasm: true
-          - features: "client, hydration"
+          - features: "client,hydration"
             is_wasm: true
     steps:
       - name: Checkout

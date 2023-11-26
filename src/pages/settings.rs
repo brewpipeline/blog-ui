@@ -15,7 +15,6 @@ use web_sys::HtmlInputElement;
 use yew::prelude::*;
 
 use crate::components::meta::*;
-use crate::components::svg_image::*;
 #[cfg(feature = "telegram")]
 use crate::components::telegram_button::*;
 use crate::components::warning::*;
@@ -475,7 +474,7 @@ pub fn settings() -> Html {
                                             main_section_error.set(None);
                                         }
                                     }>
-                                        <CounterclockwiseImg />
+                                        <i title="Сбросить основные данные" class="bi bi-arrow-counterclockwise"></i>
                                     </a>
                                 </h6>
                                 if let Some(message) = main_section_error.as_ref() {
@@ -624,7 +623,7 @@ pub fn settings() -> Html {
                                             secondary_section_error.set(None);
                                         }
                                     }>
-                                        <CounterclockwiseImg />
+                                        <i title="Сбросить второстепенные данные" class="bi bi-arrow-counterclockwise"></i>
                                     </a>
                                 </h6>
                                 if let Some(message) = secondary_section_error.as_ref() {

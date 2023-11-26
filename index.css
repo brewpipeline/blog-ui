@@ -312,3 +312,8 @@ article .article-iframe {
     height: 100%;
     width: 100%;
 }
+
+.bi-bell-slash-fill::before {
+    top: -1px;
+    position: relative;
+}

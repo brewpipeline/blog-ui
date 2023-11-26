@@ -4,7 +4,6 @@ use yew_router::prelude::*;
 use crate::components::author_image::*;
 use crate::components::delayed_component::*;
 use crate::components::optional_image::*;
-use crate::components::svg_image::*;
 use crate::content::*;
 use crate::utils::*;
 
@@ -150,7 +149,7 @@ pub fn post_card(props: &PostCardProps) -> Html {
                     <div class="d-flex col-2 align-items-center justify-content-end" style="height: 24px;">
                         <p class="mt-0 mb-0">
                             if let Some(0) = post.as_ref().map(|p| p.published) {
-                                <EyeSlashFillImg />
+                                <i title="Публикация скрыта" class="bi bi-eye-slash-fill"></i>
                             }
                             if !logged_user_context.is_not_inited() {
                                 if let (
@@ -167,7 +166,7 @@ pub fn post_card(props: &PostCardProps) -> Html {
                                             to={ Route::EditPost { id: post.id } }
                                             state={ Some(post.clone()) }
                                         >
-                                            <PencilSquareImg />
+                                            <i title="Редактировать публикацию" class="bi bi-pencil-square"></i>
                                         </Link<Route, (), Post>>
                                     }
                                 }

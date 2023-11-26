@@ -5,6 +5,7 @@ use crate::components::auth_user_block::*;
 use crate::components::delayed_component::*;
 use crate::components::search_button::*;
 use crate::components::search_field::*;
+use crate::components::subscribe_button::*;
 
 use crate::Route;
 
@@ -32,6 +33,7 @@ pub fn header() -> Html {
                             <DelayedComponent<()> component={ |_| html! {
                                 <>
                                     <SearchButton />
+                                    <SubscribeButton />
                                     <AuthUserBlock />
                                 </>
                             } } deps={ () } />

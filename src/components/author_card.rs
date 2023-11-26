@@ -3,7 +3,6 @@ use yew::prelude::*;
 use yew_router::prelude::*;
 
 use crate::components::author_image::*;
-use crate::components::svg_image::*;
 use crate::content::*;
 use crate::utils::*;
 
@@ -108,7 +107,7 @@ pub fn author_card(props: &AuthorCardProps) -> Html {
                                 disabled={ *in_progress }
                                 { onclick }
                             >
-                                <HammerImg />
+                                <i class="bi bi-hammer"></i>
                                 {
                                     if !(*is_blocked) { " Бан " } else { " Разбан " }
                                 }

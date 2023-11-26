@@ -2,7 +2,6 @@ use yew::prelude::*;
 use yew_router::prelude::*;
 
 use crate::components::author_image::*;
-use crate::components::svg_image::*;
 use crate::content::*;
 use crate::utils::*;
 
@@ -19,6 +18,7 @@ pub fn auth_user_block() -> Html {
     let Some(_) = logged_user_context.token().cloned() else {
         return html! {
             <button
+                title="Войти"
                 aria-label="Войти"
                 type="button"
                 class="item btn btn-light"
@@ -26,7 +26,7 @@ pub fn auth_user_block() -> Html {
                 data-bs-target="#loginModal"
             >
                 <div class="d-block d-lg-none">
-                    <PersonAddImg />
+                    <i class="bi bi-person-add"></i>
                 </div>
                 <div class="d-none d-lg-block"> { "Войти" } </div>
             </button>
@@ -38,6 +38,7 @@ pub fn auth_user_block() -> Html {
     html! {
         <div class="d-flex dropdown dropdown-menu-end">
             <div
+                title="Профиль"
                 class="img-block item d-flex rounded"
                 style="overflow:hidden;width:38px;"
                 data-bs-toggle="dropdown"
