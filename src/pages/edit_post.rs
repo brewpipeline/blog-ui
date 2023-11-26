@@ -8,7 +8,6 @@ use yew_router::prelude::*;
 use crate::components::delayed_component::*;
 use crate::components::item::*;
 use crate::components::meta::*;
-use crate::components::svg_image::*;
 use crate::components::warning::*;
 use crate::content;
 use crate::utils::*;
@@ -301,7 +300,7 @@ pub fn edit_post(props: &EditPostProps) -> Html {
                         style="font-size: 10em"
                         role="img"
                     >
-                        <FilePostImg />
+                        <i class="bi bi-file-post"></i>
                     </div>
 
                     <div class="mb-3">

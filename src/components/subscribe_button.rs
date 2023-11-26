@@ -1,10 +1,6 @@
 use yew::prelude::*;
 
-use crate::components::svg_image::*;
-
-use crate::content::SubscribeAuthorIdParams;
-use crate::content::Tokened;
-use crate::content::API;
+use crate::content::*;
 use crate::utils::*;
 
 #[function_component(SubscribeButton)]
@@ -91,6 +87,7 @@ pub fn subscribe_button() -> Html {
     } else {
         html! {
             <button
+                title={ if *is_subscribed { "Вы подписаны на уведомления" } else { "Вы отписаны от уведомлений" } }
                 type="button"
                 class={
                     classes!(
@@ -101,9 +98,9 @@ pub fn subscribe_button() -> Html {
                 { onclick }
             >
                 if *is_subscribed {
-                    <FilledBellImg />
+                    <i class="bi bi-bell-fill"></i>
                 } else {
-                    <SlashedBellImg />
+                    <i class="bi bi-bell-slash-fill"></i>
                 }
             </button>
         }

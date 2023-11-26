@@ -20,7 +20,6 @@ pub mod search_button;
 pub mod search_field;
 pub mod simple_title_card;
 pub mod subscribe_button;
-pub mod svg_image;
 #[cfg(feature = "telegram")]
 pub mod telegram_button;
 pub mod warning;

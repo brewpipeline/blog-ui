@@ -8,7 +8,6 @@ use yew_router::prelude::*;
 use crate::components::delayed_component::*;
 use crate::components::information_menu::*;
 use crate::components::navigation_menu::*;
-use crate::components::svg_image::*;
 
 use crate::Route;
 
@@ -71,8 +70,8 @@ pub fn body() -> Html {
                     }
                     checked={ *enabled_menu == EnabledMenu::Second }
                 />
-                <label class="btn btn-light" for="vbtn-radio2">
-                    <CardHeadingImg />
+                <label title="Лента" class="btn btn-light" for="vbtn-radio2">
+                    <i class="bi bi-card-heading"></i>
                 </label>
                 <input
                     type="radio"

@@ -2,7 +2,6 @@ use yew::prelude::*;
 use yew_router::prelude::*;
 
 use crate::components::author_image::*;
-use crate::components::svg_image::*;
 use crate::content;
 use crate::utils::*;
 
@@ -132,8 +131,8 @@ pub fn comment_card(props: &CommentCardProps) -> Html {
                                     {
                                         match *state {
                                             CommentCardState::None => html! {
-                                                <a class="icon-link" href="#" { onclick }>
-                                                    <TrashImg />
+                                                <a href="#" { onclick }>
+                                                    <i title="Удалить комментарий" class="bi bi-trash"></i>
                                                 </a>
                                             },
                                             CommentCardState::DeleteInProgress => html! {
