@@ -1,5 +1,6 @@
 use yew::prelude::*;
 
+#[cfg(feature = "client")]
 use crate::content::*;
 use crate::utils::*;
 

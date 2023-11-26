@@ -9,8 +9,6 @@ use crate::components::logout_modal::*;
 #[cfg(feature = "yandex")]
 use crate::components::meta::*;
 #[cfg(feature = "yandex")]
-use crate::components::svg_image::*;
-#[cfg(feature = "yandex")]
 use crate::components::yandex_token::*;
 
 use crate::Route;
