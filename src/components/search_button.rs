@@ -20,7 +20,7 @@ pub fn search_button() -> Html {
                 return;
             }
             e.prevent_default();
-            
+
             navigator.push(&match SearchMode::new(route.clone()) {
                 SearchMode::Authors { query: _ } => Route::AuthorsSearchRoot,
                 SearchMode::Posts { query: _ } => Route::PostsSearchRoot,
