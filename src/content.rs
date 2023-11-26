@@ -91,7 +91,7 @@ impl RequestableItem<ExternalListContainerParams<()>> for API<AuthorsContainer> 
     async fn request(params: ExternalListContainerParams<()>) -> Result<Request, Error> {
         let ExternalListContainerParams { limit, skip, .. } = params;
         let url = format!(
-            "{url}/api/authors?limit={limit}&offset={skip}",
+            "{url}/authors?limit={limit}&offset={skip}",
             url = crate::API_URL
         );
         Ok(Request::get(url.as_str()).build()?)
@@ -115,7 +115,7 @@ impl RequestableItem<ExternalListContainerParams<AuthorsContainerSearchParams>>
             params: AuthorsContainerSearchParams { query },
         } = params;
         let url = format!(
-            "{url}/api/authors/search/{query}?limit={limit}&offset={skip}",
+            "{url}/authors/search/{query}?limit={limit}&offset={skip}",
             url = crate::API_URL
         );
         Ok(Request::get(url.as_str()).build()?)
@@ -184,7 +184,7 @@ pub struct AuthorResetOverrideSocialData;
 impl RequestableItem<AuthorSlugParams> for API<AuthorContainer> {
     async fn request(params: AuthorSlugParams) -> Result<Request, Error> {
         let AuthorSlugParams { slug } = params;
-        let url = format!("{url}/api/author/slug/{slug}", url = crate::API_URL);
+        let url = format!("{url}/author/slug/{slug}", url = crate::API_URL);
         Ok(Request::get(url.as_str()).build()?)
     }
     async fn response(response: Response) -> Result<Self, Error> {
@@ -197,7 +197,7 @@ impl RequestableItem<AuthorSlugParams> for API<AuthorContainer> {
 impl RequestableItem<Tokened<AuthorMeParams>> for API<AuthorContainer> {
     async fn request(params: Tokened<AuthorMeParams>) -> Result<Request, Error> {
         let Tokened { token, params: _ } = params;
-        let url = format!("{url}/api/author/me", url = crate::API_URL);
+        let url = format!("{url}/author/me", url = crate::API_URL);
         Ok(Request::get(url.as_str())
             .header("Token", token.as_str())
             .build()?)
@@ -216,7 +216,7 @@ impl RequestableItem<Tokened<BlockAuthorIdParams>> for API<()> {
             params: BlockAuthorIdParams { id, block },
         } = params;
         let url = format!(
-            "{url}/api/author/id/{id}/{state}",
+            "{url}/author/id/{id}/{state}",
             url = crate::API_URL,
             state = if block { "block" } else { "unblock" }
         );
@@ -238,7 +238,7 @@ impl RequestableItem<Tokened<SubscribeAuthorIdParams>> for API<()> {
             params: SubscribeAuthorIdParams { id, subscribe },
         } = params;
         let url = format!(
-            "{url}/api/author/id/{id}/{state}",
+            "{url}/author/id/{id}/{state}",
             url = crate::API_URL,
             state = if subscribe {
                 "subscribe"
@@ -264,7 +264,7 @@ impl RequestableItem<Tokened<AuthorResetOverrideSocialData>> for API<()> {
             params: AuthorResetOverrideSocialData,
         } = params;
         let url = format!(
-            "{url}/api/author/reset_override_social_data",
+            "{url}/author/reset_override_social_data",
             url = crate::API_URL
         );
         Ok(Request::patch(url.as_str())
@@ -286,7 +286,7 @@ impl RequestableItem<Tokened<UpdateMinimalAuthor>> for API<()> {
                 update_minimal_author,
             },
         } = params;
-        let url = format!("{url}/api/author/minimal", url = crate::API_URL);
+        let url = format!("{url}/author/minimal", url = crate::API_URL);
         Ok(Request::patch(url.as_str())
             .header("Token", token.as_str())
             .header("Content-Type", "application/json")
@@ -309,7 +309,7 @@ impl RequestableItem<Tokened<UpdateSecondaryAuthor>> for API<()> {
                 update_secondary_author,
             },
         } = params;
-        let url = format!("{url}/api/author/secondary", url = crate::API_URL);
+        let url = format!("{url}/author/secondary", url = crate::API_URL);
         Ok(Request::patch(url.as_str())
             .header("Token", token.as_str())
             .header("Content-Type", "application/json")
@@ -369,7 +369,7 @@ impl RequestableItem<ExternalListContainerParams<PostsContainerParams>> for API<
     ) -> Result<Request, Error> {
         let ExternalListContainerParams { limit, skip, .. } = params;
         let url = format!(
-            "{url}/api/posts?limit={limit}&offset={skip}",
+            "{url}/posts?limit={limit}&offset={skip}",
             url = crate::API_URL
         );
         Ok(Request::get(url.as_str()).build()?)
@@ -393,7 +393,7 @@ impl RequestableItem<ExternalListContainerParams<PostsContainerSearchParams>>
             params: PostsContainerSearchParams { query },
         } = params;
         let url = format!(
-            "{url}/api/posts/search/{query}?limit={limit}&offset={skip}",
+            "{url}/posts/search/{query}?limit={limit}&offset={skip}",
             url = crate::API_URL,
         );
         Ok(Request::get(url.as_str()).build()?)
@@ -417,7 +417,7 @@ impl RequestableItem<ExternalListContainerParams<PostsContainerAuthorParams>>
             params: PostsContainerAuthorParams { author_id },
         } = params;
         let url = format!(
-            "{url}/api/posts/author/id/{author_id}?limit={limit}&offset={skip}",
+            "{url}/posts/author/id/{author_id}?limit={limit}&offset={skip}",
             url = crate::API_URL,
         );
         Ok(Request::get(url.as_str()).build()?)
@@ -439,7 +439,7 @@ impl RequestableItem<ExternalListContainerParams<PostsContainerTagParams>> for A
             params: PostsContainerTagParams { tag_id },
         } = params;
         let url = format!(
-            "{url}/api/posts/tag/{tag_id}?limit={limit}&offset={skip}",
+            "{url}/posts/tag/{tag_id}?limit={limit}&offset={skip}",
             url = crate::API_URL,
         );
         Ok(Request::get(url.as_str()).build()?)
@@ -463,7 +463,7 @@ impl RequestableItem<ExternalListContainerParams<OptionTokened<UnpublishedPostsC
             skip,
         } = params;
         let url = format!(
-            "{url}/api/posts/unpublished?limit={limit}&offset={skip}",
+            "{url}/posts/unpublished?limit={limit}&offset={skip}",
             url = crate::API_URL
         );
         let mut request = Request::get(url.as_str());
@@ -497,7 +497,7 @@ impl
             skip,
         } = params;
         let url = format!(
-            "{url}/api/posts/unpublished/author/id/{author_id}?limit={limit}&offset={skip}",
+            "{url}/posts/unpublished/author/id/{author_id}?limit={limit}&offset={skip}",
             url = crate::API_URL
         );
         let mut request = Request::get(url.as_str());
@@ -569,7 +569,7 @@ impl RequestableItem<OptionTokened<PostParams>> for API<PostContainer> {
             token,
             params: PostParams { id },
         } = params;
-        let url = format!("{url}/api/post/{id}", url = crate::API_URL);
+        let url = format!("{url}/post/{id}", url = crate::API_URL);
         let mut request = Request::get(url.as_str());
         if let Some(token) = token {
             request = request.header("Token", token.as_str())
@@ -589,7 +589,7 @@ impl RequestableItem<Tokened<NewPostParams>> for API<PostContainer> {
             token,
             params: NewPostParams { new_post },
         } = params;
-        let url = format!("{url}/api/post", url = crate::API_URL);
+        let url = format!("{url}/post", url = crate::API_URL);
         Ok(Request::post(url.as_str())
             .header("Token", token.as_str())
             .header("Content-Type", "application/json")
@@ -608,7 +608,7 @@ impl RequestableItem<Tokened<UpdatePostParams>> for API<PostContainer> {
             token,
             params: UpdatePostParams { id, update_post },
         } = params;
-        let url = format!("{url}/api/post/{id}", url = crate::API_URL);
+        let url = format!("{url}/post/{id}", url = crate::API_URL);
         Ok(Request::patch(url.as_str())
             .header("Token", token.as_str())
             .header("Content-Type", "application/json")
@@ -627,7 +627,7 @@ impl RequestableItem<Tokened<DeletePostParams>> for API<()> {
             token,
             params: DeletePostParams { id },
         } = params;
-        let url = format!("{url}/api/post/{id}", url = crate::API_URL);
+        let url = format!("{url}/post/{id}", url = crate::API_URL);
         Ok(Request::delete(url.as_str())
             .header("Token", token.as_str())
             .build()?)
@@ -659,7 +659,7 @@ pub struct TagIdParams {
 impl RequestableItem<TagIdParams> for API<TagContainer> {
     async fn request(params: TagIdParams) -> Result<Request, Error> {
         let TagIdParams { id } = params;
-        let url = format!("{url}/api/tag/{id}", url = crate::API_URL);
+        let url = format!("{url}/tag/{id}", url = crate::API_URL);
         Ok(Request::get(url.as_str()).build()?)
     }
     async fn response(response: Response) -> Result<Self, Error> {
@@ -703,7 +703,7 @@ impl RequestableItem<ExternalListContainerParams<CommentsContainerPostIdParams>>
             skip,
         } = params;
         let url = format!(
-            "{url}/api/comments/{post_id}?limit={limit}&offset={skip}&request_index={request_index}",
+            "{url}/comments/{post_id}?limit={limit}&offset={skip}&request_index={request_index}",
             url = crate::API_URL,
         );
         Ok(Request::get(url.as_str()).build()?)
@@ -755,7 +755,7 @@ impl RequestableItem<Tokened<CreateCommentParams>> for API<()> {
             token,
             params: CreateCommentParams { comment },
         } = params;
-        let url = format!("{url}/api/comment", url = crate::API_URL,);
+        let url = format!("{url}/comment", url = crate::API_URL,);
         Ok(Request::post(url.as_str())
             .header("Token", token.as_str())
             .header("Content-Type", "application/json")
@@ -779,7 +779,7 @@ impl RequestableItem<Tokened<DeleteCommentParams>> for API<()> {
             token,
             params: DeleteCommentParams { comment_id },
         } = params;
-        let url = format!("{url}/api/comment/{comment_id}", url = crate::API_URL,);
+        let url = format!("{url}/comment/{comment_id}", url = crate::API_URL,);
         Ok(Request::delete(url.as_str())
             .header("Token", token.as_str())
             .build()?)
@@ -798,7 +798,7 @@ impl RequestableItem<Tokened<DeleteCommentParams>> for API<()> {
 #[async_trait(?Send)]
 impl RequestableItem<LoginQuestion> for API<LoginAnswer> {
     async fn request(params: LoginQuestion) -> Result<Request, Error> {
-        let url = format!("{url}/api/login", url = crate::API_URL);
+        let url = format!("{url}/login", url = crate::API_URL);
         Ok(Request::post(url.as_str())
             .header("Content-Type", "application/json")
             .body(serde_json::to_string(&params).map_err(|e| Error::SerdeError(e))?)?)
@@ -812,7 +812,7 @@ impl RequestableItem<LoginQuestion> for API<LoginAnswer> {
 #[async_trait(?Send)]
 impl RequestableItem<LoginYandexQuestion> for API<LoginAnswer> {
     async fn request(params: LoginYandexQuestion) -> Result<Request, Error> {
-        let url = format!("{url}/api/ylogin", url = crate::API_URL);
+        let url = format!("{url}/ylogin", url = crate::API_URL);
         Ok(Request::post(url.as_str())
             .header("Content-Type", "application/json")
             .body(serde_json::to_string(&params).map_err(|e| Error::SerdeError(e))?)?)
@@ -826,7 +826,7 @@ impl RequestableItem<LoginYandexQuestion> for API<LoginAnswer> {
 #[async_trait(?Send)]
 impl RequestableItem<LoginTelegramQuestion> for API<LoginAnswer> {
     async fn request(params: LoginTelegramQuestion) -> Result<Request, Error> {
-        let url = format!("{url}/api/tlogin", url = crate::API_URL);
+        let url = format!("{url}/tlogin", url = crate::API_URL);
         Ok(Request::post(url.as_str())
             .header("Content-Type", "application/json")
             .body(serde_json::to_string(&params).map_err(|e| Error::SerdeError(e))?)?)
