@@ -161,6 +161,12 @@ pub struct BlockAuthorIdParams {
 }
 
 #[derive(Clone, PartialEq)]
+pub struct SubscribeAuthorIdParams {
+    pub id: u64,
+    pub subscribe: bool,
+}
+
+#[derive(Clone, PartialEq)]
 pub struct UpdateMinimalAuthor {
     pub update_minimal_author: CommonMinimalAuthor,
 }
@@ -215,6 +221,32 @@ impl RequestableItem<Tokened<BlockAuthorIdParams>> for API<()> {
             state = if block { "block" } else { "unblock" }
         );
         Ok(Request::get(url.as_str())
+            .header("Token", token.as_str())
+            .build()?)
+    }
+    async fn response(response: Response) -> Result<Self, Error> {
+        response.json().await
+    }
+}
+
+#[cfg(feature = "client")]
+#[async_trait(?Send)]
+impl RequestableItem<Tokened<SubscribeAuthorIdParams>> for API<()> {
+    async fn request(params: Tokened<SubscribeAuthorIdParams>) -> Result<Request, Error> {
+        let Tokened {
+            token,
+            params: SubscribeAuthorIdParams { id, subscribe },
+        } = params;
+        let url = format!(
+            "{url}/api/author/id/{id}/{state}",
+            url = crate::API_URL,
+            state = if subscribe {
+                "subscribe"
+            } else {
+                "unsubscribe"
+            }
+        );
+        Ok(Request::patch(url.as_str())
             .header("Token", token.as_str())
             .build()?)
     }
