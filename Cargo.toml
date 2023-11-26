@@ -35,6 +35,8 @@ urlencoding = "2.1"
 
 noneifempty = "0.1"
 
+base64 = "0.21"
+
 
 [features]
 default = ["client"]
