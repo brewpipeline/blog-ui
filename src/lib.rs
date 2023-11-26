@@ -18,7 +18,7 @@ pub use utils::AppContent;
 #[cfg(all(feature = "client", feature = "yandex"))]
 const YANDEX_CLIENT_ID: &'static str = std::env!("YANDEX_CLIENT_ID"); // ee156ec6ee994a748e724f604db8e305
 #[cfg(feature = "client")]
-const API_URL: &'static str = std::env!("API_URL"); // http://127.0.0.1:3000
+const API_URL: &'static str = std::env!("API_URL"); // http://127.0.0.1:3000/api
 #[cfg(feature = "telegram")]
 const TELEGRAM_BOT_LOGIN: &'static str = std::env!("TELEGRAM_BOT_LOGIN"); // AnyBlogBot
 const TITLE: &'static str = std::env!("TITLE"); // BLOG
