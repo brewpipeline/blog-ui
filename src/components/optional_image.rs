@@ -11,6 +11,8 @@ pub struct OptionalImageProps {
     pub image: Option<String>,
     #[prop_or_default]
     pub fallback_image: Option<String>,
+    #[prop_or_default]
+    pub without_empty: bool,
 }
 
 #[function_component(OptionalImage)]
@@ -19,6 +21,7 @@ pub fn optional_image(props: &OptionalImageProps) -> Html {
         alt,
         image,
         fallback_image,
+        without_empty,
     } = props.clone();
 
     let image_ref = use_node_ref();
@@ -37,7 +40,7 @@ pub fn optional_image(props: &OptionalImageProps) -> Html {
             }
             if let Some(fallback_image) = fallback_image.clone().filter(|f| f != &image_ref.src()) {
                 image_ref.set_src(fallback_image.as_str());
-            } else {
+            } else if !without_empty {
                 image_ref.set_src(EMPTY_IMAGE);
             }
         })
