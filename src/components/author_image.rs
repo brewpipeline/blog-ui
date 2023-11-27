@@ -28,6 +28,7 @@ pub fn author_image(props: &AuthorImageProps) -> Html {
             { alt }
             { image }
             { fallback_image }
+            without_empty=true
         />
     }
 }

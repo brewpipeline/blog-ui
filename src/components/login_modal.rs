@@ -167,7 +167,6 @@ pub fn login_modal(props: &LoginModalProps) -> Html {
             let logged_user_context = logged_user_context.clone();
             let modal_element = modal_node_ref.cast::<HtmlElement>().unwrap();
             let listener = EventListener::new(&modal_element, "hidden.bs.modal", move |e| {
-                e.prevent_default();
                 username_node_ref
                     .cast::<HtmlInputElement>()
                     .map(|e| e.set_value(""));
