@@ -18,7 +18,7 @@ pub fn author_image(props: &AuthorImageProps) -> Html {
         .as_ref()
         .map(|a| a.image_url.clone())
         .flatten()
-        .map(|u| image_url_formatter(ImageType::Small, &u));
+        .map(|u| image_url_formatter(ImageType::Small, u));
     let fallback_image = author
         .as_ref()
         .map(|a| format!("https://api.dicebear.com/7.x/thumbs/svg?seed={}", a.slug));

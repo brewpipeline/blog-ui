@@ -60,6 +60,7 @@ pub fn optional_image(props: &OptionalImageProps) -> Html {
                 }
                 onload={ error_handler.clone() }
                 onerror={ error_handler }
+                loading="lazy"
             />
         </div>
     }
