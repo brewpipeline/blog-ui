@@ -33,7 +33,6 @@ pub fn post_card(props: &PostCardProps) -> Html {
                             .flatten()
                             .map(|u| image_url_formatter(ImageType::Medium, u))
                     }
-                    is_lazy_loading=true
                 />
             </div>
             <div class="card-body">

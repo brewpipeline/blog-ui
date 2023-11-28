@@ -29,7 +29,6 @@ pub fn author_image(props: &AuthorImageProps) -> Html {
             { image }
             { fallback_image }
             without_empty=true
-            is_lazy_loading=true
         />
     }
 }
