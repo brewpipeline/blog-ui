@@ -26,7 +26,14 @@ pub fn post_card(props: &PostCardProps) -> Html {
             <div class="img-block bd-placeholder-img" style="height:194px;width:100%;overflow:hidden;">
                 <OptionalImage
                     alt={ post.as_ref().map(|p| p.title.clone()) }
-                    image={ post.as_ref().map(|p| p.image_url.clone()).flatten() }
+                    image={
+                        post
+                            .as_ref()
+                            .map(|p| p.image_url.clone())
+                            .flatten()
+                            .map(|u| image_url_formatter(ImageType::Medium, u))
+                    }
+                    is_lazy_loading=true
                 />
             </div>
             <div class="card-body">

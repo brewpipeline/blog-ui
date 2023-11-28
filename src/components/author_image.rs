@@ -18,7 +18,7 @@ pub fn author_image(props: &AuthorImageProps) -> Html {
         .as_ref()
         .map(|a| a.image_url.clone())
         .flatten()
-        .map(|u| image_url_formatter(ImageType::Small, &u));
+        .map(|u| image_url_formatter(ImageType::Small, u));
     let fallback_image = author
         .as_ref()
         .map(|a| format!("https://api.dicebear.com/7.x/bottts/svg?seed={}&baseColor=f2f2f2&eyes=dizzy,eva,frame1,frame2,happy,hearts,robocop,round,roundFrame01,roundFrame02,sensor,shade01", a.slug));
@@ -29,6 +29,7 @@ pub fn author_image(props: &AuthorImageProps) -> Html {
             { image }
             { fallback_image }
             without_empty=true
+            is_lazy_loading=true
         />
     }
 }
