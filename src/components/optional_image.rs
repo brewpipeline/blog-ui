@@ -13,6 +13,8 @@ pub struct OptionalImageProps {
     pub fallback_image: Option<String>,
     #[prop_or_default]
     pub without_empty: bool,
+    #[prop_or_default]
+    pub is_lazy_loading: bool,
 }
 
 #[function_component(OptionalImage)]
@@ -22,6 +24,7 @@ pub fn optional_image(props: &OptionalImageProps) -> Html {
         image,
         fallback_image,
         without_empty,
+        is_lazy_loading,
     } = props.clone();
 
     let image_ref = use_node_ref();
@@ -60,7 +63,7 @@ pub fn optional_image(props: &OptionalImageProps) -> Html {
                 }
                 onload={ error_handler.clone() }
                 onerror={ error_handler }
-                loading="lazy"
+                loading={ if is_lazy_loading { "lazy" } else { "eager" } }
             />
         </div>
     }
