@@ -70,8 +70,15 @@ impl SearchMode {
     }
 }
 
+#[derive(PartialEq, Properties, Clone)]
+pub struct SearchFieldProps {
+    pub id: &'static str,
+}
+
 #[function_component(SearchField)]
-pub fn search_field() -> Html {
+pub fn search_field(props: &SearchFieldProps) -> Html {
+    let SearchFieldProps { id } = props.clone();
+
     let navigator = use_navigator().unwrap();
 
     let route = use_route::<Route>().unwrap_or_default();
@@ -123,6 +130,7 @@ pub fn search_field() -> Html {
 
     html! {
         <input
+            { id }
             type="search"
             class="form-control"
             placeholder={ mode.placeholder() }
