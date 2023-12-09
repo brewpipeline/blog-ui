@@ -25,7 +25,7 @@ pub fn header() -> Html {
 
                         <div class="col px-lg-3 d-none d-lg-block">
                             <DelayedComponent<()> component={ |_| html! {
-                                <SearchField />
+                                <SearchField id="headerSearchField" />
                             } } deps={ () } />
                         </div>
 

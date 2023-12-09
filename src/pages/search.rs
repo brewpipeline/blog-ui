@@ -24,7 +24,7 @@ pub fn search(props: &SearchProps) -> Html {
         <>
             <Meta title={ mode.title() } noindex=true />
             <div class="mb-3 d-block d-lg-none">
-                <SearchField />
+                <SearchField id="pageSearchField" />
             </div>
             {
                 match mode {
