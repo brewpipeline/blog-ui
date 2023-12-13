@@ -3,6 +3,7 @@
 mod app;
 mod components;
 mod content;
+#[cfg(feature = "client")]
 mod js;
 mod pages;
 mod route;

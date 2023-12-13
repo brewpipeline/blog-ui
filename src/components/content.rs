@@ -17,6 +17,7 @@ use crate::Route;
 pub fn content() -> Html {
     let route = use_route::<Route>().unwrap_or_default();
 
+    #[cfg(feature = "client")]
     {
         let route = route.clone();
         use_effect_with(route, |route| {
