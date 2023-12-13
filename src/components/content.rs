@@ -20,10 +20,7 @@ pub fn content() -> Html {
     {
         let route = route.clone();
         use_effect_with(route, |route| {
-            crate::js::log_analytic(
-                "route",
-                &std::collections::HashMap::from([("path", route.to_path())]),
-            )
+            crate::js::log_analytic("route", &[("path", route.to_path())].into());
         });
     }
 
