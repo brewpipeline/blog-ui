@@ -17,6 +17,16 @@ use crate::Route;
 pub fn content() -> Html {
     let route = use_route::<Route>().unwrap_or_default();
 
+    {
+        let route = route.clone();
+        use_effect_with(route, |route| {
+            crate::js::log_analytic(
+                "route",
+                &std::collections::HashMap::from([("path", route.to_path())]),
+            )
+        });
+    }
+
     let main_content = html! {
         <>
             <Header />
