@@ -46,6 +46,11 @@ pub fn post_card(props: &PostCardProps) -> Html {
                 <article class="card-text placeholder-glow">
                     if let Some(text) = post.as_ref().map(|post| {
                         if let (Some(content), true) = (post.content.clone(), is_full) {
+                            let content = content.map_in_pattern(["<img", ">"], |i| {
+                                i.map_in_pattern(["src=\"", "\""], |u| {
+                                    image_url_formatter(ImageType::Medium, u)
+                                })
+                            });
                             Html::from_html_unchecked(AttrValue::from(content))
                         } else {
                             html! { post.summary.clone() }
