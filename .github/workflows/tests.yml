@@ -1,0 +1,31 @@
+name: Tests
+
+on:
+  push:
+    branches: [ "main" ]
+  pull_request:
+    branches: [ "main" ]
+
+  workflow_dispatch:
+
+env:
+  CARGO_TERM_COLOR: always
+
+jobs:
+  tests:
+
+    runs-on: ubuntu-latest
+
+    env:
+      YANDEX_CLIENT_ID: ""
+      API_URL: ""
+      TELEGRAM_BOT_LOGIN: ""
+      TITLE: ""
+      DESCRIPTION: ""
+      KEYWORDS: ""
+      ACCORDION_JSON: ""
+
+    steps:
+    - uses: actions/checkout@v3
+    - name: Run tests
+      run: cargo test --verbose --all-features
