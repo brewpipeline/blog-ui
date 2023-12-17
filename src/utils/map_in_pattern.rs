@@ -53,10 +53,15 @@ mod tests {
     fn test_multiple_attributes() {
         let html = r#"<img src="old.jpg"><img src="another_old.jpg">"#;
         let result = html.map_in_pattern(["src=\"", "\""], |url| {
-            assert!(url == "old.jpg" || url == "another_old.jpg");
-            "new.jpg".to_string()
+            if url == "old.jpg" {
+                "new1.jpg".to_string()
+            } else if url == "another_old.jpg" {
+                "new2.jpg".to_string()
+            } else {
+                unreachable!()
+            }
         });
-        assert_eq!(result, r#"<img src="new.jpg"><img src="new.jpg">"#);
+        assert_eq!(result, r#"<img src="new1.jpg"><img src="new2.jpg">"#);
     }
 
     #[test]
