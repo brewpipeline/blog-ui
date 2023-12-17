@@ -446,6 +446,9 @@ pub fn edit_post(props: &EditPostProps) -> Html {
                                     },
                                     language: 'ru',
                                     plugins: 'anchor autolink charmap codesample emoticons image link lists media searchreplace table visualblocks wordcount code codesample',
+                                    relative_urls : false,
+                                    remove_script_host : false,
+                                    convert_urls : true,
                                 })
                             }
                             if (typeof tinymce === 'undefined') {{
