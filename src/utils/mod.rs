@@ -7,7 +7,7 @@ pub mod get;
 pub mod head;
 pub mod image_url_formatter;
 pub mod logged_user_context;
-pub mod map_attr_value;
+pub mod map_in_pattern;
 pub mod use_load;
 
 pub use app_content_context::*;
@@ -17,7 +17,7 @@ pub use external::*;
 pub use get::*;
 pub use image_url_formatter::*;
 pub use logged_user_context::*;
-pub use map_attr_value::*;
+pub use map_in_pattern::*;
 pub use use_load::*;
 
 #[cfg(not(feature = "client"))]
