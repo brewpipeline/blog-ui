@@ -25,8 +25,8 @@ wasm-logger = { version = "0.2", optional = true }
 web-sys = { version = "0.3", features = ["HtmlDocument","console","Document","HtmlElement","MouseEvent","DomRect","ScrollToOptions","ScrollBehavior","Element","MouseEvent","CssStyleDeclaration","MutationObserver","MutationObserverInit","Node","CustomEvent","HtmlImageElement"], optional = true }
 
 gloo-history = "0.2"
-gloo = { version = "0.10", optional = true }
-gloo-net = { version = "0.4", optional = true }
+gloo = { version = "0.11", optional = true }
+gloo-net = { version = "0.5", optional = true }
 
 serde = { version = "1.0", features = ["derive"] }
 serde_json = "1.0"
@@ -36,6 +36,7 @@ urlencoding = "2.1"
 noneifempty = "0.1"
 
 base64 = "0.21"
+scraper = "0.18"
 
 
 [features]
