@@ -6,6 +6,7 @@
 .card {
     --bs-card-spacer-y: 12px !important;
     --bs-card-spacer-x: 12px !important;
+    --bs-card-cap-padding-x: 12px;
     --bs-card-border-color: #dee2e6;
     --bs-card-title-color: var(--bs-body-color);
     --bs-card-color: var(--bs-body-color);
