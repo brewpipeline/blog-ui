@@ -35,7 +35,7 @@ pub fn post_card(props: &PostCardProps) -> Html {
                     }
                 />
             </div>
-            <div class="card-body">
+            <div class="card-body pb-0">
                 <h5 class="card-title placeholder-glow">
                     if let Some(title) = post.as_ref().map(|p| p.title.clone()) {
                         { title }
