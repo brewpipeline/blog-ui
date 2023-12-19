@@ -260,3 +260,7 @@ article .article-iframe {
     top: -1px;
     position: relative;
 }
+
+img {
+    color: transparent;
+}
