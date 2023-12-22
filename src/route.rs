@@ -60,6 +60,8 @@ impl Route {
             | Route::Author { slug: _ }
             | Route::Authors
             | Route::NotFound => false,
+            #[cfg(feature = "yandex")]
+            Route::YandexToken => false,
         }
     }
     pub fn recognize_path(pathname: &str) -> Option<Self> {
