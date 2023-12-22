@@ -43,6 +43,25 @@ pub enum Route {
 }
 
 impl Route {
+    pub(crate) fn is_search(&self) -> bool {
+        match self {
+            Route::PostsSearchRoot
+            | Route::PostsSearch { query: _ }
+            | Route::AuthorsSearchRoot
+            | Route::AuthorsSearch { query: _ } => true,
+            Route::Settings
+            | Route::NewPost
+            | Route::EditPost { id: _ }
+            | Route::Post { slug: _, id: _ }
+            | Route::Posts
+            | Route::UnpublishedPosts
+            | Route::MyUnpublishedPosts
+            | Route::Tag { slug: _, id: _ }
+            | Route::Author { slug: _ }
+            | Route::Authors
+            | Route::NotFound => false,
+        }
+    }
     pub fn recognize_path(pathname: &str) -> Option<Self> {
         Self::recognize(pathname)
     }
