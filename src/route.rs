@@ -43,6 +43,9 @@ pub enum Route {
 }
 
 impl Route {
+    pub fn recognize_path(pathname: &str) -> Option<Self> {
+        Self::recognize(pathname)
+    }
     pub(crate) fn is_search(&self) -> bool {
         match self {
             Route::PostsSearchRoot
@@ -63,9 +66,6 @@ impl Route {
             #[cfg(feature = "yandex")]
             Route::YandexToken => false,
         }
-    }
-    pub fn recognize_path(pathname: &str) -> Option<Self> {
-        Self::recognize(pathname)
     }
     pub(crate) fn switch(route: Route) -> Html {
         match route {
