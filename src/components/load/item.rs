@@ -1,5 +1,7 @@
-use crate::utils::*;
 use yew::prelude::*;
+
+use crate::utils::*;
+
 #[derive(PartialEq, Properties, Clone)]
 pub struct ItemProps<C, P = ()>
 where
@@ -15,6 +17,7 @@ where
     pub component: Callback<Option<<C::Inner as ExternalItemContainer>::Item>, Html>,
     pub error_component: Callback<LoadError<C::Error>, Html>,
 }
+
 #[function_component(Item)]
 pub fn item<C, P = ()>(props: &ItemProps<C, P>) -> Html
 where
