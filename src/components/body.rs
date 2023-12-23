@@ -44,7 +44,7 @@ pub fn body() -> Html {
     html! {
         <main class="body position-relative container">
 
-            <div class="menu-nav btn-group d-flex d-xl-none" role="group">
+            <div class="menu-nav btn-group d-flex d-lg-none sticky-top" role="group">
                 <input
                     type="radio"
                     class="btn-check"
@@ -104,15 +104,51 @@ pub fn body() -> Html {
                         { if *enabled_menu == EnabledMenu::First { "d-grid" } else { "d-none" } }
                     ) }
                 >
-                    <DelayedComponent<()> component={ |_| html! {
-                        <>
+                    <div class="d-grid gap-2">
+                        <div class="btn-group d-none d-flex d-lg-flex d-xl-none flex-wrap" role="group">
+                            <input
+                                aria-label="Лента"
+                                type="radio"
+                                class="btn-check"
+                                name="vbtn2-radio"
+                                id="vbtn2-radio1"
+                                autocomplete="off"
+                                onchange={
+                                    let enabled_menu = enabled_menu.clone();
+                                    Callback::from(move |_| enabled_menu.set(EnabledMenu::Second))
+                                }
+                                checked={ *enabled_menu == EnabledMenu::Second }
+                            />
+                            <label title="Лента" class="btn btn-light" for="vbtn2-radio1">
+                                <i class="bi bi-card-heading"></i>
+                            </label>
+                            <input
+                                aria-label="Информация"
+                                type="radio"
+                                class="btn-check"
+                                name="vbtn2-radio"
+                                id="vbtn2-radio2"
+                                autocomplete="off"
+                                onchange={
+                                    let enabled_menu = enabled_menu.clone();
+                                    Callback::from(move |_| enabled_menu.set(EnabledMenu::Third))
+                                }
+                                checked={ *enabled_menu == EnabledMenu::Third }
+                            />
+                            <label title="Информация" class="btn btn-light" for="vbtn2-radio2">
+                                <i class="bi bi-info-square"></i>
+                            </label>
+                        </div>
+                        <DelayedComponent<()> component={ |_| html! {
                             <NavigationMenu />
-                            <div class="d-flex flex-wrap align-items-end justify-content-center">
-                                <a href="https://github.com/tikitko/blog-ui/blob/main/MADEWITHLOVE.md" class="text-decoration-none text-center">
-                                    { "Сделано с ❤️" }
-                                </a>
-                            </div>
-                        </>
+                        } } deps={ () } />
+                    </div>
+                    <DelayedComponent<()> component={ |_| html! {
+                        <div class="d-flex flex-wrap align-items-end justify-content-center">
+                            <a href="https://github.com/tikitko/blog-ui/blob/main/MADEWITHLOVE.md" class="text-decoration-none text-center">
+                                { "Сделано с ❤️" }
+                            </a>
+                        </div>
                     } } deps={ () } />
                 </div>
 

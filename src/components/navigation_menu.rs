@@ -15,7 +15,7 @@ pub fn navigation_menu() -> Html {
             .map(|a| a.editor == 1)
             .unwrap_or(false);
     html! {
-        <div class="d-grid gap-2">
+        <>
             <Link<Route>
                 classes={
                     classes!(
@@ -66,6 +66,6 @@ pub fn navigation_menu() -> Html {
                     { "Неопубликованное" }
                 </Link<Route>>
             }
-        </div>
+        </>
     }
 }
