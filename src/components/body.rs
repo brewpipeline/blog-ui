@@ -44,7 +44,7 @@ pub fn body() -> Html {
     html! {
         <main class="body position-relative container">
 
-            <div class="menu-nav btn-group d-flex d-lg-none sticky-top" role="group">
+            <div class="menu-nav btn-group d-flex d-lg-none" role="group">
                 <input
                     type="radio"
                     class="btn-check"
