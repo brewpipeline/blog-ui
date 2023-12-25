@@ -1,3 +1,4 @@
+use blog_generic::*;
 #[cfg(feature = "client")]
 use gloo::timers::callback::Timeout;
 #[cfg(feature = "client")]

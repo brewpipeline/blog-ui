@@ -1,3 +1,4 @@
+use blog_generic::*;
 use yew::prelude::*;
 use yew_router::prelude::*;
 
@@ -5,28 +6,6 @@ use crate::components::pagination::*;
 use crate::utils::*;
 
 use crate::Route;
-
-pub trait PageProcessor {
-    fn create_for_page(page: &u64) -> Self;
-    fn limit(&self) -> u64;
-    fn offset(&self) -> u64;
-}
-
-pub struct DefaultPageProcessor<const LIMIT: u64 = { blog_generic::ITEMS_PER_PAGE }> {
-    page: u64,
-}
-
-impl<const LIMIT: u64> PageProcessor for DefaultPageProcessor<LIMIT> {
-    fn create_for_page(page: &u64) -> Self {
-        Self { page: *page }
-    }
-    fn limit(&self) -> u64 {
-        LIMIT
-    }
-    fn offset(&self) -> u64 {
-        blog_generic::offset_for_page::<LIMIT>(&self.page)
-    }
-}
 
 #[derive(Properties, PartialEq, Clone)]
 pub struct ListProps<C, P = ()>
