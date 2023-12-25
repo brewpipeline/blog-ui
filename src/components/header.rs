@@ -17,7 +17,7 @@ pub fn header() -> Html {
                 <div class="container">
                     <div class="d-flex flex-wrap align-items-center justify-content-center">
 
-                        <div class="col col-lg-2 d-flex justify-content-start justify-content-lg-center align-items-center">
+                        <div class="col col-lg-3 col-xl-2 d-flex justify-content-start justify-content-lg-center align-items-center">
                             <Link<Route> classes="d-flex link-body-emphasis text-decoration-none" to={ Route::Posts }>
                                 <h1 class="item mb-0">
                                     { crate::TITLE }
@@ -25,13 +25,13 @@ pub fn header() -> Html {
                             </Link<Route>>
                         </div>
 
-                        <div class="col px-lg-3 d-none d-lg-block">
+                        <div class="col ps-lg-3 pe-lg-2 px-xl-3 d-none d-lg-block">
                             <DelayedComponent<()> component={ |_| html! {
                                 <SearchField id="headerSearchField" />
                             } } deps={ () } />
                         </div>
 
-                        <div class="col col-lg-3 gap-2 d-flex justify-content-end align-items-center">
+                        <div class="col col-lg-auto col-xl-3 gap-2 d-flex justify-content-end align-items-center">
                             <DelayedComponent<()> component={ |_| html! {
                                 <>
                                     <SearchButton />

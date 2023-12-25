@@ -11,6 +11,10 @@ pub fn search_button() -> Html {
 
     let route = use_route::<Route>().unwrap_or_default();
 
+    if route.is_search() {
+        return html! {};
+    }
+
     let onclick = {
         let navigator = navigator.clone();
         let route = route.clone();

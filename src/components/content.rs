@@ -1,3 +1,7 @@
+#[cfg(feature = "client")]
+use gloo::utils::window;
+#[cfg(feature = "client")]
+use web_sys::{ScrollBehavior, ScrollToOptions};
 use yew::prelude::*;
 use yew_router::prelude::*;
 
@@ -16,6 +20,20 @@ use crate::Route;
 #[function_component(Content)]
 pub fn content() -> Html {
     let route = use_route::<Route>().unwrap_or_default();
+    let location = use_location();
+
+    #[cfg(feature = "client")]
+    {
+        let location = location.clone();
+        use_effect_with(location, move |_| {
+            window().scroll_to_with_scroll_to_options(
+                ScrollToOptions::new()
+                    .left(0.0)
+                    .top(0.0)
+                    .behavior(ScrollBehavior::Instant),
+            );
+        });
+    }
 
     let main_content = html! {
         <>
