@@ -1,3 +1,4 @@
+use blog_generic::*;
 #[cfg(feature = "client")]
 use gloo::timers::callback::Timeout;
 #[cfg(feature = "client")]
@@ -142,18 +143,17 @@ pub fn comments(props: &CommentsProps) -> Html {
             <SimpleTitleCard>
                 { "Комментарии" }
             </SimpleTitleCard>
-            <List<content::API<content::CommentsContainer>, content::CommentsContainerPostIdParams>
+            <List<content::API<content::CommentsContainer>, content::CommentsContainerPostIdParams, DefaultPageProcessor<50>>
                 r#type={ LoadType::Params(content::CommentsContainerPostIdParams {
                     post_id: post.id,
                     request_index: *request_index
                 }) }
-                items_per_page={ 50 }
                 route_to_page={ Route::Post { slug: post.slug, id: post.id } }
                 component={ |comment| html! { <CommentCard { comment } /> } }
                 error_component={ |_| html! { <Warning text="Ошибка загрузки комментариев!" /> } }
             >
                 <Warning text="Нет комментариев." />
-            </List<content::API<content::CommentsContainer>, content::CommentsContainerPostIdParams>>
+            </List<content::API<content::CommentsContainer>, content::CommentsContainerPostIdParams, DefaultPageProcessor<50>>>
             if !logged_user_context.is_not_inited() {
                 if logged_user_context.author().map(|a| a.blocked == 0).unwrap_or(false) {
                     <div class="mb-3">

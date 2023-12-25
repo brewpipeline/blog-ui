@@ -111,7 +111,7 @@ fn view_relnav_previous_button(props: &PaginationProps) -> Html {
         <li class={ classes!("page-item", "text-center", is_current_class) }>
             <Link<Route, PageQuery, ()>
                 classes={ classes!("page-link") }
-                query={ Some(PageQuery{page: page - 1}) }
+                query={ Some(PageQuery { page: page.checked_sub(1).unwrap_or_default() } ) }
                 to={ to.clone() }
             >
                 { "<" }
