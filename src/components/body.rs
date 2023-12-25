@@ -1,8 +1,6 @@
-#[cfg(feature = "client")]
-use gloo::utils::window;
-#[cfg(feature = "client")]
-use web_sys::{ScrollBehavior, ScrollToOptions};
 use yew::prelude::*;
+#[cfg(feature = "client")]
+use yew_hooks::prelude::*;
 use yew_router::prelude::*;
 
 use crate::components::delayed_component::*;
@@ -21,21 +19,24 @@ pub enum EnabledMenu {
 #[function_component(Body)]
 pub fn body() -> Html {
     #[cfg(feature = "client")]
-    window().scroll_to_with_scroll_to_options(
-        ScrollToOptions::new()
-            .left(0.0)
-            .top(0.0)
-            .behavior(ScrollBehavior::Instant),
-    );
+    let window_size = use_window_size();
+    let route = use_route::<Route>().unwrap_or_default();
 
     let enabled_menu = use_state_eq(|| EnabledMenu::Second);
 
-    let route = use_route::<Route>().unwrap_or_default();
-
     {
-        let enabled_menu = enabled_menu.clone();
         let route = route.clone();
+        let enabled_menu = enabled_menu.clone();
         use_effect_with(route, move |_| {
+            enabled_menu.set(EnabledMenu::Second);
+        });
+    }
+
+    #[cfg(feature = "client")]
+    {
+        let window_size = window_size.clone();
+        let enabled_menu = enabled_menu.clone();
+        use_effect_with(window_size, move |_| {
             enabled_menu.set(EnabledMenu::Second);
         });
     }
@@ -56,9 +57,9 @@ pub fn body() -> Html {
                     }
                     checked={ *enabled_menu == EnabledMenu::First }
                 />
-                <label class="btn btn-light" for="vbtn-radio1"> { "Меню" } </label>
+                <label class="btn btn-light d-block d-lg-none" for="vbtn-radio1"> { "Меню" } </label>
                 <input
-                    aria-label="Контент"
+                    aria-label="Лента"
                     type="radio"
                     class="btn-check"
                     name="vbtn-radio"
@@ -97,26 +98,63 @@ pub fn body() -> Html {
                         "gap-2",
                         "sticky-lg-top",
                         "col-12",
-                        "col-lg-2",
+                        "col-lg-3",
+                        "col-xl-2",
                         "d-lg-grid",
                         { if *enabled_menu == EnabledMenu::First { "d-grid" } else { "d-none" } }
                     ) }
                 >
-                    <DelayedComponent<()> component={ |_| html! {
-                        <>
+                    <div class="d-grid gap-2">
+                        <div class="btn-group d-none d-flex d-lg-flex d-xl-none flex-wrap" role="group">
+                            <input
+                                aria-label="Лента"
+                                type="radio"
+                                class="btn-check"
+                                name="vbtn2-radio"
+                                id="vbtn2-radio1"
+                                autocomplete="off"
+                                onchange={
+                                    let enabled_menu = enabled_menu.clone();
+                                    Callback::from(move |_| enabled_menu.set(EnabledMenu::Second))
+                                }
+                                checked={ *enabled_menu == EnabledMenu::Second }
+                            />
+                            <label title="Лента" class="btn btn-light" for="vbtn2-radio1">
+                                <i class="bi bi-card-heading"></i>
+                            </label>
+                            <input
+                                aria-label="Информация"
+                                type="radio"
+                                class="btn-check"
+                                name="vbtn2-radio"
+                                id="vbtn2-radio2"
+                                autocomplete="off"
+                                onchange={
+                                    let enabled_menu = enabled_menu.clone();
+                                    Callback::from(move |_| enabled_menu.set(EnabledMenu::Third))
+                                }
+                                checked={ *enabled_menu == EnabledMenu::Third }
+                            />
+                            <label title="Информация" class="btn btn-light" for="vbtn2-radio2">
+                                <i class="bi bi-info-square"></i>
+                            </label>
+                        </div>
+                        <DelayedComponent<()> component={ |_| html! {
                             <NavigationMenu />
-                            <div class="d-flex flex-wrap align-items-end justify-content-center">
-                                <p style="margin-bottom: 0;">
-                                    <a href="https://www.youtube.com/watch?v=dQw4w9WgXcQ" class="text-decoration-none text-center">
-                                        { "Правила" }
-                                    </a>
-                                    <br/>
-                                    <a href="https://about.tikitko.su/" class="text-decoration-none text-center">
-                                        { "О Tikitko" }
-                                    </a>
-                                </p>
-                            </div>
-                        </>
+                        } } deps={ () } />
+                    </div>
+                    <DelayedComponent<()> component={ |_| html! {
+                        <div class="d-flex flex-wrap align-items-end justify-content-center">
+                            <p style="margin-bottom: 0;">
+                                <a href="https://www.youtube.com/watch?v=dQw4w9WgXcQ" class="text-decoration-none text-center">
+                                    { "Правила" }
+                                </a>
+                                <br/>
+                                <a href="https://about.tikitko.su/" class="text-decoration-none text-center">
+                                    { "О Tikitko" }
+                                </a>
+                            </p>
+                        </div>
                     } } deps={ () } />
                 </div>
 
@@ -125,10 +163,12 @@ pub fn body() -> Html {
                     class={ classes!(
                         "menu",
                         "col-12",
-                        "col-lg-7",
+                        "col-lg-9",
+                        "col-xl-7",
                         "px-0",
-                        "px-lg-3",
-                        "d-lg-block",
+                        "ps-lg-3",
+                        "px-xl-3",
+                        "d-xl-block",
                         { if *enabled_menu == EnabledMenu::Second { "d-block" } else { "d-none" } }
                     ) }
                 >
@@ -142,9 +182,12 @@ pub fn body() -> Html {
                         "gap-2",
                         "sticky-lg-top",
                         "col-12",
-                        "col-lg-3",
-                         "d-lg-grid",
-                         { if *enabled_menu == EnabledMenu::Third { "d-grid" } else { "d-none" } }
+                        "col-lg-9",
+                        "col-xl-3",
+                        "ps-lg-3",
+                        "ps-xl-0",
+                        "d-xl-grid",
+                        { if *enabled_menu == EnabledMenu::Third { "d-grid" } else { "d-none" } }
                     ) }
                 >
                     <DelayedComponent<()> component={ |_| html! {

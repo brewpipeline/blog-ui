@@ -16,6 +16,7 @@ pub fn posts() -> Html {
             <Meta title="Публикации" />
             <List<API<PostsContainer>, PostsContainerParams>
                 r#type={ LoadType::Params(PostsContainerParams) }
+                use_caches=true
                 route_to_page={ Route::Posts }
                 component={ |post| html! { <PostCard { post } is_full=false /> } }
                 error_component={ |_| html! { <Warning text="Ошибка загрузки публикаций!" /> } }

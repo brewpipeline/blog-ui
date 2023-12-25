@@ -20,14 +20,14 @@ pub fn information_menu() -> Html {
                     let id = format!("collapse{index}");
                     let target = format!("#collapse{index}");
                     let expanded;
-                    let mut button_classes = "accordion-button".to_string();
-                    let mut content_classes = "accordion-collapse collapse".to_string();
+                    let mut button_classes = vec!["accordion-button"];
+                    let mut content_classes = vec!["accordion-collapse", "collapse"];
                     if index == 0 {
                         expanded = "true";
-                        content_classes += " show"
-                     } else {
+                        content_classes.push("show");
+                    } else {
                         expanded = "false";
-                        button_classes += " collapsed";
+                        button_classes.push("collapsed");
                     };
                     html! {
                         <div class="accordion-item">

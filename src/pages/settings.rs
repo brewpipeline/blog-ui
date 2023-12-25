@@ -1,5 +1,5 @@
-#[cfg(all(feature = "client", feature = "telegram"))]
-use blog_generic::entities::LoginTelegramQuestion;
+#[cfg(feature = "client")]
+use blog_generic::*;
 #[cfg(all(feature = "client", feature = "telegram"))]
 use gloo::events::EventListener;
 #[cfg(feature = "client")]
@@ -73,7 +73,7 @@ pub fn settings() -> Html {
                         slug_node_ref
                             .cast::<HtmlInputElement>()
                             .unwrap()
-                            .set_value(blog_generic::clean_author_slug(&author.slug).as_str());
+                            .set_value(author_slug_utils::clean(&author.slug).as_str());
                         first_name_node_ref
                             .cast::<HtmlInputElement>()
                             .unwrap()
@@ -283,7 +283,7 @@ pub fn settings() -> Html {
                 .cast::<HtmlInputElement>()
                 .map(|v| v.value())
                 .none_if_empty();
-            !(Some(blog_generic::clean_author_slug(&author.slug)) == slug
+            !(Some(author_slug_utils::clean(&author.slug)) == slug
                 && author.first_name.none_if_empty() == first_name
                 && author.last_name.none_if_empty() == last_name
                 && author.image_url.none_if_empty() == image_url
