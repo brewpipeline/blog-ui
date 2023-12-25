@@ -1,11 +1,11 @@
 # blog-ui
 Blog UI made with Yew/WASM/Bootstrap
 
-(Project: https://github.com/users/tikitko/projects/2/)
+Project: https://github.com/users/tikitko/projects/2/
 ---
-(UI part: https://github.com/tikitko/blog-ui)
+UI part: https://github.com/tikitko/blog-ui
 
-(Server part: https://github.com/tikitko/blog-server)
+Server part: https://github.com/tikitko/blog-server
 
 ![1](https://raw.githubusercontent.com/tikitko/blog-ui/main/images/1.png)
 
@@ -16,3 +16,5 @@ Blog UI made with Yew/WASM/Bootstrap
 ![4](https://raw.githubusercontent.com/tikitko/blog-ui/main/images/4.png)
 
 ![5](https://raw.githubusercontent.com/tikitko/blog-ui/main/images/5.png)
+
+![6](https://raw.githubusercontent.com/tikitko/blog-ui/main/images/6.png)
