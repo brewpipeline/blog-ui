@@ -11,8 +11,9 @@ Features:
 - Server-Side Rendering (SSR) (posts/post/authors/author/tag)
 - SEO optimized (search/social)
 - Search (posts/authors)
-- Images mirroring
 - Telegram notifications (post publish)
+- Images mirroring
+- Deploy
 
 How-to:
 1. Configure ENV vars mentioned in [job](https://github.com/tikitko/blog-ui/blob/main/.github/workflows/builds.yml), where some items can be optional, based on selected features.
@@ -23,8 +24,8 @@ Links
 - Project: https://github.com/users/tikitko/projects/2/
 - UI(current) part: https://github.com/tikitko/blog-ui
 - Server part: https://github.com/tikitko/blog-server
-- Images part: https://github.com/tikitko/images-processor-service
 - Notifications part: https://github.com/YoshkiMatryoshki/BlogNotificationService
+- Images part: https://github.com/tikitko/images-processor-service
 - Deploy part: https://github.com/tikitko/blog-deploy
 
 Images
