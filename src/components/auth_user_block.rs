@@ -29,7 +29,7 @@ pub fn auth_user_block() -> Html {
             </button>
         });
         #[cfg(not(feature = "telegram"))]
-        let tg_button = None;
+        let tg_button: Option<VNode> = None;
 
         return html! {
             <>
