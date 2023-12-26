@@ -1,8 +1,20 @@
 # blog-ui
 Blog UI made with Yew/WASM/Bootstrap
 
-How-to:
+Features:
+- **Posts system** (page/list/create/edit/delete/publish)
+- **Authors system** (page/list/create/edit)
+- **Tags system** (page/create)
+- **Comments system** (list/create/delete)
+- Minimal administration system (roles/bans/control)
+- Authorization (telegram/yandex/internal)
+- Server-Side Rendering (SSR) (posts/post/authors/author/tag)
+- SEO optimized (search/social)
+- Search (posts/authors)
+- Images mirroring
+- Telegram notifications (post publish)
 
+How-to:
 1. Configure ENV vars mentioned in [job](https://github.com/tikitko/blog-ui/blob/main/.github/workflows/builds.yml), where some items can be optional, based on selected features.
 2. Build YEW/app with [tutorial](https://yew.rs/docs/tutorial).
 
