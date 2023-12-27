@@ -11,6 +11,8 @@ use crate::Route;
 pub fn auth_user_block() -> Html {
     let logged_user_context = use_context::<LoggedUserContext>().unwrap();
 
+    let social_tries = use_state_eq(|| 0);
+
     if logged_user_context.is_not_inited() {
         return html! {};
     }
@@ -22,8 +24,17 @@ pub fn auth_user_block() -> Html {
                 title="Войти через Telegram"
                 aria-label="Войти через Telegram"
                 type="button"
-                class="item btn bg-color-tg"
+                class={ classes!(
+                    "item",
+                    "btn",
+                    "bg-color-tg",
+                    { if *social_tries >= 2 { "d-none" } else { "d-block" } }
+                ) }
                 ONCLICK="return TWidgetLogin.auth();"
+                onclick={
+                    let social_tries = social_tries.clone();
+                    move |_e: MouseEvent| social_tries.set(*social_tries + 1)
+                }
             >
                 <i class="bi bi-tg"></i>
             </button>
@@ -42,7 +53,7 @@ pub fn auth_user_block() -> Html {
                         "item",
                         "btn",
                         "btn-light",
-                        { if tg_button == None { "d-block" } else { "d-none" } }
+                        { if tg_button == None || *social_tries >= 2 { "d-block" } else { "d-none" } }
                     ) }
                     data-bs-toggle="modal"
                     data-bs-target="#loginModal"
