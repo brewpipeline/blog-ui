@@ -11,25 +11,63 @@ use crate::Route;
 pub fn auth_user_block() -> Html {
     let logged_user_context = use_context::<LoggedUserContext>().unwrap();
 
+    let social_tries = use_state_eq(|| 0);
+
     if logged_user_context.is_not_inited() {
         return html! {};
     }
 
+    let social_tries_out = *social_tries >= 2;
+
     let Some(_) = logged_user_context.token().cloned() else {
-        return html! {
+        #[cfg(feature = "telegram")]
+        let tg_button = Some(html! {
             <button
-                title="Войти"
-                aria-label="Войти"
+                title="Войти через Telegram"
+                aria-label="Войти через Telegram"
                 type="button"
-                class="item btn btn-light"
-                data-bs-toggle="modal"
-                data-bs-target="#loginModal"
+                class={ classes!(
+                    "item",
+                    "btn",
+                    "bg-color-tg",
+                    { if social_tries_out { "d-none" } else { "d-block" } }
+                ) }
+                ONCLICK="return TWidgetLogin.auth();"
+                onclick={
+                    let social_tries = social_tries.clone();
+                    move |_e: MouseEvent| social_tries.set(*social_tries + 1)
+                }
             >
-                <div class="d-block d-lg-none">
-                    <i class="bi bi-person-add"></i>
-                </div>
-                <div class="d-none d-lg-block"> { "Войти" } </div>
+                <i class="bi bi-tg"></i>
             </button>
+        });
+        #[cfg(not(feature = "telegram"))]
+        let tg_button: Option<Html> = None;
+
+        return html! {
+            <>
+                { tg_button.clone() }
+                <button
+                    title="Войти"
+                    aria-label="Войти"
+                    type="button"
+                    class={ classes!(
+                        "item",
+                        "btn",
+                        "btn-light",
+                        { if tg_button == None || social_tries_out { "d-block" } else { "d-none" } }
+                    ) }
+                    data-bs-toggle="modal"
+                    data-bs-target="#loginModal"
+                >
+                    <div class="d-block d-lg-none">
+                        <i class="bi bi-person-add"></i>
+                    </div>
+                    <div class="d-none d-lg-block">
+                        { "Войти" }
+                    </div>
+                </button>
+            </>
         };
     };
 

@@ -284,20 +284,19 @@ pub fn edit_post(props: &EditPostProps) -> Html {
             .map(|h| h.checked())
             .unwrap_or(post_published);
         html! {
-            <>
-                <form>
-                    <h5 class="mb-3">
-                        if let Some(post) = post.as_ref() {
-                            { "Редактирование публикации: " }
-                            { post.title.clone() }
-                        } else {
-                            { "Новая публикация" }
-                        }
-                    </h5>
-
+            <div class="card"><div class="card-body">
+                <h5 class="card-title mb-3">
+                    if let Some(post) = post.as_ref() {
+                        { "Редактирование публикации: " }
+                        { post.title.clone() }
+                    } else {
+                        { "Новая публикация" }
+                    }
+                </h5>
+                <form class="card-text">
                     <div
-                        class="mb-4 border rounded-3 d-flex align-items-center justify-content-center p-3 py-6"
-                        style="font-size: 10em"
+                        class="mb-3 border rounded-3 d-flex align-items-center justify-content-center p-3 py-6"
+                        style="font-size: 10em;"
                         role="img"
                     >
                         <i class="bi bi-file-post"></i>
@@ -408,9 +407,9 @@ pub fn edit_post(props: &EditPostProps) -> Html {
                         </div>
                     }
 
-                    <div class="mb-3">
+                    <div>
                         <button
-                            class="btn btn-light"
+                            class="btn btn-info"
                             type="submit"
                             onclick={ save_onclick.clone() }
                             disabled={ !state.action_available() }
@@ -464,7 +463,7 @@ pub fn edit_post(props: &EditPostProps) -> Html {
                     #[cfg(not(feature = "client"))]
                     unreachable!()
                 }} deps={ () } />
-            </>
+            </div></div>
         }
     });
 

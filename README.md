@@ -1,7 +1,8 @@
 # blog-ui
 Blog UI made with Yew/WASM/Bootstrap
 
-Features:
+Features
+---
 - **Posts system** (page/list/create/edit/delete/publish)
 - **Authors system** (page/list/create/edit)
 - **Tags system** (page/create)
@@ -15,9 +16,22 @@ Features:
 - Images mirroring
 - Deploy
 
-How-to:
-1. Configure ENV vars mentioned in [job](https://github.com/tikitko/blog-ui/blob/main/.github/workflows/builds.yml), where some items can be optional, based on selected features.
-2. Build YEW/app with [tutorial](https://yew.rs/docs/tutorial).
+How-to
+---
+1. Configure ENV vars mentioned in [job](https://github.com/tikitko/blog-ui/blob/main/.github/workflows/builds.yml) or in [lib](https://github.com/tikitko/blog-ui/blob/main/src/lib.rs) file, where some items can be optional, based on selected features.
+```rust
+#[cfg(all(feature = "client", feature = "yandex"))]
+const YANDEX_CLIENT_ID: &'static str = std::env!("YANDEX_CLIENT_ID"); // ee156ec6ee994a748e724f604db8e305
+#[cfg(feature = "client")]
+const API_URL: &'static str = std::env!("API_URL"); // http://127.0.0.1:3000/api
+#[cfg(feature = "telegram")]
+const TELEGRAM_BOT_LOGIN: &'static str = std::env!("TELEGRAM_BOT_LOGIN"); // AnyBlogBot
+const TITLE: &'static str = std::env!("TITLE"); // BLOG
+const DESCRIPTION: &'static str = std::env!("DESCRIPTION"); // BLOG DESCRIPTION
+const KEYWORDS: &'static str = std::env!("KEYWORDS"); // BLOG, KEYWORDS
+const ACCORDION_JSON: &'static str = std::env!("ACCORDION_JSON"); // [{"title":"О блоге","body":"<strong>Ты ошибка эволюции.</strong><br/>А блог этот про хороших людей в плохое время."},{"title":"Контент","body":"Привет!"}]
+```
+2. Build YEW/app by [tutorial](https://yew.rs/docs/tutorial).
 
 Links
 ---
