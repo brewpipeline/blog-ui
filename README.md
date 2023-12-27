@@ -1,5 +1,5 @@
 # blog-ui
-Blog UI made with Yew/WASM/Bootstrap/HTML5/CSS3/JavaScript
+Blog UI made with Yew/WASM/Bootstrap
 
 Features
 ---
