@@ -296,7 +296,7 @@ pub fn edit_post(props: &EditPostProps) -> Html {
                 <form class="card-text">
                     <div
                         class="mb-3 border rounded-3 d-flex align-items-center justify-content-center p-3 py-6"
-                        style="font-size: 10em;"
+                        style="font-size: 10em; background-color: var(--bs-body-bg);"
                         role="img"
                     >
                         <i class="bi bi-file-post"></i>
