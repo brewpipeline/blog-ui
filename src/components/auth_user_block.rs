@@ -17,6 +17,8 @@ pub fn auth_user_block() -> Html {
         return html! {};
     }
 
+    let social_tries_out = *social_tries >= 2;
+
     let Some(_) = logged_user_context.token().cloned() else {
         #[cfg(feature = "telegram")]
         let tg_button = Some(html! {
@@ -28,7 +30,7 @@ pub fn auth_user_block() -> Html {
                     "item",
                     "btn",
                     "bg-color-tg",
-                    { if *social_tries >= 2 { "d-none" } else { "d-block" } }
+                    { if social_tries_out { "d-none" } else { "d-block" } }
                 ) }
                 ONCLICK="return TWidgetLogin.auth();"
                 onclick={
@@ -53,7 +55,7 @@ pub fn auth_user_block() -> Html {
                         "item",
                         "btn",
                         "btn-light",
-                        { if tg_button == None || *social_tries >= 2 { "d-block" } else { "d-none" } }
+                        { if tg_button == None || social_tries_out { "d-block" } else { "d-none" } }
                     ) }
                     data-bs-toggle="modal"
                     data-bs-target="#loginModal"
