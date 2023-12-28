@@ -21,7 +21,7 @@ pub fn auth_user_block() -> Html {
 
     let Some(_) = logged_user_context.token().cloned() else {
         #[cfg(feature = "telegram")]
-        let tg_button = Some(html! {
+        let tg_button = /* Some(html! {
             <button
                 title="Войти через Telegram"
                 aria-label="Войти через Telegram"
@@ -40,7 +40,7 @@ pub fn auth_user_block() -> Html {
             >
                 <i class="bi bi-tg"></i>
             </button>
-        });
+        }); */ None;
         #[cfg(not(feature = "telegram"))]
         let tg_button: Option<Html> = None;
 
