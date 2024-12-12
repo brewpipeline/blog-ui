@@ -14,6 +14,34 @@ pub fn navigation_menu() -> Html {
             .author()
             .map(|a| a.editor == 1)
             .unwrap_or(false);
+    let is_logged_in = !logged_user_context.is_not_inited() && logged_user_context.token() != None;
+
+    #[cfg(feature = "telegram")]
+    let tg_button: Option<Html> = if !is_logged_in {
+        Some(html! {
+            <button
+                title="Войти через Telegram"
+                aria-label="Войти через Telegram"
+                type="button"
+                data-bs-toggle="modal"
+                data-bs-target="#loginModal"
+                class="btn btn-light telegram-button"
+            >
+                <div class="btn inner">
+                    <p>
+                        <span>{ "Войти через" }</span>
+                        <br/>
+                        <span>{ "Telegram" }</span>
+                    </p>
+                </div>
+            </button>
+        })
+    } else {
+        None
+    };
+    #[cfg(not(feature = "telegram"))]
+    let tg_button: Option<Html> = None;
+
     html! {
         <>
             <Link<Route>
@@ -66,6 +94,7 @@ pub fn navigation_menu() -> Html {
                     { "Неопубликованное" }
                 </Link<Route>>
             }
+            { tg_button }
         </>
     }
 }
