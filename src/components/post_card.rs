@@ -36,13 +36,13 @@ pub fn post_card(props: &PostCardProps) -> Html {
                 />
             </div>
             <div class="card-body pb-0">
-                <h5 class="card-title placeholder-glow">
+                <h4 class="card-title placeholder-glow">
                     if let Some(title) = post.as_ref().map(|p| p.title.clone()) {
                         { title }
                     } else {
                         <span class="placeholder col-6 bg-secondary"></span>
                     }
-                </h5>
+                </h4>
                 <article class="card-text placeholder-glow">
                     if let Some(text) = post.as_ref().map(|post| {
                         if let (Some(content), true) = (post.content.clone(), is_full) {
