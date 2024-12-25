@@ -35,14 +35,6 @@ pub fn content() -> Html {
         });
     }
 
-    #[cfg(feature = "client")]
-    {
-        let route = route.clone();
-        use_effect_with(route, |route| {
-            crate::js::log_analytic("route", &[("path", route.to_path())].into());
-        });
-    }
-
     let main_content = html! {
         <>
             <Header />
