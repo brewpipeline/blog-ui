@@ -118,7 +118,7 @@ pub fn author_card(props: &AuthorCardProps) -> Html {
             </div>
             <div class="col">
                 <div class="card-body">
-                    <h5 class="card-title placeholder-glow">
+                    <h4 class="card-title placeholder-glow">
                         if let Some(author) = author.as_ref() {
                             {
                                 if author.blocked == 1 {
@@ -148,7 +148,7 @@ pub fn author_card(props: &AuthorCardProps) -> Html {
                             <span class="placeholder col-3 bg-secondary"></span> { " " }
                             <span class="placeholder col-3 bg-secondary"></span>
                         }
-                    </h5>
+                    </h4>
                     <p class="card-text placeholder-glow">
                         <small class="text-body-secondary">
                             if let Some(author) = author.as_ref() {
