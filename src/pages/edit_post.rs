@@ -71,15 +71,15 @@ pub fn edit_post(props: &EditPostProps) -> Html {
     let content_node_ref = use_node_ref();
     let tags_node_ref = use_node_ref();
 
-    let published_type = use_state(|| None);
+    let publish_type = use_state(|| None);
     #[cfg(feature = "client")]
-    let published_type_on_change = {
-        let published_type = published_type.clone();
+    let publish_type_on_change = {
+        let publish_type = publish_type.clone();
         Callback::from(move |event: Event| {
             let value = event
                 .target_unchecked_into::<web_sys::HtmlInputElement>()
                 .value();
-            published_type.set(Some(value.parse::<u8>().unwrap()));
+            publish_type.set(Some(value.parse::<u8>().unwrap()));
         })
     };
     #[cfg(not(feature = "client"))]
@@ -218,10 +218,10 @@ pub fn edit_post(props: &EditPostProps) -> Html {
         let post_summary = post.as_ref().map(|p| p.summary.clone());
         let post_content = post.as_ref().map(|p| p.content.clone()).flatten();
         let post_tags = post.as_ref().map(|p| p.joined_tags_string(", "));
-        let published_type_value = (*published_type)
-            .map(|t| content::PublishedType::from(t))
-            .or(post.as_ref().map(|t| t.published_type.to_owned()))
-            .unwrap_or(content::PublishedType::Unpublished);
+        let publish_type_value = (*publish_type)
+            .map(|t| content::PublishType::from(t))
+            .or(post.as_ref().map(|t| t.publish_type.to_owned()))
+            .unwrap_or(content::PublishType::Unpublished);
         #[cfg(feature = "client")]
         let post_image = image_node_ref
             .cast::<HtmlInputElement>()
@@ -255,7 +255,7 @@ pub fn edit_post(props: &EditPostProps) -> Html {
             let summary_node_ref = summary_node_ref.clone();
             let content_node_ref = content_node_ref.clone();
             let tags_node_ref = tags_node_ref.clone();
-            let published_type_value = published_type_value.clone();
+            let publish_type_value = publish_type_value.clone();
             Callback::from(move |e: MouseEvent| {
                 e.prevent_default();
 
@@ -279,7 +279,7 @@ pub fn edit_post(props: &EditPostProps) -> Html {
                     .collect();
                 state.set(EditPostState::EditedInProgress(content::CommonPost {
                     title,
-                    published_type: published_type_value.clone(),
+                    publish_type: publish_type_value.clone(),
                     summary,
                     content,
                     tags,
@@ -389,8 +389,8 @@ pub fn edit_post(props: &EditPostProps) -> Html {
                             name="validationFormCheck"
                             id="validationFormCheck1"
                             value="0"
-                            checked={ published_type_value == content::PublishedType::Unpublished }
-                            onchange={ published_type_on_change.clone() }
+                            checked={ publish_type_value == content::PublishType::Unpublished }
+                            onchange={ publish_type_on_change.clone() }
                         />
                         <label class="form-check-label" for="validationFormCheck1">
                             { "Неопубликовано" }
@@ -404,8 +404,8 @@ pub fn edit_post(props: &EditPostProps) -> Html {
                             name="validationFormCheck"
                             id="validationFormCheck2"
                             value="1"
-                            checked={ published_type_value == content::PublishedType::Published }
-                            onchange={ published_type_on_change.clone() }
+                            checked={ publish_type_value == content::PublishType::Published }
+                            onchange={ publish_type_on_change.clone() }
                         />
                         <label class="form-check-label" for="validationFormCheck2">
                             { "Опубликовано" }
@@ -419,8 +419,8 @@ pub fn edit_post(props: &EditPostProps) -> Html {
                         name="validationFormCheck"
                         id="validationFormCheck3"
                         value="2"
-                        checked={ published_type_value == content::PublishedType::Hidden }
-                        onchange={ published_type_on_change.clone() }
+                        checked={ publish_type_value == content::PublishType::Hidden }
+                        onchange={ publish_type_on_change.clone() }
                     />
                     <label class="form-check-label" for="validationFormCheck3">
                         { "Скрыто" }
