@@ -361,6 +361,9 @@ pub struct UnpublishedPostsContainerAuthorParams {
     pub author_id: u64,
 }
 
+#[derive(Clone, PartialEq)]
+pub struct HiddenPostsContainerParams;
+
 #[cfg(feature = "client")]
 #[async_trait(?Send)]
 impl RequestableItem<ExternalListContainerParams<PostsContainerParams>> for API<PostsContainer> {
@@ -498,6 +501,34 @@ impl
         } = params;
         let url = format!(
             "{url}/posts/unpublished/author/id/{author_id}?limit={limit}&offset={skip}",
+            url = crate::API_URL
+        );
+        let mut request = Request::get(url.as_str());
+        if let Some(token) = token {
+            request = request.header("Token", token.as_str());
+        }
+        Ok(request.build()?)
+    }
+    async fn response(response: Response) -> Result<Self, Error> {
+        response.json().await
+    }
+}
+
+#[cfg(feature = "client")]
+#[async_trait(?Send)]
+impl RequestableItem<ExternalListContainerParams<OptionTokened<HiddenPostsContainerParams>>>
+    for API<PostsContainer>
+{
+    async fn request(
+        params: ExternalListContainerParams<OptionTokened<HiddenPostsContainerParams>>,
+    ) -> Result<Request, Error> {
+        let ExternalListContainerParams {
+            params: OptionTokened { token, .. },
+            limit,
+            skip,
+        } = params;
+        let url = format!(
+            "{url}/posts/hidden?limit={limit}&offset={skip}",
             url = crate::API_URL
         );
         let mut request = Request::get(url.as_str());

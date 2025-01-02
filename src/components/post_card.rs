@@ -108,6 +108,7 @@ pub fn post_card(props: &PostCardProps) -> Html {
             }
         }
     };
+    let published_type = post.as_ref().map(|p| p.published_type.clone());
     html! {
         <div class="card mb-3">
             <div class="card-header placeholder-glow border-0">
@@ -159,8 +160,11 @@ pub fn post_card(props: &PostCardProps) -> Html {
                     </div>
                     <div class="d-flex col-2 align-items-center justify-content-end" style="height: 24px;">
                         <p class="mt-0 mb-0">
-                            if let Some(0) = post.as_ref().map(|p| p.published) {
-                                <i title="Публикация скрыта" class="bi bi-eye-slash-fill"></i>
+                            if published_type == Some(PublishedType::Unpublished) {
+                                <i title="Неопубликовано" class="bi bi-clipboard2-x-fill"></i>
+                            }
+                            if published_type == Some(PublishedType::Hidden) {
+                                <i title="Скрыто" class="bi bi-eye-slash-fill"></i>
                             }
                             if !logged_user_context.is_not_inited() {
                                 if let (
