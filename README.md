@@ -56,3 +56,5 @@ Images
 ![5](https://raw.githubusercontent.com/brewpipeline/blog-ui/main/images/5.png)
 
 ![6](https://raw.githubusercontent.com/brewpipeline/blog-ui/main/images/6.png)
+
+![7](https://raw.githubusercontent.com/brewpipeline/blog-ui/main/images/7.png)
