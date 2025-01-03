@@ -83,7 +83,7 @@ pub fn edit_post(props: &EditPostProps) -> Html {
         })
     };
     #[cfg(not(feature = "client"))]
-    let save_onclick = Callback::from(|_| {});
+    let publish_type_on_change = Callback::from(|_| {});
 
     #[cfg(feature = "client")]
     {
