@@ -33,6 +33,7 @@ pub fn my_unpublished_posts() -> Html {
     else {
         return not_auth_content;
     };
+
     html! {
         <>
             { meta }
@@ -40,21 +41,15 @@ pub fn my_unpublished_posts() -> Html {
                 { "Мое неопубликованное" }
             </SimpleTitleCard>
             <List<API<PostsContainer>, OptionTokened<PostsContainerParams>>
-                r#type={
-                    if !logged_user_context.is_not_inited() {
-                        LoadType::Params(OptionTokened {
-                            token: Some(token),
-                            params: PostsContainerParams {
-                                publish_type: PublishType::Unpublished,
-                                search_query: None,
-                                author_id: Some(author.id),
-                                tag_id: None
-                            }
-                        })
-                    } else {
-                        LoadType::OnlyAppCacheIfApplicable
+                r#type={ LoadType::Params(OptionTokened {
+                    token: Some(token),
+                    params: PostsContainerParams {
+                        publish_type: PublishType::Unpublished,
+                        search_query: None,
+                        author_id: Some(author.id),
+                        tag_id: None
                     }
-                }
+                }) }
                 route_to_page={ Route::UnpublishedPosts }
                 component={ |post| html! { <PostCard { post } is_full=false /> } }
                 error_component={ |_| html! { <Warning text="Ошибка загрузки моего неопубликованного!" /> } }
