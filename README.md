@@ -1,6 +1,8 @@
 # blog-ui
 Blog UI made with Yew/WASM/Bootstrap
 
+![1](https://raw.githubusercontent.com/brewpipeline/blog-ui/main/images/1.png)
+
 Features
 ---
 - **Posts system** (page/list/create/edit/delete/publish)
@@ -45,8 +47,6 @@ Links
 Images
 ---
 
-![1](https://raw.githubusercontent.com/brewpipeline/blog-ui/main/images/1.png)
-
 ![2](https://raw.githubusercontent.com/brewpipeline/blog-ui/main/images/2.png)
 
 ![3](https://raw.githubusercontent.com/brewpipeline/blog-ui/main/images/3.png)
@@ -56,3 +56,5 @@ Images
 ![5](https://raw.githubusercontent.com/brewpipeline/blog-ui/main/images/5.png)
 
 ![6](https://raw.githubusercontent.com/brewpipeline/blog-ui/main/images/6.png)
+
+![7](https://raw.githubusercontent.com/brewpipeline/blog-ui/main/images/7.png)
