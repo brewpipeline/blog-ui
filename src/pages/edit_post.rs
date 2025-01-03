@@ -71,7 +71,7 @@ pub fn edit_post(props: &EditPostProps) -> Html {
     let content_node_ref = use_node_ref();
     let tags_node_ref = use_node_ref();
 
-    let publish_type = use_state(|| None);
+    let publish_type = use_state(|| Option::<u8>::None);
     #[cfg(feature = "client")]
     let publish_type_on_change = {
         let publish_type = publish_type.clone();
