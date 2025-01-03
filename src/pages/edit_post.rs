@@ -70,7 +70,20 @@ pub fn edit_post(props: &EditPostProps) -> Html {
     let summary_node_ref = use_node_ref();
     let content_node_ref = use_node_ref();
     let tags_node_ref = use_node_ref();
-    let published_node_ref = use_node_ref();
+
+    let publish_type = use_state(|| Option::<u8>::None);
+    #[cfg(feature = "client")]
+    let publish_type_on_change = {
+        let publish_type = publish_type.clone();
+        Callback::from(move |event: Event| {
+            let value = event
+                .target_unchecked_into::<web_sys::HtmlInputElement>()
+                .value();
+            publish_type.set(Some(value.parse::<u8>().unwrap()));
+        })
+    };
+    #[cfg(not(feature = "client"))]
+    let publish_type_on_change = Callback::from(|_| {});
 
     #[cfg(feature = "client")]
     {
@@ -192,53 +205,6 @@ pub fn edit_post(props: &EditPostProps) -> Html {
         };
     }
 
-    #[cfg(feature = "client")]
-    let save_onclick = {
-        let state = state.clone();
-        let image_node_ref = image_node_ref.clone();
-        let title_node_ref = title_node_ref.clone();
-        let summary_node_ref = summary_node_ref.clone();
-        let content_node_ref = content_node_ref.clone();
-        let tags_node_ref = tags_node_ref.clone();
-        let published_node_ref = published_node_ref.clone();
-        Callback::from(move |e: MouseEvent| {
-            e.prevent_default();
-
-            let image_url = image_node_ref
-                .cast::<HtmlInputElement>()
-                .map(|v| v.value())
-                .filter(|s| !s.is_empty());
-            let title = title_node_ref.cast::<HtmlInputElement>().unwrap().value();
-            let summary = summary_node_ref.cast::<HtmlInputElement>().unwrap().value();
-            let content = content_node_ref
-                .cast::<HtmlInputElement>()
-                .map(|v| v.value())
-                .filter(|s| !s.is_empty());
-            let tags = tags_node_ref
-                .cast::<HtmlInputElement>()
-                .unwrap()
-                .value()
-                .split(',')
-                .map(|t| t.trim().to_owned())
-                .filter(|s| !s.is_empty())
-                .collect();
-            let published = published_node_ref
-                .cast::<HtmlInputElement>()
-                .unwrap()
-                .checked() as u8;
-            state.set(EditPostState::EditedInProgress(content::CommonPost {
-                title,
-                published,
-                summary,
-                content,
-                tags,
-                image_url,
-            }));
-        })
-    };
-    #[cfg(not(feature = "client"))]
-    let save_onclick = Callback::from(|_| {});
-
     let delete_onclick = {
         let state = state.clone();
         Callback::from(move |_| {
@@ -252,7 +218,10 @@ pub fn edit_post(props: &EditPostProps) -> Html {
         let post_summary = post.as_ref().map(|p| p.summary.clone());
         let post_content = post.as_ref().map(|p| p.content.clone()).flatten();
         let post_tags = post.as_ref().map(|p| p.joined_tags_string(", "));
-        let post_published = post.as_ref().map(|p| p.published == 1).unwrap_or(false);
+        let publish_type_value = (*publish_type)
+            .map(|t| content::PublishType::from(t))
+            .or(post.as_ref().map(|t| t.publish_type.to_owned()))
+            .unwrap_or(content::PublishType::Unpublished);
         #[cfg(feature = "client")]
         let post_image = image_node_ref
             .cast::<HtmlInputElement>()
@@ -279,10 +248,47 @@ pub fn edit_post(props: &EditPostProps) -> Html {
             .map(|h| h.value())
             .or(post_tags);
         #[cfg(feature = "client")]
-        let post_published = published_node_ref
-            .cast::<HtmlInputElement>()
-            .map(|h| h.checked())
-            .unwrap_or(post_published);
+        let save_onclick = {
+            let state = state.clone();
+            let image_node_ref = image_node_ref.clone();
+            let title_node_ref = title_node_ref.clone();
+            let summary_node_ref = summary_node_ref.clone();
+            let content_node_ref = content_node_ref.clone();
+            let tags_node_ref = tags_node_ref.clone();
+            let publish_type_value = publish_type_value.clone();
+            Callback::from(move |e: MouseEvent| {
+                e.prevent_default();
+
+                let image_url = image_node_ref
+                    .cast::<HtmlInputElement>()
+                    .map(|v| v.value())
+                    .filter(|s| !s.is_empty());
+                let title = title_node_ref.cast::<HtmlInputElement>().unwrap().value();
+                let summary = summary_node_ref.cast::<HtmlInputElement>().unwrap().value();
+                let content = content_node_ref
+                    .cast::<HtmlInputElement>()
+                    .map(|v| v.value())
+                    .filter(|s| !s.is_empty());
+                let tags = tags_node_ref
+                    .cast::<HtmlInputElement>()
+                    .unwrap()
+                    .value()
+                    .split(',')
+                    .map(|t| t.trim().to_owned())
+                    .filter(|s| !s.is_empty())
+                    .collect();
+                state.set(EditPostState::EditedInProgress(content::CommonPost {
+                    title,
+                    publish_type: publish_type_value.clone(),
+                    summary,
+                    content,
+                    tags,
+                    image_url,
+                }));
+            })
+        };
+        #[cfg(not(feature = "client"))]
+        let save_onclick = Callback::from(|_| {});
         html! {
             <div class="card"><div class="card-body">
                 <h5 class="card-title mb-3">
@@ -378,16 +384,48 @@ pub fn edit_post(props: &EditPostProps) -> Html {
 
                     <div class={ classes!("form-check", "mb-3", if author.editor == 0 { "d-none" } else { "" }) }>
                         <input
-                            type="checkbox"
+                            type="radio"
                             class="form-check-input"
+                            name="validationFormCheck"
                             id="validationFormCheck1"
-                            checked={ post_published }
-                            ref={ published_node_ref.clone() }
+                            value="0"
+                            checked={ publish_type_value == content::PublishType::Unpublished }
+                            onchange={ publish_type_on_change.clone() }
                         />
                         <label class="form-check-label" for="validationFormCheck1">
-                            { "Опубликовать" }
+                            { "Неопубликовано" }
                         </label>
                     </div>
+
+                    <div class={ classes!("form-check", "mb-3", if author.editor == 0 { "d-none" } else { "" }) }>
+                        <input
+                            type="radio"
+                            class="form-check-input"
+                            name="validationFormCheck"
+                            id="validationFormCheck2"
+                            value="1"
+                            checked={ publish_type_value == content::PublishType::Published }
+                            onchange={ publish_type_on_change.clone() }
+                        />
+                        <label class="form-check-label" for="validationFormCheck2">
+                            { "Опубликовано" }
+                        </label>
+                    </div>
+
+                    <div class={ classes!("form-check", "mb-3", if author.editor == 0 { "d-none" } else { "" }) }>
+                    <input
+                        type="radio"
+                        class="form-check-input"
+                        name="validationFormCheck"
+                        id="validationFormCheck3"
+                        value="2"
+                        checked={ publish_type_value == content::PublishType::Hidden }
+                        onchange={ publish_type_on_change.clone() }
+                    />
+                    <label class="form-check-label" for="validationFormCheck3">
+                        { "Скрыто" }
+                    </label>
+                </div>
 
                     if let EditPostState::EditError(message) = (*state).clone() {
                         <div class="alert alert-danger d-flex align-items-center" role="alert">

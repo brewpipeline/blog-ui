@@ -18,7 +18,7 @@ Features
 
 How-to
 ---
-1. Configure ENV vars mentioned in [job](https://github.com/tikitko/blog-ui/blob/main/.github/workflows/builds.yml) or in [lib](https://github.com/tikitko/blog-ui/blob/main/src/lib.rs) file, where some items can be optional, based on selected features
+1. Configure ENV vars mentioned in [job](https://github.com/brewpipeline/blog-ui/blob/main/.github/workflows/builds.yml) or in [lib](https://github.com/brewpipeline/blog-ui/blob/main/src/lib.rs) file, where some items can be optional, based on selected features
 ```rust
 #[cfg(all(feature = "client", feature = "yandex"))]
 const YANDEX_CLIENT_ID: &'static str = std::env!("YANDEX_CLIENT_ID"); // ee156ec6ee994a748e724f604db8e305
@@ -35,24 +35,24 @@ const ACCORDION_JSON: &'static str = std::env!("ACCORDION_JSON"); // [{"title":"
 
 Links
 ---
-- Project: https://github.com/users/tikitko/projects/2/
-- UI(current) part: https://github.com/tikitko/blog-ui
-- Server part: https://github.com/tikitko/blog-server
-- Notifications part: https://github.com/YoshkiMatryoshki/BlogNotificationService
-- Images part: https://github.com/tikitko/images-processor-service
-- Deploy part: https://github.com/tikitko/blog-deploy
+- Project: https://github.com/orgs/brewpipeline/projects/3
+- UI(current) part: https://github.com/brewpipeline/blog-ui
+- Server part: https://github.com/brewpipeline/blog-server
+- Notifications part: https://github.com/brewpipeline/BlogNotificationService
+- Images part: https://github.com/brewpipeline/images-processor-service
+- Deploy part: https://github.com/brewpipeline/blog-deploy
 
 Images
 ---
 
-![1](https://raw.githubusercontent.com/tikitko/blog-ui/main/images/1.png)
+![1](https://raw.githubusercontent.com/brewpipeline/blog-ui/main/images/1.png)
 
-![2](https://raw.githubusercontent.com/tikitko/blog-ui/main/images/2.png)
+![2](https://raw.githubusercontent.com/brewpipeline/blog-ui/main/images/2.png)
 
-![3](https://raw.githubusercontent.com/tikitko/blog-ui/main/images/3.png)
+![3](https://raw.githubusercontent.com/brewpipeline/blog-ui/main/images/3.png)
 
-![4](https://raw.githubusercontent.com/tikitko/blog-ui/main/images/4.png)
+![4](https://raw.githubusercontent.com/brewpipeline/blog-ui/main/images/4.png)
 
-![5](https://raw.githubusercontent.com/tikitko/blog-ui/main/images/5.png)
+![5](https://raw.githubusercontent.com/brewpipeline/blog-ui/main/images/5.png)
 
-![6](https://raw.githubusercontent.com/tikitko/blog-ui/main/images/6.png)
+![6](https://raw.githubusercontent.com/brewpipeline/blog-ui/main/images/6.png)

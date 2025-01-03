@@ -30,14 +30,22 @@ pub fn search(props: &SearchProps) -> Html {
                 match mode {
                     SearchMode::Posts { query } => html! {
                         if let Some(query) = query.none_if_empty() {
-                            <List<API<PostsContainer>, PostsContainerSearchParams>
-                                r#type={ LoadType::Params(PostsContainerSearchParams { query: query.clone() }) }
+                            <List<API<PostsContainer>, OptionTokened<PostsContainerParams>>
+                                r#type={ LoadType::Params(OptionTokened {
+                                    token: None,
+                                    params: PostsContainerParams {
+                                        publish_type: PublishType::Published,
+                                        search_query: Some(query.clone()),
+                                        author_id: None,
+                                        tag_id: None
+                                    }
+                                }) }
                                 route_to_page={ Route::PostsSearch { query: query.clone() } }
                                 component={ |post| html! { <PostCard { post } is_full=false /> } }
                                 error_component={ |_| html! { <Warning text="Ошибка загрузки результатов поиска публикаций!" /> } }
                             >
                                 <Warning text="Публикаций не найдено!" />
-                            </List<API<PostsContainer>, PostsContainerSearchParams>>
+                            </List<API<PostsContainer>, OptionTokened<PostsContainerParams>>>
                         } else {
                             <Warning text="Начните ввод для поиска публикаций..." />
                         }

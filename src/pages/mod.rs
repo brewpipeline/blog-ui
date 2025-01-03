@@ -1,6 +1,7 @@
 pub mod author;
 pub mod authors;
 pub mod edit_post;
+pub mod hidden_posts;
 pub mod my_unpublished_posts;
 pub mod page_not_found;
 pub mod post;
@@ -13,6 +14,7 @@ pub mod unpublished_posts;
 pub use author::*;
 pub use authors::*;
 pub use edit_post::*;
+pub use hidden_posts::*;
 pub use my_unpublished_posts::*;
 pub use page_not_found::*;
 pub use post::*;

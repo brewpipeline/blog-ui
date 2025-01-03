@@ -32,7 +32,11 @@ pub fn post(props: &PostProps) -> Html {
             }
             use_caches=true
             component={ move |post: Option<content::Post>| {
-                if post.as_ref().map(|p| p.id != id || p.slug != slug).unwrap_or(false) {
+                let is_post_invalid = post
+                    .as_ref()
+                    .map(|p| p.id != id || p.slug != slug)
+                    .unwrap_or(false);
+                if is_post_invalid {
                     return html! {
                         <>
                             <Meta title="Ссылка на публикацию повреждена" noindex=true />
@@ -49,6 +53,7 @@ pub fn post(props: &PostProps) -> Html {
                                 description={ post.summary.clone() }
                                 keywords={ post.joined_tags_string(", ") }
                                 image={ post.image_url.clone().unwrap_or_default() }
+                                noindex={ post.publish_type != content::PublishType::Published }
                             />
                         } else {
                             <Meta title="Публикация" noindex=true />
