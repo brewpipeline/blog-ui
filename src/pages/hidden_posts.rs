@@ -10,18 +10,18 @@ use crate::utils::*;
 
 use crate::Route;
 
-#[function_component(MyUnpublishedPosts)]
-pub fn my_unpublished_posts() -> Html {
+#[function_component(HiddenPosts)]
+pub fn hidden_posts() -> Html {
     let logged_user_context = use_context::<LoggedUserContext>().unwrap();
 
     let meta = html! {
-        <Meta title="Мое неопубликованное" noindex=true />
+        <Meta title="Скрытое" noindex=true />
     };
 
     let not_auth_content = html! {
         <>
             { meta.clone() }
-            <Warning text="Нужна авторизация для получения моего неопубликованного!" />
+            <Warning text="Нужна авторизация для просмотра скрытого!" />
         </>
     };
 
@@ -34,27 +34,36 @@ pub fn my_unpublished_posts() -> Html {
         return not_auth_content;
     };
 
+    if author.editor != 1 {
+        return html! {
+            <>
+                { meta.clone() }
+                <Warning text="Просмотр скрытого доступен только редакторам!" />
+            </>
+        };
+    }
+
     html! {
         <>
             { meta }
             <SimpleTitleCard>
-                { "Мое неопубликованное" }
+                { "Скрытое" }
             </SimpleTitleCard>
             <List<API<PostsContainer>, OptionTokened<PostsContainerParams>>
                 r#type={ LoadType::Params(OptionTokened {
                     token: Some(token),
                     params: PostsContainerParams {
-                        publish_type: PublishType::Unpublished,
+                        publish_type: PublishType::Hidden,
                         search_query: None,
-                        author_id: Some(author.id),
+                        author_id: None,
                         tag_id: None
                     }
                 }) }
                 route_to_page={ Route::UnpublishedPosts }
                 component={ |post| html! { <PostCard { post } is_full=false /> } }
-                error_component={ |_| html! { <Warning text="Ошибка загрузки моего неопубликованного!" /> } }
+                error_component={ |_| html! { <Warning text="Ошибка загрузки скрытого!" /> } }
             >
-                <Warning text="Нет моего неопубликованного." />
+                <Warning text="Нет скрытого." />
             </List<API<PostsContainer>, OptionTokened<PostsContainerParams>>>
         </>
     }

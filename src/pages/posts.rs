@@ -14,15 +14,23 @@ pub fn posts() -> Html {
     html! {
         <>
             <Meta title="Публикации" />
-            <List<API<PostsContainer>, PostsContainerParams>
-                r#type={ LoadType::Params(PostsContainerParams) }
+            <List<API<PostsContainer>, OptionTokened<PostsContainerParams>>
+                r#type={ LoadType::Params(OptionTokened {
+                    token: None,
+                    params: PostsContainerParams {
+                        publish_type: PublishType::Published,
+                        search_query: None,
+                        author_id: None,
+                        tag_id: None
+                    }
+                }) }
                 use_caches=true
                 route_to_page={ Route::Posts }
                 component={ |post| html! { <PostCard { post } is_full=false /> } }
                 error_component={ |_| html! { <Warning text="Ошибка загрузки публикаций!" /> } }
             >
                 <Warning text="Нет публикаций." />
-            </List<API<PostsContainer>, PostsContainerParams>>
+            </List<API<PostsContainer>, OptionTokened<PostsContainerParams>>>
         </>
     }
 }

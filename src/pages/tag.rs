@@ -53,14 +53,22 @@ pub fn post(props: &TagProps) -> Html {
                         </SimpleTitleCard>
 
                         if let Some(tag) = tag {
-                            <List<content::API<content::PostsContainer>, content::PostsContainerTagParams>
-                                r#type={ LoadType::Params(content::PostsContainerTagParams { tag_id: tag.id }) }
+                            <List<content::API<content::PostsContainer>, content::OptionTokened<content::PostsContainerParams>>
+                                r#type={ LoadType::Params(content::OptionTokened {
+                                    token: None,
+                                    params: content::PostsContainerParams {
+                                        publish_type: content::PublishType::Published,
+                                        search_query: None,
+                                        author_id: None,
+                                        tag_id: Some(tag.id)
+                                    }
+                                }) }
                                 route_to_page={ Route::Tag { slug: tag.slug, id: tag.id } }
                                 component={ |post| html! { <PostCard { post } is_full=false /> } }
                                 error_component={ |_| html! { <Warning text="Ошибка загрузки публикаций по тегу!" /> } }
                             >
                                 <Warning text="Нет публикаций по тегу." />
-                            </List<content::API<content::PostsContainer>, content::PostsContainerTagParams>>
+                            </List<content::API<content::PostsContainer>, content::OptionTokened<content::PostsContainerParams>>>
                         }
                     </>
                 }

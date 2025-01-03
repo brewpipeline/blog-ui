@@ -93,6 +93,18 @@ pub fn navigation_menu() -> Html {
                 >
                     { "Неопубликованное" }
                 </Link<Route>>
+                <Link<Route>
+                    classes={
+                        classes!(
+                            "btn",
+                            "btn-light",
+                            if route == Route::HiddenPosts { "active" } else { "" }
+                        )
+                    }
+                    to={ Route::HiddenPosts }
+                >
+                    { "Скрытое" }
+                </Link<Route>>
             }
             { tg_button }
         </>
