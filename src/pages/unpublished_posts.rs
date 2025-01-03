@@ -19,12 +19,17 @@ pub fn unpublished_posts() -> Html {
             <SimpleTitleCard>
                 { "Неопубликованное" }
             </SimpleTitleCard>
-            <List<API<PostsContainer>, OptionTokened<UnpublishedPostsContainerParams>>
+            <List<API<PostsContainer>, OptionTokened<PostsContainerParams>>
                 r#type={
                     if !logged_user_context.is_not_inited() {
                         LoadType::Params(OptionTokened {
                             token: logged_user_context.token().cloned(),
-                            params: UnpublishedPostsContainerParams
+                            params: PostsContainerParams {
+                                publish_type: PublishType::Unpublished,
+                                search_query: None,
+                                author_id: None,
+                                tag_id: None
+                            }
                         })
                     } else {
                         LoadType::OnlyAppCacheIfApplicable
@@ -35,7 +40,7 @@ pub fn unpublished_posts() -> Html {
                 error_component={ |_| html! { <Warning text="Ошибка загрузки неопубликованного!" /> } }
             >
                 <Warning text="Нет неопубликованного." />
-            </List<API<PostsContainer>, OptionTokened<UnpublishedPostsContainerParams>>>
+            </List<API<PostsContainer>, OptionTokened<PostsContainerParams>>>
         </>
     }
 }

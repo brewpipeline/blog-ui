@@ -42,14 +42,22 @@ pub fn author(props: &AuthorProps) -> Html {
                         <SimpleTitleCard>
                             { "Публикации автора " }
                         </SimpleTitleCard>
-                        <List<content::API<content::PostsContainer>, content::PostsContainerAuthorParams>
-                            r#type={ LoadType::Params(content::PostsContainerAuthorParams { author_id: author.id }) }
+                        <List<content::API<content::PostsContainer>, content::OptionTokened<content::PostsContainerParams>>
+                            r#type={ LoadType::Params(content::OptionTokened {
+                                token: None,
+                                params: content::PostsContainerParams {
+                                    publish_type: content::PublishType::Published,
+                                    search_query: None,
+                                    author_id: Some(author.id),
+                                    tag_id: None
+                                }
+                            }) }
                             route_to_page={ Route::Author { slug: author.slug.clone() } }
                             component={ |post| html! { <PostCard { post } is_full=false /> } }
                             error_component={ |_| html! { <Warning text="Ошибка загрузки публикаций автора!" /> } }
                         >
                             <Warning text="У автора нет публикаций." />
-                        </List<content::API<content::PostsContainer>, content::PostsContainerAuthorParams>>
+                        </List<content::API<content::PostsContainer>, content::OptionTokened<content::PostsContainerParams>>>
                     }
                 </>
             } }

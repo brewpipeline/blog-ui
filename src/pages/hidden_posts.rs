@@ -19,12 +19,17 @@ pub fn hidden_posts() -> Html {
             <SimpleTitleCard>
                 { "Скрытое" }
             </SimpleTitleCard>
-            <List<API<PostsContainer>, OptionTokened<HiddenPostsContainerParams>>
+            <List<API<PostsContainer>, OptionTokened<PostsContainerParams>>
                 r#type={
                     if !logged_user_context.is_not_inited() {
                         LoadType::Params(OptionTokened {
                             token: logged_user_context.token().cloned(),
-                            params: HiddenPostsContainerParams
+                            params: PostsContainerParams {
+                                publish_type: PublishType::Hidden,
+                                search_query: None,
+                                author_id: None,
+                                tag_id: None
+                            }
                         })
                     } else {
                         LoadType::OnlyAppCacheIfApplicable
@@ -35,7 +40,7 @@ pub fn hidden_posts() -> Html {
                 error_component={ |_| html! { <Warning text="Ошибка загрузки скрытого!" /> } }
             >
                 <Warning text="Нет скрытого." />
-            </List<API<PostsContainer>, OptionTokened<HiddenPostsContainerParams>>>
+            </List<API<PostsContainer>, OptionTokened<PostsContainerParams>>>
         </>
     }
 }

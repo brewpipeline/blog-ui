@@ -336,204 +336,59 @@ impl ExternalItemContainer for AuthorContainer {
 //
 
 #[derive(Clone, PartialEq)]
-pub struct PostsContainerParams;
-
-#[derive(Clone, PartialEq)]
-pub struct PostsContainerSearchParams {
-    pub query: String,
-}
-
-#[derive(Clone, PartialEq)]
-pub struct PostsContainerAuthorParams {
-    pub author_id: u64,
-}
-
-#[derive(Clone, PartialEq)]
-pub struct PostsContainerTagParams {
-    pub tag_id: u64,
-}
-
-#[derive(Clone, PartialEq)]
-pub struct UnpublishedPostsContainerParams;
-
-#[derive(Clone, PartialEq)]
-pub struct UnpublishedPostsContainerAuthorParams {
-    pub author_id: u64,
-}
-
-#[derive(Clone, PartialEq)]
-pub struct HiddenPostsContainerParams;
-
-#[cfg(feature = "client")]
-#[async_trait(?Send)]
-impl RequestableItem<ExternalListContainerParams<PostsContainerParams>> for API<PostsContainer> {
-    async fn request(
-        params: ExternalListContainerParams<PostsContainerParams>,
-    ) -> Result<Request, Error> {
-        let ExternalListContainerParams { limit, skip, .. } = params;
-        let url = format!(
-            "{url}/posts?limit={limit}&offset={skip}",
-            url = crate::API_URL
-        );
-        Ok(Request::get(url.as_str()).build()?)
-    }
-    async fn response(response: Response) -> Result<Self, Error> {
-        response.json().await
-    }
+pub struct PostsContainerParams {
+    pub publish_type: PublishType,
+    pub search_query: Option<String>,
+    pub author_id: Option<u64>,
+    pub tag_id: Option<u64>,
 }
 
 #[cfg(feature = "client")]
 #[async_trait(?Send)]
-impl RequestableItem<ExternalListContainerParams<PostsContainerSearchParams>>
+impl RequestableItem<ExternalListContainerParams<OptionTokened<PostsContainerParams>>>
     for API<PostsContainer>
 {
     async fn request(
-        params: ExternalListContainerParams<PostsContainerSearchParams>,
+        params: ExternalListContainerParams<OptionTokened<PostsContainerParams>>,
     ) -> Result<Request, Error> {
         let ExternalListContainerParams {
             limit,
             skip,
-            params: PostsContainerSearchParams { query },
-        } = params;
-        let url = format!(
-            "{url}/posts/search/{query}?limit={limit}&offset={skip}",
-            url = crate::API_URL,
-        );
-        Ok(Request::get(url.as_str()).build()?)
-    }
-    async fn response(response: Response) -> Result<Self, Error> {
-        response.json().await
-    }
-}
-
-#[cfg(feature = "client")]
-#[async_trait(?Send)]
-impl RequestableItem<ExternalListContainerParams<PostsContainerAuthorParams>>
-    for API<PostsContainer>
-{
-    async fn request(
-        params: ExternalListContainerParams<PostsContainerAuthorParams>,
-    ) -> Result<Request, Error> {
-        let ExternalListContainerParams {
-            limit,
-            skip,
-            params: PostsContainerAuthorParams { author_id },
-        } = params;
-        let url = format!(
-            "{url}/posts/author/id/{author_id}?limit={limit}&offset={skip}",
-            url = crate::API_URL,
-        );
-        Ok(Request::get(url.as_str()).build()?)
-    }
-    async fn response(response: Response) -> Result<Self, Error> {
-        response.json().await
-    }
-}
-
-#[cfg(feature = "client")]
-#[async_trait(?Send)]
-impl RequestableItem<ExternalListContainerParams<PostsContainerTagParams>> for API<PostsContainer> {
-    async fn request(
-        params: ExternalListContainerParams<PostsContainerTagParams>,
-    ) -> Result<Request, Error> {
-        let ExternalListContainerParams {
-            limit,
-            skip,
-            params: PostsContainerTagParams { tag_id },
-        } = params;
-        let url = format!(
-            "{url}/posts/tag/{tag_id}?limit={limit}&offset={skip}",
-            url = crate::API_URL,
-        );
-        Ok(Request::get(url.as_str()).build()?)
-    }
-    async fn response(response: Response) -> Result<Self, Error> {
-        response.json().await
-    }
-}
-
-#[cfg(feature = "client")]
-#[async_trait(?Send)]
-impl RequestableItem<ExternalListContainerParams<OptionTokened<UnpublishedPostsContainerParams>>>
-    for API<PostsContainer>
-{
-    async fn request(
-        params: ExternalListContainerParams<OptionTokened<UnpublishedPostsContainerParams>>,
-    ) -> Result<Request, Error> {
-        let ExternalListContainerParams {
-            params: OptionTokened { token, .. },
-            limit,
-            skip,
-        } = params;
-        let url = format!(
-            "{url}/posts/unpublished?limit={limit}&offset={skip}",
-            url = crate::API_URL
-        );
-        let mut request = Request::get(url.as_str());
-        if let Some(token) = token {
-            request = request.header("Token", token.as_str());
-        }
-        Ok(request.build()?)
-    }
-    async fn response(response: Response) -> Result<Self, Error> {
-        response.json().await
-    }
-}
-
-#[cfg(feature = "client")]
-#[async_trait(?Send)]
-impl
-    RequestableItem<
-        ExternalListContainerParams<OptionTokened<UnpublishedPostsContainerAuthorParams>>,
-    > for API<PostsContainer>
-{
-    async fn request(
-        params: ExternalListContainerParams<OptionTokened<UnpublishedPostsContainerAuthorParams>>,
-    ) -> Result<Request, Error> {
-        let ExternalListContainerParams {
             params:
                 OptionTokened {
                     token,
-                    params: UnpublishedPostsContainerAuthorParams { author_id },
+                    params:
+                        PostsContainerParams {
+                            publish_type,
+                            search_query,
+                            author_id,
+                            tag_id,
+                        },
                 },
-            limit,
-            skip,
         } = params;
         let url = format!(
-            "{url}/posts/unpublished/author/id/{author_id}?limit={limit}&offset={skip}",
-            url = crate::API_URL
+            "{url}/posts{area}?{params}",
+            url = crate::API_URL,
+            area = match publish_type {
+                PublishType::Unpublished => "/unpublished",
+                PublishType::Published => "",
+                PublishType::Hidden => "/hidden",
+            },
+            params = vec![
+                search_query.map(|q| format!("search_query={q}")),
+                author_id.map(|a| format!("author_id={a}")),
+                tag_id.map(|t| format!("tag_id={t}")),
+                Some(format!("limit={limit}")),
+                Some(format!("offset={skip}"))
+            ]
+            .into_iter()
+            .filter_map(|x| x)
+            .collect::<Vec<_>>()
+            .join("&")
         );
         let mut request = Request::get(url.as_str());
         if let Some(token) = token {
-            request = request.header("Token", token.as_str());
-        }
-        Ok(request.build()?)
-    }
-    async fn response(response: Response) -> Result<Self, Error> {
-        response.json().await
-    }
-}
-
-#[cfg(feature = "client")]
-#[async_trait(?Send)]
-impl RequestableItem<ExternalListContainerParams<OptionTokened<HiddenPostsContainerParams>>>
-    for API<PostsContainer>
-{
-    async fn request(
-        params: ExternalListContainerParams<OptionTokened<HiddenPostsContainerParams>>,
-    ) -> Result<Request, Error> {
-        let ExternalListContainerParams {
-            params: OptionTokened { token, .. },
-            limit,
-            skip,
-        } = params;
-        let url = format!(
-            "{url}/posts/hidden?limit={limit}&offset={skip}",
-            url = crate::API_URL
-        );
-        let mut request = Request::get(url.as_str());
-        if let Some(token) = token {
-            request = request.header("Token", token.as_str());
+            request = request.header("Token", token.as_str())
         }
         Ok(request.build()?)
     }
