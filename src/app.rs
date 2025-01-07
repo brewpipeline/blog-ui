@@ -26,8 +26,14 @@ fn main(props: &MainProps) -> Html {
             logged_user_context.dispatch(LoggedUserState::load());
         });
     }
+    let app_info_comment = format!(
+        "<!-- {TITLE} | GIT_HASH: {GIT_HASH} -->",
+        TITLE = crate::TITLE,
+        GIT_HASH = env!("GIT_HASH")
+    );
     html! {
         <>
+            { Html::from_html_unchecked(AttrValue::from(app_info_comment)) }
             <script
                 id="page-content"
                 type={ app_content_container.app_content.as_ref().map(|c| c.r#type.clone()) }
