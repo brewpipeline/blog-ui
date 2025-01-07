@@ -375,3 +375,17 @@ img {
 .bg-color-tg {
     background-color: var(--tg-color)!important;
 }
+
+.or-container {
+    text-align: center;
+    border-top: var(--bs-border-width) solid var(--bs-border-color);
+}
+
+.or-container > div {
+    display: inline-block;
+    position: relative;
+    top: -12px;
+    background-color: var(--bs-body-bg);
+    padding: 0px 10px;
+    color: var(--bs-body-color);
+}
