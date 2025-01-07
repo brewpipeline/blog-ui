@@ -1,9 +1,10 @@
+#[cfg(feature = "client")]
+use web_sys::HtmlInputElement;
 use yew::prelude::*;
 #[cfg(feature = "client")]
 use yew_hooks::prelude::*;
 use yew_router::prelude::*;
 
-use crate::components::delayed_component::*;
 use crate::components::information_menu::*;
 use crate::components::navigation_menu::*;
 
@@ -22,22 +23,23 @@ pub fn body() -> Html {
     let window_size = use_window_size();
     let route = use_route::<Route>().unwrap_or_default();
 
-    let enabled_menu = use_state_eq(|| EnabledMenu::Second);
-
-    {
-        let route = route.clone();
-        let enabled_menu = enabled_menu.clone();
-        use_effect_with(route, move |_| {
-            enabled_menu.set(EnabledMenu::Second);
-        });
-    }
+    let large_menu_default_ref = use_node_ref();
+    let small_menu_default_ref = use_node_ref();
 
     #[cfg(feature = "client")]
     {
         let window_size = window_size.clone();
-        let enabled_menu = enabled_menu.clone();
+        let large_menu_default_ref = large_menu_default_ref.clone();
+        let small_menu_default_ref = small_menu_default_ref.clone();
         use_effect_with(window_size, move |_| {
-            enabled_menu.set(EnabledMenu::Second);
+            large_menu_default_ref
+                .cast::<HtmlInputElement>()
+                .unwrap()
+                .set_checked(true);
+            small_menu_default_ref
+                .cast::<HtmlInputElement>()
+                .unwrap()
+                .set_checked(true);
         });
     }
 
@@ -51,11 +53,6 @@ pub fn body() -> Html {
                     name="vbtn-radio"
                     id="vbtn-radio1"
                     autocomplete="off"
-                    onchange={
-                        let enabled_menu = enabled_menu.clone();
-                        Callback::from(move |_| enabled_menu.set(EnabledMenu::First))
-                    }
-                    checked={ *enabled_menu == EnabledMenu::First }
                 />
                 <label class="btn btn-light d-block d-lg-none" for="vbtn-radio1"> { "Меню" } </label>
                 <input
@@ -65,11 +62,8 @@ pub fn body() -> Html {
                     name="vbtn-radio"
                     id="vbtn-radio2"
                     autocomplete="off"
-                    onchange={
-                        let enabled_menu = enabled_menu.clone();
-                        Callback::from(move |_| enabled_menu.set(EnabledMenu::Second))
-                    }
-                    checked={ *enabled_menu == EnabledMenu::Second }
+                    checked={ true }
+                    ref={ large_menu_default_ref }
                 />
                 <label title="Лента" class="btn btn-light" for="vbtn-radio2">
                     <i class="bi bi-card-heading"></i>
@@ -80,11 +74,6 @@ pub fn body() -> Html {
                     name="vbtn-radio"
                     id="vbtn-radio3"
                     autocomplete="off"
-                    onchange={
-                        let enabled_menu = enabled_menu.clone();
-                        Callback::from(move |_| enabled_menu.set(EnabledMenu::Third))
-                    }
-                    checked={ *enabled_menu == EnabledMenu::Third }
                 />
                 <label class="btn btn-light" for="vbtn-radio3"> { "Инфо" } </label>
             </div>
@@ -100,8 +89,7 @@ pub fn body() -> Html {
                         "col-12",
                         "col-lg-3",
                         "col-xl-2",
-                        "d-lg-grid",
-                        { if *enabled_menu == EnabledMenu::First { "d-grid" } else { "d-none" } }
+                        "d-lg-grid"
                     ) }
                 >
                     <div class="d-grid gap-2">
@@ -113,11 +101,8 @@ pub fn body() -> Html {
                                 name="vbtn2-radio"
                                 id="vbtn2-radio1"
                                 autocomplete="off"
-                                onchange={
-                                    let enabled_menu = enabled_menu.clone();
-                                    Callback::from(move |_| enabled_menu.set(EnabledMenu::Second))
-                                }
-                                checked={ *enabled_menu == EnabledMenu::Second }
+                                checked={ true }
+                                ref={ small_menu_default_ref }
                             />
                             <label title="Лента" class="btn btn-light" for="vbtn2-radio1">
                                 <i class="bi bi-card-heading"></i>
@@ -129,27 +114,18 @@ pub fn body() -> Html {
                                 name="vbtn2-radio"
                                 id="vbtn2-radio2"
                                 autocomplete="off"
-                                onchange={
-                                    let enabled_menu = enabled_menu.clone();
-                                    Callback::from(move |_| enabled_menu.set(EnabledMenu::Third))
-                                }
-                                checked={ *enabled_menu == EnabledMenu::Third }
                             />
                             <label title="Информация" class="btn btn-light" for="vbtn2-radio2">
                                 <i class="bi bi-info-square"></i>
                             </label>
                         </div>
-                        <DelayedComponent<()> component={ |_| html! {
-                            <NavigationMenu />
-                        } } deps={ () } />
+                        <NavigationMenu />
                     </div>
-                    <DelayedComponent<()> component={ |_| html! {
-                        <div class="d-flex flex-wrap align-items-end justify-content-center">
-                            <a href="https://github.com/tikitko/blog-ui/blob/main/MADEWITHLOVE.md" class="text-decoration-none text-center">
-                                { "Сделано с ❤️" }
-                            </a>
-                        </div>
-                    } } deps={ () } />
+                    <div class="d-flex flex-wrap align-items-end justify-content-center">
+                        <a href="https://github.com/tikitko/blog-ui/blob/main/MADEWITHLOVE.md" class="text-decoration-none text-center">
+                            { "Сделано с ❤️" }
+                        </a>
+                    </div>
                 </div>
 
                 <div
@@ -162,8 +138,7 @@ pub fn body() -> Html {
                         "px-0",
                         "ps-lg-3",
                         "px-xl-3",
-                        "d-xl-block",
-                        { if *enabled_menu == EnabledMenu::Second { "d-block" } else { "d-none" } }
+                        "d-xl-block"
                     ) }
                 >
                     <Switch<Route> render={Route::switch} />
@@ -180,13 +155,10 @@ pub fn body() -> Html {
                         "col-xl-3",
                         "ps-lg-3",
                         "ps-xl-0",
-                        "d-xl-grid",
-                        { if *enabled_menu == EnabledMenu::Third { "d-grid" } else { "d-none" } }
+                        "d-xl-grid"
                     ) }
                 >
-                    <DelayedComponent<()> component={ |_| html! {
-                        <InformationMenu />
-                    } } deps={ () } />
+                    <InformationMenu />
                 </div>
 
             </div>
