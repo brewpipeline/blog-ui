@@ -199,6 +199,27 @@
     padding-top: 16px !important;
 }
 
+#menu1, #menu2, #menu3 {
+    display: none;
+}
+@media (max-width:991px) {
+    div:has(#vbtn-radio1:checked) #menu1,
+    div:has(#vbtn-radio3:checked) #menu3 {
+        display: grid;
+    }
+    div:has(#vbtn-radio2:checked) #menu2 {
+        display: block;
+    }
+}
+@media (min-width:992px) {
+    div:has(#vbtn2-radio1:checked) #menu2 {
+        display: block;
+    }
+    div:has(#vbtn2-radio2:checked) #menu3 {
+        display: grid;
+    }
+}
+
 .modal {
     --bs-modal-width: 450px;
 }
