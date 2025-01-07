@@ -127,7 +127,7 @@ pub fn body() -> Html {
                                 { env!("GIT_SHORT_HASH") }
                             </span>
                             <br/>
-                            <a href="https://github.com/tikitko/blog-ui/blob/main/MADEWITHLOVE.md" class="text-decoration-none text-center">
+                            <a href="https://github.com/tikitko/blog-ui/blob/main/MADEWITHLOVE.md" class="text-decoration-none">
                                 { "Сделано с ❤️" }
                             </a>
                         </p>
