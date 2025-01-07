@@ -122,12 +122,16 @@ pub fn body() -> Html {
                         <NavigationMenu />
                     </div>
                     <div class="d-flex flex-wrap align-items-end justify-content-center">
-                        <p style="margin-bottom: 0;">
-                            <a href="https://www.youtube.com/watch?v=dQw4w9WgXcQ" class="text-decoration-none text-center">
+                        <p class="mb-0 text-center">
+                            <span title="GIT_SHORT_HASH" aria-label="GIT_SHORT_HASH" style="color:var(--bs-body-bg);">
+                                { env!("GIT_SHORT_HASH") }
+                            </span>
+                            <br/>
+                            <a href="https://www.youtube.com/watch?v=dQw4w9WgXcQ" class="text-decoration-none">
                                 { "Правила" }
                             </a>
                             <br/>
-                            <a href="https://about.tikitko.su/" class="text-decoration-none text-center">
+                            <a href="https://about.tikitko.su/" class="text-decoration-none">
                                 { "О Tikitko" }
                             </a>
                         </p>
