@@ -324,8 +324,8 @@ pub fn login_modal(props: &LoginModalProps) -> Html {
 
     #[cfg(any(feature = "yandex", feature = "telegram"))]
     let split_html = html! {
-        <div style="text-align: center; border-top: var(--bs-border-width) solid var(--bs-border-color);">
-            <div style="display: inline-block; position: relative; top: -12px; background-color: var(--bs-body-bg); padding: 0px 10px; color: var(--bs-body-color);"> { "ИЛИ" } </div>
+        <div class="or-container">
+            <div> { "ИЛИ" } </div>
         </div>
     };
     #[cfg(not(any(feature = "yandex", feature = "telegram")))]
