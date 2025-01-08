@@ -1,6 +1,7 @@
 use yew::prelude::*;
 use yew_router::prelude::*;
 
+use crate::components::delayed_component::*;
 use crate::utils::*;
 
 use crate::Route;
@@ -110,7 +111,12 @@ pub fn navigation_menu() -> Html {
                     { "Скрытое" }
                 </Link<Route>>
             }
-            { tg_button }
+            // Workaround: to avoid blink on hydrate
+            <DelayedComponent<Option<Html>> component={ move |tg_button| html! {
+                <>
+                    { tg_button }
+                </>
+            } } deps={ tg_button.clone() } />
         </>
     }
 }
