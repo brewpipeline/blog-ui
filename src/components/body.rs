@@ -127,7 +127,7 @@ pub fn body() -> Html {
                                 { "Правила" }
                             </a>
                             <br/>
-                            <a href="https://about.tikitko.su/" class="text-decoration-none">
+                            <a href="https://about.tikitko.dev/" class="text-decoration-none">
                                 { "О Tikitko" }
                             </a>
                         </p>
