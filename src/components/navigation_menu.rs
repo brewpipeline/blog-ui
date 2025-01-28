@@ -79,6 +79,18 @@ pub fn navigation_menu() -> Html {
                     { "Скрытое" }
                 </Link<Route>>
             }
+            <a
+                class="btn btn-light telegram-button"
+                href="https://t.me/TikitkoBlog"
+            >
+                <div class="btn inner">
+                    <p>
+                        <span>{ "Перейти в канал" }</span>
+                        <br/>
+                        <span>{ "Telegram" }</span>
+                    </p>
+                </div>
+            </a>
         </>
     }
 }
