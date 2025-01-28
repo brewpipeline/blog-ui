@@ -26,12 +26,11 @@ pub fn content() -> Html {
     {
         let location = location.clone();
         use_effect_with(location, move |_| {
-            window().scroll_to_with_scroll_to_options(
-                ScrollToOptions::new()
-                    .left(0.0)
-                    .top(0.0)
-                    .behavior(ScrollBehavior::Instant),
-            );
+            let scroll_to_options = ScrollToOptions::new();
+            scroll_to_options.set_left(0.0);
+            scroll_to_options.set_top(0.0);
+            scroll_to_options.set_behavior(ScrollBehavior::Instant);
+            window().scroll_to_with_scroll_to_options(&scroll_to_options);
         });
     }
 

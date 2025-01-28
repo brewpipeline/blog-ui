@@ -1,7 +1,6 @@
 use yew::prelude::*;
 use yew_router::prelude::*;
 
-use crate::components::delayed_component::*;
 use crate::utils::*;
 
 use crate::Route;
@@ -15,37 +14,6 @@ pub fn navigation_menu() -> Html {
             .author()
             .map(|a| a.editor == 1)
             .unwrap_or(false);
-    let is_tg_button_available = if !logged_user_context.is_not_inited() {
-        logged_user_context.token() == None
-    } else {
-        false
-    };
-
-    #[cfg(feature = "telegram")]
-    let tg_button: Option<Html> = if is_tg_button_available {
-        Some(html! {
-            <button
-                title="Войти через Telegram"
-                aria-label="Войти через Telegram"
-                type="button"
-                data-bs-toggle="modal"
-                data-bs-target="#loginModal"
-                class="btn btn-light telegram-button"
-            >
-                <div class="btn inner">
-                    <p>
-                        <span>{ "Войти через" }</span>
-                        <br/>
-                        <span>{ "Telegram" }</span>
-                    </p>
-                </div>
-            </button>
-        })
-    } else {
-        None
-    };
-    #[cfg(not(feature = "telegram"))]
-    let tg_button: Option<Html> = None;
 
     html! {
         <>
@@ -111,12 +79,6 @@ pub fn navigation_menu() -> Html {
                     { "Скрытое" }
                 </Link<Route>>
             }
-            // Workaround: to avoid blink on hydrate
-            <DelayedComponent<Option<Html>> component={ move |tg_button| html! {
-                <>
-                    { tg_button }
-                </>
-            } } deps={ tg_button.clone() } />
         </>
     }
 }
