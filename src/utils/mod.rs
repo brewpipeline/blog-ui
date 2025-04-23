@@ -9,6 +9,10 @@ pub mod image_url_formatter;
 pub mod logged_user_context;
 pub mod map_in_pattern;
 pub mod use_load;
+#[cfg(feature = "client")]
+pub mod use_raf_state_eq;
+#[cfg(feature = "client")]
+pub mod use_window_width;
 
 pub use app_content_context::*;
 pub use author_slug_formatter::*;
@@ -19,6 +23,10 @@ pub use image_url_formatter::*;
 pub use logged_user_context::*;
 pub use map_in_pattern::*;
 pub use use_load::*;
+#[cfg(feature = "client")]
+pub use use_raf_state_eq::*;
+#[cfg(feature = "client")]
+pub use use_window_width::*;
 
 #[cfg(not(feature = "client"))]
 pub trait RequestableItem<P> {}
