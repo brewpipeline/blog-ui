@@ -6,6 +6,7 @@ pub mod comment_card;
 pub mod comments;
 pub mod content;
 pub mod delayed_component;
+pub mod footer;
 pub mod header;
 pub mod information_menu;
 mod load;

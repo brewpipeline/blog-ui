@@ -7,6 +7,7 @@ use yew_router::prelude::*;
 
 use crate::components::body::*;
 use crate::components::delayed_component::*;
+use crate::components::footer::*;
 use crate::components::header::*;
 use crate::components::login_modal::*;
 use crate::components::logout_modal::*;
@@ -38,6 +39,8 @@ pub fn content() -> Html {
         <>
             <Header />
             <Body />
+            <Footer />
+
             <DelayedComponent<()> component={ |_| html! {
                 <>
                     <LoginModal id="loginModal" />

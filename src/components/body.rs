@@ -23,19 +23,13 @@ pub fn body() -> Html {
     let window_size = use_window_size();
     let route = use_route::<Route>().unwrap_or_default();
 
-    let large_menu_default_ref = use_node_ref();
     let small_menu_default_ref = use_node_ref();
 
     #[cfg(feature = "client")]
     {
         let window_size = window_size.clone();
-        let large_menu_default_ref = large_menu_default_ref.clone();
         let small_menu_default_ref = small_menu_default_ref.clone();
         use_effect_with(window_size, move |_| {
-            large_menu_default_ref
-                .cast::<HtmlInputElement>()
-                .unwrap()
-                .set_checked(true);
             small_menu_default_ref
                 .cast::<HtmlInputElement>()
                 .unwrap()
@@ -45,38 +39,6 @@ pub fn body() -> Html {
 
     html! {
         <main class="body position-relative container">
-
-            <div class="menu-nav btn-group d-flex d-lg-none" role="group">
-                <input
-                    type="radio"
-                    class="btn-check"
-                    name="vbtn-radio"
-                    id="vbtn-radio1"
-                    autocomplete="off"
-                />
-                <label class="btn btn-light d-block d-lg-none" for="vbtn-radio1"> { "Меню" } </label>
-                <input
-                    aria-label="Лента"
-                    type="radio"
-                    class="btn-check"
-                    name="vbtn-radio"
-                    id="vbtn-radio2"
-                    autocomplete="off"
-                    checked={ true }
-                    ref={ large_menu_default_ref }
-                />
-                <label title="Лента" class="btn btn-light" for="vbtn-radio2">
-                    <i class="bi bi-card-heading"></i>
-                </label>
-                <input
-                    type="radio"
-                    class="btn-check"
-                    name="vbtn-radio"
-                    id="vbtn-radio3"
-                    autocomplete="off"
-                />
-                <label class="btn btn-light" for="vbtn-radio3"> { "Инфо" } </label>
-            </div>
 
             <div class="d-flex flex-wrap">
 
