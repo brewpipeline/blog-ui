@@ -388,7 +388,7 @@ img {
 
 @media (max-width: 991.98px) {
     .body {
-        padding-bottom: var(--header-height);
+        padding-bottom: calc(var(--header-height) + env(safe-area-inset-bottom));
     }
 }
 
@@ -397,7 +397,8 @@ img {
     justify-content: space-evenly;
     align-items: center;
     width: 100%;
-    height: var(--header-height);
+    height: calc(var(--header-height) + env(safe-area-inset-bottom));
+    padding-bottom: env(safe-area-inset-bottom);
 }
 
 .footer .btn-light {
