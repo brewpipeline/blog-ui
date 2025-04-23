@@ -1,13 +1,13 @@
 #[cfg(feature = "client")]
 use web_sys::HtmlInputElement;
 use yew::prelude::*;
-#[cfg(feature = "client")]
-use yew_hooks::prelude::*;
 use yew_router::prelude::*;
 
 use crate::components::information_menu::*;
 use crate::components::navigation_menu::*;
 
+#[cfg(feature = "client")]
+use crate::utils::*;
 use crate::Route;
 
 #[derive(PartialEq, Clone, Copy)]
@@ -20,16 +20,16 @@ pub enum EnabledMenu {
 #[function_component(Body)]
 pub fn body() -> Html {
     #[cfg(feature = "client")]
-    let window_size = use_window_size();
+    let window_width = use_window_width();
     let route = use_route::<Route>().unwrap_or_default();
 
     let small_menu_default_ref = use_node_ref();
 
     #[cfg(feature = "client")]
     {
-        let window_size = window_size.clone();
+        let window_width = window_width.clone();
         let small_menu_default_ref = small_menu_default_ref.clone();
-        use_effect_with(window_size, move |_| {
+        use_effect_with(window_width, move |_| {
             small_menu_default_ref
                 .cast::<HtmlInputElement>()
                 .unwrap()
