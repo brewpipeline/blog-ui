@@ -414,3 +414,11 @@ img {
     padding: 0.5rem;
     width: 100%;
 }
+
+.author-description {
+    overflow: hidden;
+    display: -webkit-box;
+    -webkit-line-clamp: 4;
+    line-clamp: 4; 
+    -webkit-box-orient: vertical;
+}
