@@ -21,6 +21,98 @@ pub fn post_card(props: &PostCardProps) -> Html {
 
     let logged_user_context = use_context::<LoggedUserContext>().unwrap();
 
+    let token = if !logged_user_context.is_not_inited() {
+        logged_user_context.token().cloned()
+    } else {
+        None
+    };
+    let is_editor = !logged_user_context.is_not_inited()
+        && logged_user_context
+            .author()
+            .map(|a| a.editor == 1 && a.blocked == 0)
+            .unwrap_or(false);
+
+    let post_id = post.as_ref().map(|p| p.id);
+    let is_recommended = use_state_eq(|| false);
+    {
+        let is_recommended = is_recommended.clone();
+        let token = token.clone();
+        use_effect_with((is_full, is_editor, post_id, token), move |(is_full, is_editor, post_id, token)| {
+            if !*is_full || !*is_editor {
+                return;
+            }
+            let Some(id) = *post_id else {
+                return;
+            };
+            let token = token.clone();
+            let is_recommended = is_recommended.clone();
+            wasm_bindgen_futures::spawn_local(async move {
+                let result = API::<PostWithRecommendedContainer>::get(OptionTokened {
+                    token,
+                    params: PostParams { id },
+                })
+                .await;
+                if let Ok(API::Success {
+                    data: PostWithRecommendedContainer { post },
+                    ..
+                }) = result
+                {
+                    is_recommended.set(post.recommended == 1);
+                }
+            });
+        });
+    }
+    let in_progress = use_state_eq(|| false);
+    let recommendation_button = if is_full && is_editor {
+        if let Some(id) = post_id {
+            let onclick = {
+                let in_progress = in_progress.clone();
+                let is_recommended = is_recommended.clone();
+                let token = token.clone();
+                Callback::from(move |e: MouseEvent| {
+                    e.prevent_default();
+                    if *in_progress {
+                        return;
+                    }
+                    let Some(token) = token.clone() else {
+                        return;
+                    };
+                    in_progress.set(true);
+                    let recommend = !*is_recommended;
+                    let is_recommended = is_recommended.clone();
+                    let in_progress = in_progress.clone();
+                    wasm_bindgen_futures::spawn_local(async move {
+                        let res = API::<()>::get(Tokened {
+                            token,
+                            params: PostPoolParams { id, add: recommend },
+                        })
+                        .await;
+                        if let Ok(API::Success { .. }) = res {
+                            is_recommended.set(recommend);
+                        }
+                        in_progress.set(false);
+                    });
+                })
+            };
+            html! {
+                <>
+                    { " " }
+                    <button type="button" class="btn btn-link p-0" {onclick} disabled={*in_progress}>
+                        if *is_recommended {
+                            <i title="Удалить из рекомендаций" class="bi bi-star-fill"></i>
+                        } else {
+                            <i title="Добавить в рекомендации" class="bi bi-star"></i>
+                        }
+                    </button>
+                </>
+            }
+        } else {
+            html! { <></> }
+        }
+    } else {
+        html! { <></> }
+    };
+
     let main_content = html! {
         <>
             <div class="img-block bd-placeholder-img" style="height:194px;width:100%;overflow:hidden;">
@@ -186,6 +278,7 @@ pub fn post_card(props: &PostCardProps) -> Html {
                                     }
                                 }
                             }
+                            { recommendation_button.clone() }
                         </p>
                     </div>
                 </div>
