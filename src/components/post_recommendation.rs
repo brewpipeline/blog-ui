@@ -15,16 +15,22 @@ pub fn post_recommendation(props: &PostRecommendationProps) -> Html {
     let PostRecommendationProps { id } = props.clone();
     let logged_user_context =
         use_context::<LoggedUserContext>().expect("no logged user context found");
-    let is_editor = logged_user_context
-        .author()
-        .map(|a| a.editor == 1)
-        .unwrap_or(false);
+    let is_editor = !logged_user_context.is_not_inited()
+        && logged_user_context
+            .author()
+            .map(|a| a.editor == 1)
+            .unwrap_or(false);
+    let token = if !logged_user_context.is_not_inited() {
+        logged_user_context.token().cloned()
+    } else {
+        None
+    };
 
     let is_recommended = use_state_eq(|| false);
     {
         let is_recommended = is_recommended.clone();
-        let token = logged_user_context.token().cloned();
-        use_effect_with((id, is_editor), move |(id, is_editor)| {
+        let token = token.clone();
+        use_effect_with((id, is_editor, token), move |(id, is_editor, token)| {
             if !*is_editor {
                 return;
             }
