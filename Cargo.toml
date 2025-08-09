@@ -6,7 +6,7 @@ license = "MIT"
 
 
 [dependencies]
-blog-generic = { git = "https://github.com/tikitko/blog-server.git", package = "blog-generic" }
+blog-generic = { git = "https://github.com/tikitko/blog-server.git", package = "blog-generic", branch = "codex/add-post-recommendation-endpoint" }
 
 log = "0.4"
 async-trait = "0.1"
