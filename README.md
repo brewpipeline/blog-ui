@@ -1,6 +1,6 @@
 # blog-ui
 
-Blog UI built with [Yew](https://yew.rs/) and WebAssembly, styled with Bootstrap. This crate provides the front‑end for the BrewPipeline blogging platform.
+Blog UI built with [Yew](https://yew.rs/) and WebAssembly, styled with Bootstrap.
 
 ![1](https://raw.githubusercontent.com/brewpipeline/blog-ui/main/images/1.png)
 
