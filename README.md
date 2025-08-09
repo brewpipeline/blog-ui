@@ -35,17 +35,17 @@ Blog UI built with [Yew](https://yew.rs/) and WebAssembly, styled with Bootstrap
 
 The UI is configured through environment variables. Some of the most common ones are listed below:
 
-| Variable | Description |
-|---------|-------------|
-| `YANDEX_CLIENT_ID` | OAuth identifier for Yandex authentication |
-| `API_URL` | Base URL of the backend API, e.g. `http://127.0.0.1:3000/api` |
-| `TELEGRAM_BOT_LOGIN` | Telegram bot login for notifications |
-| `TITLE` | Title of the blog |
-| `DESCRIPTION` | Meta description for SEO |
-| `KEYWORDS` | Comma‑separated keywords |
-| `ACCORDION_JSON` | JSON definition for the landing page accordion |
+| Variable | Description | Required? |
+|---------|-------------|-----------|
+| `YANDEX_CLIENT_ID` | OAuth identifier for Yandex authentication | Only with `yandex` feature |
+| `API_URL` | Base URL of the backend API, e.g. `http://127.0.0.1:3000/api` | Yes (client) |
+| `TELEGRAM_BOT_LOGIN` | Telegram bot login for notifications | Only with `telegram` feature |
+| `TITLE` | Title of the blog | Yes |
+| `DESCRIPTION` | Meta description for SEO | Yes |
+| `KEYWORDS` | Comma‑separated keywords | No |
+| `ACCORDION_JSON` | JSON definition for the landing page accordion | Yes |
 
-See [`src/lib.rs`](src/lib.rs) for the full list and optional items.
+See [`src/lib.rs`](src/lib.rs) for the full list and defaults.
 
 ### Development
 
