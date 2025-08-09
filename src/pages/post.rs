@@ -19,7 +19,7 @@ pub fn post(props: &PostProps) -> Html {
     let PostProps { slug, id } = props.clone();
     let logged_user_context = use_context::<LoggedUserContext>().unwrap();
     html! {
-        <Item<content::API<content::PostContainer>, content::OptionTokened<content::PostParams>>
+        <Item<content::API<content::PostWithRecommendedContainer>, content::OptionTokened<content::PostParams>>
             r#type={
                 if !logged_user_context.is_not_inited() {
                     LoadType::Params(content::OptionTokened {
@@ -31,10 +31,10 @@ pub fn post(props: &PostProps) -> Html {
                 }
             }
             use_caches=true
-            component={ move |post: Option<content::Post>| {
+            component={ move |post: Option<content::PostWithRecommended>| {
                 let is_post_invalid = post
                     .as_ref()
-                    .map(|p| p.id != id || p.slug != slug)
+                    .map(|p| p.post.id != id || p.post.slug != slug)
                     .unwrap_or(false);
                 if is_post_invalid {
                     return html! {
@@ -44,24 +44,36 @@ pub fn post(props: &PostProps) -> Html {
                         </>
                     }
                 }
+                let meta = if let Some(pwr) = post.as_ref() {
+                    let post = &pwr.post;
+                    html! {
+                        <Meta
+                            r#type="article"
+                            title={ format!("{} - Публикация", post.title.clone()) }
+                            description={ post.summary.clone() }
+                            keywords={ post.joined_tags_string(", ") }
+                            image={ post.image_url.clone().unwrap_or_default() }
+                            noindex={ post.publish_type != content::PublishType::Published }
+                        />
+                    }
+                } else {
+                    html! { <Meta title="Публикация" noindex=true /> }
+                };
+                let comments = if let Some(pwr) = post.clone() {
+                    let post = pwr.post;
+                    html! { <Comments { post } /> }
+                } else {
+                    html! { <></> }
+                };
                 html! {
                     <>
-                        if let Some(post) = post.as_ref() {
-                            <Meta
-                                r#type="article"
-                                title={ format!("{} - Публикация", post.title.clone()) }
-                                description={ post.summary.clone() }
-                                keywords={ post.joined_tags_string(", ") }
-                                image={ post.image_url.clone().unwrap_or_default() }
-                                noindex={ post.publish_type != content::PublishType::Published }
-                            />
-                        } else {
-                            <Meta title="Публикация" noindex=true />
-                        }
-                        <PostCard post={ post.clone() } is_full=true />
-                        if let Some(post) = post {
-                            <Comments { post } />
-                        }
+                        { meta }
+                        <PostCard
+                            post={ post.clone().map(|p| p.post.clone()) }
+                            is_full=true
+                            recommended={ post.as_ref().map(|p| p.recommended == 1).unwrap_or(false) }
+                        />
+                        { comments }
                     </>
                 }
             } }

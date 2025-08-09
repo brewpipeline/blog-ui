@@ -13,11 +13,17 @@ use crate::Route;
 pub struct PostCardProps {
     pub post: Option<Post>,
     pub is_full: bool,
+    #[prop_or_default]
+    pub recommended: bool,
 }
 
 #[function_component(PostCard)]
 pub fn post_card(props: &PostCardProps) -> Html {
-    let PostCardProps { post, is_full } = props.clone();
+    let PostCardProps {
+        post,
+        is_full,
+        recommended,
+    } = props.clone();
 
     let logged_user_context = use_context::<LoggedUserContext>().unwrap();
 
@@ -33,35 +39,7 @@ pub fn post_card(props: &PostCardProps) -> Html {
             .unwrap_or(false);
 
     let post_id = post.as_ref().map(|p| p.id);
-    let is_recommended = use_state_eq(|| false);
-    {
-        let is_recommended = is_recommended.clone();
-        let token = token.clone();
-        use_effect_with((is_full, is_editor, post_id, token), move |(is_full, is_editor, post_id, token)| {
-            if !*is_full || !*is_editor {
-                return;
-            }
-            let Some(id) = *post_id else {
-                return;
-            };
-            let token = token.clone();
-            let is_recommended = is_recommended.clone();
-            wasm_bindgen_futures::spawn_local(async move {
-                let result = API::<PostWithRecommendedContainer>::get(OptionTokened {
-                    token,
-                    params: PostParams { id },
-                })
-                .await;
-                if let Ok(API::Success {
-                    data: PostWithRecommendedContainer { post },
-                    ..
-                }) = result
-                {
-                    is_recommended.set(post.recommended == 1);
-                }
-            });
-        });
-    }
+    let is_recommended = use_state_eq(|| recommended);
     let in_progress = use_state_eq(|| false);
     let recommendation_button = if is_full && is_editor {
         if let Some(id) = post_id {

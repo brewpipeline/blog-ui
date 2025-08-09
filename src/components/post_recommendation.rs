@@ -28,4 +28,3 @@ pub fn post_recommendation(props: &PostRecommendationProps) -> Html {
         />
     }
 }
-
