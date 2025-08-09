@@ -13,17 +13,13 @@ use crate::Route;
 pub struct PostCardProps {
     pub post: Option<Post>,
     pub is_full: bool,
-    #[prop_or_default]
-    pub recommended: bool,
 }
 
 #[function_component(PostCard)]
 pub fn post_card(props: &PostCardProps) -> Html {
-    let PostCardProps {
-        post,
-        is_full,
-        recommended,
-    } = props.clone();
+    let PostCardProps { post, is_full } = props.clone();
+
+    let post_state = use_state_eq(|| post);
 
     let logged_user_context = use_context::<LoggedUserContext>().unwrap();
 
@@ -38,14 +34,17 @@ pub fn post_card(props: &PostCardProps) -> Html {
             .map(|a| a.editor == 1 && a.blocked == 0)
             .unwrap_or(false);
 
-    let post_id = post.as_ref().map(|p| p.id);
-    let is_recommended = use_state_eq(|| recommended);
+    let post_id = post_state.as_ref().and_then(|p| Some(p.id));
+    let is_recommended = post_state
+        .as_ref()
+        .map(|p| p.recommended == 1)
+        .unwrap_or(false);
     let in_progress = use_state_eq(|| false);
     let recommendation_button = if is_full && is_editor {
         if let Some(id) = post_id {
             let onclick = {
                 let in_progress = in_progress.clone();
-                let is_recommended = is_recommended.clone();
+                let post_state = post_state.clone();
                 let token = token.clone();
                 Callback::from(move |e: MouseEvent| {
                     e.prevent_default();
@@ -56,8 +55,11 @@ pub fn post_card(props: &PostCardProps) -> Html {
                         return;
                     };
                     in_progress.set(true);
-                    let recommend = !*is_recommended;
-                    let is_recommended = is_recommended.clone();
+                    let recommend = !post_state
+                        .as_ref()
+                        .map(|p| p.recommended == 1)
+                        .unwrap_or(false);
+                    let post_state_setter = post_state.clone();
                     let in_progress = in_progress.clone();
                     wasm_bindgen_futures::spawn_local(async move {
                         let res = API::<()>::get(Tokened {
@@ -66,7 +68,10 @@ pub fn post_card(props: &PostCardProps) -> Html {
                         })
                         .await;
                         if let Ok(API::Success { .. }) = res {
-                            is_recommended.set(recommend);
+                            if let Some(mut p) = (*post_state_setter).clone() {
+                                p.recommended = if recommend { 1 } else { 0 };
+                                post_state_setter.set(Some(p));
+                            }
                         }
                         in_progress.set(false);
                     });
@@ -76,7 +81,7 @@ pub fn post_card(props: &PostCardProps) -> Html {
                 <>
                     { " " }
                     <button type="button" class="btn btn-link p-0" {onclick} disabled={*in_progress}>
-                        if *is_recommended {
+                        if is_recommended {
                             <i title="Удалить из рекомендаций" class="bi bi-star-fill"></i>
                         } else {
                             <i title="Добавить в рекомендации" class="bi bi-star"></i>
@@ -95,9 +100,9 @@ pub fn post_card(props: &PostCardProps) -> Html {
         <>
             <div class="img-block bd-placeholder-img" style="height:194px;width:100%;overflow:hidden;">
                 <OptionalImage
-                    alt={ post.as_ref().map(|p| p.title.clone()) }
+                    alt={ post_state.as_ref().map(|p| p.title.clone()) }
                     image={
-                        post
+                        post_state
                             .as_ref()
                             .map(|p| p.image_url.clone())
                             .flatten()
@@ -107,14 +112,14 @@ pub fn post_card(props: &PostCardProps) -> Html {
             </div>
             <div class="card-body">
                 <h4 class="card-title placeholder-glow">
-                    if let Some(title) = post.as_ref().map(|p| p.title.clone()) {
+                    if let Some(title) = post_state.as_ref().map(|p| p.title.clone()) {
                         { title }
                     } else {
                         <span class="placeholder col-6 bg-secondary"></span>
                     }
                 </h4>
                 <article class="card-text placeholder-glow">
-                    if let Some(text) = post.as_ref().map(|post| {
+                    if let Some(text) = post_state.as_ref().map(|post| {
                         if let (Some(content), true) = (post.content.clone(), is_full) {
                             let content = content.map_in_pattern(["<img", ">"], |i| {
                                 i.map_in_pattern(["src=\"", "\""], |u| {
@@ -152,7 +157,7 @@ pub fn post_card(props: &PostCardProps) -> Html {
         </>
     };
     let tags_content = {
-        if let Some(post) = post.as_ref() {
+        if let Some(post) = post_state.as_ref() {
             let mut tags_len = 0;
             let tags = post.tags.iter().filter(|t| {
                 tags_len += t.slug.len() + 1;
@@ -178,16 +183,16 @@ pub fn post_card(props: &PostCardProps) -> Html {
             }
         }
     };
-    let publish_type = post.as_ref().map(|p| p.publish_type.clone());
+    let publish_type = post_state.as_ref().map(|p| p.publish_type.clone());
     html! {
         <div class="card mb-3">
             <div class="card-header placeholder-glow border-0">
                 <div class="row align-items-center">
                     <div class="d-flex col-5 align-items-center justify-content-start" style="height:24px;">
                         <div class="img-block rounded me-1" style="height:24px;width:24px;overflow:hidden;">
-                            <AuthorImage author={ post.as_ref().map(|p| p.author.clone()) } />
+                                <AuthorImage author={ post_state.as_ref().map(|p| p.author.clone()) } />
                         </div>
-                        if let Some(post) = &post {
+                        if let Some(post) = &*post_state {
                             <Link<Route, (), Author>
                                 classes="text-decoration-none"
                                 to={ Route::Author { slug: post.author.slug.clone() } }
@@ -208,11 +213,11 @@ pub fn post_card(props: &PostCardProps) -> Html {
                             } else {
                                 <span class="placeholder col-3 bg-secondary"></span>
                             }
-                        } } deps={ post.clone() } />
+                        } } deps={ (*post_state).clone() } />
                     </div>
                 </div>
             </div>
-            if let (Some(post), false) = (post.as_ref(), is_full) {
+            if let (Some(post), false) = (post_state.as_ref(), is_full) {
                 <Link<Route, (), Post>
                     classes="text-decoration-none"
                     to={ Route::Post { slug: post.slug.clone(), id: post.id } }
@@ -241,7 +246,7 @@ pub fn post_card(props: &PostCardProps) -> Html {
                                     Some(post),
                                     Some(author),
                                 ) = (
-                                    post.as_ref(),
+                                    post_state.as_ref(),
                                     logged_user_context.author(),
                                 ) {
                                     if (author.id == post.author.id || author.editor == 1) && author.blocked == 0 {

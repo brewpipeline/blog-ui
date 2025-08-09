@@ -530,47 +530,6 @@ impl ExternalItemContainer for PostContainer {
     }
 }
 
-#[derive(Clone, Debug, Eq, PartialEq, Serialize, Deserialize)]
-#[serde(rename_all = "camelCase")]
-pub struct PostWithRecommended {
-    #[serde(flatten)]
-    pub post: Post,
-    pub recommended: u8,
-}
-
-#[derive(Clone, Debug, Eq, PartialEq, Serialize, Deserialize)]
-#[serde(rename_all = "camelCase")]
-pub struct PostWithRecommendedContainer {
-    pub post: PostWithRecommended,
-}
-
-#[cfg(feature = "client")]
-#[async_trait(?Send)]
-impl RequestableItem<OptionTokened<PostParams>> for API<PostWithRecommendedContainer> {
-    async fn request(params: OptionTokened<PostParams>) -> Result<Request, Error> {
-        let OptionTokened {
-            token,
-            params: PostParams { id },
-        } = params;
-        let url = format!("{url}/post/{id}", url = crate::API_URL);
-        let mut request = Request::get(url.as_str());
-        if let Some(token) = token {
-            request = request.header("Token", token.as_str())
-        }
-        Ok(request.build()?)
-    }
-    async fn response(response: Response) -> Result<Self, Error> {
-        response.json().await
-    }
-}
-
-impl ExternalItemContainer for PostWithRecommendedContainer {
-    type Item = PostWithRecommended;
-    fn item(self) -> Self::Item {
-        self.post
-    }
-}
-
 #[derive(Clone, PartialEq)]
 pub struct PostRecommendationParams {
     pub id: u64,
