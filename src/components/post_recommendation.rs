@@ -17,9 +17,13 @@ pub fn post_recommendation(props: &PostRecommendationProps) -> Html {
         <Item<API<PostRecommendationContainer>, PostRecommendationParams>
             r#type={ LoadType::Params(PostRecommendationParams { id }) }
             use_caches=true
-            component={ |post: Option<Post>| {
+            component={ move |post: Option<Post>| {
                 if let Some(post) = post {
-                    html! { <PostCard post={ Some(post) } is_full=false /> }
+                    if post.id != id {
+                        html! { <PostCard post={ Some(post) } is_full=false /> }
+                    } else {
+                        html! { <></> }
+                    }
                 } else {
                     html! { <></> }
                 }
