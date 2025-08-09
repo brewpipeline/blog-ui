@@ -34,11 +34,8 @@ pub fn post_card(props: &PostCardProps) -> Html {
             .map(|a| a.editor == 1 && a.blocked == 0)
             .unwrap_or(false);
 
-    let post_id = post_state.as_ref().and_then(|p| Some(p.id));
-    let is_recommended = post_state
-        .as_ref()
-        .map(|p| p.recommended == 1)
-        .unwrap_or(false);
+    let post_id = post_state.as_ref().map(|p| p.id);
+    let is_recommended = post_state.as_ref().map(|p| p.recommended).unwrap_or(false);
     let in_progress = use_state_eq(|| false);
     let recommendation_button = if is_full && is_editor {
         if let Some(id) = post_id {
@@ -55,10 +52,7 @@ pub fn post_card(props: &PostCardProps) -> Html {
                         return;
                     };
                     in_progress.set(true);
-                    let recommend = !post_state
-                        .as_ref()
-                        .map(|p| p.recommended == 1)
-                        .unwrap_or(false);
+                    let recommend = !post_state.as_ref().map(|p| p.recommended).unwrap_or(false);
                     let post_state_setter = post_state.clone();
                     let in_progress = in_progress.clone();
                     wasm_bindgen_futures::spawn_local(async move {
@@ -69,7 +63,7 @@ pub fn post_card(props: &PostCardProps) -> Html {
                         .await;
                         if let Ok(API::Success { .. }) = res {
                             if let Some(mut p) = (*post_state_setter).clone() {
-                                p.recommended = if recommend { 1 } else { 0 };
+                                p.recommended = recommend;
                                 post_state_setter.set(Some(p));
                             }
                         }
