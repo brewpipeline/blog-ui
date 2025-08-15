@@ -18,22 +18,20 @@ pub struct RecommendedPostCardProps {
 pub fn recommended_post_card(props: &RecommendedPostCardProps) -> Html {
     let RecommendedPostCardProps { post } = props.clone();
 
-    let image_block = if let Some(url) = post.as_ref().and_then(|p| p.image_url.clone()) {
-        html! {
+    let main_content = html! {
+        <>
             <div class="img-block bd-placeholder-img" style="height:194px;width:100%;overflow:hidden;">
                 <OptionalImage
                     alt={ post.as_ref().map(|p| p.title.clone()) }
-                    image={ Some(image_url_formatter(ImageType::Medium, url)) }
+                    image={
+                        post
+                            .as_ref()
+                            .map(|p| p.image_url.clone())
+                            .flatten()
+                            .map(|u| image_url_formatter(ImageType::Medium, u))
+                    }
                 />
             </div>
-        }
-    } else {
-        Html::default()
-    };
-
-    let main_content = html! {
-        <>
-            { image_block }
             <div class="card-body">
                 <h5 class="card-title placeholder-glow">
                     <DelayedComponent<Option<Post>> component={ |post: Option<Post>| html! {
