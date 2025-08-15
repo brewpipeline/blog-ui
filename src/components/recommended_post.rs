@@ -18,13 +18,11 @@ pub fn recommended_post(props: &RecommendedPostProps) -> Html {
             r#type={ LoadType::Params(content::PostRecommendationParams { id }) }
             use_caches=false
             component={ |post: Option<content::Post>| {
-                if let Some(post) = post {
-                    html! { <PostCard post={ Some(post) } is_full=false /> }
-                } else {
-                    html! {}
-                }
+                post
+                    .map(|post| html! { <PostCard post={ Some(post) } is_full=false /> })
+                    .unwrap_or_default()
             } }
-            error_component={ |_| html! {} }
+            error_component={ |_| Html::default() }
         />
     }
 }

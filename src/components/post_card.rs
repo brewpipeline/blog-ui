@@ -31,54 +31,53 @@ pub fn post_card(props: &PostCardProps) -> Html {
             }
         });
     }
-    let token = logged_user_context.token().cloned();
-
-    let star_button = {
-        if !logged_user_context.is_not_inited() {
-            if let (Some(post), Some(author)) = (post.as_ref(), logged_user_context.author()) {
-                if author.editor == 1 && author.blocked == 0 && is_full {
-                    let recommended_state = recommended.clone();
-                    let token_clone = token.clone();
-                    let post_id = post.id;
-                    let onclick = Callback::from(move |_| {
-                        let Some(token) = token_clone.clone() else {
-                            return;
-                        };
-                        let recommended_state = recommended_state.clone();
-                        spawn_local(async move {
-                            let res = API::<()>::get(Tokened {
-                                token,
-                                params: PostPoolParams {
-                                    id: post_id,
-                                    add: !*recommended_state,
-                                },
-                            })
-                            .await;
-                            if let Ok(API::Success { .. }) = res {
-                                recommended_state.set(!*recommended_state);
-                            }
-                        });
+    let star_button = match (
+        logged_user_context.is_not_inited(),
+        post.as_ref(),
+        logged_user_context.author(),
+    ) {
+        (false, Some(post), Some(author))
+            if author.editor == 1 && author.blocked == 0 && is_full =>
+        {
+            let recommended_state = recommended.clone();
+            let token = logged_user_context.token().cloned();
+            let post_id = post.id;
+            let onclick = {
+                let recommended_state = recommended_state.clone();
+                let token = token.clone();
+                Callback::from(move |_| {
+                    let Some(token) = token.clone() else {
+                        return;
+                    };
+                    let recommended_state = recommended_state.clone();
+                    spawn_local(async move {
+                        let res = API::<()>::get(Tokened {
+                            token,
+                            params: PostPoolParams {
+                                id: post_id,
+                                add: !*recommended_state,
+                            },
+                        })
+                        .await;
+                        if let Ok(API::Success { .. }) = res {
+                            recommended_state.set(!*recommended_state);
+                        }
                     });
-                    html! {
-                        <>
-                            { " " }
-                            <i
-                                class={ classes!("bi", if *recommended { "bi-star-fill" } else { "bi-star" }) }
-                                style="cursor: pointer;"
-                                {onclick}
-                                title={ if *recommended { "Убрать из рекомендаций" } else { "Добавить в рекомендации" } }
-                            ></i>
-                        </>
-                    }
-                } else {
-                    html! {}
-                }
-            } else {
-                html! {}
+                })
+            };
+            html! {
+                <>
+                    { " " }
+                    <i
+                        class={ classes!("bi", if *recommended { "bi-star-fill" } else { "bi-star" }) }
+                        style="cursor: pointer;"
+                        {onclick}
+                        title={ if *recommended { "Убрать из рекомендаций" } else { "Добавить в рекомендации" } }
+                    ></i>
+                </>
             }
-        } else {
-            html! {}
         }
+        _ => html! {},
     };
 
     let edit_button = {

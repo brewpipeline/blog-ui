@@ -125,10 +125,9 @@ pub fn body() -> Html {
                 >
                     <InformationMenu />
                     {
-                        if let Route::Post { id, .. } = route.clone() {
-                            html! { <RecommendedPost id={id} /> }
-                        } else {
-                            html! {}
+                        match route.clone() {
+                            Route::Post { id, .. } => html! { <RecommendedPost id={id} /> },
+                            _ => Html::default(),
                         }
                     }
                 </div>
