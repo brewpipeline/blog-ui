@@ -9,6 +9,9 @@ use crate::utils::*;
 
 use crate::Route;
 
+#[cfg(feature = "client")]
+use web_sys::MouseEvent;
+
 #[derive(Clone, Debug, PartialEq, Eq, Properties)]
 pub struct PostCardProps {
     pub post: Option<Post>,
@@ -36,14 +39,17 @@ pub fn post_card(props: &PostCardProps) -> Html {
             html! {}
         } else {
             match (post.as_ref(), logged_user_context.author()) {
-                (Some(post), Some(author)) if author.editor == 1 && author.blocked == 0 && is_full => {
+                (Some(post), Some(author))
+                    if author.editor == 1 && author.blocked == 0 && is_full =>
+                {
                     let recommended_state = recommended.clone();
                     let post_id = post.id;
                     let logged_user_context = logged_user_context.clone();
                     let onclick = {
                         let recommended_state = recommended_state.clone();
                         let logged_user_context = logged_user_context.clone();
-                        Callback::from(move |_| {
+                        Callback::from(move |e: MouseEvent| {
+                            e.prevent_default();
                             let Some(token) = logged_user_context.token().cloned() else {
                                 return;
                             };
@@ -66,12 +72,11 @@ pub fn post_card(props: &PostCardProps) -> Html {
                     html! {
                         <>
                             { " " }
-                            <i
-                                class={ classes!("bi", if *recommended { "bi-star-fill" } else { "bi-star" }) }
-                                style="cursor: pointer;"
-                                {onclick}
-                                title={ if *recommended { "Убрать из рекомендаций" } else { "Добавить в рекомендации" } }
-                            ></i>
+                            <a href="#" class="text-decoration-none" {onclick} title={ if *recommended { "Убрать из рекомендаций" } else { "Добавить в рекомендации" } }>
+                                <i
+                                    class={ classes!("bi", if *recommended { "bi-star-fill" } else { "bi-star" }) }
+                                ></i>
+                            </a>
                         </>
                     }
                 }
