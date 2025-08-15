@@ -6,7 +6,6 @@ use crate::components::delayed_component::*;
 use crate::components::optional_image::*;
 use crate::content::*;
 use crate::utils::*;
-use wasm_bindgen_futures::spawn_local;
 
 use crate::Route;
 
@@ -31,52 +30,57 @@ pub fn post_card(props: &PostCardProps) -> Html {
             }
         });
     }
-    let star_button = if logged_user_context.is_not_inited() {
-        html! {}
-    } else {
-        match (post.as_ref(), logged_user_context.author()) {
-            (Some(post), Some(author)) if author.editor == 1 && author.blocked == 0 && is_full => {
-                let recommended_state = recommended.clone();
-                let token = logged_user_context.token().cloned();
-                let post_id = post.id;
-                let onclick = {
-                    let recommended_state = recommended_state.clone();
-                    let token = token.clone();
-                    Callback::from(move |_| {
-                        let Some(token) = token.clone() else {
-                            return;
-                        };
+    #[cfg(feature = "client")]
+    let star_button = {
+        if logged_user_context.is_not_inited() {
+            html! {}
+        } else {
+            match (post.as_ref(), logged_user_context.author()) {
+                (Some(post), Some(author)) if author.editor == 1 && author.blocked == 0 && is_full => {
+                    let recommended_state = recommended.clone();
+                    let post_id = post.id;
+                    let logged_user_context = logged_user_context.clone();
+                    let onclick = {
                         let recommended_state = recommended_state.clone();
-                        spawn_local(async move {
-                            let res = API::<()>::get(Tokened {
-                                token,
-                                params: PostPoolParams {
-                                    id: post_id,
-                                    add: !*recommended_state,
-                                },
-                            })
-                            .await;
-                            if let Ok(API::Success { .. }) = res {
-                                recommended_state.set(!*recommended_state);
-                            }
-                        });
-                    })
-                };
-                html! {
-                    <>
-                        { " " }
-                        <i
-                            class={ classes!("bi", if *recommended { "bi-star-fill" } else { "bi-star" }) }
-                            style="cursor: pointer;"
-                            {onclick}
-                            title={ if *recommended { "Убрать из рекомендаций" } else { "Добавить в рекомендации" } }
-                        ></i>
-                    </>
+                        let logged_user_context = logged_user_context.clone();
+                        Callback::from(move |_| {
+                            let Some(token) = logged_user_context.token().cloned() else {
+                                return;
+                            };
+                            let recommended_state = recommended_state.clone();
+                            wasm_bindgen_futures::spawn_local(async move {
+                                let res = API::<()>::get(Tokened {
+                                    token,
+                                    params: PostPoolParams {
+                                        id: post_id,
+                                        add: !*recommended_state,
+                                    },
+                                })
+                                .await;
+                                if let Ok(API::Success { .. }) = res {
+                                    recommended_state.set(!*recommended_state);
+                                }
+                            });
+                        })
+                    };
+                    html! {
+                        <>
+                            { " " }
+                            <i
+                                class={ classes!("bi", if *recommended { "bi-star-fill" } else { "bi-star" }) }
+                                style="cursor: pointer;"
+                                {onclick}
+                                title={ if *recommended { "Убрать из рекомендаций" } else { "Добавить в рекомендации" } }
+                            ></i>
+                        </>
+                    }
                 }
+                _ => html! {},
             }
-            _ => html! {},
         }
     };
+    #[cfg(not(feature = "client"))]
+    let star_button: Html = html! {};
 
     let edit_button = if logged_user_context.is_not_inited() {
         html! {}
