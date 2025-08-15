@@ -13,7 +13,7 @@ pub fn information_menu() -> Html {
             .expect("wrong ACCORDION_JSON format")
     });
     html! {
-        <div class="accordion" id="accordionMain">
+        <div class="accordion mb-3" id="accordionMain">
             {
                 accordion_items.iter().enumerate().map(|(index, item)| {
                     let item = item.clone();

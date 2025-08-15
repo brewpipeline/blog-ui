@@ -121,7 +121,7 @@ pub fn body() -> Html {
                         "col-xl-3",
                         "ps-lg-3",
                         "ps-xl-0",
-                        "d-xl-grid"
+                        "d-xl-block"
                     ) }
                 >
                     <InformationMenu />
