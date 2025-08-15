@@ -16,15 +16,19 @@ pub fn recommended_post(props: &RecommendedPostProps) -> Html {
     let RecommendedPostProps { id } = *props;
     html! {
         <>
-            <SimpleTitleCard>
-                { "Рекомендация" }
-            </SimpleTitleCard>
             <Item<content::API<content::PostContainer>, content::PostRecommendationParams>
                 r#type={ LoadType::Params(content::PostRecommendationParams { id }) }
                 use_caches=false
                 component={ |post: Option<content::Post>| {
                     post
-                        .map(|post| html! { <RecommendedPostCard post={ Some(post) } /> })
+                        .map(|post| html! {
+                            <>
+                                <SimpleTitleCard>
+                                    { "Вам будет интересно" }
+                                </SimpleTitleCard>
+                                <RecommendedPostCard post={ Some(post) } /> 
+                            </>
+                        })
                         .unwrap_or_default()
                 } }
                 error_component={ |_| Html::default() }
