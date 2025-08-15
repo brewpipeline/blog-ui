@@ -128,7 +128,7 @@ pub fn body() -> Html {
                     {
                         match route.clone() {
                             Route::Post { id, .. } => html! {
-                                <DelayedComponent<()> component={ move |_| html! { <RecommendedPost id={id} /> } } deps={ () } />
+                                <DelayedComponent<u64> component={ |id| html! { <RecommendedPost id={id} /> } } deps={ id } />
                             },
                             _ => Html::default(),
                         }

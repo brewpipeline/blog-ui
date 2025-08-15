@@ -44,14 +44,8 @@ pub fn recommended_post_card(props: &RecommendedPostCardProps) -> Html {
                 </h5>
                 <article class="card-text placeholder-glow">
                     {
-                        if let Some(post) = post.as_ref().map(|p| {
-                            if let Some(content) = p.content.clone() {
-                                Html::from_html_unchecked(AttrValue::from(content))
-                            } else {
-                                html! { p.summary.clone() }
-                            }
-                        }) {
-                            { post }
+                        if let Some(post) = post.as_ref() {
+                            html! { post.summary.clone() }
                         } else {
                             html! {
                                 <>
