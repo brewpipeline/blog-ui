@@ -3,6 +3,7 @@ use web_sys::HtmlInputElement;
 use yew::prelude::*;
 use yew_router::prelude::*;
 
+use crate::components::delayed_component::*;
 use crate::components::information_menu::*;
 use crate::components::navigation_menu::*;
 use crate::components::recommended_post::*;
@@ -126,7 +127,9 @@ pub fn body() -> Html {
                     <InformationMenu />
                     {
                         match route.clone() {
-                            Route::Post { id, .. } => html! { <RecommendedPost id={id} /> },
+                            Route::Post { id, .. } => html! {
+                                <DelayedComponent<()> component={ move |_| html! { <RecommendedPost id={id} /> } } deps={ () } />
+                            },
                             _ => Html::default(),
                         }
                     }
