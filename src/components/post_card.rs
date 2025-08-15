@@ -6,6 +6,7 @@ use crate::components::delayed_component::*;
 use crate::components::optional_image::*;
 use crate::content::*;
 use crate::utils::*;
+use wasm_bindgen_futures::spawn_local;
 
 use crate::Route;
 
@@ -20,6 +21,92 @@ pub fn post_card(props: &PostCardProps) -> Html {
     let PostCardProps { post, is_full } = props.clone();
 
     let logged_user_context = use_context::<LoggedUserContext>().unwrap();
+    let recommended = use_state(|| post.as_ref().map(|p| p.recommended).unwrap_or(false));
+    {
+        let post = post.clone();
+        let recommended = recommended.clone();
+        use_effect_with(post, move |p| {
+            if let Some(p) = p {
+                recommended.set(p.recommended);
+            }
+        });
+    }
+    let token = logged_user_context.token().cloned();
+
+    let star_button = {
+        if !logged_user_context.is_not_inited() {
+            if let (Some(post), Some(author)) = (post.as_ref(), logged_user_context.author()) {
+                if author.editor == 1 && author.blocked == 0 && is_full {
+                    let recommended_state = recommended.clone();
+                    let token_clone = token.clone();
+                    let post_id = post.id;
+                    let onclick = Callback::from(move |_| {
+                        let Some(token) = token_clone.clone() else {
+                            return;
+                        };
+                        let recommended_state = recommended_state.clone();
+                        spawn_local(async move {
+                            let res = API::<()>::get(Tokened {
+                                token,
+                                params: PostPoolParams {
+                                    id: post_id,
+                                    add: !*recommended_state,
+                                },
+                            })
+                            .await;
+                            if let Ok(API::Success { .. }) = res {
+                                recommended_state.set(!*recommended_state);
+                            }
+                        });
+                    });
+                    html! {
+                        <>
+                            { " " }
+                            <i
+                                class={ classes!("bi", if *recommended { "bi-star-fill" } else { "bi-star" }) }
+                                style="cursor: pointer;"
+                                {onclick}
+                                title={ if *recommended { "Убрать из рекомендаций" } else { "Добавить в рекомендации" } }
+                            ></i>
+                        </>
+                    }
+                } else {
+                    html! {}
+                }
+            } else {
+                html! {}
+            }
+        } else {
+            html! {}
+        }
+    };
+
+    let edit_button = {
+        if !logged_user_context.is_not_inited() {
+            if let (Some(post), Some(author)) = (post.as_ref(), logged_user_context.author()) {
+                if (author.id == post.author.id || author.editor == 1) && author.blocked == 0 {
+                    html! {
+                        <>
+                            { " " }
+                            <Link<Route, (), Post>
+                                classes="text-decoration-none"
+                                to={ Route::EditPost { id: post.id } }
+                                state={ Some(post.clone()) }
+                            >
+                                <i title="Редактировать публикацию" class="bi bi-pencil-square"></i>
+                            </Link<Route, (), Post>>
+                        </>
+                    }
+                } else {
+                    html! {}
+                }
+            } else {
+                html! {}
+            }
+        } else {
+            html! {}
+        }
+    };
 
     let main_content = html! {
         <>
@@ -166,26 +253,8 @@ pub fn post_card(props: &PostCardProps) -> Html {
                             if publish_type == Some(PublishType::Hidden) {
                                 <i title="Скрыто" class="bi bi-eye-slash-fill"></i>
                             }
-                            if !logged_user_context.is_not_inited() {
-                                if let (
-                                    Some(post),
-                                    Some(author),
-                                ) = (
-                                    post.as_ref(),
-                                    logged_user_context.author(),
-                                ) {
-                                    if (author.id == post.author.id || author.editor == 1) && author.blocked == 0 {
-                                        { " " }
-                                        <Link<Route, (), Post>
-                                            classes="text-decoration-none"
-                                            to={ Route::EditPost { id: post.id } }
-                                            state={ Some(post.clone()) }
-                                        >
-                                            <i title="Редактировать публикацию" class="bi bi-pencil-square"></i>
-                                        </Link<Route, (), Post>>
-                                    }
-                                }
-                            }
+                            { star_button }
+                            { edit_button }
                         </p>
                     </div>
                 </div>

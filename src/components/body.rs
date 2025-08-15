@@ -5,6 +5,7 @@ use yew_router::prelude::*;
 
 use crate::components::information_menu::*;
 use crate::components::navigation_menu::*;
+use crate::components::recommended_post::*;
 
 #[cfg(feature = "client")]
 use crate::utils::*;
@@ -123,6 +124,13 @@ pub fn body() -> Html {
                     ) }
                 >
                     <InformationMenu />
+                    {
+                        if let Route::Post { id, .. } = route.clone() {
+                            html! { <RecommendedPost id={id} /> }
+                        } else {
+                            html! {}
+                        }
+                    }
                 </div>
 
             </div>
