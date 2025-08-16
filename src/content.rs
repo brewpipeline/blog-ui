@@ -530,6 +530,52 @@ impl ExternalItemContainer for PostContainer {
     }
 }
 
+#[derive(Clone, PartialEq)]
+pub struct PostRecommendationParams {
+    pub id: u64,
+}
+
+#[cfg(feature = "client")]
+#[async_trait(?Send)]
+impl RequestableItem<PostRecommendationParams> for API<PostContainer> {
+    async fn request(params: PostRecommendationParams) -> Result<Request, Error> {
+        let PostRecommendationParams { id } = params;
+        let url = format!("{url}/post/{id}/recommendation", url = crate::API_URL);
+        Ok(Request::get(url.as_str()).build()?)
+    }
+    async fn response(response: Response) -> Result<Self, Error> {
+        response.json().await
+    }
+}
+
+#[derive(Clone, PartialEq)]
+pub struct UpdatePostRecommendedParams {
+    pub id: u64,
+    pub value: bool,
+}
+
+#[cfg(feature = "client")]
+#[async_trait(?Send)]
+impl RequestableItem<Tokened<UpdatePostRecommendedParams>> for API<()> {
+    async fn request(params: Tokened<UpdatePostRecommendedParams>) -> Result<Request, Error> {
+        let Tokened {
+            token,
+            params: UpdatePostRecommendedParams { id, value },
+        } = params;
+        let url = format!(
+            "{url}/post/{id}/recommended/{value}",
+            url = crate::API_URL,
+            value = if value { "true" } else { "false" }
+        );
+        Ok(Request::patch(url.as_str())
+            .header("Token", token.as_str())
+            .build()?)
+    }
+    async fn response(response: Response) -> Result<Self, Error> {
+        response.json().await
+    }
+}
+
 //
 // Tag
 //
