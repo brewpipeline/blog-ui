@@ -26,7 +26,7 @@ pub fn recommended_post(props: &RecommendedPostProps) -> Html {
                                 <SimpleTitleCard>
                                     { "Вам будет интересно" }
                                 </SimpleTitleCard>
-                                <RecommendedPostCard post={ Some(post) } /> 
+                                <RecommendedPostCard { post } /> 
                             </>
                         })
                         .unwrap_or_default()

@@ -57,9 +57,9 @@ pub fn post_card(props: &PostCardProps) -> Html {
                             wasm_bindgen_futures::spawn_local(async move {
                                 let res = API::<()>::get(Tokened {
                                     token,
-                                    params: PostPoolParams {
+                                    params: UpdatePostRecommendedParams {
                                         id: post_id,
-                                        add: !*recommended_state,
+                                        value: !*recommended_state,
                                     },
                                 })
                                 .await;

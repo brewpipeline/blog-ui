@@ -530,10 +530,6 @@ impl ExternalItemContainer for PostContainer {
     }
 }
 
-//
-// Post recommendation
-//
-
 #[derive(Clone, PartialEq)]
 pub struct PostRecommendationParams {
     pub id: u64,
@@ -552,28 +548,24 @@ impl RequestableItem<PostRecommendationParams> for API<PostContainer> {
     }
 }
 
-//
-// Post pool
-//
-
 #[derive(Clone, PartialEq)]
-pub struct PostPoolParams {
+pub struct UpdatePostRecommendedParams {
     pub id: u64,
-    pub add: bool,
+    pub value: bool,
 }
 
 #[cfg(feature = "client")]
 #[async_trait(?Send)]
-impl RequestableItem<Tokened<PostPoolParams>> for API<()> {
-    async fn request(params: Tokened<PostPoolParams>) -> Result<Request, Error> {
+impl RequestableItem<Tokened<UpdatePostRecommendedParams>> for API<()> {
+    async fn request(params: Tokened<UpdatePostRecommendedParams>) -> Result<Request, Error> {
         let Tokened {
             token,
-            params: PostPoolParams { id, add },
+            params: UpdatePostRecommendedParams { id, value },
         } = params;
         let url = format!(
-            "{url}/post/{id}/pool/{action}",
+            "{url}/post/{id}/recommended/{value}",
             url = crate::API_URL,
-            action = if add { "add" } else { "remove" }
+            value = if value { "true" } else { "false" }
         );
         Ok(Request::patch(url.as_str())
             .header("Token", token.as_str())
