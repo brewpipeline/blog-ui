@@ -7,6 +7,7 @@ use crate::components::information_menu::*;
 use crate::components::navigation_menu::*;
 use crate::components::recommended_post::*;
 
+#[cfg(feature = "client")]
 use crate::utils::*;
 use crate::Route;
 

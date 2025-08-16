@@ -6,7 +6,6 @@ use crate::components::recommended_post_card::*;
 use crate::components::simple_title_card::*;
 use crate::content;
 
-#[cfg(feature = "client")]
 use crate::utils::*;
 use crate::Route;
 
