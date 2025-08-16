@@ -18,8 +18,8 @@ pub fn recommended_post_card(props: &RecommendedPostCardProps) -> Html {
 
     let main_content = html! {
         <>
-            <div 
-                class="img-block bd-placeholder-img" 
+            <div
+                class="img-block bd-placeholder-img"
                 style="height:144px;width:100%;overflow:hidden;border-radius:calc(var(--bs-border-radius) - 1px) calc(var(--bs-border-radius) - 1px) 0 0"
             >
                 <OptionalImage
