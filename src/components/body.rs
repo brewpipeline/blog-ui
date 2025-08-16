@@ -5,6 +5,7 @@ use yew_router::prelude::*;
 
 use crate::components::information_menu::*;
 use crate::components::navigation_menu::*;
+use crate::components::recommended_post::*;
 
 #[cfg(feature = "client")]
 use crate::utils::*;
@@ -123,10 +124,11 @@ pub fn body() -> Html {
                         "col-xl-3",
                         "ps-lg-3",
                         "ps-xl-0",
-                        "d-xl-grid"
+                        "d-xl-block"
                     ) }
                 >
                     <InformationMenu />
+                    <RecommendedPost />
                 </div>
 
             </div>

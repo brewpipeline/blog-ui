@@ -20,6 +20,93 @@ pub fn post_card(props: &PostCardProps) -> Html {
     let PostCardProps { post, is_full } = props.clone();
 
     let logged_user_context = use_context::<LoggedUserContext>().unwrap();
+    let recommended = use_state(|| post.as_ref().map(|p| p.recommended).unwrap_or(false));
+    {
+        let post = post.clone();
+        let recommended = recommended.clone();
+        use_effect_with(post, move |p| {
+            if let Some(p) = p {
+                recommended.set(p.recommended);
+            }
+        });
+    }
+    #[cfg(feature = "client")]
+    let star_button = {
+        if logged_user_context.is_not_inited() {
+            html! {}
+        } else {
+            match (post.as_ref(), logged_user_context.author()) {
+                (Some(post), Some(author))
+                    if author.editor == 1 && author.blocked == 0 && is_full =>
+                {
+                    let recommended_state = recommended.clone();
+                    let post_id = post.id;
+                    let logged_user_context = logged_user_context.clone();
+                    let onclick = {
+                        let recommended_state = recommended_state.clone();
+                        let logged_user_context = logged_user_context.clone();
+                        Callback::from(move |e: web_sys::MouseEvent| {
+                            e.prevent_default();
+                            let Some(token) = logged_user_context.token().cloned() else {
+                                return;
+                            };
+                            let recommended_state = recommended_state.clone();
+                            wasm_bindgen_futures::spawn_local(async move {
+                                let res = API::<()>::get(Tokened {
+                                    token,
+                                    params: UpdatePostRecommendedParams {
+                                        id: post_id,
+                                        value: !*recommended_state,
+                                    },
+                                })
+                                .await;
+                                if let Ok(API::Success { .. }) = res {
+                                    recommended_state.set(!*recommended_state);
+                                }
+                            });
+                        })
+                    };
+                    html! {
+                        <>
+                            { " " }
+                            <a href="#" class="text-decoration-none" {onclick} title={ if *recommended { "Убрать из рекомендаций" } else { "Добавить в рекомендации" } }>
+                                <i
+                                    class={ classes!("bi", if *recommended { "bi-star-fill" } else { "bi-star" }) }
+                                ></i>
+                            </a>
+                        </>
+                    }
+                }
+                _ => html! {},
+            }
+        }
+    };
+    #[cfg(not(feature = "client"))]
+    let star_button: Html = html! {};
+
+    let edit_button = if logged_user_context.is_not_inited() {
+        html! {}
+    } else {
+        match (post.as_ref(), logged_user_context.author()) {
+            (Some(post), Some(author))
+                if (author.id == post.author.id || author.editor == 1) && author.blocked == 0 =>
+            {
+                html! {
+                    <>
+                        { " " }
+                        <Link<Route, (), Post>
+                            classes="text-decoration-none"
+                            to={ Route::EditPost { id: post.id } }
+                            state={ Some(post.clone()) }
+                        >
+                            <i title="Редактировать публикацию" class="bi bi-pencil-square"></i>
+                        </Link<Route, (), Post>>
+                    </>
+                }
+            }
+            _ => html! {},
+        }
+    };
 
     let main_content = html! {
         <>
@@ -166,26 +253,8 @@ pub fn post_card(props: &PostCardProps) -> Html {
                             if publish_type == Some(PublishType::Hidden) {
                                 <i title="Скрыто" class="bi bi-eye-slash-fill"></i>
                             }
-                            if !logged_user_context.is_not_inited() {
-                                if let (
-                                    Some(post),
-                                    Some(author),
-                                ) = (
-                                    post.as_ref(),
-                                    logged_user_context.author(),
-                                ) {
-                                    if (author.id == post.author.id || author.editor == 1) && author.blocked == 0 {
-                                        { " " }
-                                        <Link<Route, (), Post>
-                                            classes="text-decoration-none"
-                                            to={ Route::EditPost { id: post.id } }
-                                            state={ Some(post.clone()) }
-                                        >
-                                            <i title="Редактировать публикацию" class="bi bi-pencil-square"></i>
-                                        </Link<Route, (), Post>>
-                                    }
-                                }
-                            }
+                            { star_button }
+                            { edit_button }
                         </p>
                     </div>
                 </div>

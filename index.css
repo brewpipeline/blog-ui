@@ -199,9 +199,11 @@
     display: none;
 }
 @media (max-width: 991.98px) {
-    div:has(#vbtn-radio1:checked) #menu1,
-    div:has(#vbtn-radio3:checked) #menu3 {
+    div:has(#vbtn-radio1:checked) #menu1{
         display: grid;
+    }
+        div:has(#vbtn-radio3:checked) #menu3 {
+        display: block;
     }
     div:has(#vbtn-radio2:checked) #menu2 {
         display: block;
@@ -212,7 +214,7 @@
         display: block;
     }
     div:has(#vbtn2-radio2:checked) #menu3 {
-        display: grid;
+        display: block;
     }
 }
 

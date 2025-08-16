@@ -17,6 +17,8 @@ pub mod navigation_menu;
 pub mod optional_image;
 pub mod pagination;
 pub mod post_card;
+pub mod recommended_post;
+pub mod recommended_post_card;
 pub mod search_button;
 pub mod search_field;
 pub mod simple_title_card;
