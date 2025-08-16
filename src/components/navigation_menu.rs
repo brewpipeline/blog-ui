@@ -78,6 +78,18 @@ pub fn navigation_menu() -> Html {
                 >
                     { "Скрытое" }
                 </Link<Route>>
+                <Link<Route>
+                    classes={
+                        classes!(
+                            "btn",
+                            "btn-light",
+                            if route == Route::UploadImage { "active" } else { "" }
+                        )
+                    }
+                    to={ Route::UploadImage }
+                >
+                    { "Загрузка изображений" }
+                </Link<Route>>
             }
         </>
     }

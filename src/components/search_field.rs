@@ -28,6 +28,7 @@ impl SearchMode {
             | Route::UnpublishedPosts
             | Route::MyUnpublishedPosts
             | Route::HiddenPosts
+            | Route::UploadImage
             | Route::Tag { slug: _, id: _ } => Self::Posts { query: None },
             #[cfg(feature = "yandex")]
             Route::YandexToken => Self::Posts { query: None },
