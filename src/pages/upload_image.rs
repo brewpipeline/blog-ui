@@ -1,4 +1,6 @@
+#[cfg(feature = "client")]
 use gloo_net::http::Request;
+#[cfg(feature = "client")]
 use web_sys::{FormData, HtmlInputElement};
 use yew::prelude::*;
 
@@ -39,6 +41,10 @@ pub fn upload_image() -> Html {
         };
     }
 
+    #[cfg(not(feature = "client"))]
+    let on_upload = Callback::from(|_| {});
+
+    #[cfg(feature = "client")]
     let on_upload = {
         let file_input = file_input.clone();
         let message = message.clone();
