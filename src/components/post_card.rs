@@ -9,9 +9,6 @@ use crate::utils::*;
 
 use crate::Route;
 
-#[cfg(feature = "client")]
-use web_sys::MouseEvent;
-
 #[derive(Clone, Debug, PartialEq, Eq, Properties)]
 pub struct PostCardProps {
     pub post: Option<Post>,
@@ -48,7 +45,7 @@ pub fn post_card(props: &PostCardProps) -> Html {
                     let onclick = {
                         let recommended_state = recommended_state.clone();
                         let logged_user_context = logged_user_context.clone();
-                        Callback::from(move |e: MouseEvent| {
+                        Callback::from(move |e: web_sys::MouseEvent| {
                             e.prevent_default();
                             let Some(token) = logged_user_context.token().cloned() else {
                                 return;
