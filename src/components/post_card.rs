@@ -36,9 +36,7 @@ pub fn post_card(props: &PostCardProps) -> Html {
             html! {}
         } else {
             match (post.as_ref(), logged_user_context.author()) {
-                (Some(post), Some(author))
-                    if author.editor == 1 && author.blocked == 0 && is_full =>
-                {
+                (Some(post), Some(author)) if author.editor == 1 && author.blocked == 0 => {
                     let recommended_state = recommended.clone();
                     let post_id = post.id;
                     let logged_user_context = logged_user_context.clone();
