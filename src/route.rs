@@ -26,6 +26,8 @@ pub enum Route {
     MyUnpublishedPosts,
     #[at("/posts/hidden")]
     HiddenPosts,
+    #[at("/admin/upload-image")]
+    UploadImage,
     #[at("/tag/:slug/:id")]
     Tag { slug: String, id: u64 },
     #[at("/author/:slug")]
@@ -62,6 +64,7 @@ impl Route {
             | Route::UnpublishedPosts
             | Route::MyUnpublishedPosts
             | Route::HiddenPosts
+            | Route::UploadImage
             | Route::Tag { slug: _, id: _ }
             | Route::Author { slug: _ }
             | Route::Authors
@@ -86,6 +89,7 @@ impl Route {
             Route::UnpublishedPosts => html! { <UnpublishedPosts /> },
             Route::MyUnpublishedPosts => html! { <MyUnpublishedPosts /> },
             Route::HiddenPosts => html! { <HiddenPosts /> },
+            Route::UploadImage => html! { <UploadImage /> },
             Route::Tag { slug, id } => html! { <Tag { slug } { id } /> },
             Route::Author { slug } => html! { <Author { slug } /> },
             Route::Authors => html! { <Authors /> },

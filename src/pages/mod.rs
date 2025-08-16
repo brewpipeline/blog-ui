@@ -10,6 +10,7 @@ pub mod search;
 pub mod settings;
 pub mod tag;
 pub mod unpublished_posts;
+pub mod upload_image;
 
 pub use author::*;
 pub use authors::*;
@@ -23,3 +24,4 @@ pub use search::*;
 pub use settings::*;
 pub use tag::*;
 pub use unpublished_posts::*;
+pub use upload_image::*;
