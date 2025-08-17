@@ -1,8 +1,6 @@
 use yew::prelude::*;
 
 #[cfg(feature = "client")]
-use gloo::storage::{LocalStorage, Storage};
-#[cfg(feature = "client")]
 use gloo_net::http::Request;
 #[cfg(feature = "client")]
 use wasm_bindgen_futures::spawn_local;
@@ -13,33 +11,10 @@ use crate::utils::*;
 #[cfg(feature = "client")]
 use blog_generic::entities::{ChatAnswer, ChatQuestion};
 
-#[cfg(feature = "client")]
-const CHAT_STORAGE_KEY: &str = "ai_chat_history";
-#[cfg(feature = "client")]
-const CHAT_QUESTION_KEY: &str = "ai_chat_question";
-
 #[function_component(AiChat)]
 pub fn ai_chat() -> Html {
-    let messages = use_state(|| {
-        #[cfg(feature = "client")]
-        {
-            LocalStorage::get::<Vec<(bool, String)>>(CHAT_STORAGE_KEY).unwrap_or_default()
-        }
-        #[cfg(not(feature = "client"))]
-        {
-            Vec::<(bool, String)>::new()
-        }
-    });
-    let question = use_state(|| {
-        #[cfg(feature = "client")]
-        {
-            LocalStorage::get::<String>(CHAT_QUESTION_KEY).unwrap_or_default()
-        }
-        #[cfg(not(feature = "client"))]
-        {
-            String::new()
-        }
-    });
+    let messages = use_state(|| Vec::<(bool, String)>::new());
+    let question = use_state(|| (true, String::new()));
     let sending = use_state(|| false);
     let expanded = use_state(|| false);
 
@@ -47,7 +22,7 @@ pub fn ai_chat() -> Html {
         let question = question.clone();
         Callback::from(move |e: InputEvent| {
             let input: web_sys::HtmlInputElement = e.target_unchecked_into();
-            question.set(input.value());
+            question.set((true, input.value()));
         })
     };
 
@@ -59,7 +34,7 @@ pub fn ai_chat() -> Html {
             if *sending {
                 return;
             }
-            let q = (*question).trim().to_string();
+            let q = (*question).1.trim().to_string();
             if q.is_empty() {
                 return;
             }
@@ -69,7 +44,7 @@ pub fn ai_chat() -> Html {
                 msgs.push((true, q.clone()));
                 msgs
             });
-            question.set(String::new());
+            question.set((true, String::new()));
             sending.set(true);
 
             #[cfg(feature = "client")]
@@ -130,24 +105,6 @@ pub fn ai_chat() -> Html {
         })
     };
 
-    {
-        let messages = messages.clone();
-        use_effect_with((*messages).clone(), move |msgs| {
-            #[cfg(feature = "client")]
-            let _ = LocalStorage::set(CHAT_STORAGE_KEY, msgs);
-            || ()
-        });
-    }
-
-    {
-        let question = question.clone();
-        use_effect_with((*question).clone(), move |q| {
-            #[cfg(feature = "client")]
-            let _ = LocalStorage::set(CHAT_QUESTION_KEY, q);
-            || ()
-        });
-    }
-
     let container_class = classes!(
         "ai-chat",
         "mb-3",
@@ -163,7 +120,7 @@ pub fn ai_chat() -> Html {
                     <input
                         class="form-control"
                         placeholder="Ask what to read"
-                        value={(*question).clone()}
+                        value={(*question).1.clone()}
                         readonly=true
                     />
                 </div>
@@ -193,7 +150,7 @@ pub fn ai_chat() -> Html {
                 <div class="card-footer d-flex">
                     <input
                         class="form-control me-2"
-                        value={(*question).clone()}
+                        value={(*question).1.clone()}
                         {oninput}
                         {onkeydown}
                     />
