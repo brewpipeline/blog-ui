@@ -16,6 +16,7 @@ pub fn ai_chat() -> Html {
     let messages = use_state(|| Vec::<(bool, String)>::new());
     let question = use_state(|| String::new());
     let sending = use_state(|| false);
+    let expanded = use_state(|| false);
 
     let oninput = {
         let question = question.clone();
@@ -76,6 +77,16 @@ pub fn ai_chat() -> Html {
         })
     };
 
+    let open_chat = {
+        let expanded = expanded.clone();
+        Callback::from(move |_| expanded.set(true))
+    };
+
+    let close_chat = {
+        let expanded = expanded.clone();
+        Callback::from(move |_| expanded.set(false))
+    };
+
     let onclick = {
         let send = send.clone();
         Callback::from(move |e: MouseEvent| {
@@ -94,28 +105,42 @@ pub fn ai_chat() -> Html {
         })
     };
 
-    html! {
-        <div class="ai-chat card mt-3 w-100">
-            <div class="card-header">
-                { "AI рекомендации" }
-            </div>
-            <div class="chat-body card-body">
-                {
-                    for (*messages).iter().map(|(is_user, msg)| {
-                        let class = if *is_user {"chat-message user"} else {"chat-message ai"};
-                        html!{ <div class={class}>{ msg }</div> }
-                    })
-                }
-            </div>
-            <div class="card-footer d-flex">
+    if !*expanded {
+        html! {
+            <div class="ai-chat mt-3 w-100">
                 <input
-                    class="form-control me-2"
-                    value={(*question).clone()}
-                    {oninput}
-                    {onkeydown}
+                    class="form-control"
+                    placeholder="Ask what to read"
+                    onclick={open_chat}
+                    readonly=true
                 />
-                <button class="btn btn-purple" {onclick} disabled={*sending}>{ "Отправить" }</button>
             </div>
-        </div>
+        }
+    } else {
+        html! {
+            <div class="ai-chat card mt-3 w-100">
+                <div class="card-header d-flex justify-content-between align-items-center">
+                    { "AI рекомендации" }
+                    <button type="button" class="btn-close" aria-label="Close" onclick={close_chat}></button>
+                </div>
+                <div class="chat-body card-body">
+                    {
+                        for (*messages).iter().map(|(is_user, msg)| {
+                            let class = if *is_user {"chat-message user"} else {"chat-message ai"};
+                            html!{ <div class={class}>{ msg }</div> }
+                        })
+                    }
+                </div>
+                <div class="card-footer d-flex">
+                    <input
+                        class="form-control me-2"
+                        value={(*question).clone()}
+                        {oninput}
+                        {onkeydown}
+                    />
+                    <button class="btn btn-purple" {onclick} disabled={*sending}>{ "Отправить" }</button>
+                </div>
+            </div>
+        }
     }
 }

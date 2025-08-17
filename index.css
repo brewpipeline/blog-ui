@@ -363,6 +363,17 @@ img {
     color: #fff;
 }
 
+.ai-chat input[readonly] {
+    background-color: #f8f0ff;
+    border: 1px solid #6f42c1;
+    color: #6f42c1;
+    cursor: pointer;
+}
+
+.ai-chat input[readonly]::placeholder {
+    color: #6f42c1;
+}
+
 .ai-chat .chat-body {
     max-height: 200px;
     overflow-y: auto;

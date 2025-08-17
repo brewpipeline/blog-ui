@@ -86,7 +86,6 @@ pub fn body() -> Html {
                         <NavigationMenu />
                     </div>
                     <div class="d-flex flex-column gap-2 align-items-center justify-content-end">
-                        <AiChat />
                         <p class="mb-0 text-center">
                             <a href="https://github.com/tikitko/blog-ui/blob/main/MADEWITHLOVE.md" class="text-decoration-none">
                                 { "Сделано с ❤️" }
@@ -108,6 +107,7 @@ pub fn body() -> Html {
                         "d-xl-block"
                     ) }
                 >
+                    <AiChat />
                     <Switch<Route> render={Route::switch} />
                 </div>
 
