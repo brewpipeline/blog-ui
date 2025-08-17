@@ -445,6 +445,26 @@ img {
     font-size: 1.25rem;
 }
 
+.ai-chat .card-footer {
+    background-color: #f8f0ff;
+    border-top: 1px solid #e0c9ff;
+}
+
+.ai-chat .card-footer .form-control {
+    background-color: #f8f0ff;
+    border: 1px solid #6f42c1;
+    color: #6f42c1;
+}
+
+.ai-chat .card-footer .form-control::placeholder {
+    color: #6f42c1;
+}
+
+.ai-chat .card-footer .form-control:focus {
+    box-shadow: none;
+    border-color: #8e5bff;
+}
+
 .btn-purple {
     background-color: #6f42c1;
     color: #fff;
