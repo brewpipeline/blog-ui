@@ -13,8 +13,8 @@ use blog_generic::entities::{ChatAnswer, ChatQuestion};
 
 #[function_component(AiChat)]
 pub fn ai_chat() -> Html {
-    let messages = use_state(|| Vec::<(bool, String)>::new());
-    let question = use_state(|| (true, String::new()));
+    let messages = use_state(|| vec![(false, "Привет! Что хотите почитать?".to_string())]);
+    let question = use_state(|| Vec::<(bool, String)>::new());
     let sending = use_state(|| false);
     let expanded = use_state(|| false);
 
@@ -22,7 +22,15 @@ pub fn ai_chat() -> Html {
         let question = question.clone();
         Callback::from(move |e: InputEvent| {
             let input: web_sys::HtmlInputElement = e.target_unchecked_into();
-            question.set((true, input.value()));
+            question.set({
+                let mut q = (*question).clone();
+                if q.is_empty() {
+                    q.push((true, input.value()));
+                } else if let Some(last) = q.last_mut() {
+                    last.1 = input.value();
+                }
+                q
+            });
         })
     };
 
@@ -34,7 +42,10 @@ pub fn ai_chat() -> Html {
             if *sending {
                 return;
             }
-            let q = (*question).1.trim().to_string();
+            let q = (*question)
+                .last()
+                .map(|(_, s)| s.trim().to_string())
+                .unwrap_or_default();
             if q.is_empty() {
                 return;
             }
@@ -44,7 +55,11 @@ pub fn ai_chat() -> Html {
                 msgs.push((true, q.clone()));
                 msgs
             });
-            question.set((true, String::new()));
+            question.set({
+                let mut qv = (*question).clone();
+                qv.push((true, String::new()));
+                qv
+            });
             sending.set(true);
 
             #[cfg(feature = "client")]
@@ -120,7 +135,10 @@ pub fn ai_chat() -> Html {
                     <input
                         class="form-control"
                         placeholder="Ask what to read"
-                        value={(*question).1.clone()}
+                        value={(*question)
+                            .last()
+                            .map(|(_, q)| q.clone())
+                            .unwrap_or_default()}
                         readonly=true
                     />
                 </div>
@@ -150,7 +168,10 @@ pub fn ai_chat() -> Html {
                 <div class="card-footer d-flex">
                     <input
                         class="form-control me-2"
-                        value={(*question).1.clone()}
+                        value={(*question)
+                            .last()
+                            .map(|(_, q)| q.clone())
+                            .unwrap_or_default()}
                         {oninput}
                         {onkeydown}
                     />
