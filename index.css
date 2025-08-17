@@ -358,3 +358,40 @@ img {
     padding: 0.5rem;
     width: 100%;
 }
+.ai-chat .card-header {
+    background-color: #6f42c1;
+    color: #fff;
+}
+
+.ai-chat .chat-body {
+    max-height: 200px;
+    overflow-y: auto;
+    background-color: #f8f0ff;
+}
+
+.ai-chat .chat-message {
+    margin-bottom: 4px;
+    padding: 4px 8px;
+    border-radius: 5px;
+}
+
+.ai-chat .chat-message.user {
+    background-color: #e0c9ff;
+    text-align: right;
+}
+
+.ai-chat .chat-message.ai {
+    background-color: #f0e6ff;
+    text-align: left;
+}
+
+.btn-purple {
+    background-color: #6f42c1;
+    color: #fff;
+}
+
+.btn-purple:hover {
+    background-color: #5a359f;
+    color: #fff;
+}
+

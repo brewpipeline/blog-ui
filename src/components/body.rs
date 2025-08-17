@@ -3,6 +3,7 @@ use web_sys::HtmlInputElement;
 use yew::prelude::*;
 use yew_router::prelude::*;
 
+use crate::components::ai_chat::*;
 use crate::components::information_menu::*;
 use crate::components::navigation_menu::*;
 use crate::components::recommended_post::*;
@@ -84,7 +85,8 @@ pub fn body() -> Html {
                         </div>
                         <NavigationMenu />
                     </div>
-                    <div class="d-flex flex-wrap align-items-end justify-content-center">
+                    <div class="d-flex flex-column gap-2 align-items-center justify-content-end">
+                        <AiChat />
                         <p class="mb-0 text-center">
                             <a href="https://github.com/tikitko/blog-ui/blob/main/MADEWITHLOVE.md" class="text-decoration-none">
                                 { "Сделано с ❤️" }
