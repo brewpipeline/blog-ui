@@ -406,7 +406,7 @@ img {
 }
 
 .ai-chat .card-header {
-    background-color: #6f42c1;
+    background: linear-gradient(135deg, #6f42c1, #8e5bff);
     color: #fff;
 }
 
@@ -414,22 +414,35 @@ img {
     max-height: 200px;
     overflow-y: auto;
     background-color: #f8f0ff;
+    padding: 8px;
+    scroll-behavior: smooth;
 }
 
 .ai-chat .chat-message {
-    margin-bottom: 4px;
-    padding: 4px 8px;
-    border-radius: 5px;
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    margin-bottom: 8px;
+    padding: 8px 12px;
+    border-radius: 16px;
+    max-width: 85%;
+    box-shadow: 0 1px 2px rgba(0, 0, 0, 0.1);
 }
 
 .ai-chat .chat-message.user {
-    background-color: #e0c9ff;
-    text-align: right;
+    background: linear-gradient(135deg, #8e5bff, #6f42c1);
+    color: #fff;
+    margin-left: auto;
 }
 
 .ai-chat .chat-message.ai {
-    background-color: #f0e6ff;
-    text-align: left;
+    background: #fff;
+    border: 1px solid #e0c9ff;
+    color: #333;
+}
+
+.ai-chat .chat-message i {
+    font-size: 1.25rem;
 }
 
 .btn-purple {

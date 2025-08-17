@@ -1,6 +1,8 @@
 use yew::prelude::*;
 
 #[cfg(feature = "client")]
+use gloo::storage::{LocalStorage, Storage};
+#[cfg(feature = "client")]
 use gloo_net::http::Request;
 #[cfg(feature = "client")]
 use wasm_bindgen_futures::spawn_local;
@@ -11,9 +13,21 @@ use crate::utils::*;
 #[cfg(feature = "client")]
 use blog_generic::entities::{ChatAnswer, ChatQuestion};
 
+#[cfg(feature = "client")]
+const CHAT_STORAGE_KEY: &str = "ai_chat_history";
+
 #[function_component(AiChat)]
 pub fn ai_chat() -> Html {
-    let messages = use_state(|| Vec::<(bool, String)>::new());
+    let messages = use_state(|| {
+        #[cfg(feature = "client")]
+        {
+            LocalStorage::get::<Vec<(bool, String)>>(CHAT_STORAGE_KEY).unwrap_or_default()
+        }
+        #[cfg(not(feature = "client"))]
+        {
+            Vec::<(bool, String)>::new()
+        }
+    });
     let question = use_state(|| String::new());
     let sending = use_state(|| false);
     let expanded = use_state(|| false);
@@ -105,6 +119,15 @@ pub fn ai_chat() -> Html {
         })
     };
 
+    {
+        let messages = messages.clone();
+        use_effect_with((*messages).clone(), move |msgs| {
+            #[cfg(feature = "client")]
+            let _ = LocalStorage::set(CHAT_STORAGE_KEY, msgs);
+            || ()
+        });
+    }
+
     let container_class = classes!(
         "ai-chat",
         "mb-3",
@@ -132,8 +155,17 @@ pub fn ai_chat() -> Html {
                 <div class="chat-body card-body">
                     {
                         for (*messages).iter().map(|(is_user, msg)| {
+                            let alignment = if *is_user {"justify-content-end"} else {"justify-content-start"};
                             let class = if *is_user {"chat-message user"} else {"chat-message ai"};
-                            html!{ <div class={class}>{ msg }</div> }
+                            let icon = if *is_user {"bi-person-circle"} else {"bi-robot"};
+                            html! {
+                                <div class={classes!("d-flex", alignment)}>
+                                    <div class={class}>
+                                        <i class={classes!("bi", icon)}></i>
+                                        <span>{ msg }</span>
+                                    </div>
+                                </div>
+                            }
                         })
                     }
                 </div>
