@@ -105,20 +105,26 @@ pub fn ai_chat() -> Html {
         })
     };
 
-    if !*expanded {
-        html! {
-            <div class="ai-chat mt-3 w-100">
-                <input
-                    class="form-control"
-                    placeholder="Ask what to read"
-                    onclick={open_chat}
-                    readonly=true
-                />
+    let container_class = classes!(
+        "ai-chat",
+        "mb-3",
+        "w-100",
+        if *expanded { "expanded" } else { "" }
+    );
+
+    html! {
+        <div class={container_class}>
+            <div class="collapsed" onclick={open_chat}>
+                <div class="input-group">
+                    <span class="input-group-text"><i class="bi bi-robot"></i></span>
+                    <input
+                        class="form-control"
+                        placeholder="Ask what to read"
+                        readonly=true
+                    />
+                </div>
             </div>
-        }
-    } else {
-        html! {
-            <div class="ai-chat card mt-3 w-100">
+            <div class="chat card">
                 <div class="card-header d-flex justify-content-between align-items-center">
                     { "AI рекомендации" }
                     <button type="button" class="btn-close" aria-label="Close" onclick={close_chat}></button>
@@ -141,6 +147,6 @@ pub fn ai_chat() -> Html {
                     <button class="btn btn-purple" {onclick} disabled={*sending}>{ "Отправить" }</button>
                 </div>
             </div>
-        }
+        </div>
     }
 }

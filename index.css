@@ -358,20 +358,56 @@ img {
     padding: 0.5rem;
     width: 100%;
 }
-.ai-chat .card-header {
+/* AI chat widget */
+.ai-chat {
+    overflow: hidden;
+}
+
+.ai-chat .collapsed .input-group-text {
     background-color: #6f42c1;
+    border: 1px solid #6f42c1;
     color: #fff;
 }
 
-.ai-chat input[readonly] {
+.ai-chat .collapsed input[readonly] {
     background-color: #f8f0ff;
     border: 1px solid #6f42c1;
     color: #6f42c1;
     cursor: pointer;
 }
 
-.ai-chat input[readonly]::placeholder {
+.ai-chat .collapsed input[readonly]::placeholder {
     color: #6f42c1;
+}
+
+.ai-chat .collapsed {
+    transition: opacity 0.3s ease, height 0.3s ease, margin 0.3s ease, padding 0.3s ease;
+}
+
+.ai-chat.expanded .collapsed {
+    opacity: 0;
+    height: 0;
+    margin: 0;
+    padding: 0;
+    overflow: hidden;
+}
+
+.ai-chat .chat {
+    max-height: 0;
+    opacity: 0;
+    overflow: hidden;
+    transition: max-height 0.4s ease, opacity 0.4s ease;
+    box-shadow: 0 0.5rem 1rem rgba(111, 66, 193, 0.15);
+}
+
+.ai-chat.expanded .chat {
+    max-height: 400px;
+    opacity: 1;
+}
+
+.ai-chat .card-header {
+    background-color: #6f42c1;
+    color: #fff;
 }
 
 .ai-chat .chat-body {
