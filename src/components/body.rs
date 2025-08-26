@@ -3,7 +3,6 @@ use web_sys::HtmlInputElement;
 use yew::prelude::*;
 use yew_router::prelude::*;
 
-use crate::components::ai_chat::*;
 use crate::components::information_menu::*;
 use crate::components::navigation_menu::*;
 use crate::components::recommended_post::*;
@@ -107,7 +106,6 @@ pub fn body() -> Html {
                         "d-xl-block"
                     ) }
                 >
-                    <AiChat />
                     <Switch<Route> render={Route::switch} />
                 </div>
 

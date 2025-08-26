@@ -89,8 +89,14 @@ fn pending_question(messages: &[ChatMessage]) -> String {
 
 const GREETING: &str = "Привет! Что хотите почитать?";
 
+#[derive(Properties, PartialEq)]
+pub struct AiChatProps {
+    #[prop_or(false)]
+    pub standalone: bool,
+}
+
 #[function_component(AiChat)]
-pub fn ai_chat() -> Html {
+pub fn ai_chat(props: &AiChatProps) -> Html {
     #[cfg(feature = "client")]
     const STORAGE_KEY: &str = "ai-chat";
 
@@ -110,7 +116,7 @@ pub fn ai_chat() -> Html {
     });
 
     let sending = use_state(|| false);
-    let expanded = use_state(|| false);
+    let expanded = use_state(|| props.standalone);
 
     #[cfg(feature = "client")]
     {
@@ -226,21 +232,31 @@ pub fn ai_chat() -> Html {
 
     html! {
         <div class={container_class}>
-            <div class="collapsed" onclick={open_chat}>
-                <div class="input-group">
-                    <span class="input-group-text"><i class="bi bi-robot"></i></span>
-                    <input
-                        class="form-control"
-                        placeholder="Ask what to read"
-                        value={latest_user_question(&chat)}
-                        readonly=true
-                    />
-                </div>
-            </div>
+            { if !props.standalone {
+                html! {
+                    <div class="collapsed" onclick={open_chat}>
+                        <div class="input-group">
+                            <span class="input-group-text"><i class="bi bi-robot"></i></span>
+                            <input
+                                class="form-control"
+                                placeholder="Ask what to read"
+                                value={latest_user_question(&chat)}
+                                readonly=true
+                            />
+                        </div>
+                    </div>
+                }
+            } else {
+                html! {}
+            }}
             <div class="chat card">
                 <div class="card-header d-flex justify-content-between align-items-center">
                     { "AI рекомендации" }
-                    <button type="button" class="btn-close" aria-label="Close" onclick={close_chat}></button>
+                    { if !props.standalone {
+                        html! { <button type="button" class="btn-close" aria-label="Close" onclick={close_chat}></button> }
+                    } else {
+                        html! {}
+                    }}
                 </div>
                 <div class="chat-body card-body">
                     { for (*chat).iter().filter(|m| !m.pending).map(render_message) }

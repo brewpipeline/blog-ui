@@ -1,3 +1,4 @@
+pub mod ai_chat;
 pub mod author;
 pub mod authors;
 pub mod edit_post;
@@ -11,6 +12,7 @@ pub mod settings;
 pub mod tag;
 pub mod unpublished_posts;
 
+pub use ai_chat::*;
 pub use author::*;
 pub use authors::*;
 pub use edit_post::*;

@@ -36,6 +36,8 @@ pub enum Route {
     AuthorsSearchRoot,
     #[at("/authors/search/:query")]
     AuthorsSearch { query: String },
+    #[at("/chat")]
+    Chat,
     #[cfg(feature = "yandex")]
     #[at("/yandexToken")]
     YandexToken,
@@ -65,6 +67,7 @@ impl Route {
             | Route::Tag { slug: _, id: _ }
             | Route::Author { slug: _ }
             | Route::Authors
+            | Route::Chat
             | Route::NotFound => false,
             #[cfg(feature = "yandex")]
             Route::YandexToken => false,
@@ -95,6 +98,7 @@ impl Route {
             Route::AuthorsSearch { query } => {
                 html! { <Search mode={ SearchMode::Authors { query: Some(query) } } /> }
             }
+            Route::Chat => html! { <AiChatPage /> },
             #[cfg(feature = "yandex")]
             Route::YandexToken => unreachable!(),
             Route::NotFound => html! { <PageNotFound /> },
