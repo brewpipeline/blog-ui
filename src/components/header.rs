@@ -27,16 +27,18 @@ pub fn header() -> Html {
 
                         <div class="col ps-lg-3 pe-lg-2 px-xl-3 d-none d-lg-block">
                             <DelayedComponent<()> component={ |_| html! {
-                                <SearchField id="headerSearchField" />
+                                <div class="input-group">
+                                    <Link<Route> to={Route::Chat} classes="btn btn-purple">
+                                        <i class="bi bi-robot" title="AI чат"></i>
+                                    </Link<Route>>
+                                    <SearchField id="headerSearchField" />
+                                </div>
                             } } deps={ () } />
                         </div>
 
                         <div class="col col-lg-auto col-xl-3 gap-2 d-flex justify-content-end align-items-center">
                             <DelayedComponent<()> component={ |_| html! {
                                 <>
-                                    <Link<Route> to={Route::Chat} classes="btn btn-light">
-                                        <i class="bi bi-robot" title="AI чат"></i>
-                                    </Link<Route>>
                                     <SearchButton />
                                     <SubscribeButton />
                                     <AuthUserBlock />
