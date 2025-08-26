@@ -11,38 +11,46 @@ use crate::utils::*;
 #[cfg(feature = "client")]
 use blog_generic::entities::{ChatAnswer, ChatQuestion};
 
+#[derive(Clone, PartialEq)]
+struct ChatStorage {
+    messages: Vec<(bool, String)>,
+    question: Vec<(bool, String)>,
+}
+
 #[function_component(AiChat)]
 pub fn ai_chat() -> Html {
-    let messages = use_state(|| vec![(false, "Привет! Что хотите почитать?".to_string())]);
-    let question = use_state(|| Vec::<(bool, String)>::new());
+    let chat = use_state(|| ChatStorage {
+        messages: vec![(false, "Привет! Что хотите почитать?".to_string())],
+        question: Vec::<(bool, String)>::new(),
+    });
     let sending = use_state(|| false);
     let expanded = use_state(|| false);
 
     let oninput = {
-        let question = question.clone();
+        let chat = chat.clone();
         Callback::from(move |e: InputEvent| {
             let input: web_sys::HtmlInputElement = e.target_unchecked_into();
-            question.set({
-                let mut q = (*question).clone();
-                if q.is_empty() {
-                    q.push((true, input.value()));
-                } else if let Some(last) = q.last_mut() {
+            chat.set({
+                let mut state = (*chat).clone();
+                if state.question.is_empty() {
+                    state.question.push((true, input.value()));
+                } else if let Some(last) = state.question.last_mut() {
                     last.1 = input.value();
                 }
-                q
+                state
             });
         })
     };
 
     let send = {
-        let messages = messages.clone();
-        let question = question.clone();
+        let chat = chat.clone();
         let sending = sending.clone();
         Callback::from(move |_| {
             if *sending {
                 return;
             }
-            let q = (*question)
+            let q = (*chat)
+                .question
                 .last()
                 .map(|(_, s)| s.trim().to_string())
                 .unwrap_or_default();
@@ -50,21 +58,17 @@ pub fn ai_chat() -> Html {
                 return;
             }
 
-            messages.set({
-                let mut msgs = (*messages).clone();
-                msgs.push((true, q.clone()));
-                msgs
-            });
-            question.set({
-                let mut qv = (*question).clone();
-                qv.push((true, String::new()));
-                qv
+            chat.set({
+                let mut state = (*chat).clone();
+                state.messages.push((true, q.clone()));
+                state.question.push((true, String::new()));
+                state
             });
             sending.set(true);
 
             #[cfg(feature = "client")]
             {
-                let messages = messages.clone();
+                let chat = chat.clone();
                 let sending = sending.clone();
                 spawn_local(async move {
                     let url = format!("{}/chat", crate::API_URL);
@@ -78,10 +82,10 @@ pub fn ai_chat() -> Html {
                     if let Ok(resp) = resp {
                         if let Ok(api) = resp.json::<content::API<ChatAnswer>>().await {
                             if let Ok(answer) = api.result() {
-                                messages.set({
-                                    let mut msgs = (*messages).clone();
-                                    msgs.push((false, answer.answer));
-                                    msgs
+                                chat.set({
+                                    let mut state = (*chat).clone();
+                                    state.messages.push((false, answer.answer));
+                                    state
                                 });
                             }
                         }
@@ -135,7 +139,8 @@ pub fn ai_chat() -> Html {
                     <input
                         class="form-control"
                         placeholder="Ask what to read"
-                        value={(*question)
+                        value={(*chat)
+                            .question
                             .last()
                             .map(|(_, q)| q.clone())
                             .unwrap_or_default()}
@@ -150,7 +155,7 @@ pub fn ai_chat() -> Html {
                 </div>
                 <div class="chat-body card-body">
                     {
-                        for (*messages).iter().map(|(is_user, msg)| {
+                        for (*chat).messages.iter().map(|(is_user, msg)| {
                             let alignment = if *is_user {"justify-content-end"} else {"justify-content-start"};
                             let class = if *is_user {"chat-message user"} else {"chat-message ai"};
                             let icon = if *is_user {"bi-person-circle"} else {"bi-robot"};
@@ -168,7 +173,8 @@ pub fn ai_chat() -> Html {
                 <div class="card-footer d-flex">
                     <input
                         class="form-control me-2"
-                        value={(*question)
+                        value={(*chat)
+                            .question
                             .last()
                             .map(|(_, q)| q.clone())
                             .unwrap_or_default()}
