@@ -84,7 +84,7 @@ pub fn body() -> Html {
                         </div>
                         <NavigationMenu />
                     </div>
-                    <div class="d-flex flex-column gap-2 align-items-center justify-content-end">
+                    <div class="d-flex flex-wrap align-items-end justify-content-center">
                         <p class="mb-0 text-center">
                             <a href="https://github.com/tikitko/blog-ui/blob/main/MADEWITHLOVE.md" class="text-decoration-none">
                                 { "Сделано с ❤️" }

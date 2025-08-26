@@ -67,16 +67,15 @@ pub fn ai_chat() -> Html {
                 return;
             }
 
-            messages.set({
-                let mut msgs = (*messages).clone();
-                msgs.push(ChatMessage::user(&q));
-                msgs
-            });
+            let mut msgs = (*messages).clone();
+            msgs.push(ChatMessage::user(q.clone()));
+            messages.set(msgs.clone());
             question.set(String::new());
             sending.set(true);
 
             #[cfg(feature = "client")]
             {
+                let mut msgs = msgs;
                 let messages = messages.clone();
                 let sending = sending.clone();
                 spawn_local(async move {
@@ -92,11 +91,8 @@ pub fn ai_chat() -> Html {
                     if let Ok(resp) = resp {
                         if let Ok(api) = resp.json::<content::API<ChatAnswer>>().await {
                             if let Ok(answer) = api.result() {
-                                messages.set({
-                                    let mut msgs = (*messages).clone();
-                                    msgs.push(ChatMessage::ai(answer.answer));
-                                    msgs
-                                });
+                                msgs.push(ChatMessage::ai(answer.answer));
+                                messages.set(msgs);
                             }
                         }
                     }
@@ -126,7 +122,7 @@ pub fn ai_chat() -> Html {
 
     html! {
         <>
-            <SimpleTitleCard>{ "AI рекомендации" }</SimpleTitleCard>
+            <SimpleTitleCard>{ "Рекомендации AI" }</SimpleTitleCard>
             { for (*messages).iter().map(|m| html! {
                 <div class="card mb-3">
                     <div class="card-header d-flex align-items-center">
