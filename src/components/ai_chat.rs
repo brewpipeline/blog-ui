@@ -7,11 +7,7 @@ use crate::utils::external::ExternalResultContainer;
 #[cfg(feature = "client")]
 use blog_generic::entities::{ChatAnswer, ChatQuestion};
 #[cfg(feature = "client")]
-use gloo::storage::{LocalStorage, Storage};
-#[cfg(feature = "client")]
 use gloo_net::http::Request;
-#[cfg(feature = "client")]
-use serde::{Deserialize, Serialize};
 #[cfg(feature = "client")]
 use wasm_bindgen_futures::spawn_local;
 
@@ -20,7 +16,6 @@ use web_sys::HtmlTextAreaElement;
 use crate::components::simple_title_card::SimpleTitleCard;
 
 #[derive(Clone, PartialEq)]
-#[cfg_attr(feature = "client", derive(Serialize, Deserialize))]
 struct ChatMessage {
     from_user: bool,
     text: String,
@@ -46,31 +41,10 @@ const GREETING: &str = "Привет! Что хотите почитать?";
 
 #[function_component(AiChat)]
 pub fn ai_chat() -> Html {
-    #[cfg(feature = "client")]
-    const STORAGE_KEY: &str = "ai-chat";
-
-    let messages = use_state(|| {
-        #[cfg(feature = "client")]
-        {
-            LocalStorage::get(STORAGE_KEY).unwrap_or_else(|_| vec![ChatMessage::ai(GREETING)])
-        }
-        #[cfg(not(feature = "client"))]
-        {
-            vec![ChatMessage::ai(GREETING)]
-        }
-    });
+    let messages = use_state(|| vec![ChatMessage::ai(GREETING)]);
 
     let question = use_state(String::new);
     let sending = use_state(|| false);
-
-    #[cfg(feature = "client")]
-    {
-        let msgs = (*messages).clone();
-        use_effect_with(msgs, move |msgs: &Vec<ChatMessage>| {
-            LocalStorage::set(STORAGE_KEY, msgs).ok();
-            || ()
-        });
-    }
 
     let oninput = {
         let question = question.clone();
@@ -155,7 +129,10 @@ pub fn ai_chat() -> Html {
             <SimpleTitleCard>{ "AI рекомендации" }</SimpleTitleCard>
             { for (*messages).iter().map(|m| html! {
                 <div class="card mb-3">
-                    <div class="card-header">{ if m.from_user { "Вы" } else { "AI" } }</div>
+                    <div class="card-header d-flex align-items-center">
+                        <i class={classes!("bi", if m.from_user { "bi-person-fill" } else { "bi-robot" }, "me-2")}></i>
+                        { if m.from_user { "Вы" } else { "AI" } }
+                    </div>
                     <div class="card-body">
                         <p class="card-text">{ &m.text }</p>
                     </div>
