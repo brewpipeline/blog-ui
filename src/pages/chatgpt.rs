@@ -1,3 +1,4 @@
+#[cfg(feature = "client")]
 use blog_generic::entities::*;
 use yew::prelude::*;
 
@@ -9,7 +10,9 @@ use wasm_bindgen_futures::spawn_local;
 use web_sys::HtmlTextAreaElement;
 
 use crate::components::meta::*;
+#[cfg(feature = "client")]
 use crate::content::*;
+#[cfg(feature = "client")]
 use crate::utils::*;
 
 #[derive(Clone, PartialEq)]
@@ -100,8 +103,6 @@ pub fn chatgpt() -> Html {
             });
         })
     };
-    #[cfg(not(feature = "client"))]
-    let send = Callback::from(|_| {});
 
     #[cfg(feature = "client")]
     let onclick = {
