@@ -15,13 +15,14 @@ use serde::{Deserialize, Serialize};
 #[cfg(feature = "client")]
 use wasm_bindgen_futures::spawn_local;
 
-use web_sys::HtmlInputElement;
+use web_sys::HtmlTextAreaElement;
+
+use crate::components::simple_title_card::SimpleTitleCard;
 
 #[derive(Clone, PartialEq)]
 #[cfg_attr(feature = "client", derive(Serialize, Deserialize))]
 struct ChatMessage {
     from_user: bool,
-    pending: bool,
     text: String,
 }
 
@@ -29,85 +30,29 @@ impl ChatMessage {
     fn ai(text: impl Into<String>) -> Self {
         Self {
             from_user: false,
-            pending: false,
             text: text.into(),
         }
     }
 
-    fn user_pending(text: impl Into<String>) -> Self {
+    fn user(text: impl Into<String>) -> Self {
         Self {
             from_user: true,
-            pending: true,
             text: text.into(),
         }
     }
-}
-
-fn render_message(msg: &ChatMessage) -> Html {
-    let alignment = if msg.from_user {
-        "justify-content-end"
-    } else {
-        "justify-content-start"
-    };
-    let class = if msg.from_user {
-        "chat-message user"
-    } else {
-        "chat-message ai"
-    };
-    let icon = if msg.from_user {
-        "bi-person-circle"
-    } else {
-        "bi-robot"
-    };
-
-    html! {
-        <div class={classes!("d-flex", alignment)}>
-            <div class={class}>
-                <i class={classes!("bi", icon)}></i>
-                <span>{ &msg.text }</span>
-            </div>
-        </div>
-    }
-}
-
-fn latest_user_question(messages: &[ChatMessage]) -> String {
-    messages
-        .iter()
-        .rev()
-        .find(|m| m.from_user)
-        .map(|m| m.text.clone())
-        .unwrap_or_default()
-}
-
-fn pending_question(messages: &[ChatMessage]) -> String {
-    messages
-        .last()
-        .filter(|m| m.from_user && m.pending)
-        .map(|m| m.text.clone())
-        .unwrap_or_default()
 }
 
 const GREETING: &str = "Привет! Что хотите почитать?";
 
-#[derive(Properties, PartialEq)]
-pub struct AiChatProps {
-    #[prop_or(false)]
-    pub standalone: bool,
-}
-
 #[function_component(AiChat)]
-pub fn ai_chat(props: &AiChatProps) -> Html {
+pub fn ai_chat() -> Html {
     #[cfg(feature = "client")]
     const STORAGE_KEY: &str = "ai-chat";
 
-    let chat = use_state(|| {
+    let messages = use_state(|| {
         #[cfg(feature = "client")]
         {
-            let mut history: Vec<ChatMessage> = LocalStorage::get(STORAGE_KEY).unwrap_or_default();
-            if history.is_empty() {
-                history.push(ChatMessage::ai(GREETING));
-            }
-            history
+            LocalStorage::get(STORAGE_KEY).unwrap_or_else(|_| vec![ChatMessage::ai(GREETING)])
         }
         #[cfg(not(feature = "client"))]
         {
@@ -115,62 +60,54 @@ pub fn ai_chat(props: &AiChatProps) -> Html {
         }
     });
 
+    let question = use_state(String::new);
     let sending = use_state(|| false);
-    let expanded = use_state(|| props.standalone);
 
     #[cfg(feature = "client")]
     {
-        let chat_value = (*chat).clone();
-        use_effect_with(chat_value, move |msgs: &Vec<ChatMessage>| {
+        let msgs = (*messages).clone();
+        use_effect_with(msgs, move |msgs: &Vec<ChatMessage>| {
             LocalStorage::set(STORAGE_KEY, msgs).ok();
             || ()
         });
     }
 
     let oninput = {
-        let chat = chat.clone();
+        let question = question.clone();
         Callback::from(move |e: InputEvent| {
-            let input: HtmlInputElement = e.target_unchecked_into();
-            let value = input.value();
-            chat.set({
-                let mut msgs = (*chat).clone();
-                match msgs.last_mut() {
-                    Some(msg) if msg.from_user && msg.pending => msg.text = value,
-                    _ => msgs.push(ChatMessage::user_pending(value)),
-                }
-                msgs
-            });
+            let input: HtmlTextAreaElement = e.target_unchecked_into();
+            question.set(input.value());
         })
     };
 
     let send = {
-        let chat = chat.clone();
+        let messages = messages.clone();
+        let question = question.clone();
         let sending = sending.clone();
         Callback::from(move |_| {
             if *sending {
                 return;
             }
-            let question = pending_question(&chat).trim().to_string();
-            if question.is_empty() {
+            let q = (*question).trim().to_string();
+            if q.is_empty() {
                 return;
             }
 
-            chat.set({
-                let mut msgs = (*chat).clone();
-                if let Some(last) = msgs.last_mut() {
-                    last.pending = false;
-                }
+            messages.set({
+                let mut msgs = (*messages).clone();
+                msgs.push(ChatMessage::user(&q));
                 msgs
             });
+            question.set(String::new());
             sending.set(true);
 
             #[cfg(feature = "client")]
             {
-                let chat = chat.clone();
+                let messages = messages.clone();
                 let sending = sending.clone();
                 spawn_local(async move {
                     let url = format!("{}/chat", crate::API_URL);
-                    let body = serde_json::to_string(&ChatQuestion { question }).unwrap();
+                    let body = serde_json::to_string(&ChatQuestion { question: q }).unwrap();
                     let resp = Request::post(&url)
                         .header("Content-Type", "application/json")
                         .body(body)
@@ -181,8 +118,8 @@ pub fn ai_chat(props: &AiChatProps) -> Html {
                     if let Ok(resp) = resp {
                         if let Ok(api) = resp.json::<content::API<ChatAnswer>>().await {
                             if let Ok(answer) = api.result() {
-                                chat.set({
-                                    let mut msgs = (*chat).clone();
+                                messages.set({
+                                    let mut msgs = (*messages).clone();
                                     msgs.push(ChatMessage::ai(answer.answer));
                                     msgs
                                 });
@@ -193,16 +130,6 @@ pub fn ai_chat(props: &AiChatProps) -> Html {
                 });
             }
         })
-    };
-
-    let open_chat = {
-        let expanded = expanded.clone();
-        Callback::from(move |_| expanded.set(true))
-    };
-
-    let close_chat = {
-        let expanded = expanded.clone();
-        Callback::from(move |_| expanded.set(false))
     };
 
     let onclick = {
@@ -216,61 +143,37 @@ pub fn ai_chat(props: &AiChatProps) -> Html {
     let onkeydown = {
         let send = send.clone();
         Callback::from(move |e: KeyboardEvent| {
-            if e.key() == "Enter" {
+            if e.key() == "Enter" && !e.shift_key() {
                 e.prevent_default();
                 send.emit(());
             }
         })
     };
 
-    let container_class = classes!(
-        "ai-chat",
-        "mb-3",
-        "w-100",
-        if *expanded { "expanded" } else { "" }
-    );
-
     html! {
-        <div class={container_class}>
-            { if !props.standalone {
-                html! {
-                    <div class="collapsed" onclick={open_chat}>
-                        <div class="input-group">
-                            <span class="input-group-text"><i class="bi bi-robot"></i></span>
-                            <input
-                                class="form-control"
-                                placeholder="Ask what to read"
-                                value={latest_user_question(&chat)}
-                                readonly=true
-                            />
-                        </div>
+        <>
+            <SimpleTitleCard>{ "AI рекомендации" }</SimpleTitleCard>
+            { for (*messages).iter().map(|m| html! {
+                <div class="card mb-3">
+                    <div class="card-header">{ if m.from_user { "Вы" } else { "AI" } }</div>
+                    <div class="card-body">
+                        <p class="card-text">{ &m.text }</p>
                     </div>
-                }
-            } else {
-                html! {}
-            }}
-            <div class="chat card">
-                <div class="card-header d-flex justify-content-between align-items-center">
-                    { "AI рекомендации" }
-                    { if !props.standalone {
-                        html! { <button type="button" class="btn-close" aria-label="Close" onclick={close_chat}></button> }
-                    } else {
-                        html! {}
-                    }}
                 </div>
-                <div class="chat-body card-body">
-                    { for (*chat).iter().filter(|m| !m.pending).map(render_message) }
-                </div>
-                <div class="card-footer d-flex">
-                    <input
-                        class="form-control me-2"
-                        value={pending_question(&chat)}
-                        {oninput}
-                        {onkeydown}
-                    />
-                    <button class="btn btn-purple" {onclick} disabled={*sending}>{ "Отправить" }</button>
-                </div>
+            }) }
+            <div class="mb-3">
+                <textarea
+                    class="form-control"
+                    rows="3"
+                    placeholder="Спросите, что почитать..."
+                    value={(*question).clone()}
+                    {oninput}
+                    {onkeydown}
+                ></textarea>
             </div>
-        </div>
+            <div class="mb-3 d-grid gap-2">
+                <button class="btn btn-light" {onclick} disabled={*sending}>{ "Отправить" }</button>
+            </div>
+        </>
     }
 }
