@@ -1,19 +1,16 @@
+use blog_generic::entities::*;
 use yew::prelude::*;
 
-#[cfg(feature = "client")]
-use crate::content;
-#[cfg(feature = "client")]
-use crate::utils::external::ExternalResultContainer;
-#[cfg(feature = "client")]
-use blog_generic::entities::{ChatAnswer, ChatQuestion};
 #[cfg(feature = "client")]
 use gloo_net::http::Request;
 #[cfg(feature = "client")]
 use wasm_bindgen_futures::spawn_local;
-
+#[cfg(feature = "client")]
 use web_sys::HtmlTextAreaElement;
 
 use crate::components::meta::*;
+use crate::content::*;
+use crate::utils::*;
 
 #[derive(Clone, PartialEq)]
 struct ChatMessage {
@@ -48,6 +45,7 @@ pub fn chatgpt() -> Html {
     let question = use_state(String::new);
     let sending = use_state(|| false);
 
+    #[cfg(feature = "client")]
     let oninput = {
         let question = question.clone();
         Callback::from(move |e: InputEvent| {
@@ -55,7 +53,10 @@ pub fn chatgpt() -> Html {
             question.set(input.value());
         })
     };
+    #[cfg(not(feature = "client"))]
+    let oninput = Callback::from(|_| {});
 
+    #[cfg(feature = "client")]
     let send = {
         let messages = messages.clone();
         let question = question.clone();
@@ -75,35 +76,34 @@ pub fn chatgpt() -> Html {
             question.set(String::new());
             sending.set(true);
 
-            #[cfg(feature = "client")]
-            {
-                let mut msgs = msgs;
-                let messages = messages.clone();
-                let sending = sending.clone();
-                spawn_local(async move {
-                    let url = format!("{}/chat", crate::API_URL);
-                    let body = serde_json::to_string(&ChatQuestion { question: q }).unwrap();
-                    let resp = Request::post(&url)
-                        .header("Content-Type", "application/json")
-                        .body(body)
-                        .unwrap()
-                        .send()
-                        .await;
+            let messages = messages.clone();
+            let sending = sending.clone();
+            spawn_local(async move {
+                let url = format!("{}/chat", crate::API_URL);
+                let body = serde_json::to_string(&ChatQuestion { question: q }).unwrap();
+                let resp = Request::post(&url)
+                    .header("Content-Type", "application/json")
+                    .body(body)
+                    .unwrap()
+                    .send()
+                    .await;
 
-                    if let Ok(resp) = resp {
-                        if let Ok(api) = resp.json::<content::API<ChatAnswer>>().await {
-                            if let Ok(answer) = api.result() {
-                                msgs.push(ChatMessage::ai(answer.answer));
-                                messages.set(msgs);
-                            }
+                if let Ok(resp) = resp {
+                    if let Ok(api) = resp.json::<API<ChatAnswer>>().await {
+                        if let Ok(answer) = api.result() {
+                            msgs.push(ChatMessage::ai(answer.answer));
+                            messages.set(msgs);
                         }
                     }
-                    sending.set(false);
-                });
-            }
+                }
+                sending.set(false);
+            });
         })
     };
+    #[cfg(not(feature = "client"))]
+    let send = Callback::from(|_| {});
 
+    #[cfg(feature = "client")]
     let onclick = {
         let send = send.clone();
         Callback::from(move |e: MouseEvent| {
@@ -111,7 +111,10 @@ pub fn chatgpt() -> Html {
             send.emit(());
         })
     };
+    #[cfg(not(feature = "client"))]
+    let onclick = Callback::from(|_| {});
 
+    #[cfg(feature = "client")]
     let onkeydown = {
         let send = send.clone();
         Callback::from(move |e: KeyboardEvent| {
@@ -121,6 +124,8 @@ pub fn chatgpt() -> Html {
             }
         })
     };
+    #[cfg(not(feature = "client"))]
+    let onkeydown = Callback::from(|_| {});
 
     html! {
         <>
