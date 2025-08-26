@@ -1,6 +1,6 @@
-pub mod ai_chat;
 pub mod author;
 pub mod authors;
+pub mod chatgpt;
 pub mod edit_post;
 pub mod hidden_posts;
 pub mod my_unpublished_posts;
@@ -12,9 +12,9 @@ pub mod settings;
 pub mod tag;
 pub mod unpublished_posts;
 
-pub use ai_chat::*;
 pub use author::*;
 pub use authors::*;
+pub use chatgpt::*;
 pub use edit_post::*;
 pub use hidden_posts::*;
 pub use my_unpublished_posts::*;

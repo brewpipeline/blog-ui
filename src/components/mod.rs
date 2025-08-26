@@ -1,4 +1,3 @@
-pub mod ai_chat;
 pub mod auth_user_block;
 pub mod author_card;
 pub mod author_image;

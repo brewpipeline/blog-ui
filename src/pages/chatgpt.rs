@@ -13,7 +13,7 @@ use wasm_bindgen_futures::spawn_local;
 
 use web_sys::HtmlTextAreaElement;
 
-use crate::components::simple_title_card::SimpleTitleCard;
+use crate::components::meta::*;
 
 #[derive(Clone, PartialEq)]
 struct ChatMessage {
@@ -37,11 +37,13 @@ impl ChatMessage {
     }
 }
 
-const GREETING: &str = "Привет! Что хотите почитать?";
-
-#[function_component(AiChat)]
-pub fn ai_chat() -> Html {
-    let messages = use_state(|| vec![ChatMessage::ai(GREETING)]);
+#[function_component(ChatGPT)]
+pub fn chatgpt() -> Html {
+    let messages = use_state(|| {
+        vec![ChatMessage::ai(
+            "Привет! Я — ChatGPT, адаптированный под этот блог. О чём бы ты хотел почитать?",
+        )]
+    });
 
     let question = use_state(String::new);
     let sending = use_state(|| false);
@@ -122,12 +124,12 @@ pub fn ai_chat() -> Html {
 
     html! {
         <>
-            <SimpleTitleCard>{ "Рекомендации AI" }</SimpleTitleCard>
+            <Meta title="ChatGPT" noindex=true />
             { for (*messages).iter().map(|m| html! {
                 <div class="card mb-3">
                     <div class="card-header d-flex align-items-center">
-                        <i class={classes!("bi", if m.from_user { "bi-person-fill" } else { "bi-robot" }, "me-2")}></i>
-                        { if m.from_user { "Вы" } else { "AI" } }
+                        <i class={classes!("bi", if m.from_user { "bi-person-fill" } else { "bi-openai" }, "me-2")}></i>
+                        { if m.from_user { "Вы" } else { "ChatGPT" } }
                     </div>
                     <div class="card-body">
                         <p class="card-text">{ &m.text }</p>
@@ -138,7 +140,7 @@ pub fn ai_chat() -> Html {
                 <textarea
                     class="form-control"
                     rows="3"
-                    placeholder="Спросите, что почитать..."
+                    placeholder="Спросите что-нибудь…"
                     value={(*question).clone()}
                     {oninput}
                     {onkeydown}
