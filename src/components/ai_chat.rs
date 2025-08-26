@@ -11,18 +11,10 @@ use crate::utils::*;
 #[cfg(feature = "client")]
 use blog_generic::entities::{ChatAnswer, ChatQuestion};
 
-#[derive(Clone, PartialEq)]
-struct ChatStorage {
-    messages: Vec<(bool, String)>,
-    question: Vec<(bool, String)>,
-}
-
 #[function_component(AiChat)]
 pub fn ai_chat() -> Html {
-    let chat = use_state(|| ChatStorage {
-        messages: vec![(false, "Привет! Что хотите почитать?".to_string())],
-        question: Vec::<(bool, String)>::new(),
-    });
+    // (is_user, is_pending, text)
+    let chat = use_state(|| vec![(false, false, "Привет! Что хотите почитать?".to_string())]);
     let sending = use_state(|| false);
     let expanded = use_state(|| false);
 
@@ -32,10 +24,14 @@ pub fn ai_chat() -> Html {
             let input: web_sys::HtmlInputElement = e.target_unchecked_into();
             chat.set({
                 let mut state = (*chat).clone();
-                if state.question.is_empty() {
-                    state.question.push((true, input.value()));
-                } else if let Some(last) = state.question.last_mut() {
-                    last.1 = input.value();
+                if let Some((is_user, is_pending, text)) = state.last_mut() {
+                    if *is_user && *is_pending {
+                        *text = input.value();
+                    } else {
+                        state.push((true, true, input.value()));
+                    }
+                } else {
+                    state.push((true, true, input.value()));
                 }
                 state
             });
@@ -50,9 +46,9 @@ pub fn ai_chat() -> Html {
                 return;
             }
             let q = (*chat)
-                .question
                 .last()
-                .map(|(_, s)| s.trim().to_string())
+                .filter(|(is_user, is_pending, _)| *is_user && *is_pending)
+                .map(|(_, _, s)| s.trim().to_string())
                 .unwrap_or_default();
             if q.is_empty() {
                 return;
@@ -60,8 +56,9 @@ pub fn ai_chat() -> Html {
 
             chat.set({
                 let mut state = (*chat).clone();
-                state.messages.push((true, q.clone()));
-                state.question.push((true, String::new()));
+                if let Some((_, pending, _)) = state.last_mut() {
+                    *pending = false;
+                }
                 state
             });
             sending.set(true);
@@ -84,7 +81,7 @@ pub fn ai_chat() -> Html {
                             if let Ok(answer) = api.result() {
                                 chat.set({
                                     let mut state = (*chat).clone();
-                                    state.messages.push((false, answer.answer));
+                                    state.push((false, false, answer.answer));
                                     state
                                 });
                             }
@@ -140,9 +137,9 @@ pub fn ai_chat() -> Html {
                         class="form-control"
                         placeholder="Ask what to read"
                         value={(*chat)
-                            .question
                             .last()
-                            .map(|(_, q)| q.clone())
+                            .filter(|(is_user, is_pending, _)| *is_user && *is_pending)
+                            .map(|(_, _, q)| q.clone())
                             .unwrap_or_default()}
                         readonly=true
                     />
@@ -155,28 +152,31 @@ pub fn ai_chat() -> Html {
                 </div>
                 <div class="chat-body card-body">
                     {
-                        for (*chat).messages.iter().map(|(is_user, msg)| {
-                            let alignment = if *is_user {"justify-content-end"} else {"justify-content-start"};
-                            let class = if *is_user {"chat-message user"} else {"chat-message ai"};
-                            let icon = if *is_user {"bi-person-circle"} else {"bi-robot"};
-                            html! {
-                                <div class={classes!("d-flex", alignment)}>
-                                    <div class={class}>
-                                        <i class={classes!("bi", icon)}></i>
-                                        <span>{ msg }</span>
+                        for (*chat)
+                            .iter()
+                            .filter(|(_, pending, _)| !pending)
+                            .map(|(is_user, _, msg)| {
+                                let alignment = if *is_user {"justify-content-end"} else {"justify-content-start"};
+                                let class = if *is_user {"chat-message user"} else {"chat-message ai"};
+                                let icon = if *is_user {"bi-person-circle"} else {"bi-robot"};
+                                html! {
+                                    <div class={classes!("d-flex", alignment)}>
+                                        <div class={class}>
+                                            <i class={classes!("bi", icon)}></i>
+                                            <span>{ msg }</span>
+                                        </div>
                                     </div>
-                                </div>
-                            }
-                        })
+                                }
+                            })
                     }
                 </div>
                 <div class="card-footer d-flex">
                     <input
                         class="form-control me-2"
                         value={(*chat)
-                            .question
                             .last()
-                            .map(|(_, q)| q.clone())
+                            .filter(|(is_user, is_pending, _)| *is_user && *is_pending)
+                            .map(|(_, _, q)| q.clone())
                             .unwrap_or_default()}
                         {oninput}
                         {onkeydown}
