@@ -6,6 +6,8 @@ use gloo_net::http::Request;
 use wasm_bindgen_futures::spawn_local;
 
 #[cfg(feature = "client")]
+use gloo::storage::{LocalStorage, Storage};
+#[cfg(feature = "client")]
 use crate::content;
 use crate::utils::*;
 #[cfg(feature = "client")]
@@ -13,10 +15,39 @@ use blog_generic::entities::{ChatAnswer, ChatQuestion};
 
 #[function_component(AiChat)]
 pub fn ai_chat() -> Html {
+    #[cfg(feature = "client")]
+    const STORAGE_KEY: &str = "ai-chat";
+
     // (is_user, is_pending, text)
-    let chat = use_state(|| vec![(false, false, "Привет! Что хотите почитать?".to_string())]);
+    let chat = use_state(|| {
+        #[cfg(feature = "client")]
+        {
+            let mut history: Vec<(bool, bool, String)> =
+                LocalStorage::get(STORAGE_KEY).unwrap_or_default();
+            if history.is_empty() {
+                history.push((false, false, "Привет! Что хотите почитать?".to_string()));
+            }
+            history
+        }
+        #[cfg(not(feature = "client"))]
+        {
+            vec![(false, false, "Привет! Что хотите почитать?".to_string())]
+        }
+    });
     let sending = use_state(|| false);
     let expanded = use_state(|| false);
+
+    #[cfg(feature = "client")]
+    {
+        let chat_value = (*chat).clone();
+        use_effect_with(
+            chat_value,
+            move |chat_vec: &Vec<(bool, bool, String)>| {
+                LocalStorage::set(STORAGE_KEY, chat_vec).ok();
+                || ()
+            },
+        );
+    }
 
     let oninput = {
         let chat = chat.clone();
