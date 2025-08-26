@@ -6,12 +6,12 @@ use gloo_net::http::Request;
 use wasm_bindgen_futures::spawn_local;
 
 #[cfg(feature = "client")]
-use gloo::storage::{LocalStorage, Storage};
-#[cfg(feature = "client")]
 use crate::content;
 use crate::utils::*;
 #[cfg(feature = "client")]
 use blog_generic::entities::{ChatAnswer, ChatQuestion};
+#[cfg(feature = "client")]
+use gloo::storage::{LocalStorage, Storage};
 
 #[function_component(AiChat)]
 pub fn ai_chat() -> Html {
@@ -40,13 +40,10 @@ pub fn ai_chat() -> Html {
     #[cfg(feature = "client")]
     {
         let chat_value = (*chat).clone();
-        use_effect_with(
-            chat_value,
-            move |chat_vec: &Vec<(bool, bool, String)>| {
-                LocalStorage::set(STORAGE_KEY, chat_vec).ok();
-                || ()
-            },
-        );
+        use_effect_with(chat_value, move |chat_vec: &Vec<(bool, bool, String)>| {
+            LocalStorage::set(STORAGE_KEY, chat_vec).ok();
+            || ()
+        });
     }
 
     let oninput = {
@@ -112,6 +109,11 @@ pub fn ai_chat() -> Html {
                             if let Ok(answer) = api.result() {
                                 chat.set({
                                     let mut state = (*chat).clone();
+                                    if let Some((_, pending, _)) =
+                                        state.iter_mut().rev().find(|(is_user, _, _)| *is_user)
+                                    {
+                                        *pending = false;
+                                    }
                                     state.push((false, false, answer.answer));
                                     state
                                 });
@@ -168,8 +170,9 @@ pub fn ai_chat() -> Html {
                         class="form-control"
                         placeholder="Ask what to read"
                         value={(*chat)
-                            .last()
-                            .filter(|(is_user, is_pending, _)| *is_user && *is_pending)
+                            .iter()
+                            .rev()
+                            .find(|(is_user, _, _)| *is_user)
                             .map(|(_, _, q)| q.clone())
                             .unwrap_or_default()}
                         readonly=true
