@@ -1,9 +1,11 @@
 #[cfg(feature = "client")]
 use blog_generic::entities::*;
+#[cfg(feature = "client")]
+use gloo::utils::window;
+#[cfg(feature = "client")]
+use web_sys::{ScrollBehavior, ScrollToOptions};
 use yew::prelude::*;
 
-#[cfg(feature = "client")]
-use gloo_net::http::Request;
 #[cfg(feature = "client")]
 use wasm_bindgen_futures::spawn_local;
 #[cfg(feature = "client")]
@@ -82,22 +84,30 @@ pub fn chatgpt() -> Html {
             let messages = messages.clone();
             let sending = sending.clone();
             spawn_local(async move {
-                let url = format!("{}/chat", crate::API_URL);
-                let body = serde_json::to_string(&ChatQuestion { question: q }).unwrap();
-                let resp = Request::post(&url)
-                    .header("Content-Type", "application/json")
-                    .body(body)
-                    .unwrap()
-                    .send()
-                    .await;
-
-                if let Ok(resp) = resp {
-                    if let Ok(api) = resp.json::<API<ChatAnswer>>().await {
-                        if let Ok(answer) = api.result() {
-                            msgs.push(ChatMessage::ai(answer.answer));
+                match API::<ChatAnswer>::get(ChatQuestion { question: q }).await {
+                    Ok(api_resp) => match api_resp {
+                        API::Success {
+                            identifier: _,
+                            description: _,
+                            data,
+                        } => {
+                            msgs.push(ChatMessage::ai(data.answer));
                             messages.set(msgs);
                         }
-                    }
+                        API::Failure {
+                            identifier: _,
+                            reason,
+                        } => {
+                            let reason_text =
+                                reason.unwrap_or_else(|| "неизвестная причина".to_string());
+                            msgs.push(ChatMessage::ai(format!(
+                                "Произошла ошибка при получении ответа: {}",
+                                reason_text
+                            )));
+                            messages.set(msgs);
+                        }
+                    },
+                    Err(_) => {}
                 }
                 sending.set(false);
             });
@@ -128,6 +138,18 @@ pub fn chatgpt() -> Html {
     #[cfg(not(feature = "client"))]
     let onkeydown = Callback::from(|_| {});
 
+    #[cfg(feature = "client")]
+    {
+        let messages = messages.clone();
+        use_effect_with(messages, move |_| {
+            let scroll_to_options = ScrollToOptions::new();
+            scroll_to_options.set_left(0.0);
+            scroll_to_options.set_top(9999999.0);
+            scroll_to_options.set_behavior(ScrollBehavior::Instant);
+            window().scroll_to_with_scroll_to_options(&scroll_to_options);
+        });
+    }
+
     html! {
         <>
             <Meta title="ChatGPT" noindex=true />
@@ -142,6 +164,17 @@ pub fn chatgpt() -> Html {
                     </div>
                 </div>
             }) }
+            /*<div class="input-group mb-3">
+                <input
+                    class="form-control"
+                    rows="3"
+                    placeholder="Спросите что-нибудь…"
+                    value={(*question).clone()}
+                    {oninput}
+                    {onkeydown}
+                />
+                <button class="btn btn-light" {onclick} disabled={*sending}>{ "Отправить" }</button>
+            </div>*/
             <div class="mb-3">
                 <textarea
                     class="form-control"
