@@ -8,6 +8,8 @@ pub mod head;
 pub mod image_url_formatter;
 pub mod logged_user_context;
 pub mod map_in_pattern;
+#[cfg(feature = "client")]
+pub mod scroll;
 pub mod use_load;
 #[cfg(feature = "client")]
 pub mod use_raf_state_eq;
@@ -22,6 +24,8 @@ pub use get::*;
 pub use image_url_formatter::*;
 pub use logged_user_context::*;
 pub use map_in_pattern::*;
+#[cfg(feature = "client")]
+pub use scroll::*;
 pub use use_load::*;
 #[cfg(feature = "client")]
 pub use use_raf_state_eq::*;

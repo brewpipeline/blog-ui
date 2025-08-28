@@ -15,7 +15,6 @@ pub fn chatgpt_button(props: &ChatGptButtonProps) -> Html {
     let route = use_route::<Route>();
     let on_chat = matches!(route, Some(Route::ChatGPT));
 
-    // Compute click handler (noop when already on ChatGPT)
     let onclick = {
         if on_chat {
             Callback::from(|_| ())
@@ -31,13 +30,16 @@ pub fn chatgpt_button(props: &ChatGptButtonProps) -> Html {
         }
     };
 
-    // Build button classes and icon classes once
     let mut btn_classes = classes!("btn", "btn-purple");
     btn_classes.extend(props.classes.clone());
-    if on_chat { btn_classes.push("disabled"); }
+    if on_chat {
+        btn_classes.push("disabled");
+    }
 
     let mut icon_classes = classes!("bi", "bi-openai");
-    if on_chat { icon_classes.push("rotate"); }
+    if on_chat {
+        icon_classes.push("rotate");
+    }
 
     html! {
         <button type={"button"} class={btn_classes} {onclick} disabled={on_chat} title={"ChatGPT"}>
