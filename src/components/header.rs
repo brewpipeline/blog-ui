@@ -2,6 +2,7 @@ use yew::prelude::*;
 use yew_router::prelude::*;
 
 use crate::components::auth_user_block::*;
+use crate::components::chatgpt_button::*;
 use crate::components::delayed_component::*;
 use crate::components::search_button::*;
 use crate::components::search_field::*;
@@ -27,10 +28,8 @@ pub fn header() -> Html {
 
                         <div class="col ps-lg-3 pe-lg-2 px-xl-3 d-none d-lg-block">
                             <DelayedComponent<()> component={ |_| html! {
-                                <div class="input-group">
-                                    <Link<Route> to={Route::ChatGPT} classes="btn btn-purple">
-                                        <i class="bi bi-openai" title="ChatGPT"></i>
-                                    </Link<Route>>
+                                <div class="d-flex align-items-center gap-2">
+                                    <ChatGptButton />
                                     <SearchField id="headerSearchField" />
                                 </div>
                             } } deps={ () } />
@@ -39,9 +38,7 @@ pub fn header() -> Html {
                         <div class="col col-lg-auto col-xl-3 gap-2 d-flex justify-content-end align-items-center">
                             <DelayedComponent<()> component={ |_| html! {
                                 <>
-                                    <Link<Route> to={Route::ChatGPT} classes="btn btn-purple d-block d-lg-none">
-                                        <i class="bi bi-openai" title="ChatGPT"></i>
-                                    </Link<Route>>
+                                    <ChatGptButton classes={classes!("d-block", "d-lg-none")} />
                                     <SearchButton />
                                     <SubscribeButton />
                                     <AuthUserBlock />

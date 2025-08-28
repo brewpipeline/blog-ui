@@ -36,6 +36,7 @@ urlencoding = "2.1"
 noneifempty = "0.1"
 
 base64 = "0.21"
+uuid = { version = "1.18.0", features = ["std", "v4", "js"] }
 
 
 [features]

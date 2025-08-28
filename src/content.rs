@@ -4,6 +4,7 @@ use gloo_net::http::{Request, Response};
 #[cfg(feature = "client")]
 use gloo_net::Error;
 use serde::{Deserialize, Serialize};
+use uuid::Uuid;
 
 use crate::utils::*;
 
@@ -768,14 +769,21 @@ impl RequestableItem<LoginTelegramQuestion> for API<LoginAnswer> {
     }
 }
 
+#[derive(Clone, PartialEq)]
+pub struct ChatGptQuestion {
+    pub session_id: Uuid,
+    pub question: ChatQuestion,
+}
+
 #[cfg(feature = "client")]
 #[async_trait(?Send)]
-impl RequestableItem<ChatQuestion> for API<ChatAnswer> {
-    async fn request(params: ChatQuestion) -> Result<Request, Error> {
-        let url = format!("{url}/chat", url = crate::API_URL);
+impl RequestableItem<ChatGptQuestion> for API<ChatAnswer> {
+    async fn request(params: ChatGptQuestion) -> Result<Request, Error> {
+        let url = format!("{url}/chatgpt", url = crate::API_URL);
         Ok(Request::post(url.as_str())
             .header("Content-Type", "application/json")
-            .body(serde_json::to_string(&params).map_err(|e| Error::SerdeError(e))?)?)
+            .header("Chat-Session-Id", params.session_id.to_string().as_str())
+            .body(serde_json::to_string(&params.question).map_err(|e| Error::SerdeError(e))?)?)
     }
     async fn response(response: Response) -> Result<Self, Error> {
         response.json().await
