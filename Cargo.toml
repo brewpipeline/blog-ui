@@ -36,7 +36,7 @@ urlencoding = "2.1"
 noneifempty = "0.1"
 
 base64 = "0.21"
-uuid = { version = "1.18.0", features = ["std", "v4", "js"] }
+uuid = { version = "1.18.0", features = ["std", "v4", "js"], optional = true }
 
 
 [features]
@@ -46,6 +46,7 @@ client = ["yew/csr", "yew-hooks", "wasm-bindgen-futures", "wasm-bindgen", "wasm-
 hydration = ["client", "yew/hydration"]
 yandex = []
 telegram = []
+chatgpt = ["uuid"]
 
 
 [[bin]]

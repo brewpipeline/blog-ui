@@ -24,7 +24,7 @@ pub use get::*;
 pub use image_url_formatter::*;
 pub use logged_user_context::*;
 pub use map_in_pattern::*;
-#[cfg(feature = "client")]
+#[cfg(all(feature = "client", feature = "chatgpt"))]
 pub use scroll::*;
 pub use use_load::*;
 #[cfg(feature = "client")]

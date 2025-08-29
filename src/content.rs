@@ -4,6 +4,7 @@ use gloo_net::http::{Request, Response};
 #[cfg(feature = "client")]
 use gloo_net::Error;
 use serde::{Deserialize, Serialize};
+#[cfg(all(feature = "client", feature = "chatgpt"))]
 use uuid::Uuid;
 
 use crate::utils::*;
@@ -769,13 +770,14 @@ impl RequestableItem<LoginTelegramQuestion> for API<LoginAnswer> {
     }
 }
 
+#[cfg(all(feature = "client", feature = "chatgpt"))]
 #[derive(Clone, PartialEq)]
 pub struct ChatGptQuestion {
     pub session_id: Uuid,
     pub question: ChatQuestion,
 }
 
-#[cfg(feature = "client")]
+#[cfg(all(feature = "client", feature = "chatgpt"))]
 #[async_trait(?Send)]
 impl RequestableItem<ChatGptQuestion> for API<ChatAnswer> {
     async fn request(params: ChatGptQuestion) -> Result<Request, Error> {
