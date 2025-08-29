@@ -19,7 +19,8 @@ pub fn header() -> Html {
     let chat_btn_desktop: Html = html! {};
 
     #[cfg(feature = "chatgpt")]
-    let chat_btn_mobile: Html = html! { <ChatGptButton classes={classes!("d-block", "d-lg-none")} /> };
+    let chat_btn_mobile: Html =
+        html! { <ChatGptButton classes={classes!("d-block", "d-lg-none")} /> };
     #[cfg(not(feature = "chatgpt"))]
     let chat_btn_mobile: Html = html! {};
 
