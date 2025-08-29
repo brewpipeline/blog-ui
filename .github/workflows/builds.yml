@@ -31,6 +31,8 @@ jobs:
             is_wasm: false
           - features: "server"
             is_wasm: false
+          - features: "server,chatgpt"
+            is_wasm: false
           - features: "server,yandex"
             is_wasm: false
           - features: "server,telegram"
@@ -38,6 +40,8 @@ jobs:
           - features: "server,yandex,telegram"
             is_wasm: false
           - features: "client"
+            is_wasm: true
+          - features: "client,chatgpt"
             is_wasm: true
           - features: "client,yandex"
             is_wasm: true
