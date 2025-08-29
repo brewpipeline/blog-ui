@@ -53,7 +53,9 @@ jobs:
             is_wasm: true
     steps:
       - name: Checkout
-        uses: actions/checkout@v3
+        uses: actions/checkout@v4
+      - name: Cargo cache
+        uses: Swatinem/rust-cache@v2
       - name: Target Add `wasm32-unknown-unknown`
         if: matrix.is_wasm == true
         run: rustup target add wasm32-unknown-unknown
