@@ -36,6 +36,9 @@ pub enum Route {
     AuthorsSearchRoot,
     #[at("/authors/search/:query")]
     AuthorsSearch { query: String },
+    #[cfg(feature = "chatgpt")]
+    #[at("/chatgpt")]
+    ChatGPT,
     #[cfg(feature = "yandex")]
     #[at("/yandexToken")]
     YandexToken,
@@ -66,6 +69,8 @@ impl Route {
             | Route::Author { slug: _ }
             | Route::Authors
             | Route::NotFound => false,
+            #[cfg(feature = "chatgpt")]
+            Route::ChatGPT => false,
             #[cfg(feature = "yandex")]
             Route::YandexToken => false,
         }
@@ -95,6 +100,8 @@ impl Route {
             Route::AuthorsSearch { query } => {
                 html! { <Search mode={ SearchMode::Authors { query: Some(query) } } /> }
             }
+            #[cfg(feature = "chatgpt")]
+            Route::ChatGPT => html! { <ChatGPT /> },
             #[cfg(feature = "yandex")]
             Route::YandexToken => unreachable!(),
             Route::NotFound => html! { <PageNotFound /> },

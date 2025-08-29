@@ -31,6 +31,8 @@ jobs:
             is_wasm: false
           - features: "server"
             is_wasm: false
+          - features: "server,chatgpt"
+            is_wasm: false
           - features: "server,yandex"
             is_wasm: false
           - features: "server,telegram"
@@ -38,6 +40,8 @@ jobs:
           - features: "server,yandex,telegram"
             is_wasm: false
           - features: "client"
+            is_wasm: true
+          - features: "client,chatgpt"
             is_wasm: true
           - features: "client,yandex"
             is_wasm: true
@@ -49,7 +53,9 @@ jobs:
             is_wasm: true
     steps:
       - name: Checkout
-        uses: actions/checkout@v3
+        uses: actions/checkout@v4
+      - name: Cargo cache
+        uses: Swatinem/rust-cache@v2
       - name: Target Add `wasm32-unknown-unknown`
         if: matrix.is_wasm == true
         run: rustup target add wasm32-unknown-unknown
