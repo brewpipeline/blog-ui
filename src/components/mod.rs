@@ -2,6 +2,8 @@ pub mod auth_user_block;
 pub mod author_card;
 pub mod author_image;
 pub mod body;
+#[cfg(feature = "chatgpt")]
+pub mod chatgpt_button;
 pub mod comment_card;
 pub mod comments;
 pub mod content;

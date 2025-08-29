@@ -22,7 +22,7 @@ wasm-bindgen = { version = "0.2", optional = true }
 wasm-cookies = { version = "0.2", optional = true }
 wasm-logger = { version = "0.2", optional = true }
 
-web-sys = { version = "0.3", features = ["HtmlDocument","console","Document","HtmlElement","MouseEvent","DomRect","ScrollToOptions","ScrollBehavior","Element","MouseEvent","CssStyleDeclaration","MutationObserver","MutationObserverInit","Node","CustomEvent","HtmlImageElement"], optional = true }
+web-sys = { version = "0.3", features = ["HtmlDocument","console","Document","HtmlElement","HtmlTextAreaElement","MouseEvent","DomRect","ScrollToOptions","ScrollBehavior","Element","CssStyleDeclaration","MutationObserver","MutationObserverInit","Node","CustomEvent","HtmlImageElement"], optional = true }
 
 gloo-history = "0.2"
 gloo = { version = "0.11", optional = true }
@@ -36,6 +36,7 @@ urlencoding = "2.1"
 noneifempty = "0.1"
 
 base64 = "0.21"
+uuid = { version = "1.18.0", features = ["std", "v4", "js"], optional = true }
 
 
 [features]
@@ -45,6 +46,7 @@ client = ["yew/csr", "yew-hooks", "wasm-bindgen-futures", "wasm-bindgen", "wasm-
 hydration = ["client", "yew/hydration"]
 yandex = []
 telegram = []
+chatgpt = ["uuid"]
 
 
 [[bin]]

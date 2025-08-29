@@ -29,6 +29,8 @@ impl SearchMode {
             | Route::MyUnpublishedPosts
             | Route::HiddenPosts
             | Route::Tag { slug: _, id: _ } => Self::Posts { query: None },
+            #[cfg(feature = "chatgpt")]
+            Route::ChatGPT => Self::Posts { query: None },
             #[cfg(feature = "yandex")]
             Route::YandexToken => Self::Posts { query: None },
             Route::AuthorsSearchRoot | Route::Author { slug: _ } | Route::Authors => {

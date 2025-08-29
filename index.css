@@ -424,3 +424,44 @@ img {
     line-clamp: 4; 
     -webkit-box-orient: vertical;
 }
+
+/* AI chat widget */
+.btn-purple {
+    background-color: hsl(261, 51%, 51%);
+    color: #fff;
+    border: var(--bs-btn-border-width) solid var(--bs-primary-bg-subtle);
+}
+
+.btn-purple:hover {
+    background-color: #5a359f;
+    color: #fff;
+    border-color: #5a359f;
+}
+
+.btn-purple:disabled,
+.btn-purple.disabled {
+    background-color: #7d67c6; /* slightly grayer/muted purple */
+    color: #fff;
+    border-color: transparent; /* keep border hidden when disabled */
+    opacity: 1; /* keep strong color while disabled */
+}
+
+/* pressed (active) state uses the same muted purple */
+.btn-purple:active,
+.btn-purple:focus:active {
+    background-color: #7d67c6;
+    border-color: #7d67c6;
+    color: #fff;
+}
+
+/* rotate icon when already on ChatGPT page */
+.rotate {
+    display: inline-block;
+    animation: spin 3.0s linear infinite;
+}
+
+@keyframes spin {
+    from { transform: rotate(0deg); }
+    to { transform: rotate(360deg); }
+}
+
