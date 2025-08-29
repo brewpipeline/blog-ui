@@ -2,7 +2,7 @@
 use blog_generic::entities::*;
 use uuid::Uuid;
 use yew::prelude::*;
-use yew::AttrValue;
+use yew_router::prelude::*;
 
 #[cfg(feature = "client")]
 use wasm_bindgen_futures::spawn_local;
@@ -14,6 +14,84 @@ use crate::components::meta::*;
 use crate::content::*;
 #[cfg(feature = "client")]
 use crate::utils::*;
+use crate::Route;
+
+fn render_text_with_links(text: &str) -> Html {
+    let mut nodes: Vec<Html> = Vec::new();
+    let mut buf = String::new();
+
+    let mut i = 0;
+    let len = text.len();
+    while i < len {
+        let rest = &text[i..];
+        let is_http = rest.starts_with("http://") || rest.starts_with("https://");
+        let is_path = rest.starts_with('/');
+
+        if is_http || is_path {
+            if !buf.is_empty() {
+                nodes.push(html! { { buf.clone() } });
+                buf.clear();
+            }
+
+            let mut j = i;
+            while j < len {
+                let ch = text[j..].chars().next().unwrap();
+                if ch.is_whitespace() {
+                    break;
+                }
+                j += ch.len_utf8();
+            }
+
+            let mut link = text[i..j].to_string();
+            let mut trailing = String::new();
+            while let Some(last) = link.chars().last() {
+                if matches!(last, ',' | '.' | '!' | '?' | ':' | ';' | ')') {
+                    link.pop();
+                    trailing.insert(0, last);
+                } else {
+                    break;
+                }
+            }
+
+            let maybe_route = if link.starts_with('/') {
+                Route::recognize_path(&link)
+            } else if let Some(scheme_pos) = link.find("://") {
+                let after_scheme = &link[scheme_pos + 3..];
+                if let Some(slash_pos) = after_scheme.find('/') {
+                    let path = &after_scheme[slash_pos..];
+                    Route::recognize_path(path)
+                } else {
+                    None
+                }
+            } else {
+                None
+            };
+
+            if let Some(route) = maybe_route {
+                let label = link.clone();
+                nodes.push(html! { <Link<Route> to={route}>{ label }</Link<Route>> });
+            } else {
+                let href = link.clone();
+                nodes.push(html! { <a href={href.clone()} target="_blank" rel="noopener noreferrer">{ href }</a> });
+            }
+
+            if !trailing.is_empty() {
+                buf.push_str(&trailing);
+            }
+            i = j;
+        } else {
+            let ch = rest.chars().next().unwrap();
+            buf.push(ch);
+            i += ch.len_utf8();
+        }
+    }
+
+    if !buf.is_empty() {
+        nodes.push(html! { { buf } });
+    }
+
+    html! { for nodes }
+}
 
 #[derive(Clone, PartialEq)]
 enum ChatFrom {
@@ -200,7 +278,7 @@ pub fn chatgpt() -> Html {
                         <p class="card-text">
                             {
                                 match m.from {
-                                    ChatFrom::ChatGpt => Html::from_html_unchecked(AttrValue::from(m.text.clone())),
+                                    ChatFrom::ChatGpt => render_text_with_links(&m.text),
                                     _ => html! { &m.text },
                                 }
                             }
