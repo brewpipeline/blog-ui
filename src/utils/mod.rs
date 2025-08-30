@@ -10,6 +10,7 @@ pub mod logged_user_context;
 pub mod map_in_pattern;
 #[cfg(feature = "client")]
 pub mod scroll;
+pub mod text;
 pub mod use_load;
 #[cfg(feature = "client")]
 pub mod use_raf_state_eq;
@@ -26,6 +27,7 @@ pub use logged_user_context::*;
 pub use map_in_pattern::*;
 #[cfg(all(feature = "client", feature = "chatgpt"))]
 pub use scroll::*;
+pub use text::*;
 pub use use_load::*;
 #[cfg(feature = "client")]
 pub use use_raf_state_eq::*;
