@@ -12,7 +12,6 @@ use web_sys::HtmlTextAreaElement;
 use crate::components::meta::*;
 #[cfg(feature = "client")]
 use crate::content::*;
-#[cfg(feature = "client")]
 use crate::utils::*;
 use crate::Route;
 
