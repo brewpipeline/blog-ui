@@ -81,6 +81,19 @@ fn render_text_with_links(text: &str) -> Html {
             i = j;
         } else {
             let ch = rest.chars().next().unwrap();
+            if ch == '\n' {
+                if !buf.is_empty() {
+                    nodes.push(html! { { buf.clone() } });
+                    buf.clear();
+                }
+                nodes.push(html! { <br/> });
+                i += 1;
+                continue;
+            }
+            if ch == '\r' {
+                i += 1;
+                continue;
+            }
             buf.push(ch);
             i += ch.len_utf8();
         }
@@ -279,7 +292,7 @@ pub fn chatgpt() -> Html {
                             {
                                 match m.from {
                                     ChatFrom::ChatGpt => render_text_with_links(&m.text),
-                                    _ => html! { &m.text },
+                                    _ => render_text_with_newlines(&m.text),
                                 }
                             }
                         </p>
