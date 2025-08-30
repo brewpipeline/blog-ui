@@ -120,7 +120,7 @@ pub fn comment_card(props: &CommentCardProps) -> Html {
                 <p class="card-text placeholder-glow">
                     if let Some(comment) = &comment {
                         if let Some(content) = &comment.content {
-                            { content }
+                            { render_text_with_newlines(content) }
                             if !logged_user_context.is_not_inited() {
                                 if (*logged_user_context)
                                     .author()
