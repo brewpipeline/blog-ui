@@ -47,7 +47,7 @@ pub fn header() -> Html {
                             } } deps={ () } />
                         </div>
 
-                        <div class="col col-lg-auto col-xl-3 gap-2 d-flex justify-content-end align-items-center">
+                        <div class="col col-lg-auto col-xl-3 gap-1 gap-sm-2 d-flex justify-content-end align-items-center">
                             <DelayedComponent<()> component={ move |_| html! {
                                 <>
                                     { chat_btn_mobile.clone() }
