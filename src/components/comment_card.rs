@@ -88,7 +88,7 @@ pub fn comment_card(props: &CommentCardProps) -> Html {
     html! {
         <div class="card mb-3">
             <div class="card-header placeholder-glow">
-                <div class="row align-items-center">
+                <div class="row g-0 align-items-center">
                     <div class="d-flex col-6 align-items-center justify-content-start" style="height: 24px;">
                         <div class="img-block rounded me-1" style="height:24px;width:24px;overflow:hidden;">
                             <AuthorImage author={ comment.as_ref().map(|c| c.author.clone()) } />

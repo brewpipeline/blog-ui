@@ -201,7 +201,7 @@ pub fn post_card(props: &PostCardProps) -> Html {
     html! {
         <div class="card mb-3">
             <div class="card-header placeholder-glow border-0">
-                <div class="row align-items-center">
+                <div class="row g-0 align-items-center">
                     <div class="d-flex col-5 align-items-center justify-content-start" style="height:24px;">
                         <div class="img-block rounded me-1" style="height:24px;width:24px;overflow:hidden;">
                             <AuthorImage author={ post.as_ref().map(|p| p.author.clone()) } />
@@ -243,7 +243,7 @@ pub fn post_card(props: &PostCardProps) -> Html {
                 { main_content }
             }
             <div class="card-footer placeholder-glow">
-                <div class="row align-items-center">
+                <div class="row g-0 align-items-center">
                     <div class="d-flex col-10 align-items-center justify-content-start" style="height: 24px;">
                         { tags_content }
                     </div>
