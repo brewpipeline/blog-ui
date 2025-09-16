@@ -444,23 +444,21 @@ img {
     border-color: #5a359f;
 }
 
-.btn-purple:disabled,
-.btn-purple.disabled {
-    background-color: #7d67c6; /* slightly grayer/muted purple */
-    color: #fff;
-    border-color: transparent; /* keep border hidden when disabled */
-    opacity: 1; /* keep strong color while disabled */
-}
-
-/* pressed (active) state uses the same muted purple */
 .btn-purple:active,
 .btn-purple:focus:active {
-    background-color: #7d67c6;
-    border-color: #7d67c6;
-    color: #fff;
+    background-color: #7d67c6!important;
+    border-color: #7d67c6!important;
+    color: #fff!important;
 }
 
-/* rotate icon when already on ChatGPT page */
+.btn-purple:disabled,
+.btn-purple.disabled {
+    background-color: #7d67c6!important;
+    color: #fff!important;
+    border-color: transparent!important;
+    opacity: 1!important;
+}
+
 .rotate {
     display: inline-block;
     animation: spin 3.0s linear infinite;
