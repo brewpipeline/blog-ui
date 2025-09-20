@@ -33,6 +33,17 @@ pub fn footer() -> Html {
                 <div class="container">
                         <div class="d-flex justify-content-center gap-2">
                             <input
+                                type="radio"
+                                class="btn-check"
+                                name="vbtn-radio"
+                                id="vbtn-radio1"
+                                autocomplete="off"
+                            />
+                            <label class="btn btn-light tab-label" for="vbtn-radio1">
+                                <i class="bi bi-list"></i>
+                                { "Меню" }
+                            </label>
+                            <input
                                 aria-label="Лента"
                                 type="radio"
                                 class="btn-check"
@@ -46,17 +57,6 @@ pub fn footer() -> Html {
                                 <i class="bi bi-card-heading"></i>
                                 { "Лента" }
                             </label>
-                            <input
-                                type="radio"
-                                class="btn-check"
-                                name="vbtn-radio"
-                                id="vbtn-radio1"
-                                autocomplete="off"
-                            />
-                            <label class="btn btn-light tab-label" for="vbtn-radio1">
-                                <i class="bi bi-list"></i>
-                                { "Меню" }
-                                </label>
                             <input
                                 type="radio"
                                 class="btn-check"
