@@ -351,7 +351,7 @@ pub fn login_modal(props: &LoginModalProps) -> Html {
                                     script.set_attribute("type", "text/javascript").unwrap();
                                     script.set_inner_html("
                                         setTimeout(function() {
-                                            const imageUrl = \"https://api.dicebear.com/7.x/shapes/svg?seed=\" + Date.now() + \"&backgroundColor=0a5b83,1c799f,69d2e7,f88c49&shape1Color=0a5b83,1c799f,69d2e7,f88c49&shape2Color=0a5b83,1c799f,69d2e7,f88c49&shape3Color=0a5b83,1c799f,69d2e7,f88c49\";
+                                            const imageUrl = \"https://api.dicebear.com/7.x/shapes/svg?seed=\" + Date.now() + \"&backgroundColor[]&shape1Color=242424&shape2Color=0dcaf0\";
                 
                                             let img = new Image();
                                             img.src = imageUrl;
@@ -367,9 +367,9 @@ pub fn login_modal(props: &LoginModalProps) -> Html {
                                                 class="img-block bd-placeholder-img d-none d-lg-block col-lg-4"
                                                 role="img"
                                             >
-                                                <h1 class="item mb-0">
-                                                    { crate::TITLE }
-                                                </h1>
+                                                <div class="logo-image-container">
+                                                    <img id="logo-image" height="38" width="149" style="pointer-events:none;" class="item mb-0" alt={ crate::TITLE } src="tikitko-light.svg"/>
+                                                </div>
                                             </div>
                                             { Html::VRef(script.into()) }
                                         </>
@@ -419,7 +419,7 @@ pub fn login_modal(props: &LoginModalProps) -> Html {
                                         <div class="d-grid gap-2">
                                             <button
                                                 type="button"
-                                                class="btn btn-primary"
+                                                class="btn btn-info"
                                                 { onclick }
                                                 disabled={ !logged_user_context.action_available() }
                                             >

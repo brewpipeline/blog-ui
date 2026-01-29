@@ -124,7 +124,7 @@ pub fn post_card(props: &PostCardProps) -> Html {
                     }
                 />
             </div>
-            <div class="card-body">
+            <div class="card-body pb-0">
                 <h4 class="card-title placeholder-glow">
                     if let Some(title) = post.as_ref().map(|p| p.title.clone()) {
                         { title }
@@ -179,7 +179,7 @@ pub fn post_card(props: &PostCardProps) -> Html {
             }).map(|tag| { html! {
                 <>
                     <Link<Route, (), Tag>
-                        classes="link-dark link-underline-opacity-25 link-underline-opacity-100-hover"
+                        classes="link link-underline-opacity-25 link-underline-opacity-100-hover"
                         to={ Route::Tag { id: tag.id, slug: tag.slug.clone() } }
                         state={ Some(tag.clone()) }
                     >

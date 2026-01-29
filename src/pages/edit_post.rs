@@ -302,7 +302,7 @@ pub fn edit_post(props: &EditPostProps) -> Html {
                 <form class="card-text">
                     <div
                         class="mb-3 border rounded-3 d-flex align-items-center justify-content-center p-3 py-6"
-                        style="font-size: 10em;"
+                        style="font-size: 10em; background-color: var(--bs-body-bg);"
                         role="img"
                     >
                         <i class="bi bi-file-post"></i>
@@ -447,7 +447,7 @@ pub fn edit_post(props: &EditPostProps) -> Html {
 
                     <div>
                         <button
-                            class="btn btn-light"
+                            class="btn btn-info"
                             type="submit"
                             onclick={ save_onclick.clone() }
                             disabled={ !state.action_available() }
@@ -481,6 +481,8 @@ pub fn edit_post(props: &EditPostProps) -> Html {
                                             editor.save()
                                         })
                                     },
+                                    skin: 'oxide-dark',
+                                    content_css: 'dark',
                                     language: 'ru',
                                     plugins: 'anchor autolink charmap codesample emoticons image link lists media searchreplace table visualblocks wordcount code codesample',
                                     relative_urls : false,

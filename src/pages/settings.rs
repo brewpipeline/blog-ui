@@ -597,7 +597,7 @@ pub fn settings() -> Html {
                                         </div>
                                         <button
                                             type="button"
-                                            class="btn btn-primary"
+                                            class="btn btn-info"
                                             onclick={ main_onclick }
                                             disabled={ *main_active_section != ActiveSection::Custom || *in_progress || !is_main_ready_for_save }
                                         >
@@ -685,7 +685,7 @@ pub fn settings() -> Html {
                                     </div>
                                     <button
                                         type="button"
-                                        class="btn btn-primary"
+                                        class="btn btn-info"
                                         onclick={ secondary_onclick }
                                         disabled={ *in_progress || !is_secondary_ready_for_save }
                                     >

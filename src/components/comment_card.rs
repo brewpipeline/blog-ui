@@ -136,17 +136,17 @@ pub fn comment_card(props: &CommentCardProps) -> Html {
                                                 </a>
                                             },
                                             CommentCardState::DeleteInProgress => html! {
-                                                <i style="color:#6c6c6c;"> { "Удаление..." } </i>
+                                                <i style="color:#8c8c8c;"> { "Удаление..." } </i>
                                             },
                                             CommentCardState::Deleted => html! {
-                                                <i style="color:#6c6c6c;"> { "Удален!" } </i>
+                                                <i style="color:#8c8c8c;"> { "Удален!" } </i>
                                             },
                                         }
                                     }
                                 }
                             }
                         } else {
-                            <i style="color:#6c6c6c;"> { "Комментарий удален." } </i>
+                            <i style="color:#8c8c8c;"> { "Комментарий удален." } </i>
                         }
                     } else {
                         <span class="placeholder col-3 bg-secondary"></span> { " " }

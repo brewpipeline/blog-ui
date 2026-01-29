@@ -86,8 +86,12 @@ pub fn body() -> Html {
                     </div>
                     <div class="d-flex flex-wrap align-items-end justify-content-center">
                         <p class="mb-0 text-center">
-                            <a href="https://github.com/tikitko/blog-ui/blob/main/MADEWITHLOVE.md" class="text-decoration-none">
-                                { "Сделано с ❤️" }
+                            <a href="https://www.youtube.com/watch?v=dQw4w9WgXcQ" class="text-decoration-none">
+                                { "Правила" }
+                            </a>
+                            <br/>
+                            <a href="https://about.tikitko.dev/" class="text-decoration-none">
+                                { "О Tikitko" }
                             </a>
                         </p>
                     </div>
