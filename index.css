@@ -263,14 +263,14 @@
 }
 
 .img-block {
-    background-color:#1c1b1b;
+    background-color: var(--bs-second-bg);
     background-position: center;
     background-size: cover;
     background-image: var(--image-url);
 }
 
 .bd-placeholder-img {
-    background-color:#191919
+    background-color: var(--bs-primary-bg-subtle);
 }
 
 .btn svg {

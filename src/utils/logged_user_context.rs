@@ -10,7 +10,10 @@ fn load_token() -> Option<String> {
 
 #[cfg(all(feature = "client", target_arch = "wasm32"))]
 fn save_token(token: Option<&String>) -> Option<()> {
-    let config = wasm_cookies::CookieOptions::default().with_path("/");
+    let config = wasm_cookies::CookieOptions::default()
+        .with_path("/")
+        .secure()
+        .with_same_site(wasm_cookies::SameSite::Strict);
     if let Some(token) = &token {
         wasm_cookies::set(
             "Token",
