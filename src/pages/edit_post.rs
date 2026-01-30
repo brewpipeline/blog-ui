@@ -349,7 +349,7 @@ pub fn edit_post(props: &EditPostProps) -> Html {
                             placeholder="Что-то короткое, но важное!"
                             value={ post_summary }
                             ref={ summary_node_ref.clone() }
-                        ></textarea>
+                        />
                         <div class="invalid-feedback">
                             { "Пожалуйста, введите короткую версию публикации, это обязательное поле!" }
                         </div>
@@ -365,7 +365,7 @@ pub fn edit_post(props: &EditPostProps) -> Html {
                             placeholder="Что-то динное и скучн... веселое!"
                             value={ post_content }
                             ref={ content_node_ref.clone() }
-                        ></textarea>
+                        />
                     </div>
 
                     <div class="mb-3">

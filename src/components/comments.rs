@@ -164,7 +164,7 @@ pub fn comments(props: &CommentsProps) -> Html {
                             ref={ field_ref }
                             { oninput }
                             disabled={ *state == CommentsState::InProgress }
-                        ></textarea>
+                        />
                     </div>
                     <div class="mb-3 d-grid gap-2">
                         <button

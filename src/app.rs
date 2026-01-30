@@ -38,7 +38,7 @@ fn main(props: &MainProps) -> Html {
                 id="page-content"
                 type={ app_content_container.app_content.as_ref().map(|c| c.r#type.clone()) }
             >
-                { app_content_container.app_content.as_ref().map(|c| c.value.clone()) }
+                { app_content_container.app_content.as_ref().map(|c| c.value.clone()).unwrap_or_default() }
             </script>
             <Meta />
             <ContextProvider<AppContentContext> context={ app_content_container }>

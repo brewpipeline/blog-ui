@@ -10,5 +10,5 @@ pub fn render_text_with_newlines(text: &str) -> Html {
         nodes.push(html! { { line } });
         first = false;
     }
-    html! { for nodes }
+    html! { for node in nodes { {node} } }
 }
