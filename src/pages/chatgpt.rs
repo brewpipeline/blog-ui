@@ -102,7 +102,7 @@ fn render_text_with_links(text: &str) -> Html {
         nodes.push(html! { { buf } });
     }
 
-    html! { for nodes }
+    html! { for node in nodes { {node} } }
 }
 
 #[derive(Clone, PartialEq)]
@@ -322,7 +322,7 @@ pub fn chatgpt() -> Html {
                     value={(*question).clone()}
                     {oninput}
                     {onkeydown}
-                ></textarea>
+                />
             </div>
             <div class="mb-3 d-grid gap-2">
                 <button class="btn btn-light" {onclick} disabled={*sending}>{ "Отправить" }</button>
