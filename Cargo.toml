@@ -13,9 +13,9 @@ async-trait = "0.1"
 
 chrono = { version = "0.4", features = ["unstable-locales"] }
 
-yew = { version = "0.21" }
-yew-router = { version = "0.18" }
-yew-hooks = { version = "0.3", optional = true }
+yew = { version = "0.22" }
+yew-router = { version = "0.19" }
+yew-hooks = { version = "0.4", optional = true }
 
 wasm-bindgen-futures = { version = "0.4", optional = true }
 wasm-bindgen = { version = "0.2", optional = true }
@@ -26,7 +26,7 @@ web-sys = { version = "0.3", features = ["HtmlDocument","console","Document","Ht
 
 gloo-history = "0.2"
 gloo = { version = "0.11", optional = true }
-gloo-net = { version = "0.5", optional = true }
+gloo-net = { version = "0.6", optional = true }
 
 serde = { version = "1.0", features = ["derive"] }
 serde_json = "1.0"
@@ -35,7 +35,7 @@ urlencoding = "2.1"
 
 noneifempty = "0.1"
 
-base64 = "0.21"
+base64 = "0.22"
 uuid = { version = "1.18.0", features = ["std", "v4", "js"], optional = true }
 
 
