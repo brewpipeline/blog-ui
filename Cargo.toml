@@ -1,13 +1,14 @@
 [package]
 name = "blog-ui"
-version = "0.0.1"
-edition = "2021"
+version = "0.0.2"
+edition = "2024"
 license = "MIT"
 
+[dependencies.blog-generic]
+git = "https://github.com/brewpipeline/blog-generic.git"
+tag = "0.0.2"
 
 [dependencies]
-blog-generic = { git = "https://github.com/tikitko/blog-server.git", package = "blog-generic" }
-
 log = "0.4"
 async-trait = "0.1"
 
