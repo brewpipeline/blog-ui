@@ -66,13 +66,13 @@ where
             .map(|page| render_link(page, props));
         html! {
             <>
-                { for links }
+                for link in links { {link} }
                 <li class="page-item text-center disabled"><span class="page-link">{ ELLIPSIS }</span></li>
                 { last_link }
             </>
         }
     } else {
-        html! { for pages.map(|page| render_link(page, props)) }
+        html! { for page in pages { {render_link(page, props)} } }
     }
 }
 
