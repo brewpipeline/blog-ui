@@ -1,5 +1,6 @@
 use chrono::Locale;
 
+pub const LANG_CODE: &str = "en";
 pub const DATE_LOCALE: Locale = Locale::en_US;
 
 // Common

@@ -1,5 +1,6 @@
 use chrono::Locale;
 
+pub const LANG_CODE: &str = "ru";
 pub const DATE_LOCALE: Locale = Locale::ru_RU;
 
 // Common
