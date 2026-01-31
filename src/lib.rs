@@ -3,6 +3,7 @@
 mod app;
 mod components;
 mod content;
+pub mod lang;
 mod pages;
 mod route;
 mod utils;

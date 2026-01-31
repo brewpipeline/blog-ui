@@ -1,8 +1,8 @@
 pub use blog_generic::entities::*;
 #[cfg(feature = "client")]
-use gloo_net::http::{Request, Response};
-#[cfg(feature = "client")]
 use gloo_net::Error;
+#[cfg(feature = "client")]
+use gloo_net::http::{Request, Response};
 use serde::{Deserialize, Serialize};
 #[cfg(all(feature = "client", feature = "chatgpt"))]
 use uuid::Uuid;

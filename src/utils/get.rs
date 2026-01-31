@@ -1,5 +1,5 @@
-use gloo_net::http::{Request, Response};
 use gloo_net::Error;
+use gloo_net::http::{Request, Response};
 
 #[async_trait(?Send)]
 pub trait RequestableItem<P>: Sized {

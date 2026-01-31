@@ -4,6 +4,7 @@ use yew_router::prelude::*;
 
 use crate::components::author_image::*;
 use crate::content::*;
+use crate::lang;
 use crate::utils::*;
 
 use crate::Route;
@@ -109,7 +110,7 @@ pub fn author_card(props: &AuthorCardProps) -> Html {
                             >
                                 <i class="bi bi-hammer"></i>
                                 {
-                                    if !(*is_blocked) { " Бан " } else { " Разбан " }
+                                    if !(*is_blocked) { lang::AUTHOR_CARD_BAN } else { lang::AUTHOR_CARD_UNBAN }
                                 }
                             </button>
                         }
@@ -122,14 +123,14 @@ pub fn author_card(props: &AuthorCardProps) -> Html {
                         if let Some(author) = author.as_ref() {
                             {
                                 if author.blocked == 1 {
-                                    "(Имя скрыто)".to_owned()
+                                    lang::AUTHOR_CARD_NAME_HIDDEN.to_owned()
                                 } else {
                                     format!(
                                         "{} {}",
                                         author.first_name
                                             .clone()
                                             .none_if_empty()
-                                            .unwrap_or("(Имя не указано)".to_owned()),
+                                            .unwrap_or(lang::AUTHOR_CARD_NAME_MISSING.to_owned()),
                                         author.last_name
                                             .clone()
                                             .unwrap_or_default()
@@ -138,11 +139,11 @@ pub fn author_card(props: &AuthorCardProps) -> Html {
                             }
                             if author.editor == 1 {
                                 { " " }
-                                <i style="color:#6ea5ff;font-size:1rem;"> { "Главный редактор" } </i>
+                                <i style="color:#6ea5ff;font-size:1rem;"> { lang::AUTHOR_CARD_EDITOR } </i>
                             }
                             if *is_blocked {
                                 { " " }
-                                <i style="color:#ff5252;font-size:1rem;"> { "Заблокирован" } </i>
+                                <i style="color:#ff5252;font-size:1rem;"> { lang::AUTHOR_CARD_BLOCKED } </i>
                             }
                         } else {
                             <span class="placeholder col-3 bg-secondary"></span> { " " }
@@ -162,12 +163,12 @@ pub fn author_card(props: &AuthorCardProps) -> Html {
                         if let Some(author) = author.as_ref() {
                             {
                                 if author.blocked == 1 {
-                                    "(Информация о себе скрыта)".to_owned()
+                                    lang::AUTHOR_CARD_STATUS_HIDDEN.to_owned()
                                 } else {
                                     author.status
                                         .clone()
                                         .none_if_empty()
-                                        .unwrap_or("(Информация о себе отсутствует)".to_owned())
+                                        .unwrap_or(lang::AUTHOR_CARD_STATUS_MISSING.to_owned())
                                 }
                             }
                         } else {

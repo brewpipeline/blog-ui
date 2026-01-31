@@ -1,6 +1,7 @@
 use yew::prelude::*;
 use yew_router::prelude::*;
 
+use crate::lang;
 use crate::utils::*;
 
 use crate::Route;
@@ -27,7 +28,7 @@ pub fn navigation_menu() -> Html {
                 }
                 to={ Route::Posts }
             >
-                { "Публикации" }
+                { lang::NAV_POSTS }
             </Link<Route>>
             <Link<Route>
                 classes={
@@ -39,7 +40,7 @@ pub fn navigation_menu() -> Html {
                 }
                 to={ Route::Authors }
             >
-                { "Авторы" }
+                { lang::NAV_AUTHORS }
             </Link<Route>>
             <Link<Route>
                 classes={
@@ -51,7 +52,7 @@ pub fn navigation_menu() -> Html {
                 }
                 to={ Route::NewPost }
             >
-                { "Новая публикация" }
+                { lang::NAV_NEW_POST }
             </Link<Route>>
             if is_editor {
                 <Link<Route>
@@ -64,7 +65,7 @@ pub fn navigation_menu() -> Html {
                     }
                     to={ Route::UnpublishedPosts }
                 >
-                    { "Неопубликованное" }
+                    { lang::NAV_UNPUBLISHED }
                 </Link<Route>>
                 <Link<Route>
                     classes={
@@ -76,7 +77,7 @@ pub fn navigation_menu() -> Html {
                     }
                     to={ Route::HiddenPosts }
                 >
-                    { "Скрытое" }
+                    { lang::NAV_HIDDEN }
                 </Link<Route>>
             }
             <a
@@ -85,7 +86,7 @@ pub fn navigation_menu() -> Html {
             >
                 <div class="btn inner">
                     <p>
-                        <span>{ "Перейти в канал" }</span>
+                        <span>{ lang::NAV_GO_TO_CHANNEL }</span>
                         <br/>
                         <span>{ "Telegram" }</span>
                     </p>

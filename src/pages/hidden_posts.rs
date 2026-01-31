@@ -6,6 +6,7 @@ use crate::components::post_card::*;
 use crate::components::simple_title_card::*;
 use crate::components::warning::*;
 use crate::content::*;
+use crate::lang;
 use crate::utils::*;
 
 use crate::Route;
@@ -15,13 +16,13 @@ pub fn hidden_posts() -> Html {
     let logged_user_context = use_context::<LoggedUserContext>().unwrap();
 
     let meta = html! {
-        <Meta title="Скрытое" noindex=true />
+        <Meta title={ lang::HIDDEN_TITLE } noindex=true />
     };
 
     let not_auth_content = html! {
         <>
             { meta.clone() }
-            <Warning text="Нужна авторизация для просмотра скрытого!" />
+            <Warning text={ lang::HIDDEN_AUTH_REQUIRED } />
         </>
     };
 
@@ -38,7 +39,7 @@ pub fn hidden_posts() -> Html {
         return html! {
             <>
                 { meta.clone() }
-                <Warning text="Просмотр скрытого доступен только редакторам!" />
+                <Warning text={ lang::HIDDEN_EDITORS_ONLY } />
             </>
         };
     }
@@ -47,7 +48,7 @@ pub fn hidden_posts() -> Html {
         <>
             { meta }
             <SimpleTitleCard>
-                { "Скрытое" }
+                { Html::from(lang::HIDDEN_TITLE) }
             </SimpleTitleCard>
             <List<API<PostsContainer>, OptionTokened<PostsContainerParams>>
                 r#type={ LoadType::Params(OptionTokened {
@@ -61,9 +62,9 @@ pub fn hidden_posts() -> Html {
                 }) }
                 route_to_page={ Route::UnpublishedPosts }
                 component={ |post| html! { <PostCard { post } is_full=false /> } }
-                error_component={ |_| html! { <Warning text="Ошибка загрузки скрытого!" /> } }
+                error_component={ |_| html! { <Warning text={ lang::HIDDEN_ERROR } /> } }
             >
-                <Warning text="Нет скрытого." />
+                <Warning text={ lang::HIDDEN_EMPTY } />
             </List<API<PostsContainer>, OptionTokened<PostsContainerParams>>>
         </>
     }

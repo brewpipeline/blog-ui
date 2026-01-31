@@ -10,6 +10,7 @@ use crate::components::list::*;
 use crate::components::simple_title_card::*;
 use crate::components::warning::*;
 use crate::content;
+use crate::lang;
 use crate::utils::*;
 
 use crate::Route;
@@ -141,7 +142,7 @@ pub fn comments(props: &CommentsProps) -> Html {
     html! {
         <>
             <SimpleTitleCard>
-                { "Комментарии" }
+                { Html::from(lang::COMMENT_TITLE) }
             </SimpleTitleCard>
             <List<content::API<content::CommentsContainer>, content::CommentsContainerPostIdParams, DefaultPageProcessor<50>>
                 r#type={ LoadType::Params(content::CommentsContainerPostIdParams {
@@ -150,9 +151,9 @@ pub fn comments(props: &CommentsProps) -> Html {
                 }) }
                 route_to_page={ Route::Post { slug: post.slug, id: post.id } }
                 component={ |comment| html! { <CommentCard { comment } /> } }
-                error_component={ |_| html! { <Warning text="Ошибка загрузки комментариев!" /> } }
+                error_component={ |_| html! { <Warning text={ lang::COMMENT_ERROR } /> } }
             >
-                <Warning text="Нет комментариев." />
+                <Warning text={ lang::COMMENT_EMPTY } />
             </List<content::API<content::CommentsContainer>, content::CommentsContainerPostIdParams, DefaultPageProcessor<50>>>
             if !logged_user_context.is_not_inited() {
                 if logged_user_context.author().map(|a| a.blocked == 0).unwrap_or(false) {
@@ -160,7 +161,7 @@ pub fn comments(props: &CommentsProps) -> Html {
                         <textarea
                             class="form-control"
                             rows="3"
-                            placeholder="Комментарий..."
+                            placeholder={ lang::COMMENT_PLACEHOLDER }
                             ref={ field_ref }
                             { oninput }
                             disabled={ *state == CommentsState::InProgress }
@@ -174,7 +175,7 @@ pub fn comments(props: &CommentsProps) -> Html {
                             ref={ button_ref }
                             disabled={ *state != CommentsState::ReadyToSend }
                         >
-                            { "Отправить" }
+                            { lang::COMMON_SEND }
                         </button>
                     </div>
                 }

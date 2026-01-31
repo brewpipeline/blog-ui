@@ -5,6 +5,7 @@ use crate::components::meta::*;
 use crate::components::post_card::*;
 use crate::components::warning::*;
 use crate::content::*;
+use crate::lang;
 use crate::utils::*;
 
 use crate::Route;
@@ -13,7 +14,7 @@ use crate::Route;
 pub fn posts() -> Html {
     html! {
         <>
-            <Meta title="Публикации" />
+            <Meta title={ lang::POSTS_TITLE } />
             <List<API<PostsContainer>, OptionTokened<PostsContainerParams>>
                 r#type={ LoadType::Params(OptionTokened {
                     token: None,
@@ -27,9 +28,9 @@ pub fn posts() -> Html {
                 use_caches=true
                 route_to_page={ Route::Posts }
                 component={ |post| html! { <PostCard { post } is_full=false /> } }
-                error_component={ |_| html! { <Warning text="Ошибка загрузки публикаций!" /> } }
+                error_component={ |_| html! { <Warning text={ lang::POSTS_ERROR } /> } }
             >
-                <Warning text="Нет публикаций." />
+                <Warning text={ lang::POSTS_EMPTY } />
             </List<API<PostsContainer>, OptionTokened<PostsContainerParams>>>
         </>
     }
