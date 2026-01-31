@@ -3,6 +3,7 @@ use yew_router::prelude::*;
 
 use crate::components::author_image::*;
 use crate::content::*;
+use crate::lang;
 use crate::utils::*;
 
 use crate::Route;
@@ -23,8 +24,8 @@ pub fn auth_user_block() -> Html {
         #[cfg(feature = "telegram")]
         let tg_button: Option<Html> = /* Some(html! {
             <button
-                title="Войти через Telegram"
-                aria-label="Войти через Telegram"
+                title={ lang::AUTH_LOGIN_VIA_TELEGRAM_TITLE }
+                aria-label={ lang::AUTH_LOGIN_VIA_TELEGRAM_ARIA }
                 type="button"
                 class={ classes!(
                     "item",
@@ -48,8 +49,8 @@ pub fn auth_user_block() -> Html {
             <>
                 { tg_button.clone() }
                 <button
-                    title="Войти"
-                    aria-label="Войти"
+                    title={ lang::AUTH_LOGIN_ARIA }
+                    aria-label={ lang::AUTH_LOGIN_ARIA }
                     type="button"
                     class={ classes!(
                         "item",
@@ -64,7 +65,7 @@ pub fn auth_user_block() -> Html {
                         <i class="bi bi-person-add"></i>
                     </div>
                     <div class="d-none d-lg-block">
-                        { "Войти" }
+                        { lang::AUTH_LOGIN }
                     </div>
                 </button>
             </>
@@ -76,7 +77,7 @@ pub fn auth_user_block() -> Html {
     html! {
         <div class="d-flex dropdown dropdown-menu-end">
             <div
-                title="Профиль"
+                title={ lang::AUTH_PROFILE }
                 class="img-block item d-flex rounded"
                 style="overflow:hidden;width:38px;"
                 data-bs-toggle="dropdown"
@@ -101,7 +102,7 @@ pub fn auth_user_block() -> Html {
                             classes="dropdown-item"
                             to={ Route::MyUnpublishedPosts }
                         >
-                            { "Неопубликованное" }
+                            { lang::AUTH_MY_UNPUBLISHED }
                         </Link<Route, ()>>
                     </li>
                     <li>
@@ -109,7 +110,7 @@ pub fn auth_user_block() -> Html {
                             classes="dropdown-item"
                             to={ Route::Settings }
                         >
-                            { "Настройки" }
+                            { lang::AUTH_SETTINGS }
                         </Link<Route, ()>>
                     </li>
                     <li><hr class="dropdown-divider" /></li>
@@ -120,7 +121,7 @@ pub fn auth_user_block() -> Html {
                             data-bs-toggle="modal"
                             data-bs-target="#logoutModal"
                         >
-                            { "Выход" }
+                            { lang::AUTH_LOGOUT_MENU }
                         </button>
                     </li>
                 }

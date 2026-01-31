@@ -9,11 +9,12 @@ use wasm_bindgen_futures::spawn_local;
 #[cfg(feature = "client")]
 use web_sys::HtmlTextAreaElement;
 
+use crate::Route;
 use crate::components::meta::*;
 #[cfg(feature = "client")]
 use crate::content::*;
+use crate::lang;
 use crate::utils::*;
-use crate::Route;
 
 fn render_text_with_links(text: &str) -> Html {
     let mut nodes: Vec<Html> = Vec::new();
@@ -143,11 +144,7 @@ impl ChatMessage {
 
 #[function_component(ChatGPT)]
 pub fn chatgpt() -> Html {
-    let messages = use_state(|| {
-        vec![ChatMessage::ai(
-            "Привет! Я — ChatGPT, адаптированный под этот блог. Я в курсе свежих публикаций и помогу подобрать интересное. О чём бы ты хотел почитать?",
-        )]
-    });
+    let messages = use_state(|| vec![ChatMessage::ai(lang::CHATGPT_GREETING)]);
 
     let question = use_state(String::new);
     let sending = use_state(|| false);
@@ -211,18 +208,13 @@ pub fn chatgpt() -> Html {
                             reason,
                         } => {
                             let reason_text =
-                                reason.unwrap_or_else(|| "неизвестная причина".to_string());
-                            msgs.push(ChatMessage::system(format!(
-                                "Произошла ошибка при получении ответа: {}",
-                                reason_text
-                            )));
+                                reason.unwrap_or_else(|| lang::CHATGPT_UNKNOWN_REASON.to_string());
+                            msgs.push(ChatMessage::system(lang::chatgpt_error(&reason_text)));
                             messages.set(msgs);
                         }
                     },
                     Err(_) => {
-                        msgs.push(ChatMessage::system(
-                            "Произошла ошибка сети при получении ответа".to_string(),
-                        ));
+                        msgs.push(ChatMessage::system(lang::CHATGPT_NETWORK_ERROR.to_string()));
                         messages.set(msgs);
                     }
                 }
@@ -280,9 +272,9 @@ pub fn chatgpt() -> Html {
                         )}></i>
                         {
                             match m.from {
-                                ChatFrom::User => "Вы",
+                                ChatFrom::User => lang::CHATGPT_USER,
                                 ChatFrom::ChatGpt => "ChatGPT",
-                                ChatFrom::System => "Система",
+                                ChatFrom::System => lang::CHATGPT_SYSTEM,
                             }
                         }
                     </div>
@@ -308,7 +300,7 @@ pub fn chatgpt() -> Html {
                         <div class="card-body">
                             <div class="d-flex align-items-center">
                                 <span class="spinner-border spinner-border-sm me-2" role="status" aria-hidden="true"></span>
-                                <span>{ "Печатает…" }</span>
+                                <span>{ lang::CHATGPT_TYPING }</span>
                             </div>
                         </div>
                     </div>
@@ -318,14 +310,14 @@ pub fn chatgpt() -> Html {
                 <textarea
                     class="form-control"
                     rows="3"
-                    placeholder="Спросите что-нибудь…"
+                    placeholder={ lang::CHATGPT_PLACEHOLDER }
                     value={(*question).clone()}
                     {oninput}
                     {onkeydown}
                 />
             </div>
             <div class="mb-3 d-grid gap-2">
-                <button class="btn btn-light" {onclick} disabled={*sending}>{ "Отправить" }</button>
+                <button class="btn btn-light" {onclick} disabled={*sending}>{ lang::COMMON_SEND }</button>
             </div>
         </>
     }

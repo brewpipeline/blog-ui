@@ -1,7 +1,7 @@
 use std::ops::Deref;
 use std::{cell::RefCell, rc::Rc};
 
-use gloo::render::{request_animation_frame, AnimationFrame};
+use gloo::render::{AnimationFrame, request_animation_frame};
 use yew::prelude::*;
 
 use yew_hooks::use_unmount;

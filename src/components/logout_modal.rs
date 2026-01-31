@@ -1,5 +1,6 @@
 use yew::prelude::*;
 
+use crate::lang;
 use crate::utils::*;
 
 #[derive(PartialEq, Properties, Clone)]
@@ -20,14 +21,14 @@ pub fn logout_modal(props: &LogoutModalProps) -> Html {
                     <div class="modal-content">
                         <div class="modal-header">
                             <h5 class="modal-title">
-                                { "Выход" }
+                                { lang::AUTH_LOGOUT_TITLE }
                             </h5>
                             <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                         </div>
                         <div class="modal-body">
                             if logged_user_context.token() != None {
                                 <p class="mb-3">
-                                    { "Вы точно хотите выйти?" }
+                                    { lang::AUTH_LOGOUT_CONFIRM }
                                 </p>
                                 <div class="d-grid gap-2">
                                     <button
@@ -36,11 +37,11 @@ pub fn logout_modal(props: &LogoutModalProps) -> Html {
                                         data-bs-dismiss="modal"
                                         onclick={ move |_| logged_user_context.dispatch(LoggedUserState::LoggedOut) }
                                     >
-                                        { "Выйти" }
+                                        { lang::AUTH_LOGOUT }
                                     </button>
                                 </div>
                             } else {
-                                <h5 class="mb-2 mt-2 text-center"> { "Неавторизован!" } </h5>
+                                <h5 class="mb-2 mt-2 text-center"> { lang::AUTH_NOT_AUTHORIZED } </h5>
                             }
                         </div>
                     </div>

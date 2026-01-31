@@ -6,6 +6,7 @@ use crate::components::meta::*;
 use crate::components::post_card::*;
 use crate::components::warning::*;
 use crate::content;
+use crate::lang;
 use crate::utils::*;
 
 #[derive(PartialEq, Properties, Clone)]
@@ -39,8 +40,8 @@ pub fn post(props: &PostProps) -> Html {
                 if is_post_invalid {
                     return html! {
                         <>
-                            <Meta title="Ссылка на публикацию повреждена" noindex=true />
-                            <Warning text="Ссылка на публикацию повреждена!" />
+                            <Meta title={ lang::POST_LINK_BROKEN_TITLE } noindex=true />
+                            <Warning text={ lang::POST_LINK_BROKEN_TEXT } />
                         </>
                     }
                 }
@@ -49,14 +50,14 @@ pub fn post(props: &PostProps) -> Html {
                         if let Some(post) = post.as_ref() {
                             <Meta
                                 r#type="article"
-                                title={ format!("{} - Публикация", post.title.clone()) }
+                                title={ lang::post_meta_title(&post.title) }
                                 description={ post.summary.clone() }
                                 keywords={ post.joined_tags_string(", ") }
                                 image={ post.image_url.clone().unwrap_or_default() }
                                 noindex={ post.publish_type != content::PublishType::Published }
                             />
                         } else {
-                            <Meta title="Публикация" noindex=true />
+                            <Meta title={ lang::POST_TITLE } noindex=true />
                         }
                         <PostCard post={ post.clone() } is_full=true />
                         if let Some(post) = post {
@@ -67,8 +68,8 @@ pub fn post(props: &PostProps) -> Html {
             } }
             error_component={ |_| html! {
                 <>
-                    <Meta title="Ошибка загрузки публикации" noindex=true />
-                    <Warning text="Ошибка загрузки публикации!" />
+                    <Meta title={ lang::POST_ERROR_TITLE } noindex=true />
+                    <Warning text={ lang::POST_ERROR_TEXT } />
                 </>
             } }
         />

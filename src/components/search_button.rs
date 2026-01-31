@@ -2,6 +2,7 @@ use yew::prelude::*;
 use yew_router::prelude::*;
 
 use crate::components::search_field::*;
+use crate::lang;
 
 use crate::Route;
 
@@ -33,7 +34,7 @@ pub fn search_button() -> Html {
     };
 
     html! {
-        <button title="Поиск" class="btn btn-light d-block d-lg-none" { onclick }>
+        <button title={ lang::SEARCH_BUTTON_TITLE } class="btn btn-light d-block d-lg-none" { onclick }>
             <i class="bi bi-search"></i>
         </button>
     }

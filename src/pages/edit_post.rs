@@ -10,6 +10,7 @@ use crate::components::item::*;
 use crate::components::meta::*;
 use crate::components::warning::*;
 use crate::content;
+use crate::lang;
 use crate::utils::*;
 
 #[cfg(feature = "client")]
@@ -52,9 +53,9 @@ pub fn edit_post(props: &EditPostProps) -> Html {
     let meta = html! {
         <Meta title={
             if id == None {
-                "Новая публикация"
+                lang::EDIT_POST_NEW_TITLE
             } else {
-                "Редактирование публикации"
+                lang::EDIT_POST_EDIT_TITLE
             }
         } noindex=true />
     };
@@ -180,9 +181,9 @@ pub fn edit_post(props: &EditPostProps) -> Html {
             { meta.clone() }
             <Warning text={
                 if id == None {
-                    "Создавать публикации можно только авторизованным авторам!"
+                    lang::EDIT_POST_NEW_AUTH
                 } else {
-                    "Редактировать публикации можно только авторизованным авторам!"
+                    lang::EDIT_POST_EDIT_AUTH
                 }
             } />
         </>
@@ -200,7 +201,7 @@ pub fn edit_post(props: &EditPostProps) -> Html {
     if let EditPostState::Deleted = *state {
         return html! {
             <div class="alert alert-success d-flex align-items-center" role="alert">
-                { "Публикация удалена!" }
+                { lang::EDIT_POST_DELETED }
             </div>
         };
     }
@@ -293,10 +294,10 @@ pub fn edit_post(props: &EditPostProps) -> Html {
             <div class="card"><div class="card-body">
                 <h5 class="card-title mb-3">
                     if let Some(post) = post.as_ref() {
-                        { "Редактирование публикации: " }
+                        { lang::EDIT_POST_EDITING }
                         { post.title.clone() }
                     } else {
-                        { "Новая публикация" }
+                        { lang::EDIT_POST_NEW_TITLE }
                     }
                 </h5>
                 <form class="card-text">
@@ -310,13 +311,13 @@ pub fn edit_post(props: &EditPostProps) -> Html {
 
                     <div class="mb-3">
                         <label for="validationImage1" class="form-label">
-                            { "Изображение (Cсылка) (Опциональное)" }
+                            { lang::EDIT_POST_IMAGE_LABEL }
                         </label>
                         <input
                             type="text"
                             class="form-control"
                             id="validationImage1"
-                            placeholder="Что-то визуально приятное..."
+                            placeholder={ lang::EDIT_POST_IMAGE_PLACEHOLDER }
                             value={ post_image }
                             ref={ image_node_ref.clone() }
                         />
@@ -324,45 +325,45 @@ pub fn edit_post(props: &EditPostProps) -> Html {
 
                     <div class="mb-3">
                         <label for="validationTitle1" class="form-label">
-                            { "Заголовок" }
+                            { lang::EDIT_POST_TITLE_LABEL }
                         </label>
                         <input
                             type="text"
                             class="form-control"
                             id="validationTitle1"
-                            placeholder="Что-то захватывающее внимание..."
+                            placeholder={ lang::EDIT_POST_TITLE_PLACEHOLDER }
                             value={ post_title }
                             ref={ title_node_ref.clone() }
                         />
                         <div class="invalid-feedback">
-                            { "Пожалуйста, введите заголовок публикации, это обязательное поле!" }
+                            { lang::EDIT_POST_TITLE_VALIDATION }
                         </div>
                     </div>
 
                     <div class="mb-3">
                         <label for="validationTextarea1" class="form-label">
-                            { "Короткая версия" }
+                            { lang::EDIT_POST_SUMMARY_LABEL }
                         </label>
                         <textarea
                             class="form-control"
                             id="validationTextarea1"
-                            placeholder="Что-то короткое, но важное!"
+                            placeholder={ lang::EDIT_POST_SUMMARY_PLACEHOLDER }
                             value={ post_summary }
                             ref={ summary_node_ref.clone() }
                         />
                         <div class="invalid-feedback">
-                            { "Пожалуйста, введите короткую версию публикации, это обязательное поле!" }
+                            { lang::EDIT_POST_SUMMARY_VALIDATION }
                         </div>
                     </div>
 
                     <div class="mb-3">
                         <label for="validationTextarea2" class="form-label">
-                            { "Полная версия (Опциональное)" }
+                            { lang::EDIT_POST_CONTENT_LABEL }
                         </label>
                         <textarea
                             class="form-control"
                             id="validationTextarea2"
-                            placeholder="Что-то динное и скучн... веселое!"
+                            placeholder={ lang::EDIT_POST_CONTENT_PLACEHOLDER }
                             value={ post_content }
                             ref={ content_node_ref.clone() }
                         />
@@ -370,13 +371,13 @@ pub fn edit_post(props: &EditPostProps) -> Html {
 
                     <div class="mb-3">
                         <label for="validationTitle2" class="form-label">
-                            { "Теги (через `,`) (Опциональное)" }
+                            { lang::EDIT_POST_TAGS_LABEL }
                         </label>
                         <input
                             type="text"
                             class="form-control"
                             id="validationTitle2"
-                            placeholder="Что-то напоминающее о..."
+                            placeholder={ lang::EDIT_POST_TAGS_PLACEHOLDER }
                             value={ post_tags }
                             ref={ tags_node_ref.clone() }
                         />
@@ -393,7 +394,7 @@ pub fn edit_post(props: &EditPostProps) -> Html {
                             onchange={ publish_type_on_change.clone() }
                         />
                         <label class="form-check-label" for="validationFormCheck1">
-                            { "Неопубликовано" }
+                            { lang::EDIT_POST_UNPUBLISHED }
                         </label>
                     </div>
 
@@ -408,7 +409,7 @@ pub fn edit_post(props: &EditPostProps) -> Html {
                             onchange={ publish_type_on_change.clone() }
                         />
                         <label class="form-check-label" for="validationFormCheck2">
-                            { "Опубликовано" }
+                            { lang::EDIT_POST_PUBLISHED }
                         </label>
                     </div>
 
@@ -423,25 +424,23 @@ pub fn edit_post(props: &EditPostProps) -> Html {
                         onchange={ publish_type_on_change.clone() }
                     />
                     <label class="form-check-label" for="validationFormCheck3">
-                        { "Скрыто" }
+                        { lang::EDIT_POST_HIDDEN_STATUS }
                     </label>
                 </div>
 
                     if let EditPostState::EditError(message) = (*state).clone() {
                         <div class="alert alert-danger d-flex align-items-center" role="alert">
                             if post == None {
-                                { "Ошибка добавления публикации: " }
+                                { lang::edit_post_add_error(&message) }
                             } else {
-                                { "Ошибка редактирования публикации: " }
+                                { lang::edit_post_edit_error(&message) }
                             }
-                            { message }
                         </div>
                     }
 
                     if let EditPostState::DeleteError(message) = (*state).clone() {
                         <div class="alert alert-danger d-flex align-items-center" role="alert">
-                            { "Ошибка удаления публикации: " }
-                            { message }
+                            { lang::edit_post_delete_error(&message) }
                         </div>
                     }
 
@@ -452,7 +451,7 @@ pub fn edit_post(props: &EditPostProps) -> Html {
                             onclick={ save_onclick.clone() }
                             disabled={ !state.action_available() }
                         >
-                            { "Сохранить" }
+                            { lang::COMMON_SAVE }
                         </button>
                         if post != None {
                             <button
@@ -460,7 +459,7 @@ pub fn edit_post(props: &EditPostProps) -> Html {
                                 onclick={ delete_onclick.clone() }
                                 disabled={ !state.action_available() }
                             >
-                                { "Удалить" }
+                                { lang::COMMON_DELETE }
                             </button>
                         }
                     </div>
@@ -471,31 +470,31 @@ pub fn edit_post(props: &EditPostProps) -> Html {
                     {
                         let script: Element = document().create_element("script").unwrap();
                         script.set_attribute("type", "text/javascript").unwrap();
-                        script.set_inner_html("
-                            function tinymceAction() {
+                        script.set_inner_html(&format!("
+                            function tinymceAction() {{
                                 tinymce.remove()
-                                tinymce.init({
+                                tinymce.init({{
                                     selector: '#validationTextarea2',
-                                    setup: function(editor) {
-                                        editor.on('Change Keyup', function () {
+                                    setup: function(editor) {{
+                                        editor.on('Change Keyup', function () {{
                                             editor.save()
-                                        })
-                                    },
+                                        }})
+                                    }},
                                     skin: 'oxide-dark',
                                     content_css: 'dark',
-                                    language: 'ru',
+                                    language: '{lang}',
                                     plugins: 'anchor autolink charmap codesample emoticons image link lists media searchreplace table visualblocks wordcount code codesample',
                                     relative_urls : false,
                                     remove_script_host : false,
                                     convert_urls : true,
-                                })
-                            }
-                            if (typeof tinymce === 'undefined') {{
-                                document.getElementById('tinymceScript').onload = tinymceAction
-                            }} else {{
-                                tinymceAction()
+                                }})
                             }}
-                        ");
+                            if (typeof tinymce === 'undefined') {{{{
+                                document.getElementById('tinymceScript').onload = tinymceAction
+                            }}}} else {{{{
+                                tinymceAction()
+                            }}}}
+                        ", lang = lang::TINYMCE_LANG));
                         Html::VRef(script.into())
                     }
                     #[cfg(not(feature = "client"))]
@@ -509,7 +508,7 @@ pub fn edit_post(props: &EditPostProps) -> Html {
         <>
             { meta }
             if author.blocked == 1 {
-                <Warning text="Вы заблокированы!" />
+                <Warning text={ lang::EDIT_POST_BLOCKED } />
             } else if let Some(id) = id {
                 <Item<content::API<content::PostContainer>, content::OptionTokened<content::PostParams>>
                     r#type={ LoadType::Params(content::OptionTokened {
@@ -522,13 +521,13 @@ pub fn edit_post(props: &EditPostProps) -> Html {
                             if post.author.id == author.id || author.editor == 1 {
                                 main_content.emit(Some(post))
                             } else {
-                                html! { <Warning text="Только автор или редактор может редактировать публикацию!" /> }
+                                html! { <Warning text={ lang::EDIT_POST_ONLY_AUTHOR_OR_EDITOR } /> }
                             }
                         } else {
-                            html! { <Warning text="Загрузка публикации для редактирования..." /> }
+                            html! { <Warning text={ lang::EDIT_POST_LOADING } /> }
                         }
                     } }
-                    error_component={ |_| html! { <Warning text="Ошибка загрузки публикации для редактирования!" /> } }
+                    error_component={ |_| html! { <Warning text={ lang::EDIT_POST_LOAD_ERROR } /> } }
                 />
             } else {
                 { main_content.emit(None) }

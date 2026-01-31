@@ -6,6 +6,7 @@ use crate::components::post_card::*;
 use crate::components::simple_title_card::*;
 use crate::components::warning::*;
 use crate::content::*;
+use crate::lang;
 use crate::utils::*;
 
 use crate::Route;
@@ -15,13 +16,13 @@ pub fn my_unpublished_posts() -> Html {
     let logged_user_context = use_context::<LoggedUserContext>().unwrap();
 
     let meta = html! {
-        <Meta title="Мое неопубликованное" noindex=true />
+        <Meta title={ lang::MY_UNPUB_TITLE } noindex=true />
     };
 
     let not_auth_content = html! {
         <>
             { meta.clone() }
-            <Warning text="Нужна авторизация для получения моего неопубликованного!" />
+            <Warning text={ lang::MY_UNPUB_AUTH_REQUIRED } />
         </>
     };
 
@@ -38,7 +39,7 @@ pub fn my_unpublished_posts() -> Html {
         <>
             { meta }
             <SimpleTitleCard>
-                { "Мое неопубликованное" }
+                { Html::from(lang::MY_UNPUB_TITLE) }
             </SimpleTitleCard>
             <List<API<PostsContainer>, OptionTokened<PostsContainerParams>>
                 r#type={ LoadType::Params(OptionTokened {
@@ -52,9 +53,9 @@ pub fn my_unpublished_posts() -> Html {
                 }) }
                 route_to_page={ Route::UnpublishedPosts }
                 component={ |post| html! { <PostCard { post } is_full=false /> } }
-                error_component={ |_| html! { <Warning text="Ошибка загрузки моего неопубликованного!" /> } }
+                error_component={ |_| html! { <Warning text={ lang::MY_UNPUB_ERROR } /> } }
             >
-                <Warning text="Нет моего неопубликованного." />
+                <Warning text={ lang::MY_UNPUB_EMPTY } />
             </List<API<PostsContainer>, OptionTokened<PostsContainerParams>>>
         </>
     }

@@ -17,6 +17,7 @@ use crate::components::delayed_component::*;
 use crate::components::telegram_button::*;
 #[cfg(feature = "client")]
 use crate::content::*;
+use crate::lang;
 use crate::utils::*;
 
 #[derive(PartialEq, Properties, Clone)]
@@ -325,7 +326,7 @@ pub fn login_modal(props: &LoginModalProps) -> Html {
     #[cfg(any(feature = "yandex", feature = "telegram"))]
     let split_html = html! {
         <div class="or-container">
-            <div> { "ИЛИ" } </div>
+            <div> { lang::AUTH_OR } </div>
         </div>
     };
     #[cfg(not(any(feature = "yandex", feature = "telegram")))]
@@ -380,14 +381,14 @@ pub fn login_modal(props: &LoginModalProps) -> Html {
                             }} deps={ () } />
                             <div class="col-12 col-lg-8">
                                 <div class="modal-header">
-                                    <h1 class="modal-title fs-5" id="loginModalLabel"> { "Войти" } </h1>
+                                    <h1 class="modal-title fs-5" id="loginModalLabel"> { lang::AUTH_LOGIN_TITLE } </h1>
                                     <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close" ref={ close_node_ref }></button>
                                 </div>
                                 <div class="modal-body">
                                     if logged_user_context.token() == None {
                                         if let LoggedUserState::Error(message) = logged_user_context.state().clone() {
                                             <div class="alert alert-danger d-flex align-items-center" role="alert">
-                                                { "Ошибка авторизации: " }
+                                                { lang::AUTH_LOGIN_ERROR }
                                                 { message }
                                             </div>
                                         }
@@ -399,11 +400,11 @@ pub fn login_modal(props: &LoginModalProps) -> Html {
                                                 type="email"
                                                 class="form-control"
                                                 id="floatingInput"
-                                                placeholder="Имя пользователя"
+                                                placeholder={ lang::AUTH_USERNAME }
                                                 ref={ username_node_ref }
                                                 disabled={ !logged_user_context.action_available() }
                                             />
-                                            <label for="floatingInput"> { "Имя пользователя" } </label>
+                                            <label for="floatingInput"> { lang::AUTH_USERNAME } </label>
                                         </div>
                                         <div class="form-floating mb-3">
                                             <input
@@ -414,7 +415,7 @@ pub fn login_modal(props: &LoginModalProps) -> Html {
                                                 ref={ password_node_ref }
                                                 disabled={ !logged_user_context.action_available() }
                                             />
-                                            <label for="floatingPassword"> { "Пароль" } </label>
+                                            <label for="floatingPassword"> { lang::AUTH_PASSWORD } </label>
                                         </div>
                                         <div class="d-grid gap-2">
                                             <button
@@ -425,15 +426,15 @@ pub fn login_modal(props: &LoginModalProps) -> Html {
                                             >
                                                 if let LoggedUserState::InProgress(_) = (*logged_user_context).state() {
                                                     <div class="spinner-border spinner-border-sm" role="status">
-                                                        <span class="visually-hidden"> { "Загрузка..." } </span>
+                                                        <span class="visually-hidden"> { lang::COMMON_LOADING } </span>
                                                     </div>
                                                     { " " }
                                                 }
-                                                { "Войти" }
+                                                { lang::AUTH_LOGIN }
                                             </button>
                                         </div>
                                     } else {
-                                        <h5 class="mb-5 mt-5 text-center"> { "Авторизован!" } </h5>
+                                        <h5 class="mb-5 mt-5 text-center"> { lang::AUTH_AUTHORIZED } </h5>
                                     }
                                 </div>
                             </div>

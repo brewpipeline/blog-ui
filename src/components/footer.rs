@@ -3,9 +3,10 @@ use web_sys::HtmlInputElement;
 use yew::prelude::*;
 use yew_router::prelude::*;
 
+use crate::Route;
+use crate::lang;
 #[cfg(feature = "client")]
 use crate::utils::*;
-use crate::Route;
 
 #[function_component(Footer)]
 pub fn footer() -> Html {
@@ -41,10 +42,10 @@ pub fn footer() -> Html {
                             />
                             <label class="btn btn-light tab-label" for="vbtn-radio1">
                                 <i class="bi bi-list"></i>
-                                { "Меню" }
+                                { lang::FOOTER_MENU }
                             </label>
                             <input
-                                aria-label="Лента"
+                                aria-label={ lang::FOOTER_FEED_ARIA }
                                 type="radio"
                                 class="btn-check"
                                 name="vbtn-radio"
@@ -55,7 +56,7 @@ pub fn footer() -> Html {
                             />
                             <label class="btn btn-light tab-label" for="vbtn-radio2">
                                 <i class="bi bi-card-heading"></i>
-                                { "Лента" }
+                                { lang::FOOTER_FEED }
                             </label>
                             <input
                                 type="radio"
@@ -66,7 +67,7 @@ pub fn footer() -> Html {
                             />
                             <label class="btn btn-light tab-label" for="vbtn-radio3">
                                 <i class="bi bi-info-square"></i>
-                                { "Инфо" }
+                                { lang::FOOTER_INFO }
                             </label>
                         </div>
                 </div>
