@@ -35,26 +35,37 @@ jobs:
             lang: "en"
           - features: "server"
             is_wasm: false
+            lang: "ru"
           - features: "server,chatgpt"
             is_wasm: false
+            lang: "ru"
           - features: "server,yandex"
             is_wasm: false
+            lang: "ru"
           - features: "server,telegram"
             is_wasm: false
+            lang: "ru"
           - features: "server,yandex,telegram"
             is_wasm: false
+            lang: "ru"
           - features: "client"
             is_wasm: true
+            lang: "ru"
           - features: "client,chatgpt"
             is_wasm: true
+            lang: "ru"
           - features: "client,yandex"
             is_wasm: true
+            lang: "ru"
           - features: "client,telegram"
             is_wasm: true
+            lang: "ru"
           - features: "client,yandex,telegram"
             is_wasm: true
+            lang: "ru"
           - features: "client,hydration"
             is_wasm: true
+            lang: "ru"
     steps:
       - name: Checkout
         uses: actions/checkout@v4
@@ -65,7 +76,7 @@ jobs:
         run: rustup target add wasm32-unknown-unknown
       - name: Default build
         if: matrix.is_wasm == false
-        run: cargo build --no-default-features --features "${{ matrix.lang }},${{ matrix.features }}"
+        run: cargo build --no-default-features --features "lang_${{ matrix.lang }},${{ matrix.features }}"
       - name: WASM build
         if: matrix.is_wasm == true
-        run: cargo build --no-default-features --features "${{ matrix.lang }},${{ matrix.features }}" --target wasm32-unknown-unknown
+        run: cargo build --no-default-features --features "lang_${{ matrix.lang }},${{ matrix.features }}" --target wasm32-unknown-unknown
