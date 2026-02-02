@@ -54,7 +54,7 @@ pub fn post(props: &PostProps) -> Html {
                                 description={ post.summary.clone() }
                                 keywords={ post.joined_tags_string(", ") }
                                 image={ post.image_url.clone().unwrap_or_default() }
-                                noindex={ post.publish_type != content::PublishType::Published }
+                                noindex={ post.noindex }
                             />
                         } else {
                             <Meta title={ lang::POST_TITLE } noindex=true />
