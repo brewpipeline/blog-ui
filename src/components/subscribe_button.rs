@@ -2,6 +2,7 @@ use yew::prelude::*;
 
 #[cfg(feature = "client")]
 use crate::content::*;
+use crate::lang;
 use crate::utils::*;
 
 #[function_component(SubscribeButton)]
@@ -88,7 +89,7 @@ pub fn subscribe_button() -> Html {
     } else {
         html! {
             <button
-                title={ if *is_subscribed { "Вы подписаны на уведомления" } else { "Вы отписаны от уведомлений" } }
+                title={ if *is_subscribed { lang::SUBSCRIBE_SUBSCRIBED } else { lang::SUBSCRIBE_UNSUBSCRIBED } }
                 type="button"
                 class={
                     classes!(

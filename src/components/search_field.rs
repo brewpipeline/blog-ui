@@ -6,6 +6,7 @@ use yew_hooks::prelude::*;
 use yew_router::prelude::*;
 
 use crate::Route;
+use crate::lang;
 
 #[derive(Clone, Debug, PartialEq, Eq)]
 pub enum SearchMode {
@@ -56,14 +57,14 @@ impl SearchMode {
     }
     pub fn placeholder(&self) -> &'static str {
         match self {
-            Self::Authors { query: _ } => "Поиск авторов...",
-            Self::Posts { query: _ } => "Поиск публикаций...",
+            Self::Authors { query: _ } => lang::SEARCH_AUTHORS_PLACEHOLDER,
+            Self::Posts { query: _ } => lang::SEARCH_POSTS_PLACEHOLDER,
         }
     }
     pub fn title(&self) -> String {
         let main_title = match self {
-            Self::Authors { query: _ } => "Поиск авторов",
-            Self::Posts { query: _ } => "Поиск публикаций",
+            Self::Authors { query: _ } => lang::SEARCH_AUTHORS_TITLE,
+            Self::Posts { query: _ } => lang::SEARCH_POSTS_TITLE,
         };
         if let Some(query) = self.decoded_query() {
             format!("{query} - {main_title}")

@@ -20,6 +20,7 @@ use crate::components::telegram_button::*;
 use crate::components::warning::*;
 #[cfg(feature = "client")]
 use crate::content::*;
+use crate::lang;
 use crate::utils::*;
 
 #[derive(Clone, PartialEq)]
@@ -255,7 +256,7 @@ pub fn settings() -> Html {
     };
     #[cfg(not(feature = "telegram"))]
     let telegram_button = html! {
-        <strong>{ "Кнопка еще разрабатывается..." }</strong>
+        <strong>{ lang::SETTINGS_BUTTON_NOT_READY }</strong>
     };
 
     let main_oninput = {
@@ -453,17 +454,17 @@ pub fn settings() -> Html {
 
     html! {
         <>
-            <Meta title={ "Настройки" } noindex=true />
+            <Meta title={ lang::SETTINGS_TITLE } noindex=true />
             <div id="settingsPage" ref={ settings_node_ref }>
                 if !logged_user_context.is_not_inited() && !logged_user_context.state().action_available() {
                     <div class="card mb-3">
                         <div class="card-body">
                             <h5 class="card-title placeholder-glow mb-3">
-                                { "Настройки" }
+                                { lang::SETTINGS_TITLE }
                             </h5>
                             <div class="col-12 col-xl-10">
                                 <h6 class="card-title placeholder-glow mb-3">
-                                    { "Основные данные профиля" }
+                                    { lang::SETTINGS_PRIMARY_TITLE }
                                     { " " }
                                     <a href="#" onclick={
                                         let main_reset = main_reset.clone();
@@ -474,7 +475,7 @@ pub fn settings() -> Html {
                                             main_section_error.set(None);
                                         }
                                     }>
-                                        <i title="Сбросить основные данные" class="bi bi-arrow-counterclockwise"></i>
+                                        <i title={ lang::SETTINGS_PRIMARY_RESET_TITLE } class="bi bi-arrow-counterclockwise"></i>
                                     </a>
                                 </h6>
                                 if let Some(message) = main_section_error.as_ref() {
@@ -482,13 +483,13 @@ pub fn settings() -> Html {
                                         match message {
                                             Ok(ok_message) => html! {
                                                 <div class="alert alert-success d-flex align-items-center" role="alert">
-                                                    { "Данные успешно обновлены: " }
+                                                    { lang::SETTINGS_DATA_UPDATED }
                                                     { ok_message }
                                                 </div>
                                             },
                                             Err(err_message) => html! {
                                                 <div class="alert alert-danger d-flex align-items-center" role="alert">
-                                                    { "Ошибка обновления данных: " }
+                                                    { lang::SETTINGS_DATA_ERROR }
                                                     { err_message }
                                                 </div>
                                             }
@@ -514,14 +515,14 @@ pub fn settings() -> Html {
                                             }
                                         />
                                         <label class="form-check-label mb-2" for="flexRadioDefault1">
-                                            { "Использовать данные Telegram (используйте кнопку ниже, чтобы выбрать этот пункт)" }
+                                            { lang::SETTINGS_USE_TELEGRAM }
                                         </label>
                                         <div class="mb-2">
                                             <div style={ if !*in_progress { "" } else { "pointer-events: none;" } }>
                                                 { telegram_button }
                                             </div>
                                             <div class="form-text">
-                                                { "Также используйте кнопку для синхронизации данныx." }
+                                                { lang::SETTINGS_SYNC_HINT }
                                             </div>
                                         </div>
                                     </div>
@@ -545,7 +546,7 @@ pub fn settings() -> Html {
                                             }
                                         />
                                         <label class="form-check-label mb-2" for="flexRadioDefault2">
-                                            { "Использовать пользовательские данные" }
+                                            { lang::SETTINGS_USE_CUSTOM }
                                         </label>
                                         <div class="form-floating mb-2">
                                             <input
@@ -554,10 +555,10 @@ pub fn settings() -> Html {
                                                 type="text"
                                                 class="form-control"
                                                 id="floatingInput1"
-                                                placeholder="Имя профиля (уникальное)"
+                                                placeholder={ lang::SETTINGS_SLUG }
                                                 disabled={ *main_active_section != ActiveSection::Custom || *in_progress }
                                             />
-                                            <label for="floatingInput1">{ "Имя профиля (уникальное)" }</label>
+                                            <label for="floatingInput1">{ lang::SETTINGS_SLUG }</label>
                                         </div>
                                         <div class="form-floating mb-2">
                                             <input
@@ -566,10 +567,10 @@ pub fn settings() -> Html {
                                                 type="text"
                                                 class="form-control"
                                                 id="floatingInput2"
-                                                placeholder="Изображение профиля (ссылка)"
+                                                placeholder={ lang::SETTINGS_IMAGE_URL }
                                                 disabled={ *main_active_section != ActiveSection::Custom || *in_progress }
                                             />
-                                            <label for="floatingInput2">{ "Изображение профиля (ссылка)" }</label>
+                                            <label for="floatingInput2">{ lang::SETTINGS_IMAGE_URL }</label>
                                         </div>
                                         <div class="form-floating mb-2">
                                             <input
@@ -578,10 +579,10 @@ pub fn settings() -> Html {
                                                 type="text"
                                                 class="form-control"
                                                 id="floatingInput3"
-                                                placeholder="Имя"
+                                                placeholder={ lang::SETTINGS_FIRST_NAME }
                                                 disabled={ *main_active_section != ActiveSection::Custom || *in_progress }
                                             />
-                                            <label for="floatingInput3">{ "Имя" }</label>
+                                            <label for="floatingInput3">{ lang::SETTINGS_FIRST_NAME }</label>
                                         </div>
                                         <div class="form-floating mb-2">
                                             <input
@@ -590,10 +591,10 @@ pub fn settings() -> Html {
                                                 type="text"
                                                 class="form-control"
                                                 id="floatingInput4"
-                                                placeholder="Фамилия"
+                                                placeholder={ lang::SETTINGS_LAST_NAME }
                                                 disabled={ *main_active_section != ActiveSection::Custom || *in_progress }
                                             />
-                                            <label for="floatingInput4">{ "Фамилия" }</label>
+                                            <label for="floatingInput4">{ lang::SETTINGS_LAST_NAME }</label>
                                         </div>
                                         <button
                                             type="button"
@@ -601,18 +602,18 @@ pub fn settings() -> Html {
                                             onclick={ main_onclick }
                                             disabled={ *main_active_section != ActiveSection::Custom || *in_progress || !is_main_ready_for_save }
                                         >
-                                            { "Сохранить" }
+                                            { lang::COMMON_SAVE }
                                             if *in_progress {
                                                 { " " }
                                                 <div class="spinner-border spinner-border-sm" role="status">
-                                                    <span class="visually-hidden"> { "Загрузка..." } </span>
+                                                    <span class="visually-hidden"> { lang::COMMON_LOADING } </span>
                                                 </div>
                                             }
                                         </button>
                                     </div>
                                 </div>
                                 <h6 class="card-title placeholder-glow mb-3">
-                                    { "Второстепенные данные профиля" }
+                                    { lang::SETTINGS_SECONDARY_TITLE }
                                     { " " }
                                     <a href="#" onclick={
                                         let secondary_reset = secondary_reset.clone();
@@ -623,7 +624,7 @@ pub fn settings() -> Html {
                                             secondary_section_error.set(None);
                                         }
                                     }>
-                                        <i title="Сбросить второстепенные данные" class="bi bi-arrow-counterclockwise"></i>
+                                        <i title={ lang::SETTINGS_SECONDARY_RESET_TITLE } class="bi bi-arrow-counterclockwise"></i>
                                     </a>
                                 </h6>
                                 if let Some(message) = secondary_section_error.as_ref() {
@@ -631,13 +632,13 @@ pub fn settings() -> Html {
                                         match message {
                                             Ok(ok_message) => html! {
                                                 <div class="alert alert-success d-flex align-items-center" role="alert">
-                                                    { "Данные успешно обновлены: " }
+                                                    { lang::SETTINGS_DATA_UPDATED }
                                                     { ok_message }
                                                 </div>
                                             },
                                             Err(err_message) => html! {
                                                 <div class="alert alert-danger d-flex align-items-center" role="alert">
-                                                    { "Ошибка обновления данных: " }
+                                                    { lang::SETTINGS_DATA_ERROR }
                                                     { err_message }
                                                 </div>
                                             }
@@ -654,10 +655,10 @@ pub fn settings() -> Html {
                                             type="phone"
                                             class="form-control"
                                             id="floatingInput5"
-                                            placeholder="О себе"
+                                            placeholder={ lang::SETTINGS_ABOUT }
                                             disabled={ *in_progress }
                                         />
-                                        <label for="floatingInput5">{ "О себе" }</label>
+                                        <label for="floatingInput5">{ lang::SETTINGS_ABOUT }</label>
                                     </div>
                                     <div class="form-floating mb-2">
                                         <input
@@ -666,10 +667,10 @@ pub fn settings() -> Html {
                                             type="email"
                                             class="form-control"
                                             id="floatingInput6"
-                                            placeholder="Почта"
+                                            placeholder={ lang::SETTINGS_EMAIL }
                                             disabled={ *in_progress }
                                         />
-                                        <label for="floatingInput6">{ "Почта" }</label>
+                                        <label for="floatingInput6">{ lang::SETTINGS_EMAIL }</label>
                                     </div>
                                     <div class="form-floating mb-2">
                                         <input
@@ -678,10 +679,10 @@ pub fn settings() -> Html {
                                             type="text"
                                             class="form-control"
                                             id="floatingInput7"
-                                            placeholder="Телефон"
+                                            placeholder={ lang::SETTINGS_PHONE }
                                             disabled={ *in_progress }
                                         />
-                                        <label for="floatingInput7">{ "Телефон" }</label>
+                                        <label for="floatingInput7">{ lang::SETTINGS_PHONE }</label>
                                     </div>
                                     <button
                                         type="button"
@@ -689,11 +690,11 @@ pub fn settings() -> Html {
                                         onclick={ secondary_onclick }
                                         disabled={ *in_progress || !is_secondary_ready_for_save }
                                     >
-                                        { "Сохранить" }
+                                        { lang::COMMON_SAVE }
                                         if *in_progress {
                                             { " " }
                                             <div class="spinner-border spinner-border-sm" role="status">
-                                                <span class="visually-hidden"> { "Загрузка..." } </span>
+                                                <span class="visually-hidden"> { lang::COMMON_LOADING } </span>
                                             </div>
                                         }
                                     </button>
@@ -702,7 +703,7 @@ pub fn settings() -> Html {
                         </div>
                     </div>
                 } else {
-                    <Warning text="Настройки доступны только авторизованным авторам!" />
+                    <Warning text={ lang::SETTINGS_AUTH_REQUIRED } />
                 }
             </div>
         </>

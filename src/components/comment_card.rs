@@ -3,6 +3,7 @@ use yew_router::prelude::*;
 
 use crate::components::author_image::*;
 use crate::content;
+use crate::lang;
 use crate::utils::*;
 
 use crate::Route;
@@ -132,21 +133,21 @@ pub fn comment_card(props: &CommentCardProps) -> Html {
                                         match *state {
                                             CommentCardState::None => html! {
                                                 <a href="#" { onclick }>
-                                                    <i title="Удалить комментарий" class="bi bi-trash"></i>
+                                                    <i title={ lang::COMMENT_DELETE_TITLE } class="bi bi-trash"></i>
                                                 </a>
                                             },
                                             CommentCardState::DeleteInProgress => html! {
-                                                <i style="color:#8c8c8c;"> { "Удаление..." } </i>
+                                                <i style="color:#8c8c8c;"> { lang::COMMENT_DELETING } </i>
                                             },
                                             CommentCardState::Deleted => html! {
-                                                <i style="color:#8c8c8c;"> { "Удален!" } </i>
+                                                <i style="color:#8c8c8c;"> { lang::COMMENT_DELETED } </i>
                                             },
                                         }
                                     }
                                 }
                             }
                         } else {
-                            <i style="color:#8c8c8c;"> { "Комментарий удален." } </i>
+                            <i style="color:#8c8c8c;"> { lang::COMMENT_WAS_DELETED } </i>
                         }
                     } else {
                         <span class="placeholder col-3 bg-secondary"></span> { " " }

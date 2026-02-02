@@ -5,6 +5,7 @@ use crate::components::author_image::*;
 use crate::components::delayed_component::*;
 use crate::components::optional_image::*;
 use crate::content::*;
+use crate::lang;
 use crate::utils::*;
 
 use crate::Route;
@@ -71,7 +72,7 @@ pub fn post_card(props: &PostCardProps) -> Html {
                     html! {
                         <>
                             { " " }
-                            <a href="#" class="text-decoration-none" {onclick} title={ if *recommended { "Убрать из рекомендаций" } else { "Добавить в рекомендации" } }>
+                            <a href="#" class="text-decoration-none" {onclick} title={ if *recommended { lang::POSTCARD_STAR_REMOVE } else { lang::POSTCARD_STAR_ADD } }>
                                 <i
                                     class={ classes!("bi", if *recommended { "bi-star-fill" } else { "bi-star" }) }
                                 ></i>
@@ -101,7 +102,7 @@ pub fn post_card(props: &PostCardProps) -> Html {
                             to={ Route::EditPost { id: post.id } }
                             state={ Some(post.clone()) }
                         >
-                            <i title="Редактировать публикацию" class="bi bi-pencil-square"></i>
+                            <i title={ lang::POSTCARD_EDIT_TITLE } class="bi bi-pencil-square"></i>
                         </Link<Route, (), Post>>
                     </>
                 }
@@ -250,10 +251,10 @@ pub fn post_card(props: &PostCardProps) -> Html {
                     <div class="d-flex col-2 align-items-center justify-content-end" style="height: 24px;">
                         <p class="mt-0 mb-0">
                             if publish_type == Some(PublishType::Unpublished) {
-                                <i title="Неопубликовано" class="bi bi-clipboard2-x-fill"></i>
+                                <i title={ lang::POSTCARD_UNPUBLISHED_TITLE } class="bi bi-clipboard2-x-fill"></i>
                             }
                             if publish_type == Some(PublishType::Hidden) {
-                                <i title="Скрыто" class="bi bi-eye-slash-fill"></i>
+                                <i title={ lang::POSTCARD_HIDDEN_TITLE } class="bi bi-eye-slash-fill"></i>
                             }
                             { star_button }
                             { edit_button }

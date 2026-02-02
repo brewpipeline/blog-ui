@@ -7,6 +7,7 @@ use crate::components::post_card::*;
 use crate::components::simple_title_card::*;
 use crate::components::warning::*;
 use crate::content;
+use crate::lang;
 use crate::utils::*;
 
 use crate::Route;
@@ -28,8 +29,8 @@ pub fn post(props: &TagProps) -> Html {
                 if tag.as_ref().map(|t| t.id != id || t.slug != slug).unwrap_or(false) {
                     return html! {
                         <>
-                            <Meta title="Ссылка на тег повреждена" noindex=true />
-                            <Warning text="Ссылка на тег повреждена!" />
+                            <Meta title={ lang::TAG_LINK_BROKEN_TITLE } noindex=true />
+                            <Warning text={ lang::TAG_LINK_BROKEN_TEXT } />
                         </>
                     }
                 }
@@ -37,14 +38,14 @@ pub fn post(props: &TagProps) -> Html {
                     <>
                         if let Some(tag) = tag.as_ref() {
                             <Meta
-                                title={ format!("{} - Тег", tag.title.clone()) }
+                                title={ lang::tag_meta_title(&tag.title) }
                             />
                         } else {
-                            <Meta title="Тег" noindex=true />
+                            <Meta title={ lang::TAG_TITLE } noindex=true />
                         }
 
                         <SimpleTitleCard>
-                            { "Тег: " }
+                            { lang::TAG_PREFIX }
                             if let Some(tag) = &tag {
                                 { &tag.title }
                             } else {
@@ -65,9 +66,9 @@ pub fn post(props: &TagProps) -> Html {
                                 }) }
                                 route_to_page={ Route::Tag { slug: tag.slug, id: tag.id } }
                                 component={ |post| html! { <PostCard { post } is_full=false /> } }
-                                error_component={ |_| html! { <Warning text="Ошибка загрузки публикаций по тегу!" /> } }
+                                error_component={ |_| html! { <Warning text={ lang::TAG_POSTS_ERROR } /> } }
                             >
-                                <Warning text="Нет публикаций по тегу." />
+                                <Warning text={ lang::TAG_POSTS_EMPTY } />
                             </List<content::API<content::PostsContainer>, content::OptionTokened<content::PostsContainerParams>>>
                         }
                     </>
@@ -75,8 +76,8 @@ pub fn post(props: &TagProps) -> Html {
             } }
             error_component={ |_| html! {
                 <>
-                    <Meta title="Ошибка загрузки тега" noindex=true />
-                    <Warning text="Ошибка загрузки тега!" />
+                    <Meta title={ lang::TAG_ERROR_TITLE } noindex=true />
+                    <Warning text={ lang::TAG_ERROR_TEXT } />
                 </>
             } }
         />

@@ -6,10 +6,11 @@ use yew_router::prelude::*;
 use crate::components::information_menu::*;
 use crate::components::navigation_menu::*;
 use crate::components::recommended_post::*;
+use crate::lang;
 
+use crate::Route;
 #[cfg(feature = "client")]
 use crate::utils::*;
-use crate::Route;
 
 #[derive(PartialEq, Clone, Copy)]
 pub enum EnabledMenu {
@@ -58,7 +59,7 @@ pub fn body() -> Html {
                     <div class="d-grid gap-2">
                         <div class="btn-group d-none d-flex d-lg-flex d-xl-none flex-wrap" role="group">
                             <input
-                                aria-label="Лента"
+                                aria-label={ lang::BODY_FEED_ARIA }
                                 type="radio"
                                 class="btn-check"
                                 name="vbtn2-radio"
@@ -67,18 +68,18 @@ pub fn body() -> Html {
                                 checked={ true }
                                 ref={ small_menu_default_ref }
                             />
-                            <label title="Лента" class="btn btn-light" for="vbtn2-radio1">
+                            <label title={ lang::BODY_FEED_TITLE } class="btn btn-light" for="vbtn2-radio1">
                                 <i class="bi bi-card-heading"></i>
                             </label>
                             <input
-                                aria-label="Информация"
+                                aria-label={ lang::BODY_INFO_ARIA }
                                 type="radio"
                                 class="btn-check"
                                 name="vbtn2-radio"
                                 id="vbtn2-radio2"
                                 autocomplete="off"
                             />
-                            <label title="Информация" class="btn btn-light" for="vbtn2-radio2">
+                            <label title={ lang::BODY_INFO_TITLE } class="btn btn-light" for="vbtn2-radio2">
                                 <i class="bi bi-info-square"></i>
                             </label>
                         </div>
@@ -87,11 +88,11 @@ pub fn body() -> Html {
                     <div class="d-flex flex-wrap align-items-end justify-content-center">
                         <p class="mb-0 text-center">
                             <a href="https://www.youtube.com/watch?v=dQw4w9WgXcQ" class="text-decoration-none">
-                                { "Правила" }
+                                { lang::BODY_RULES }
                             </a>
                             <br/>
                             <a href="https://about.tikitko.dev/" class="text-decoration-none">
-                                { "О Tikitko" }
+                                { lang::BODY_ABOUT }
                             </a>
                         </p>
                     </div>

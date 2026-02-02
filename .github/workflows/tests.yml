@@ -28,4 +28,4 @@ jobs:
     steps:
     - uses: actions/checkout@v3
     - name: Run tests
-      run: cargo test --verbose --all-features
+      run: cargo test --verbose --no-default-features -F $(cargo metadata --format-version=1 --no-deps | jq -r '.packages[0].features | keys[]' | grep -v "lang_en" | tr '\n' ',' | sed 's/,$//')

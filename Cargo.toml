@@ -41,7 +41,9 @@ uuid = { version = "1.18.0", features = ["std", "v4", "js"], optional = true }
 
 
 [features]
-default = ["client"]
+default = ["client", "lang_ru"]
+lang_ru = []
+lang_en = []
 server = ["yew/ssr"]
 client = ["yew/csr", "yew-hooks", "wasm-bindgen-futures", "wasm-bindgen", "wasm-cookies", "wasm-logger", "web-sys", "gloo", "gloo-net"]
 hydration = ["client", "yew/hydration"]

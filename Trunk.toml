@@ -2,3 +2,8 @@ trunk-version = "^0.21.5"
 
 [build]
 minify = "on_release"
+
+[[hooks]]
+stage = "post_build"
+command = "sh"
+command_arguments = ["trunk_post_build.sh"]

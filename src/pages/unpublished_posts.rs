@@ -6,6 +6,7 @@ use crate::components::post_card::*;
 use crate::components::simple_title_card::*;
 use crate::components::warning::*;
 use crate::content::*;
+use crate::lang;
 use crate::utils::*;
 
 use crate::Route;
@@ -15,13 +16,13 @@ pub fn unpublished_posts() -> Html {
     let logged_user_context = use_context::<LoggedUserContext>().unwrap();
 
     let meta = html! {
-        <Meta title="Неопубликованное" noindex=true />
+        <Meta title={ lang::UNPUB_TITLE } noindex=true />
     };
 
     let not_auth_content = html! {
         <>
             { meta.clone() }
-            <Warning text="Нужна авторизация для просмотра неопубликованного!" />
+            <Warning text={ lang::UNPUB_AUTH_REQUIRED } />
         </>
     };
 
@@ -38,7 +39,7 @@ pub fn unpublished_posts() -> Html {
         return html! {
             <>
                 { meta.clone() }
-                <Warning text="Просмотр неопубликованного доступен только редакторам!" />
+                <Warning text={ lang::UNPUB_EDITORS_ONLY } />
             </>
         };
     }
@@ -47,7 +48,7 @@ pub fn unpublished_posts() -> Html {
         <>
             { meta }
             <SimpleTitleCard>
-                { "Неопубликованное" }
+                { Html::from(lang::UNPUB_TITLE) }
             </SimpleTitleCard>
             <List<API<PostsContainer>, OptionTokened<PostsContainerParams>>
                 r#type={ LoadType::Params(OptionTokened {
@@ -61,9 +62,9 @@ pub fn unpublished_posts() -> Html {
                 }) }
                 route_to_page={ Route::UnpublishedPosts }
                 component={ |post| html! { <PostCard { post } is_full=false /> } }
-                error_component={ |_| html! { <Warning text="Ошибка загрузки неопубликованного!" /> } }
+                error_component={ |_| html! { <Warning text={ lang::UNPUB_ERROR } /> } }
             >
-                <Warning text="Нет неопубликованного." />
+                <Warning text={ lang::UNPUB_EMPTY } />
             </List<API<PostsContainer>, OptionTokened<PostsContainerParams>>>
         </>
     }

@@ -5,9 +5,10 @@ use crate::components::item::*;
 use crate::components::recommended_post_card::*;
 use crate::components::simple_title_card::*;
 use crate::content;
+use crate::lang;
 
-use crate::utils::*;
 use crate::Route;
+use crate::utils::*;
 
 #[function_component(RecommendedPost)]
 pub fn recommended_post() -> Html {
@@ -24,7 +25,7 @@ pub fn recommended_post() -> Html {
                             .map(|post| html! {
                                 <>
                                     <SimpleTitleCard>
-                                        { "Вам будет интересно" }
+                                        { Html::from(lang::RECOMMENDED_TITLE) }
                                     </SimpleTitleCard>
                                     <RecommendedPostCard { post } />
                                 </>
