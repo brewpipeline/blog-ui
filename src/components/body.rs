@@ -90,6 +90,10 @@ pub fn body() -> Html {
                             <a href="https://www.youtube.com/watch?v=dQw4w9WgXcQ" class="text-decoration-none">
                                 { lang::BODY_RULES }
                             </a>
+                            <br/>
+                            <a href="https://about.tikitko.dev/" class="text-decoration-none">
+                                { lang::BODY_ABOUT }
+                            </a>
                         </p>
                     </div>
                 </div>

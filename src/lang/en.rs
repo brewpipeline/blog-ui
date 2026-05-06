@@ -235,3 +235,4 @@ pub const BODY_FEED_TITLE: &str = "Feed";
 pub const BODY_INFO_ARIA: &str = "Information";
 pub const BODY_INFO_TITLE: &str = "Information";
 pub const BODY_RULES: &str = "Rules";
+pub const BODY_ABOUT: &str = "About Tikitko";
