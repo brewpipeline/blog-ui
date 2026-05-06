@@ -1,8 +1,6 @@
 [package]
 name = "blog-ui"
-version = "1.0.0"
 edition = "2024"
-license = "MIT"
 
 [dependencies.blog-generic]
 git = "https://github.com/brewpipeline/blog-generic.git"
