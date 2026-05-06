@@ -1,7 +1,7 @@
 {
-    "name": "TIKITKO blog",
-    "short_name": "TIKITKO blog",
-    "lang": "ru",
+    "name": "TIKITKO blog EN",
+    "short_name": "TIKITKO blog EN",
+    "lang": "en",
     "icons": [
         {
           "purpose": "maskable",
@@ -21,5 +21,5 @@
     "display": "standalone",
     "scope": "/",
     "theme_color": "#242424",
-    "description": "Блог от «гиков» для «гиков», говорим на темы, начиная с программирования и компьютерной графики, заканчивая играми и алкогольными посиделками в одиночестве."
+    "description": "TIKITKO blog — a blog from geeks for geeks — we talk about everything from programming and computer graphics to games and drinking alone."
 }
