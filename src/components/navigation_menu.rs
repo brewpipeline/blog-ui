@@ -80,18 +80,6 @@ pub fn navigation_menu() -> Html {
                     { lang::NAV_HIDDEN }
                 </Link<Route>>
             }
-            <a
-                class="btn btn-light telegram-button"
-                href="https://t.me/TikitkoBlog"
-            >
-                <div class="btn inner">
-                    <p>
-                        <span>{ lang::NAV_GO_TO_CHANNEL }</span>
-                        <br/>
-                        <span>{ "Telegram" }</span>
-                    </p>
-                </div>
-            </a>
         </>
     }
 }

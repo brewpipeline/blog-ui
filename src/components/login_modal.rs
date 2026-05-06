@@ -369,7 +369,7 @@ pub fn login_modal(props: &LoginModalProps) -> Html {
                                                 role="img"
                                             >
                                                 <div class="logo-image-container">
-                                                    <img id="logo-image" height="38" width="149" style="pointer-events:none;" class="item mb-0" alt={ crate::TITLE } src="tikitko-light.svg"/>
+                                                    <img id="logo-image" height="38" width="149" style="pointer-events:none;" class="item mb-0" alt={ crate::TITLE } src="logo.svg"/>
                                                 </div>
                                             </div>
                                             { Html::VRef(script.into()) }
