@@ -237,4 +237,3 @@ pub const BODY_FEED_TITLE: &str = "Лента";
 pub const BODY_INFO_ARIA: &str = "Информация";
 pub const BODY_INFO_TITLE: &str = "Информация";
 pub const BODY_RULES: &str = "Правила";
-pub const BODY_ABOUT: &str = "О Tikitko";
