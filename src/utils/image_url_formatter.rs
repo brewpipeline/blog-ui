@@ -23,7 +23,8 @@ pub fn image_url_formatter<S: AsRef<str>>(image_type: ImageType, image_url: S) -
         image_url.as_ref().to_string()
     } else {
         format!(
-            "/images/external/mirror/{path_part}{base64_image_url}", // TODO: move base url to env var
+            "{images_processor_url}mirror/{path_part}{base64_image_url}",
+            images_processor_url = crate::IMAGES_PROCESSOR_URL,
             path_part = image_type.path_part(),
             base64_image_url = general_purpose::URL_SAFE.encode(image_url.as_ref()),
         )

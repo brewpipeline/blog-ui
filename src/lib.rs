@@ -26,3 +26,4 @@ const TITLE: &'static str = std::env!("TITLE"); // BLOG
 const DESCRIPTION: &'static str = std::env!("DESCRIPTION"); // BLOG DESCRIPTION
 const KEYWORDS: &'static str = std::env!("KEYWORDS"); // BLOG, KEYWORDS
 const ACCORDION_JSON: &'static str = std::env!("ACCORDION_JSON"); // [{"title":"О блоге","body":"<strong>Ты ошибка эволюции.</strong><br/>А блог этот про хороших людей в плохое время."},{"title":"Контент","body":"Привет!"}]
+const IMAGES_PROCESSOR_URL: &'static str = std::env!("IMAGES_PROCESSOR_URL"); // http://127.0.0.1:3001/
