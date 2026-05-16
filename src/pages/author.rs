@@ -54,7 +54,7 @@ pub fn author(props: &AuthorProps) -> Html {
                                 }
                             }) }
                             route_to_page={ Route::Author { slug: author.slug.clone() } }
-                            component={ |post| html! { <PostCard { post } is_full=false /> } }
+                            component={ |(_, post)| html! { <PostCard { post } is_full=false /> } }
                             error_component={ |_| html! { <Warning text={ lang::AUTHOR_POSTS_ERROR } /> } }
                         >
                             <Warning text={ lang::AUTHOR_POSTS_EMPTY } />

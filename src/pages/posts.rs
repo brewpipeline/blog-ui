@@ -27,7 +27,7 @@ pub fn posts() -> Html {
                 }) }
                 use_caches=true
                 route_to_page={ Route::Posts }
-                component={ |post| html! { <PostCard { post } is_full=false /> } }
+                component={ |(i, post)| html! { <PostCard { post } is_full=false priority={ i < 2 } /> } }
                 error_component={ |_| html! { <Warning text={ lang::POSTS_ERROR } /> } }
             >
                 <Warning text={ lang::POSTS_EMPTY } />
