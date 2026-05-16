@@ -12,8 +12,8 @@ async-trait = "0.1"
 
 chrono = { version = "0.4", features = ["unstable-locales"] }
 
-yew = { version = "0.22" }
-yew-router = { version = "0.19" }
+yew = { git = "https://github.com/tikitko/yew.git", branch = "yew-v0.22.0.1" }
+yew-router = { git = "https://github.com/tikitko/yew.git", branch = "yew-v0.22.0.1" }
 yew-hooks = { version = "0.4", optional = true }
 
 wasm-bindgen-futures = { version = "0.4", optional = true }
@@ -54,6 +54,10 @@ chatgpt = ["uuid"]
 name = "blog_ui"
 required-features = ["client"]
 
+
+[patch.crates-io]
+yew = { git = "https://github.com/tikitko/yew.git", branch = "yew-v0.22.0.1" }
+yew-router = { git = "https://github.com/tikitko/yew.git", branch = "yew-v0.22.0.1" }
 
 [profile.release]
 # less code to include into binary

@@ -13,11 +13,13 @@ use crate::Route;
 pub struct AuthorCardProps {
     pub author: Option<Author>,
     pub link_to: bool,
+    #[prop_or_default]
+    pub priority: bool,
 }
 
 #[function_component(AuthorCard)]
 pub fn author_card(props: &AuthorCardProps) -> Html {
-    let AuthorCardProps { author, link_to } = props.clone();
+    let AuthorCardProps { author, link_to, priority } = props.clone();
 
     let logged_user_context = use_context::<LoggedUserContext>().unwrap();
 
@@ -94,7 +96,7 @@ pub fn author_card(props: &AuthorCardProps) -> Html {
         <div class="row g-0">
             <div class="col-4">
                 <div class="img-block rounded-start" style="height:220px;width:100%;overflow:hidden;">
-                    <AuthorImage author={ author.clone() } />
+                    <AuthorImage author={ author.clone() } priority={ !link_to || priority } />
                     if !link_to && !logged_user_context.is_not_inited() && author != None {
                         if (*logged_user_context)
                             .author()

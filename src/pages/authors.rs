@@ -19,7 +19,7 @@ pub fn authors() -> Html {
                 r#type={ LoadType::Params(()) }
                 use_caches=true
                 route_to_page={ Route::Authors }
-                component={ |author| html! { <AuthorCard { author } link_to=true /> } }
+                component={ |(i, author)| html! { <AuthorCard { author } link_to=true priority={ i < 4 } /> } }
                 error_component={ |_| html! { <Warning text={ lang::AUTHORS_ERROR } /> } }
             >
                 <Warning text={ lang::AUTHORS_EMPTY } />

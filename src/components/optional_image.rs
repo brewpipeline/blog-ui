@@ -13,6 +13,8 @@ pub struct OptionalImageProps {
     pub fallback_image: Option<String>,
     #[prop_or_default]
     pub without_empty: bool,
+    #[prop_or_default]
+    pub priority: bool,
 }
 
 #[function_component(OptionalImage)]
@@ -22,6 +24,7 @@ pub fn optional_image(props: &OptionalImageProps) -> Html {
         image,
         fallback_image,
         without_empty,
+        priority,
     } = props.clone();
 
     let image_ref = use_node_ref();
@@ -52,6 +55,8 @@ pub fn optional_image(props: &OptionalImageProps) -> Html {
         <div class="optional-image-container">
             <img
                 { alt }
+                loading={ if priority { "eager" } else { "lazy" } }
+                fetchpriority={ if priority { "high" } else { "auto" } }
                 ref={ image_ref }
                 src={
                     image

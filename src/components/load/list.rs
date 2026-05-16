@@ -24,7 +24,7 @@ where
     #[prop_or_default]
     pub use_caches: bool,
     pub route_to_page: Route,
-    pub component: Callback<Option<<C::Inner as ExternalListContainer>::Item>, Html>,
+    pub component: Callback<(usize, Option<<C::Inner as ExternalListContainer>::Item>), Html>,
     pub error_component: Callback<LoadError<C::Error>, Html>,
     pub children: Children,
 }
@@ -67,7 +67,8 @@ where
 
     let Some(list_result_container) = (*list_result_container).clone() else {
         return (0..page_processor.limit())
-            .map(|_| component.emit(None))
+            .enumerate()
+            .map(|(i, _)| component.emit((i, None)))
             .collect::<Html>();
     };
     match list_result_container {
@@ -78,8 +79,8 @@ where
             html! {
                 if items.len() > 0 {
                     {
-                        items.into_iter().map(|item| {
-                            component.emit(Some(item))
+                        items.into_iter().enumerate().map(|(i, item)| {
+                            component.emit((i, Some(item)))
                         }).collect::<Html>()
                     }
                     if total_pages > 1 {
