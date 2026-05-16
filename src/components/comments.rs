@@ -150,7 +150,7 @@ pub fn comments(props: &CommentsProps) -> Html {
                     request_index: *request_index
                 }) }
                 route_to_page={ Route::Post { slug: post.slug, id: post.id } }
-                component={ |comment| html! { <CommentCard { comment } /> } }
+                component={ |(_, comment)| html! { <CommentCard { comment } /> } }
                 error_component={ |_| html! { <Warning text={ lang::COMMENT_ERROR } /> } }
             >
                 <Warning text={ lang::COMMENT_EMPTY } />

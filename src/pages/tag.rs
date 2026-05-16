@@ -65,7 +65,7 @@ pub fn post(props: &TagProps) -> Html {
                                     }
                                 }) }
                                 route_to_page={ Route::Tag { slug: tag.slug, id: tag.id } }
-                                component={ |post| html! { <PostCard { post } is_full=false /> } }
+                                component={ |(_, post)| html! { <PostCard { post } is_full=false /> } }
                                 error_component={ |_| html! { <Warning text={ lang::TAG_POSTS_ERROR } /> } }
                             >
                                 <Warning text={ lang::TAG_POSTS_EMPTY } />

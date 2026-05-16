@@ -42,7 +42,7 @@ pub fn search(props: &SearchProps) -> Html {
                                     }
                                 }) }
                                 route_to_page={ Route::PostsSearch { query: query.clone() } }
-                                component={ |post| html! { <PostCard { post } is_full=false /> } }
+                                component={ |(_, post)| html! { <PostCard { post } is_full=false /> } }
                                 error_component={ |_| html! { <Warning text={ lang::SEARCH_POSTS_ERROR } /> } }
                             >
                                 <Warning text={ lang::SEARCH_POSTS_EMPTY } />
@@ -56,7 +56,7 @@ pub fn search(props: &SearchProps) -> Html {
                             <List<API<AuthorsContainer>, AuthorsContainerSearchParams>
                                 r#type={ LoadType::Params(AuthorsContainerSearchParams { query: query.clone() }) }
                                 route_to_page={ Route::AuthorsSearch { query: query.clone() } }
-                                component={ |author| html! { <AuthorCard { author } link_to=true /> } }
+                                component={ |(_, author)| html! { <AuthorCard { author } link_to=true /> } }
                                 error_component={ |_| html! { <Warning text={ lang::SEARCH_AUTHORS_ERROR } /> } }
                             >
                                 <Warning text={ lang::SEARCH_AUTHORS_EMPTY } />
