@@ -84,7 +84,7 @@ pub fn auth_user_block() -> Html {
                 aria-expanded="false"
                 type="button"
             >
-                <AuthorImage author={ author.clone() } />
+                <AuthorImage author={ author.clone() } priority=true />
             </div>
             <ul class="dropdown-menu text-small" >
                 if let Some(author) = author.as_ref() {
