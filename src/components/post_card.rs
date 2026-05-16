@@ -14,11 +14,13 @@ use crate::Route;
 pub struct PostCardProps {
     pub post: Option<Post>,
     pub is_full: bool,
+    #[prop_or_default]
+    pub priority: bool,
 }
 
 #[function_component(PostCard)]
 pub fn post_card(props: &PostCardProps) -> Html {
-    let PostCardProps { post, is_full } = props.clone();
+    let PostCardProps { post, is_full, priority } = props.clone();
 
     let logged_user_context = use_context::<LoggedUserContext>().unwrap();
     let recommended = use_state(|| post.as_ref().map(|p| p.recommended).unwrap_or(false));
@@ -116,6 +118,7 @@ pub fn post_card(props: &PostCardProps) -> Html {
             <div class="img-block bd-placeholder-img" style="height:194px;width:100%;overflow:hidden;">
                 <OptionalImage
                     alt={ post.as_ref().map(|p| p.title.clone()) }
+                    priority={ is_full || priority }
                     image={
                         post
                             .as_ref()
@@ -137,9 +140,10 @@ pub fn post_card(props: &PostCardProps) -> Html {
                     if let Some(text) = post.as_ref().map(|post| {
                         if let (Some(content), true) = (post.content.clone(), is_full) {
                             let content = content.map_in_pattern(["<img", ">"], |i| {
-                                i.map_in_pattern(["src=\"", "\""], |u| {
+                                let i = i.map_in_pattern(["src=\"", "\""], |u| {
                                     image_url_formatter(ImageType::Medium, u)
-                                })
+                                });
+                                format!(" loading=\"lazy\"{i}")
                             });
                             Html::from_html_unchecked(AttrValue::from(content))
                         } else {
@@ -205,7 +209,7 @@ pub fn post_card(props: &PostCardProps) -> Html {
                 <div class="row g-0 align-items-center">
                     <div class="d-flex col-5 align-items-center justify-content-start" style="height:24px;">
                         <div class="img-block rounded me-1" style="height:24px;width:24px;overflow:hidden;">
-                            <AuthorImage author={ post.as_ref().map(|p| p.author.clone()) } />
+                            <AuthorImage author={ post.as_ref().map(|p| p.author.clone()) } priority={ is_full || priority } />
                         </div>
                         if let Some(post) = &post {
                             <Link<Route, (), Author>

@@ -7,11 +7,13 @@ use crate::utils::*;
 #[derive(PartialEq, Properties, Clone)]
 pub struct AuthorImageProps {
     pub author: Option<Author>,
+    #[prop_or_default]
+    pub priority: bool,
 }
 
 #[function_component(AuthorImage)]
 pub fn author_image(props: &AuthorImageProps) -> Html {
-    let AuthorImageProps { author } = props.clone();
+    let AuthorImageProps { author, priority } = props.clone();
 
     let alt = author.as_ref().map(|a| a.slug.clone());
     let image = author
@@ -28,6 +30,7 @@ pub fn author_image(props: &AuthorImageProps) -> Html {
             { alt }
             { image }
             { fallback_image }
+            { priority }
             without_empty=true
         />
     }

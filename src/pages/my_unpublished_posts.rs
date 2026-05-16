@@ -52,7 +52,7 @@ pub fn my_unpublished_posts() -> Html {
                     }
                 }) }
                 route_to_page={ Route::UnpublishedPosts }
-                component={ |post| html! { <PostCard { post } is_full=false /> } }
+                component={ |(_, post)| html! { <PostCard { post } is_full=false /> } }
                 error_component={ |_| html! { <Warning text={ lang::MY_UNPUB_ERROR } /> } }
             >
                 <Warning text={ lang::MY_UNPUB_EMPTY } />
