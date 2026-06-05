@@ -1,6 +1,6 @@
 # blog-ui
 
-[![Deploy on Railway](https://railway.com/button.svg)](https://railway.com/deploy/ft_i14?referralCode=ajW30i&utm_medium=integration&utm_source=template&utm_campaign=generic)
+[![Deploy on Railway](https://railway.com/button.svg)](https://railway.com/deploy/rust-blog?referralCode=ajW30i&utm_medium=integration&utm_source=template&utm_campaign=generic)
 
 Blog UI built with [Yew](https://yew.rs/) and WebAssembly, styled with Bootstrap.
 

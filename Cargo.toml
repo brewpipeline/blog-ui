@@ -4,7 +4,7 @@ edition = "2024"
 
 [dependencies.blog-generic]
 git = "https://github.com/brewpipeline/blog-generic.git"
-tag = "0.0.4"
+tag = "1.0.0"
 
 [dependencies]
 log = "0.4"
