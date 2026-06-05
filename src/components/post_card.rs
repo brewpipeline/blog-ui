@@ -120,11 +120,11 @@ pub fn post_card(props: &PostCardProps) -> Html {
                     alt={ post.as_ref().map(|p| p.title.clone()) }
                     priority={ is_full || priority }
                     image={
-                        post
-                            .as_ref()
-                            .map(|p| p.image_url.clone())
-                            .flatten()
-                            .map(|u| image_url_formatter(ImageType::Medium, u))
+                        post.as_ref().and_then(|p| {
+                            p.image_url
+                                .clone()
+                                .map(|u| p.processed_image_urls.get(&u).cloned().unwrap_or(u))
+                        })
                     }
                 />
             </div>
@@ -139,9 +139,10 @@ pub fn post_card(props: &PostCardProps) -> Html {
                 <article class="card-text placeholder-glow">
                     if let Some(text) = post.as_ref().map(|post| {
                         if let (Some(content), true) = (post.content.clone(), is_full) {
+                            let links = post.processed_image_urls.clone();
                             let content = content.map_in_pattern(["<img", ">"], |i| {
                                 let i = i.map_in_pattern(["src=\"", "\""], |u| {
-                                    image_url_formatter(ImageType::Medium, u)
+                                    links.get(u).cloned().unwrap_or_else(|| u.to_string())
                                 });
                                 format!(" loading=\"lazy\"{i}")
                             });

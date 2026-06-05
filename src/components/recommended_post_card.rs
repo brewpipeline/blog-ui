@@ -3,7 +3,6 @@ use yew_router::prelude::*;
 
 use crate::components::optional_image::*;
 use crate::content::*;
-use crate::utils::*;
 
 use crate::Route;
 
@@ -25,7 +24,9 @@ pub fn recommended_post_card(props: &RecommendedPostCardProps) -> Html {
                 <OptionalImage
                     alt={ post.title.clone() }
                     image={
-                        post.image_url.clone().map(|u| image_url_formatter(ImageType::Medium, u))
+                        post.image_url
+                            .clone()
+                            .map(|u| post.processed_image_urls.get(&u).cloned().unwrap_or(u))
                     }
                 />
             </div>
