@@ -5,7 +5,6 @@ pub mod external;
 #[cfg(feature = "client")]
 pub mod get;
 pub mod head;
-pub mod image_url_formatter;
 pub mod logged_user_context;
 pub mod map_in_pattern;
 #[cfg(feature = "client")]
@@ -22,7 +21,6 @@ pub use author_slug_formatter::*;
 pub use external::*;
 #[cfg(feature = "client")]
 pub use get::*;
-pub use image_url_formatter::*;
 pub use logged_user_context::*;
 pub use map_in_pattern::*;
 #[cfg(all(feature = "client", feature = "chatgpt"))]
