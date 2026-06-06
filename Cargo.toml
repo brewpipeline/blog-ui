@@ -48,6 +48,7 @@ hydration = ["client", "yew/hydration"]
 yandex = []
 telegram = []
 chatgpt = ["uuid"]
+tikitko = []
 
 
 [[bin]]

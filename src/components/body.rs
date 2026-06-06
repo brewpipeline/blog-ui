@@ -27,6 +27,18 @@ pub fn body() -> Html {
 
     let small_menu_default_ref = use_node_ref();
 
+    #[cfg(feature = "tikitko")]
+    let about_link = html! {
+        <>
+            <br/>
+            <a href="https://about.tikitko.dev/" class="text-decoration-none">
+                { lang::BODY_ABOUT }
+            </a>
+        </>
+    };
+    #[cfg(not(feature = "tikitko"))]
+    let about_link = Html::default();
+
     #[cfg(feature = "client")]
     {
         let window_width = window_width.clone();
@@ -90,6 +102,7 @@ pub fn body() -> Html {
                             <a href="https://www.youtube.com/watch?v=dQw4w9WgXcQ" class="text-decoration-none">
                                 { lang::BODY_RULES }
                             </a>
+                            { about_link }
                         </p>
                     </div>
                 </div>

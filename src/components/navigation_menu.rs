@@ -16,6 +16,24 @@ pub fn navigation_menu() -> Html {
             .map(|a| a.editor == 1)
             .unwrap_or(false);
 
+    #[cfg(feature = "tikitko")]
+    let channel_button = html! {
+        <a
+            class="btn btn-light telegram-button"
+            href="https://t.me/TikitkoBlog"
+        >
+            <div class="btn inner">
+                <p>
+                    <span>{ lang::NAV_GO_TO_CHANNEL }</span>
+                    <br/>
+                    <span>{ "Telegram" }</span>
+                </p>
+            </div>
+        </a>
+    };
+    #[cfg(not(feature = "tikitko"))]
+    let channel_button = Html::default();
+
     html! {
         <>
             <Link<Route>
@@ -80,6 +98,7 @@ pub fn navigation_menu() -> Html {
                     { lang::NAV_HIDDEN }
                 </Link<Route>>
             }
+            { channel_button }
         </>
     }
 }

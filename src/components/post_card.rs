@@ -20,7 +20,11 @@ pub struct PostCardProps {
 
 #[function_component(PostCard)]
 pub fn post_card(props: &PostCardProps) -> Html {
-    let PostCardProps { post, is_full, priority } = props.clone();
+    let PostCardProps {
+        post,
+        is_full,
+        priority,
+    } = props.clone();
 
     let logged_user_context = use_context::<LoggedUserContext>().unwrap();
     let recommended = use_state(|| post.as_ref().map(|p| p.recommended).unwrap_or(false));

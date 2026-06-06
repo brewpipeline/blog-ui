@@ -19,7 +19,11 @@ pub struct AuthorCardProps {
 
 #[function_component(AuthorCard)]
 pub fn author_card(props: &AuthorCardProps) -> Html {
-    let AuthorCardProps { author, link_to, priority } = props.clone();
+    let AuthorCardProps {
+        author,
+        link_to,
+        priority,
+    } = props.clone();
 
     let logged_user_context = use_context::<LoggedUserContext>().unwrap();
 

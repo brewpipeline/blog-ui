@@ -11,9 +11,23 @@ fn main() {
     #[cfg(not(feature = "lang_ru"))]
     let lang_code = "en";
 
+    #[cfg(feature = "tikitko")]
+    let tikitko = "1";
+    #[cfg(not(feature = "tikitko"))]
+    let tikitko = "0";
+
     let manifest_dir = std::env::var("CARGO_MANIFEST_DIR").unwrap();
-    let lang_path = format!("{manifest_dir}/.lang_code");
-    if std::fs::read_to_string(&lang_path).ok().as_deref() != Some(lang_code) {
-        std::fs::write(&lang_path, lang_code).unwrap();
+    let title = std::env::var("TITLE").unwrap_or_default();
+    let description = std::env::var("DESCRIPTION").unwrap_or_default();
+
+    write_if_changed(format!("{manifest_dir}/.lang_code"), lang_code);
+    write_if_changed(format!("{manifest_dir}/.tikitko"), tikitko);
+    write_if_changed(format!("{manifest_dir}/.title"), &title);
+    write_if_changed(format!("{manifest_dir}/.description"), &description);
+}
+
+fn write_if_changed(path: String, content: &str) {
+    if std::fs::read_to_string(&path).ok().as_deref() != Some(content) {
+        std::fs::write(&path, content).unwrap();
     }
 }
