@@ -47,9 +47,9 @@ BEACON='<script defer src='\''https://beacon.tikitko.dev/script.min.js'\'' data-
 
 awk -v lang="$LANG_CODE" -v tikitko="$TIKITKO" -v beacon="$BEACON" '{
     sub(/<html /, "<html lang=\"" lang "\" ")
-    sub(/<meta property="og:locale">/, "<meta property=\"og:locale\" content=\"" lang "\">")
-    if (tikitko == "1" && $0 ~ /<\/body>/) {
-        print "    " beacon
+    sub(/<meta property="?og:locale"?>/, "<meta property=\"og:locale\" content=\"" lang "\">")
+    if (tikitko == "1") {
+        sub(/<\/body>/, beacon "</body>")
     }
     print
 }' "$INPUT" > "$TMP" && mv "$TMP" "$INPUT"
