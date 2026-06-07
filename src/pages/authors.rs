@@ -13,17 +13,15 @@ use crate::Route;
 #[function_component(Authors)]
 pub fn authors() -> Html {
     html! {
-        <>
-            <Meta title={ lang::AUTHORS_TITLE } />
-            <List<API<AuthorsContainer>>
-                r#type={ LoadType::Params(()) }
-                use_caches=true
-                route_to_page={ Route::Authors }
-                component={ |(i, author)| html! { <AuthorCard { author } link_to=true priority={ i < 4 } /> } }
-                error_component={ |_| html! { <Warning text={ lang::AUTHORS_ERROR } /> } }
-            >
-                <Warning text={ lang::AUTHORS_EMPTY } />
-            </List<API<AuthorsContainer>>>
-        </>
+        <Meta title={ lang::AUTHORS_TITLE } />
+        <List<API<AuthorsContainer>>
+            r#type={ LoadType::Params(()) }
+            use_caches=true
+            route_to_page={ Route::Authors }
+            component={ |(i, author)| html! { <AuthorCard { author } link_to=true priority={ i < 4 } /> } }
+            error_component={ |_| html! { <Warning text={ lang::AUTHORS_ERROR } /> } }
+        >
+            <Warning text={ lang::AUTHORS_EMPTY } />
+        </List<API<AuthorsContainer>>>
     }
 }

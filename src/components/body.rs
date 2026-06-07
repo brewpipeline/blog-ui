@@ -29,12 +29,10 @@ pub fn body() -> Html {
 
     #[cfg(feature = "tikitko")]
     let about_link = html! {
-        <>
-            <br/>
-            <a href="https://about.tikitko.dev/" class="text-decoration-none">
-                { lang::BODY_ABOUT }
-            </a>
-        </>
+        <br/>
+        <a href="https://about.tikitko.dev/" class="text-decoration-none">
+            { lang::BODY_ABOUT }
+        </a>
     };
     #[cfg(not(feature = "tikitko"))]
     let about_link = Html::default();

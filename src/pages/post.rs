@@ -39,38 +39,32 @@ pub fn post(props: &PostProps) -> Html {
                     .unwrap_or(false);
                 if is_post_invalid {
                     return html! {
-                        <>
-                            <Meta title={ lang::POST_LINK_BROKEN_TITLE } noindex=true />
-                            <Warning text={ lang::POST_LINK_BROKEN_TEXT } />
-                        </>
+                        <Meta title={ lang::POST_LINK_BROKEN_TITLE } noindex=true />
+                        <Warning text={ lang::POST_LINK_BROKEN_TEXT } />
                     }
                 }
                 html! {
-                    <>
-                        if let Some(post) = post.as_ref() {
-                            <Meta
-                                r#type="article"
-                                title={ lang::post_meta_title(&post.title) }
-                                description={ post.summary.clone() }
-                                keywords={ post.joined_tags_string(", ") }
-                                image={ post.image_url.clone().unwrap_or_default() }
-                                noindex={ post.noindex }
-                            />
-                        } else {
-                            <Meta title={ lang::POST_TITLE } noindex=true />
-                        }
-                        <PostCard post={ post.clone() } is_full=true />
-                        if let Some(post) = post {
-                            <Comments { post } />
-                        }
-                    </>
+                    if let Some(post) = post.as_ref() {
+                        <Meta
+                            r#type="article"
+                            title={ lang::post_meta_title(&post.title) }
+                            description={ post.summary.clone() }
+                            keywords={ post.joined_tags_string(", ") }
+                            image={ post.image_url.clone().unwrap_or_default() }
+                            noindex={ post.noindex }
+                        />
+                    } else {
+                        <Meta title={ lang::POST_TITLE } noindex=true />
+                    }
+                    <PostCard post={ post.clone() } is_full=true />
+                    if let Some(post) = post {
+                        <Comments { post } />
+                    }
                 }
             } }
             error_component={ |_| html! {
-                <>
-                    <Meta title={ lang::POST_ERROR_TITLE } noindex=true />
-                    <Warning text={ lang::POST_ERROR_TEXT } />
-                </>
+                <Meta title={ lang::POST_ERROR_TITLE } noindex=true />
+                <Warning text={ lang::POST_ERROR_TEXT } />
             } }
         />
     }

@@ -140,46 +140,44 @@ pub fn comments(props: &CommentsProps) -> Html {
     let oninput = Callback::from(|_| {});
 
     html! {
-        <>
-            <SimpleTitleCard>
-                { Html::from(lang::COMMENT_TITLE) }
-            </SimpleTitleCard>
-            <List<content::API<content::CommentsContainer>, content::CommentsContainerPostIdParams, DefaultPageProcessor<50>>
-                r#type={ LoadType::Params(content::CommentsContainerPostIdParams {
-                    post_id: post.id,
-                    request_index: *request_index
-                }) }
-                route_to_page={ Route::Post { slug: post.slug, id: post.id } }
-                component={ |(_, comment)| html! { <CommentCard { comment } /> } }
-                error_component={ |_| html! { <Warning text={ lang::COMMENT_ERROR } /> } }
-            >
-                <Warning text={ lang::COMMENT_EMPTY } />
-            </List<content::API<content::CommentsContainer>, content::CommentsContainerPostIdParams, DefaultPageProcessor<50>>>
-            if !logged_user_context.is_not_inited() {
-                if logged_user_context.author().map(|a| a.blocked == 0).unwrap_or(false) {
-                    <div class="mb-3">
-                        <textarea
-                            class="form-control"
-                            rows="3"
-                            placeholder={ lang::COMMENT_PLACEHOLDER }
-                            ref={ field_ref }
-                            { oninput }
-                            disabled={ *state == CommentsState::InProgress }
-                        />
-                    </div>
-                    <div class="mb-3 d-grid gap-2">
-                        <button
-                            class="btn btn-light"
-                            type="submit"
-                            { onclick }
-                            ref={ button_ref }
-                            disabled={ *state != CommentsState::ReadyToSend }
-                        >
-                            { lang::COMMON_SEND }
-                        </button>
-                    </div>
-                }
+        <SimpleTitleCard>
+            { Html::from(lang::COMMENT_TITLE) }
+        </SimpleTitleCard>
+        <List<content::API<content::CommentsContainer>, content::CommentsContainerPostIdParams, DefaultPageProcessor<50>>
+            r#type={ LoadType::Params(content::CommentsContainerPostIdParams {
+                post_id: post.id,
+                request_index: *request_index
+            }) }
+            route_to_page={ Route::Post { slug: post.slug, id: post.id } }
+            component={ |(_, comment)| html! { <CommentCard { comment } /> } }
+            error_component={ |_| html! { <Warning text={ lang::COMMENT_ERROR } /> } }
+        >
+            <Warning text={ lang::COMMENT_EMPTY } />
+        </List<content::API<content::CommentsContainer>, content::CommentsContainerPostIdParams, DefaultPageProcessor<50>>>
+        if !logged_user_context.is_not_inited() {
+            if logged_user_context.author().map(|a| a.blocked == 0).unwrap_or(false) {
+                <div class="mb-3">
+                    <textarea
+                        class="form-control"
+                        rows="3"
+                        placeholder={ lang::COMMENT_PLACEHOLDER }
+                        ref={ field_ref }
+                        { oninput }
+                        disabled={ *state == CommentsState::InProgress }
+                    />
+                </div>
+                <div class="mb-3 d-grid gap-2">
+                    <button
+                        class="btn btn-light"
+                        type="submit"
+                        { onclick }
+                        ref={ button_ref }
+                        disabled={ *state != CommentsState::ReadyToSend }
+                    >
+                        { lang::COMMON_SEND }
+                    </button>
+                </div>
             }
-        </>
+        }
     }
 }

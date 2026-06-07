@@ -23,12 +23,10 @@ pub fn recommended_post() -> Html {
                     component={ |post: Option<content::Post>| {
                         post
                             .map(|post| html! {
-                                <>
-                                    <SimpleTitleCard>
-                                        { Html::from(lang::RECOMMENDED_TITLE) }
-                                    </SimpleTitleCard>
-                                    <RecommendedPostCard { post } />
-                                </>
+                                <SimpleTitleCard>
+                                    { Html::from(lang::RECOMMENDED_TITLE) }
+                                </SimpleTitleCard>
+                                <RecommendedPostCard { post } />
                             })
                             .unwrap_or_default()
                     } }

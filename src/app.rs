@@ -32,21 +32,19 @@ fn main(props: &MainProps) -> Html {
         GIT_HASH = env!("GIT_HASH")
     );
     html! {
-        <>
-            { Html::from_html_unchecked(AttrValue::from(app_info_comment)) }
-            <script
-                id="page-content"
-                type={ app_content_container.app_content.as_ref().map(|c| c.r#type.clone()) }
-            >
-                { app_content_container.app_content.as_ref().map(|c| c.value.clone()).unwrap_or_default() }
-            </script>
-            <Meta />
-            <ContextProvider<AppContentContext> context={ app_content_container }>
-                <ContextProvider<LoggedUserContext> context={ logged_user_context }>
-                    <Content />
-                </ContextProvider<LoggedUserContext>>
-            </ContextProvider<AppContentContext>>
-        </>
+        { Html::from_html_unchecked(AttrValue::from(app_info_comment)) }
+        <script
+            id="page-content"
+            type={ app_content_container.app_content.as_ref().map(|c| c.r#type.clone()) }
+        >
+            { app_content_container.app_content.as_ref().map(|c| c.value.clone()).unwrap_or_default() }
+        </script>
+        <Meta />
+        <ContextProvider<AppContentContext> context={ app_content_container }>
+            <ContextProvider<LoggedUserContext> context={ logged_user_context }>
+                <Content />
+            </ContextProvider<LoggedUserContext>>
+        </ContextProvider<AppContentContext>>
     }
 }
 
@@ -95,7 +93,7 @@ struct ServerAppProps {
 #[cfg(feature = "server")]
 #[function_component(ServerApp)]
 fn server_app(props: &ServerAppProps) -> Html {
-    let history = gloo_history::AnyHistory::from(MemoryHistory::new());
+    let history = AnyHistory::from(MemoryHistory::new());
     history
         .push_with_query(&*props.url, &props.queries)
         .unwrap();

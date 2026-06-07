@@ -256,55 +256,53 @@ pub fn login_modal(props: &LoginModalProps) -> Html {
 
     #[cfg(feature = "yandex")]
     let yandex_html = html! {
-        <>
-            <script id="yandexAuthScript" src="https://yastatic.net/s3/passport-sdk/autofill/v1/sdk-suggest-with-polyfills-latest.js"></script>
-            <DelayedComponent<()> component={ move |_| {
-                #[cfg(feature = "client")]
-                {
-                    let script: Element = document().create_element("script").unwrap();
-                    script.set_attribute("type", "text/javascript").unwrap();
-                    script.set_inner_html(format!("
-                        function yaAuthSuggestAction() {{
-                            var modalElement = document.getElementById('{modal_id}')
-                            YaAuthSuggest.init(
-                                {{
-                                client_id: '{client_id}',
-                                response_type: 'token',
-                                redirect_uri: '{origin}/yandexToken'
-                                }},
-                                '{origin}', {{
-                                    parentId: 'yandexAuth',
-                                    view: 'button',
-                                    buttonSize: 'xxl',
-                                    buttonView: 'main',
-                                    buttonTheme: 'light',
-                                    buttonBorderRadius: '28',
-                                    buttonIcon: 'ya',
-                                }}
-                            )
-                            .then(({{
-                                handler
-                            }}) => handler())
-                            .then(data => modalElement.dispatchEvent(
-                                new CustomEvent('yandex.auth.data', {{detail: JSON.stringify(data)}})
-                            ))
-                            .catch(error => modalElement.dispatchEvent(
-                                new CustomEvent('yandex.auth.error', {{detail: JSON.stringify(error)}})
-                            ))
-                        }}
-                        if (typeof YaAuthSuggest === 'undefined') {{
-                            document.getElementById('yandexAuthScript').onload = yaAuthSuggestAction
-                        }} else {{
-                            yaAuthSuggestAction()
-                        }}
-                    ", modal_id = id, origin = window().origin(), client_id = crate::YANDEX_CLIENT_ID).as_str());
-                    Html::VRef(script.into())
-                }
-                #[cfg(not(feature = "client"))]
-                unreachable!()
-            }} deps={ () } />
-            <div id="yandexAuth" class="mb-4"></div>
-        </>
+        <script id="yandexAuthScript" src="https://yastatic.net/s3/passport-sdk/autofill/v1/sdk-suggest-with-polyfills-latest.js"></script>
+        <DelayedComponent<()> component={ move |_| {
+            #[cfg(feature = "client")]
+            {
+                let script: Element = document().create_element("script").unwrap();
+                script.set_attribute("type", "text/javascript").unwrap();
+                script.set_inner_html(format!("
+                    function yaAuthSuggestAction() {{
+                        var modalElement = document.getElementById('{modal_id}')
+                        YaAuthSuggest.init(
+                            {{
+                            client_id: '{client_id}',
+                            response_type: 'token',
+                            redirect_uri: '{origin}/yandexToken'
+                            }},
+                            '{origin}', {{
+                                parentId: 'yandexAuth',
+                                view: 'button',
+                                buttonSize: 'xxl',
+                                buttonView: 'main',
+                                buttonTheme: 'light',
+                                buttonBorderRadius: '28',
+                                buttonIcon: 'ya',
+                            }}
+                        )
+                        .then(({{
+                            handler
+                        }}) => handler())
+                        .then(data => modalElement.dispatchEvent(
+                            new CustomEvent('yandex.auth.data', {{detail: JSON.stringify(data)}})
+                        ))
+                        .catch(error => modalElement.dispatchEvent(
+                            new CustomEvent('yandex.auth.error', {{detail: JSON.stringify(error)}})
+                        ))
+                    }}
+                    if (typeof YaAuthSuggest === 'undefined') {{
+                        document.getElementById('yandexAuthScript').onload = yaAuthSuggestAction
+                    }} else {{
+                        yaAuthSuggestAction()
+                    }}
+                ", modal_id = id, origin = window().origin(), client_id = crate::YANDEX_CLIENT_ID).as_str());
+                Html::VRef(script.into())
+            }
+            #[cfg(not(feature = "client"))]
+            unreachable!()
+        }} deps={ () } />
+        <div id="yandexAuth" class="mb-4"></div>
     };
     #[cfg(not(feature = "yandex"))]
     let yandex_html = html! {};
@@ -361,19 +359,17 @@ pub fn login_modal(props: &LoginModalProps) -> Html {
                                         }, 0)
                                     ");
                                     html! {
-                                        <>
-                                            <div
-                                                id="login-modal-image"
-                                                style="--image-url:url('');"
-                                                class="img-block bd-placeholder-img d-none d-lg-block col-lg-4"
-                                                role="img"
-                                            >
-                                                <div class="logo-image-container">
-                                                    <img id="logo-image" height="38" width="149" style="pointer-events:none;" class="item mb-0" alt={ crate::TITLE } src="logo.svg"/>
-                                                </div>
+                                        <div
+                                            id="login-modal-image"
+                                            style="--image-url:url('');"
+                                            class="img-block bd-placeholder-img d-none d-lg-block col-lg-4"
+                                            role="img"
+                                        >
+                                            <div class="logo-image-container">
+                                                <img id="logo-image" height="38" width="149" style="pointer-events:none;" class="item mb-0" alt={ crate::TITLE } src="logo.svg"/>
                                             </div>
-                                            { Html::VRef(script.into()) }
-                                        </>
+                                        </div>
+                                        { Html::VRef(script.into()) }
                                     }
                                 }
                                 #[cfg(not(feature = "client"))]

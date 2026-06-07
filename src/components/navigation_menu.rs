@@ -35,70 +35,68 @@ pub fn navigation_menu() -> Html {
     let channel_button = Html::default();
 
     html! {
-        <>
-            <Link<Route>
-                classes={
-                    classes!(
-                        "btn",
-                        "btn-light",
-                        if route == Route::Posts { "active" } else { "" }
-                    )
-                }
-                to={ Route::Posts }
-            >
-                { lang::NAV_POSTS }
-            </Link<Route>>
-            <Link<Route>
-                classes={
-                    classes!(
-                        "btn",
-                        "btn-light",
-                        if route == Route::Authors { "active" } else { "" }
-                    )
-                }
-                to={ Route::Authors }
-            >
-                { lang::NAV_AUTHORS }
-            </Link<Route>>
-            <Link<Route>
-                classes={
-                    classes!(
-                        "btn",
-                        "btn-light",
-                        if route == Route::NewPost { "active" } else { "" }
-                    )
-                }
-                to={ Route::NewPost }
-            >
-                { lang::NAV_NEW_POST }
-            </Link<Route>>
-            if is_editor {
-                <Link<Route>
-                    classes={
-                        classes!(
-                            "btn",
-                            "btn-light",
-                            if route == Route::UnpublishedPosts { "active" } else { "" }
-                        )
-                    }
-                    to={ Route::UnpublishedPosts }
-                >
-                    { lang::NAV_UNPUBLISHED }
-                </Link<Route>>
-                <Link<Route>
-                    classes={
-                        classes!(
-                            "btn",
-                            "btn-light",
-                            if route == Route::HiddenPosts { "active" } else { "" }
-                        )
-                    }
-                    to={ Route::HiddenPosts }
-                >
-                    { lang::NAV_HIDDEN }
-                </Link<Route>>
+        <Link<Route>
+            classes={
+                classes!(
+                    "btn",
+                    "btn-light",
+                    if route == Route::Posts { "active" } else { "" }
+                )
             }
-            { channel_button }
-        </>
+            to={ Route::Posts }
+        >
+            { lang::NAV_POSTS }
+        </Link<Route>>
+        <Link<Route>
+            classes={
+                classes!(
+                    "btn",
+                    "btn-light",
+                    if route == Route::Authors { "active" } else { "" }
+                )
+            }
+            to={ Route::Authors }
+        >
+            { lang::NAV_AUTHORS }
+        </Link<Route>>
+        <Link<Route>
+            classes={
+                classes!(
+                    "btn",
+                    "btn-light",
+                    if route == Route::NewPost { "active" } else { "" }
+                )
+            }
+            to={ Route::NewPost }
+        >
+            { lang::NAV_NEW_POST }
+        </Link<Route>>
+        if is_editor {
+            <Link<Route>
+                classes={
+                    classes!(
+                        "btn",
+                        "btn-light",
+                        if route == Route::UnpublishedPosts { "active" } else { "" }
+                    )
+                }
+                to={ Route::UnpublishedPosts }
+            >
+                { lang::NAV_UNPUBLISHED }
+            </Link<Route>>
+            <Link<Route>
+                classes={
+                    classes!(
+                        "btn",
+                        "btn-light",
+                        if route == Route::HiddenPosts { "active" } else { "" }
+                    )
+                }
+                to={ Route::HiddenPosts }
+            >
+                { lang::NAV_HIDDEN }
+            </Link<Route>>
+        }
+        { channel_button }
     }
 }

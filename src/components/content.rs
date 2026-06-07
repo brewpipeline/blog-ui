@@ -36,18 +36,14 @@ pub fn content() -> Html {
     }
 
     let main_content = html! {
-        <>
-            <Header />
-            <Body />
-            <Footer />
+        <Header />
+        <Body />
+        <Footer />
 
-            <DelayedComponent<()> component={ |_| html! {
-                <>
-                    <LoginModal id="loginModal" />
-                    <LogoutModal id="logoutModal" />
-                </>
-            } } deps={ () } />
-        </>
+        <DelayedComponent<()> component={ |_| html! {
+            <LoginModal id="loginModal" />
+            <LogoutModal id="logoutModal" />
+        } } deps={ () } />
     };
 
     #[cfg(feature = "yandex")]

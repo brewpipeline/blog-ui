@@ -46,29 +46,27 @@ pub fn auth_user_block() -> Html {
         let tg_button: Option<Html> = None;
 
         return html! {
-            <>
-                { tg_button.clone() }
-                <button
-                    title={ lang::AUTH_LOGIN_ARIA }
-                    aria-label={ lang::AUTH_LOGIN_ARIA }
-                    type="button"
-                    class={ classes!(
-                        "item",
-                        "btn",
-                        "btn-light",
-                        { if tg_button == None || social_tries_out { "d-block" } else { "d-none" } }
-                    ) }
-                    data-bs-toggle="modal"
-                    data-bs-target="#loginModal"
-                >
-                    <div class="d-block d-lg-none">
-                        <i class="bi bi-person-add"></i>
-                    </div>
-                    <div class="d-none d-lg-block">
-                        { lang::AUTH_LOGIN }
-                    </div>
-                </button>
-            </>
+            { tg_button.clone() }
+            <button
+                title={ lang::AUTH_LOGIN_ARIA }
+                aria-label={ lang::AUTH_LOGIN_ARIA }
+                type="button"
+                class={ classes!(
+                    "item",
+                    "btn",
+                    "btn-light",
+                    { if tg_button == None || social_tries_out { "d-block" } else { "d-none" } }
+                ) }
+                data-bs-toggle="modal"
+                data-bs-target="#loginModal"
+            >
+                <div class="d-block d-lg-none">
+                    <i class="bi bi-person-add"></i>
+                </div>
+                <div class="d-none d-lg-block">
+                    { lang::AUTH_LOGIN }
+                </div>
+            </button>
         };
     };
 
