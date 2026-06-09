@@ -12,8 +12,8 @@ async-trait = "0.1"
 
 chrono = { version = "0.4", features = ["unstable-locales"] }
 
-yew = { git = "https://github.com/yewstack/yew.git", rev = "47d4082d301d495c3c97fc9ed5cb18ffffaa3198" }
-yew-router = { git = "https://github.com/yewstack/yew.git", rev = "47d4082d301d495c3c97fc9ed5cb18ffffaa3198" }
+yew = "0.23"
+yew-router = "0.20"
 yew-hooks = { version = "0.6", optional = true }
 
 wasm-bindgen-futures = { version = "0.4", optional = true }
