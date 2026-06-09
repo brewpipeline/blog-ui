@@ -129,20 +129,12 @@ pub fn comment_card(props: &CommentCardProps) -> Html {
                                     .unwrap_or(false)
                                 {
                                     { " " }
-                                    {
-                                        match *state {
-                                            CommentCardState::None => html! {
-                                                <a href="#" { onclick }>
-                                                    <i title={ lang::COMMENT_DELETE_TITLE } class="bi bi-trash"></i>
-                                                </a>
-                                            },
-                                            CommentCardState::DeleteInProgress => html! {
-                                                <i style="color:#8c8c8c;"> { lang::COMMENT_DELETING } </i>
-                                            },
-                                            CommentCardState::Deleted => html! {
-                                                <i style="color:#8c8c8c;"> { lang::COMMENT_DELETED } </i>
-                                            },
-                                        }
+                                    match *state {
+                                        CommentCardState::None => <a href="#" { onclick }>
+                                            <i title={ lang::COMMENT_DELETE_TITLE } class="bi bi-trash"></i>
+                                        </a>,
+                                        CommentCardState::DeleteInProgress => <i style="color:#8c8c8c;"> { lang::COMMENT_DELETING } </i>,
+                                        CommentCardState::Deleted => <i style="color:#8c8c8c;"> { lang::COMMENT_DELETED } </i>,
                                     }
                                 }
                             }

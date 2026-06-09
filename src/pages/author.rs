@@ -26,47 +26,43 @@ pub fn author(props: &AuthorProps) -> Html {
             r#type={ LoadType::Params(content::AuthorSlugParams { slug: slug.clone() }) }
             use_caches=true
             component={ |author: Option<content::Author>| html! {
-                <>
-                    if let Some(author) = &author {
-                        <Meta
-                            r#type="profile"
-                            title={ lang::author_meta_title(&author_slug_formatter(&author)) }
-                            description={ author.status.clone().unwrap_or_default() }
-                            keywords=""
-                            image={ author.image_url.clone().unwrap_or_default() }
-                        />
-                    } else {
-                        <Meta title={ lang::AUTHOR_TITLE } noindex=true />
-                    }
-                    <AuthorCard author={ author.clone() } link_to=false />
-                    if let Some(author) = &author {
-                        <SimpleTitleCard>
-                            { Html::from(lang::AUTHOR_POSTS) }
-                        </SimpleTitleCard>
-                        <List<content::API<content::PostsContainer>, content::OptionTokened<content::PostsContainerParams>>
-                            r#type={ LoadType::Params(content::OptionTokened {
-                                token: None,
-                                params: content::PostsContainerParams {
-                                    publish_type: content::PublishType::Published,
-                                    search_query: None,
-                                    author_id: Some(author.id),
-                                    tag_id: None
-                                }
-                            }) }
-                            route_to_page={ Route::Author { slug: author.slug.clone() } }
-                            component={ |(_, post)| html! { <PostCard { post } is_full=false /> } }
-                            error_component={ |_| html! { <Warning text={ lang::AUTHOR_POSTS_ERROR } /> } }
-                        >
-                            <Warning text={ lang::AUTHOR_POSTS_EMPTY } />
-                        </List<content::API<content::PostsContainer>, content::OptionTokened<content::PostsContainerParams>>>
-                    }
-                </>
+                if let Some(author) = &author {
+                    <Meta
+                        r#type="profile"
+                        title={ lang::author_meta_title(&author_slug_formatter(&author)) }
+                        description={ author.status.clone().unwrap_or_default() }
+                        keywords=""
+                        image={ author.image_url.clone().unwrap_or_default() }
+                    />
+                } else {
+                    <Meta title={ lang::AUTHOR_TITLE } noindex=true />
+                }
+                <AuthorCard author={ author.clone() } link_to=false />
+                if let Some(author) = &author {
+                    <SimpleTitleCard>
+                        { Html::from(lang::AUTHOR_POSTS) }
+                    </SimpleTitleCard>
+                    <List<content::API<content::PostsContainer>, content::OptionTokened<content::PostsContainerParams>>
+                        r#type={ LoadType::Params(content::OptionTokened {
+                            token: None,
+                            params: content::PostsContainerParams {
+                                publish_type: content::PublishType::Published,
+                                search_query: None,
+                                author_id: Some(author.id),
+                                tag_id: None
+                            }
+                        }) }
+                        route_to_page={ Route::Author { slug: author.slug.clone() } }
+                        component={ |(_, post)| html! { <PostCard { post } is_full=false /> } }
+                        error_component={ |_| html! { <Warning text={ lang::AUTHOR_POSTS_ERROR } /> } }
+                    >
+                        <Warning text={ lang::AUTHOR_POSTS_EMPTY } />
+                    </List<content::API<content::PostsContainer>, content::OptionTokened<content::PostsContainerParams>>>
+                }
             } }
             error_component={ |_| html! {
-                <>
-                    <Meta title={ lang::AUTHOR_ERROR_TITLE } noindex=true />
-                    <Warning text={ lang::AUTHOR_ERROR_TEXT } />
-                </>
+                <Meta title={ lang::AUTHOR_ERROR_TITLE } noindex=true />
+                <Warning text={ lang::AUTHOR_ERROR_TEXT } />
             } }
         />
     }

@@ -25,40 +25,36 @@ pub fn header() -> Html {
     let chat_btn_mobile: Html = html! {};
 
     html! {
-        <>
-            <header class="header fixed-top bg-primary-subtle d-flex flex-wrap align-items-center">
-                <div class="container">
-                    <div class="d-flex flex-wrap align-items-center justify-content-center">
+        <header class="header fixed-top bg-primary-subtle d-flex flex-wrap align-items-center">
+            <div class="container">
+                <div class="d-flex flex-wrap align-items-center justify-content-center">
 
-                        <div class="col col-lg-3 col-xl-2 d-flex justify-content-start justify-content-lg-center align-items-center">
-                            <Link<Route> classes="d-flex link-body-emphasis text-decoration-none" to={ Route::Posts }>
-                                <img id="logo-image" height="38" width="149" style="pointer-events:none;" class="item mb-0" alt={ crate::TITLE } src="logo.svg" fetchpriority="high"/>
-                            </Link<Route>>
-                        </div>
-
-                        <div class="col ps-lg-3 pe-lg-2 px-xl-3 d-none d-lg-block">
-                            <DelayedComponent<()> component={ move |_| html! {
-                                <div class="d-flex align-items-center gap-2">
-                                    { chat_btn_desktop.clone() }
-                                    <SearchField id="headerSearchField" />
-                                </div>
-                            } } deps={ () } />
-                        </div>
-
-                        <div class="col col-lg-auto col-xl-3 gap-1 gap-sm-2 d-flex justify-content-end align-items-center">
-                            <DelayedComponent<()> component={ move |_| html! {
-                                <>
-                                    { chat_btn_mobile.clone() }
-                                    <SearchButton />
-                                    <SubscribeButton />
-                                    <AuthUserBlock />
-                                </>
-                            } } deps={ () } />
-                        </div>
-
+                    <div class="col col-lg-3 col-xl-2 d-flex justify-content-start justify-content-lg-center align-items-center">
+                        <Link<Route> classes="d-flex link-body-emphasis text-decoration-none" to={ Route::Posts }>
+                            <img id="logo-image" height="38" width="149" style="pointer-events:none;" class="item mb-0" alt={ crate::TITLE } src="logo.svg" fetchpriority="high"/>
+                        </Link<Route>>
                     </div>
+
+                    <div class="col ps-lg-3 pe-lg-2 px-xl-3 d-none d-lg-block">
+                        <DelayedComponent<()> component={ move |_| html! {
+                            <div class="d-flex align-items-center gap-2">
+                                { chat_btn_desktop.clone() }
+                                <SearchField id="headerSearchField" />
+                            </div>
+                        } } deps={ () } />
+                    </div>
+
+                    <div class="col col-lg-auto col-xl-3 gap-1 gap-sm-2 d-flex justify-content-end align-items-center">
+                        <DelayedComponent<()> component={ move |_| html! {
+                            { chat_btn_mobile.clone() }
+                            <SearchButton />
+                            <SubscribeButton />
+                            <AuthUserBlock />
+                        } } deps={ () } />
+                    </div>
+
                 </div>
-            </header>
-        </>
+            </div>
+        </header>
     }
 }

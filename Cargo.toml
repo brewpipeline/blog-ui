@@ -12,9 +12,9 @@ async-trait = "0.1"
 
 chrono = { version = "0.4", features = ["unstable-locales"] }
 
-yew = "0.22"
-yew-router = "0.19"
-yew-hooks = { version = "0.4", optional = true }
+yew = "0.23"
+yew-router = "0.20"
+yew-hooks = { version = "0.6", optional = true }
 
 wasm-bindgen-futures = { version = "0.4", optional = true }
 wasm-bindgen = { version = "0.2", optional = true }
@@ -23,7 +23,6 @@ wasm-logger = { version = "0.2", optional = true }
 
 web-sys = { version = "0.3", features = ["HtmlDocument","console","Document","HtmlElement","HtmlTextAreaElement","MouseEvent","DomRect","ScrollToOptions","ScrollBehavior","Element","CssStyleDeclaration","MutationObserver","MutationObserverInit","Node","CustomEvent","HtmlImageElement"], optional = true }
 
-gloo-history = "0.2"
 gloo = { version = "0.11", optional = true }
 gloo-net = { version = "0.6", optional = true }
 
@@ -35,7 +34,7 @@ urlencoding = "2.1"
 noneifempty = "0.1"
 
 base64 = "0.22"
-uuid = { version = "1.18.0", features = ["std", "v4", "js"], optional = true }
+uuid = { version = "1.18", features = ["std", "v4", "js"], optional = true }
 
 
 [features]
@@ -57,8 +56,8 @@ required-features = ["client"]
 
 
 [patch.crates-io]
-yew = { git = "https://github.com/tikitko/yew.git", branch = "yew-v0.22.0.1" }
-yew-router = { git = "https://github.com/tikitko/yew.git", branch = "yew-v0.22.0.1" }
+yew = { git = "https://github.com/yewstack/yew.git", rev = "47d4082d301d495c3c97fc9ed5cb18ffffaa3198" }
+yew-router = { git = "https://github.com/yewstack/yew.git", rev = "47d4082d301d495c3c97fc9ed5cb18ffffaa3198" }
 
 [profile.release]
 # less code to include into binary

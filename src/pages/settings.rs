@@ -453,242 +453,147 @@ pub fn settings() -> Html {
     // MARK: Html
 
     html! {
-        <>
-            <Meta title={ lang::SETTINGS_TITLE } noindex=true />
-            <div id="settingsPage" ref={ settings_node_ref }>
-                if !logged_user_context.is_not_inited() && !logged_user_context.state().action_available() {
-                    <div class="card mb-3">
-                        <div class="card-body">
-                            <h5 class="card-title placeholder-glow mb-3">
-                                { lang::SETTINGS_TITLE }
-                            </h5>
-                            <div class="col-12 col-xl-10">
-                                <h6 class="card-title placeholder-glow mb-3">
-                                    { lang::SETTINGS_PRIMARY_TITLE }
-                                    { " " }
-                                    <a href="#" onclick={
-                                        let main_reset = main_reset.clone();
-                                        let main_section_error = main_section_error.clone();
-                                        move |e: MouseEvent| {
-                                            e.prevent_default();
-                                            main_reset.set(*main_reset + 1);
-                                            main_section_error.set(None);
-                                        }
-                                    }>
-                                        <i title={ lang::SETTINGS_PRIMARY_RESET_TITLE } class="bi bi-arrow-counterclockwise"></i>
-                                    </a>
-                                </h6>
-                                if let Some(message) = main_section_error.as_ref() {
-                                    {
-                                        match message {
-                                            Ok(ok_message) => html! {
-                                                <div class="alert alert-success d-flex align-items-center" role="alert">
-                                                    { lang::SETTINGS_DATA_UPDATED }
-                                                    { ok_message }
-                                                </div>
-                                            },
-                                            Err(err_message) => html! {
-                                                <div class="alert alert-danger d-flex align-items-center" role="alert">
-                                                    { lang::SETTINGS_DATA_ERROR }
-                                                    { err_message }
-                                                </div>
-                                            }
-                                        }
+        <Meta title={ lang::SETTINGS_TITLE } noindex=true />
+        <div id="settingsPage" ref={ settings_node_ref }>
+            if !logged_user_context.is_not_inited() && !logged_user_context.state().action_available() {
+                <div class="card mb-3">
+                    <div class="card-body">
+                        <h5 class="card-title placeholder-glow mb-3">
+                            { lang::SETTINGS_TITLE }
+                        </h5>
+                        <div class="col-12 col-xl-10">
+                            <h6 class="card-title placeholder-glow mb-3">
+                                { lang::SETTINGS_PRIMARY_TITLE }
+                                { " " }
+                                <a href="#" onclick={
+                                    let main_reset = main_reset.clone();
+                                    let main_section_error = main_section_error.clone();
+                                    move |e: MouseEvent| {
+                                        e.prevent_default();
+                                        main_reset.set(*main_reset + 1);
+                                        main_section_error.set(None);
                                     }
+                                }>
+                                    <i title={ lang::SETTINGS_PRIMARY_RESET_TITLE } class="bi bi-arrow-counterclockwise"></i>
+                                </a>
+                            </h6>
+                            if let Some(message) = main_section_error.as_ref() {
+                                match message {
+                                    Ok(ok_message) => <div class="alert alert-success d-flex align-items-center" role="alert">
+                                        { lang::SETTINGS_DATA_UPDATED }
+                                        { ok_message }
+                                    </div>,
+                                    Err(err_message) => <div class="alert alert-danger d-flex align-items-center" role="alert">
+                                        { lang::SETTINGS_DATA_ERROR }
+                                        { err_message }
+                                    </div>
                                 }
-                                <div class="mb-3">
-                                    <div class="form-check mb-2">
-                                        <input
-                                            class="form-check-input"
-                                            type="radio"
-                                            name="flexRadioDefault"
-                                            id="flexRadioDefault1"
-                                            disabled=true
-                                            checked={ *main_active_section == ActiveSection::Social }
-                                            onclick={
-                                                let main_active_section = main_active_section.clone();
-                                                let main_section_error = main_section_error.clone();
-                                                Callback::from(move |_: MouseEvent| {
-                                                    main_active_section.set(ActiveSection::Social);
-                                                    main_section_error.set(None);
-                                                })
-                                            }
-                                        />
-                                        <label class="form-check-label mb-2" for="flexRadioDefault1">
-                                            { lang::SETTINGS_USE_TELEGRAM }
-                                        </label>
-                                        <div class="mb-2">
-                                            <div style={ if !*in_progress { "" } else { "pointer-events: none;" } }>
-                                                { telegram_button }
-                                            </div>
-                                            <div class="form-text">
-                                                { lang::SETTINGS_SYNC_HINT }
-                                            </div>
+                            }
+                            <div class="mb-3">
+                                <div class="form-check mb-2">
+                                    <input
+                                        class="form-check-input"
+                                        type="radio"
+                                        name="flexRadioDefault"
+                                        id="flexRadioDefault1"
+                                        disabled=true
+                                        checked={ *main_active_section == ActiveSection::Social }
+                                        onclick={
+                                            let main_active_section = main_active_section.clone();
+                                            let main_section_error = main_section_error.clone();
+                                            Callback::from(move |_: MouseEvent| {
+                                                main_active_section.set(ActiveSection::Social);
+                                                main_section_error.set(None);
+                                            })
+                                        }
+                                    />
+                                    <label class="form-check-label mb-2" for="flexRadioDefault1">
+                                        { lang::SETTINGS_USE_TELEGRAM }
+                                    </label>
+                                    <div class="mb-2">
+                                        <div style={ if !*in_progress { "" } else { "pointer-events: none;" } }>
+                                            { telegram_button }
+                                        </div>
+                                        <div class="form-text">
+                                            { lang::SETTINGS_SYNC_HINT }
                                         </div>
                                     </div>
                                 </div>
-                                <div class="mb-3">
-                                    <div class="form-check mb-2">
-                                        <input
-                                            class="form-check-input"
-                                            type="radio"
-                                            name="flexRadioDefault"
-                                            id="flexRadioDefault2"
-                                            disabled={ *main_active_section == ActiveSection::None || *in_progress }
-                                            checked={ *main_active_section == ActiveSection::Custom }
-                                            onclick={
-                                                let main_active_section = main_active_section.clone();
-                                                let main_section_error = main_section_error.clone();
-                                                Callback::from(move |_: MouseEvent| {
-                                                    main_active_section.set(ActiveSection::Custom);
-                                                    main_section_error.set(None);
-                                                })
-                                            }
-                                        />
-                                        <label class="form-check-label mb-2" for="flexRadioDefault2">
-                                            { lang::SETTINGS_USE_CUSTOM }
-                                        </label>
-                                        <div class="form-floating mb-2">
-                                            <input
-                                                ref={ slug_node_ref.clone() }
-                                                oninput={ main_oninput.clone() }
-                                                type="text"
-                                                class="form-control"
-                                                id="floatingInput1"
-                                                placeholder={ lang::SETTINGS_SLUG }
-                                                disabled={ *main_active_section != ActiveSection::Custom || *in_progress }
-                                            />
-                                            <label for="floatingInput1">{ lang::SETTINGS_SLUG }</label>
-                                        </div>
-                                        <div class="form-floating mb-2">
-                                            <input
-                                                ref={ image_url_node_ref.clone() }
-                                                oninput={ main_oninput.clone() }
-                                                type="text"
-                                                class="form-control"
-                                                id="floatingInput2"
-                                                placeholder={ lang::SETTINGS_IMAGE_URL }
-                                                disabled={ *main_active_section != ActiveSection::Custom || *in_progress }
-                                            />
-                                            <label for="floatingInput2">{ lang::SETTINGS_IMAGE_URL }</label>
-                                        </div>
-                                        <div class="form-floating mb-2">
-                                            <input
-                                                ref={ first_name_node_ref.clone() }
-                                                oninput={ main_oninput.clone() }
-                                                type="text"
-                                                class="form-control"
-                                                id="floatingInput3"
-                                                placeholder={ lang::SETTINGS_FIRST_NAME }
-                                                disabled={ *main_active_section != ActiveSection::Custom || *in_progress }
-                                            />
-                                            <label for="floatingInput3">{ lang::SETTINGS_FIRST_NAME }</label>
-                                        </div>
-                                        <div class="form-floating mb-2">
-                                            <input
-                                                ref={ last_name_node_ref.clone() }
-                                                oninput={ main_oninput.clone() }
-                                                type="text"
-                                                class="form-control"
-                                                id="floatingInput4"
-                                                placeholder={ lang::SETTINGS_LAST_NAME }
-                                                disabled={ *main_active_section != ActiveSection::Custom || *in_progress }
-                                            />
-                                            <label for="floatingInput4">{ lang::SETTINGS_LAST_NAME }</label>
-                                        </div>
-                                        <button
-                                            type="button"
-                                            class="btn btn-info"
-                                            onclick={ main_onclick }
-                                            disabled={ *main_active_section != ActiveSection::Custom || *in_progress || !is_main_ready_for_save }
-                                        >
-                                            { lang::COMMON_SAVE }
-                                            if *in_progress {
-                                                { " " }
-                                                <div class="spinner-border spinner-border-sm" role="status">
-                                                    <span class="visually-hidden"> { lang::COMMON_LOADING } </span>
-                                                </div>
-                                            }
-                                        </button>
-                                    </div>
-                                </div>
-                                <h6 class="card-title placeholder-glow mb-3">
-                                    { lang::SETTINGS_SECONDARY_TITLE }
-                                    { " " }
-                                    <a href="#" onclick={
-                                        let secondary_reset = secondary_reset.clone();
-                                        let secondary_section_error = main_section_error.clone();
-                                        move |e: MouseEvent| {
-                                            e.prevent_default();
-                                            secondary_reset.set(*secondary_reset + 1);
-                                            secondary_section_error.set(None);
+                            </div>
+                            <div class="mb-3">
+                                <div class="form-check mb-2">
+                                    <input
+                                        class="form-check-input"
+                                        type="radio"
+                                        name="flexRadioDefault"
+                                        id="flexRadioDefault2"
+                                        disabled={ *main_active_section == ActiveSection::None || *in_progress }
+                                        checked={ *main_active_section == ActiveSection::Custom }
+                                        onclick={
+                                            let main_active_section = main_active_section.clone();
+                                            let main_section_error = main_section_error.clone();
+                                            Callback::from(move |_: MouseEvent| {
+                                                main_active_section.set(ActiveSection::Custom);
+                                                main_section_error.set(None);
+                                            })
                                         }
-                                    }>
-                                        <i title={ lang::SETTINGS_SECONDARY_RESET_TITLE } class="bi bi-arrow-counterclockwise"></i>
-                                    </a>
-                                </h6>
-                                if let Some(message) = secondary_section_error.as_ref() {
-                                    {
-                                        match message {
-                                            Ok(ok_message) => html! {
-                                                <div class="alert alert-success d-flex align-items-center" role="alert">
-                                                    { lang::SETTINGS_DATA_UPDATED }
-                                                    { ok_message }
-                                                </div>
-                                            },
-                                            Err(err_message) => html! {
-                                                <div class="alert alert-danger d-flex align-items-center" role="alert">
-                                                    { lang::SETTINGS_DATA_ERROR }
-                                                    { err_message }
-                                                </div>
-                                            }
-                                        }
-                                    }
-                                }
-                                <div class="mb-3">
-                                    <div class="form-floating mb-2">
-                                        <textarea
-                                            ref={ status_node_ref }
-                                            oninput={ secondary_oninput.clone() }
-                                            style="height: auto; height: 120px;"
-                                            row="4"
-                                            type="phone"
-                                            class="form-control"
-                                            id="floatingInput5"
-                                            placeholder={ lang::SETTINGS_ABOUT }
-                                            disabled={ *in_progress }
-                                        />
-                                        <label for="floatingInput5">{ lang::SETTINGS_ABOUT }</label>
-                                    </div>
+                                    />
+                                    <label class="form-check-label mb-2" for="flexRadioDefault2">
+                                        { lang::SETTINGS_USE_CUSTOM }
+                                    </label>
                                     <div class="form-floating mb-2">
                                         <input
-                                            ref={ email_node_ref }
-                                            oninput={ secondary_oninput.clone() }
-                                            type="email"
-                                            class="form-control"
-                                            id="floatingInput6"
-                                            placeholder={ lang::SETTINGS_EMAIL }
-                                            disabled={ *in_progress }
-                                        />
-                                        <label for="floatingInput6">{ lang::SETTINGS_EMAIL }</label>
-                                    </div>
-                                    <div class="form-floating mb-2">
-                                        <input
-                                            ref={ mobile_node_ref }
-                                            oninput={ secondary_oninput.clone() }
+                                            ref={ slug_node_ref.clone() }
+                                            oninput={ main_oninput.clone() }
                                             type="text"
                                             class="form-control"
-                                            id="floatingInput7"
-                                            placeholder={ lang::SETTINGS_PHONE }
-                                            disabled={ *in_progress }
+                                            id="floatingInput1"
+                                            placeholder={ lang::SETTINGS_SLUG }
+                                            disabled={ *main_active_section != ActiveSection::Custom || *in_progress }
                                         />
-                                        <label for="floatingInput7">{ lang::SETTINGS_PHONE }</label>
+                                        <label for="floatingInput1">{ lang::SETTINGS_SLUG }</label>
+                                    </div>
+                                    <div class="form-floating mb-2">
+                                        <input
+                                            ref={ image_url_node_ref.clone() }
+                                            oninput={ main_oninput.clone() }
+                                            type="text"
+                                            class="form-control"
+                                            id="floatingInput2"
+                                            placeholder={ lang::SETTINGS_IMAGE_URL }
+                                            disabled={ *main_active_section != ActiveSection::Custom || *in_progress }
+                                        />
+                                        <label for="floatingInput2">{ lang::SETTINGS_IMAGE_URL }</label>
+                                    </div>
+                                    <div class="form-floating mb-2">
+                                        <input
+                                            ref={ first_name_node_ref.clone() }
+                                            oninput={ main_oninput.clone() }
+                                            type="text"
+                                            class="form-control"
+                                            id="floatingInput3"
+                                            placeholder={ lang::SETTINGS_FIRST_NAME }
+                                            disabled={ *main_active_section != ActiveSection::Custom || *in_progress }
+                                        />
+                                        <label for="floatingInput3">{ lang::SETTINGS_FIRST_NAME }</label>
+                                    </div>
+                                    <div class="form-floating mb-2">
+                                        <input
+                                            ref={ last_name_node_ref.clone() }
+                                            oninput={ main_oninput.clone() }
+                                            type="text"
+                                            class="form-control"
+                                            id="floatingInput4"
+                                            placeholder={ lang::SETTINGS_LAST_NAME }
+                                            disabled={ *main_active_section != ActiveSection::Custom || *in_progress }
+                                        />
+                                        <label for="floatingInput4">{ lang::SETTINGS_LAST_NAME }</label>
                                     </div>
                                     <button
                                         type="button"
                                         class="btn btn-info"
-                                        onclick={ secondary_onclick }
-                                        disabled={ *in_progress || !is_secondary_ready_for_save }
+                                        onclick={ main_onclick }
+                                        disabled={ *main_active_section != ActiveSection::Custom || *in_progress || !is_main_ready_for_save }
                                     >
                                         { lang::COMMON_SAVE }
                                         if *in_progress {
@@ -700,12 +605,93 @@ pub fn settings() -> Html {
                                     </button>
                                 </div>
                             </div>
+                            <h6 class="card-title placeholder-glow mb-3">
+                                { lang::SETTINGS_SECONDARY_TITLE }
+                                { " " }
+                                <a href="#" onclick={
+                                    let secondary_reset = secondary_reset.clone();
+                                    let secondary_section_error = main_section_error.clone();
+                                    move |e: MouseEvent| {
+                                        e.prevent_default();
+                                        secondary_reset.set(*secondary_reset + 1);
+                                        secondary_section_error.set(None);
+                                    }
+                                }>
+                                    <i title={ lang::SETTINGS_SECONDARY_RESET_TITLE } class="bi bi-arrow-counterclockwise"></i>
+                                </a>
+                            </h6>
+                            if let Some(message) = secondary_section_error.as_ref() {
+                                match message {
+                                    Ok(ok_message) => <div class="alert alert-success d-flex align-items-center" role="alert">
+                                        { lang::SETTINGS_DATA_UPDATED }
+                                        { ok_message }
+                                    </div>,
+                                    Err(err_message) => <div class="alert alert-danger d-flex align-items-center" role="alert">
+                                        { lang::SETTINGS_DATA_ERROR }
+                                        { err_message }
+                                    </div>
+                                }
+                            }
+                            <div class="mb-3">
+                                <div class="form-floating mb-2">
+                                    <textarea
+                                        ref={ status_node_ref }
+                                        oninput={ secondary_oninput.clone() }
+                                        style="height: auto; height: 120px;"
+                                        row="4"
+                                        type="phone"
+                                        class="form-control"
+                                        id="floatingInput5"
+                                        placeholder={ lang::SETTINGS_ABOUT }
+                                        disabled={ *in_progress }
+                                    />
+                                    <label for="floatingInput5">{ lang::SETTINGS_ABOUT }</label>
+                                </div>
+                                <div class="form-floating mb-2">
+                                    <input
+                                        ref={ email_node_ref }
+                                        oninput={ secondary_oninput.clone() }
+                                        type="email"
+                                        class="form-control"
+                                        id="floatingInput6"
+                                        placeholder={ lang::SETTINGS_EMAIL }
+                                        disabled={ *in_progress }
+                                    />
+                                    <label for="floatingInput6">{ lang::SETTINGS_EMAIL }</label>
+                                </div>
+                                <div class="form-floating mb-2">
+                                    <input
+                                        ref={ mobile_node_ref }
+                                        oninput={ secondary_oninput.clone() }
+                                        type="text"
+                                        class="form-control"
+                                        id="floatingInput7"
+                                        placeholder={ lang::SETTINGS_PHONE }
+                                        disabled={ *in_progress }
+                                    />
+                                    <label for="floatingInput7">{ lang::SETTINGS_PHONE }</label>
+                                </div>
+                                <button
+                                    type="button"
+                                    class="btn btn-info"
+                                    onclick={ secondary_onclick }
+                                    disabled={ *in_progress || !is_secondary_ready_for_save }
+                                >
+                                    { lang::COMMON_SAVE }
+                                    if *in_progress {
+                                        { " " }
+                                        <div class="spinner-border spinner-border-sm" role="status">
+                                            <span class="visually-hidden"> { lang::COMMON_LOADING } </span>
+                                        </div>
+                                    }
+                                </button>
+                            </div>
                         </div>
                     </div>
-                } else {
-                    <Warning text={ lang::SETTINGS_AUTH_REQUIRED } />
-                }
-            </div>
-        </>
+                </div>
+            } else {
+                <Warning text={ lang::SETTINGS_AUTH_REQUIRED } />
+            }
+        </div>
     }
 }

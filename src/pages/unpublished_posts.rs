@@ -20,10 +20,8 @@ pub fn unpublished_posts() -> Html {
     };
 
     let not_auth_content = html! {
-        <>
-            { meta.clone() }
-            <Warning text={ lang::UNPUB_AUTH_REQUIRED } />
-        </>
+        { meta.clone() }
+        <Warning text={ lang::UNPUB_AUTH_REQUIRED } />
     };
 
     if logged_user_context.is_not_inited() {
@@ -37,35 +35,31 @@ pub fn unpublished_posts() -> Html {
 
     if author.editor != 1 {
         return html! {
-            <>
-                { meta.clone() }
-                <Warning text={ lang::UNPUB_EDITORS_ONLY } />
-            </>
+            { meta.clone() }
+            <Warning text={ lang::UNPUB_EDITORS_ONLY } />
         };
     }
 
     html! {
-        <>
-            { meta }
-            <SimpleTitleCard>
-                { Html::from(lang::UNPUB_TITLE) }
-            </SimpleTitleCard>
-            <List<API<PostsContainer>, OptionTokened<PostsContainerParams>>
-                r#type={ LoadType::Params(OptionTokened {
-                    token: Some(token),
-                    params: PostsContainerParams {
-                        publish_type: PublishType::Unpublished,
-                        search_query: None,
-                        author_id: None,
-                        tag_id: None
-                    }
-                }) }
-                route_to_page={ Route::UnpublishedPosts }
-                component={ |(_, post)| html! { <PostCard { post } is_full=false /> } }
-                error_component={ |_| html! { <Warning text={ lang::UNPUB_ERROR } /> } }
-            >
-                <Warning text={ lang::UNPUB_EMPTY } />
-            </List<API<PostsContainer>, OptionTokened<PostsContainerParams>>>
-        </>
+        { meta }
+        <SimpleTitleCard>
+            { Html::from(lang::UNPUB_TITLE) }
+        </SimpleTitleCard>
+        <List<API<PostsContainer>, OptionTokened<PostsContainerParams>>
+            r#type={ LoadType::Params(OptionTokened {
+                token: Some(token),
+                params: PostsContainerParams {
+                    publish_type: PublishType::Unpublished,
+                    search_query: None,
+                    author_id: None,
+                    tag_id: None
+                }
+            }) }
+            route_to_page={ Route::UnpublishedPosts }
+            component={ |(_, post)| html! { <PostCard { post } is_full=false /> } }
+            error_component={ |_| html! { <Warning text={ lang::UNPUB_ERROR } /> } }
+        >
+            <Warning text={ lang::UNPUB_EMPTY } />
+        </List<API<PostsContainer>, OptionTokened<PostsContainerParams>>>
     }
 }

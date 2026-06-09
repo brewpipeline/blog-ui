@@ -63,17 +63,15 @@ pub fn meta(props: &MetaProps) -> Html {
         &crate::TITLE.to_owned(),
     );
     html! {
-        <>
-            <script data-page-content="type" type="text/plain"> { r#type } </script>
-            <script data-page-content="title" type="text/plain"> { title } </script>
-            <script data-page-content="short_title" type="text/plain"> { short_title } </script>
-            <script data-page-content="description" type="text/plain"> { description } </script>
-            <script data-page-content="keywords" type="text/plain"> { keywords } </script>
-            <script data-page-content="image" type="text/plain"> { image } </script>
-            <script data-page-content="image_width" type="text/plain"> { image_width } </script>
-            <script data-page-content="image_height" type="text/plain"> { image_height } </script>
-            <script data-page-content="robots" type="text/plain"> { robots } </script>
-            <script data-page-content="site_name" type="text/plain"> { crate::TITLE } </script>
-        </>
+        <script data-page-content="type" type="text/plain"> { r#type } </script>
+        <script data-page-content="title" type="text/plain"> { title } </script>
+        <script data-page-content="short_title" type="text/plain"> { short_title } </script>
+        <script data-page-content="description" type="text/plain"> { description } </script>
+        <script data-page-content="keywords" type="text/plain"> { keywords } </script>
+        <script data-page-content="image" type="text/plain"> { image } </script>
+        <script data-page-content="image_width" type="text/plain"> { image_width } </script>
+        <script data-page-content="image_height" type="text/plain"> { image_height } </script>
+        <script data-page-content="robots" type="text/plain"> { robots } </script>
+        <script data-page-content="site_name" type="text/plain"> { crate::TITLE } </script>
     }
 }

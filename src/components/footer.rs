@@ -29,49 +29,47 @@ pub fn footer() -> Html {
     }
 
     html! {
-        <>
-            <footer class="footer fixed-bottom bg-primary-subtle d-flex d-lg-none">
-                <div class="container">
-                        <div class="d-flex justify-content-center gap-2">
-                            <input
-                                type="radio"
-                                class="btn-check"
-                                name="vbtn-radio"
-                                id="vbtn-radio1"
-                                autocomplete="off"
-                            />
-                            <label class="btn btn-light tab-label" for="vbtn-radio1">
-                                <i class="bi bi-list"></i>
-                                { lang::FOOTER_MENU }
-                            </label>
-                            <input
-                                aria-label={ lang::FOOTER_FEED_ARIA }
-                                type="radio"
-                                class="btn-check"
-                                name="vbtn-radio"
-                                id="vbtn-radio2"
-                                autocomplete="off"
-                                checked={ true }
-                                ref={ large_menu_default_ref }
-                            />
-                            <label class="btn btn-light tab-label" for="vbtn-radio2">
-                                <i class="bi bi-card-heading"></i>
-                                { lang::FOOTER_FEED }
-                            </label>
-                            <input
-                                type="radio"
-                                class="btn-check"
-                                name="vbtn-radio"
-                                id="vbtn-radio3"
-                                autocomplete="off"
-                            />
-                            <label class="btn btn-light tab-label" for="vbtn-radio3">
-                                <i class="bi bi-info-square"></i>
-                                { lang::FOOTER_INFO }
-                            </label>
-                        </div>
+        <footer class="footer fixed-bottom bg-primary-subtle d-flex d-lg-none">
+            <div class="container">
+                <div class="d-flex justify-content-center gap-2">
+                    <input
+                        type="radio"
+                        class="btn-check"
+                        name="vbtn-radio"
+                        id="vbtn-radio1"
+                        autocomplete="off"
+                    />
+                    <label class="btn btn-light tab-label" for="vbtn-radio1">
+                        <i class="bi bi-list"></i>
+                        { lang::FOOTER_MENU }
+                    </label>
+                    <input
+                        aria-label={ lang::FOOTER_FEED_ARIA }
+                        type="radio"
+                        class="btn-check"
+                        name="vbtn-radio"
+                        id="vbtn-radio2"
+                        autocomplete="off"
+                        checked={ true }
+                        ref={ large_menu_default_ref }
+                    />
+                    <label class="btn btn-light tab-label" for="vbtn-radio2">
+                        <i class="bi bi-card-heading"></i>
+                        { lang::FOOTER_FEED }
+                    </label>
+                    <input
+                        type="radio"
+                        class="btn-check"
+                        name="vbtn-radio"
+                        id="vbtn-radio3"
+                        autocomplete="off"
+                    />
+                    <label class="btn btn-light tab-label" for="vbtn-radio3">
+                        <i class="bi bi-info-square"></i>
+                        { lang::FOOTER_INFO }
+                    </label>
                 </div>
-            </footer>
-        </>
+            </div>
+        </footer>
     }
 }

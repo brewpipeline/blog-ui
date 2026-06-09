@@ -10,15 +10,15 @@ pub enum Route {
     Settings,
     #[at("/post/new")]
     NewPost,
-    #[at("/post/edit/:id")]
+    #[at("/post/edit/{id}")]
     EditPost { id: u64 },
-    #[at("/post/:slug/:id")]
+    #[at("/post/{slug}/{id}")]
     Post { slug: String, id: u64 },
     #[at("/")]
     Posts,
     #[at("/posts/search")]
     PostsSearchRoot,
-    #[at("/posts/search/:query")]
+    #[at("/posts/search/{query}")]
     PostsSearch { query: String },
     #[at("/posts/unpublished")]
     UnpublishedPosts,
@@ -26,15 +26,15 @@ pub enum Route {
     MyUnpublishedPosts,
     #[at("/posts/hidden")]
     HiddenPosts,
-    #[at("/tag/:slug/:id")]
+    #[at("/tag/{slug}/{id}")]
     Tag { slug: String, id: u64 },
-    #[at("/author/:slug")]
+    #[at("/author/{slug}")]
     Author { slug: String },
     #[at("/authors")]
     Authors,
     #[at("/authors/search")]
     AuthorsSearchRoot,
-    #[at("/authors/search/:query")]
+    #[at("/authors/search/{query}")]
     AuthorsSearch { query: String },
     #[cfg(feature = "chatgpt")]
     #[at("/chatgpt")]

@@ -177,16 +177,14 @@ pub fn edit_post(props: &EditPostProps) -> Html {
     }
 
     let not_auth_content = html! {
-        <>
-            { meta.clone() }
-            <Warning text={
-                if id == None {
-                    lang::EDIT_POST_NEW_AUTH
-                } else {
-                    lang::EDIT_POST_EDIT_AUTH
-                }
-            } />
-        </>
+        { meta.clone() }
+        <Warning text={
+            if id == None {
+                lang::EDIT_POST_NEW_AUTH
+            } else {
+                lang::EDIT_POST_EDIT_AUTH
+            }
+        } />
     };
 
     if logged_user_context.is_not_inited() {
@@ -505,33 +503,31 @@ pub fn edit_post(props: &EditPostProps) -> Html {
     });
 
     html! {
-        <>
-            { meta }
-            if author.blocked == 1 {
-                <Warning text={ lang::EDIT_POST_BLOCKED } />
-            } else if let Some(id) = id {
-                <Item<content::API<content::PostContainer>, content::OptionTokened<content::PostParams>>
-                    r#type={ LoadType::Params(content::OptionTokened {
-                        token: Some(token),
-                        params: content::PostParams { id }
-                    }) }
-                    use_caches=true
-                    component={ move |post: Option<content::Post>| {
-                        if let Some(post) = post {
-                            if post.author.id == author.id || author.editor == 1 {
-                                main_content.emit(Some(post))
-                            } else {
-                                html! { <Warning text={ lang::EDIT_POST_ONLY_AUTHOR_OR_EDITOR } /> }
-                            }
+        { meta }
+        if author.blocked == 1 {
+            <Warning text={ lang::EDIT_POST_BLOCKED } />
+        } else if let Some(id) = id {
+            <Item<content::API<content::PostContainer>, content::OptionTokened<content::PostParams>>
+                r#type={ LoadType::Params(content::OptionTokened {
+                    token: Some(token),
+                    params: content::PostParams { id }
+                }) }
+                use_caches=true
+                component={ move |post: Option<content::Post>| {
+                    if let Some(post) = post {
+                        if post.author.id == author.id || author.editor == 1 {
+                            main_content.emit(Some(post))
                         } else {
-                            html! { <Warning text={ lang::EDIT_POST_LOADING } /> }
+                            html! { <Warning text={ lang::EDIT_POST_ONLY_AUTHOR_OR_EDITOR } /> }
                         }
-                    } }
-                    error_component={ |_| html! { <Warning text={ lang::EDIT_POST_LOAD_ERROR } /> } }
-                />
-            } else {
-                { main_content.emit(None) }
-            }
-        </>
+                    } else {
+                        html! { <Warning text={ lang::EDIT_POST_LOADING } /> }
+                    }
+                } }
+                error_component={ |_| html! { <Warning text={ lang::EDIT_POST_LOAD_ERROR } /> } }
+            />
+        } else {
+            { main_content.emit(None) }
+        }
     }
 }

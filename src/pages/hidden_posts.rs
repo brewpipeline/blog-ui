@@ -20,10 +20,8 @@ pub fn hidden_posts() -> Html {
     };
 
     let not_auth_content = html! {
-        <>
-            { meta.clone() }
-            <Warning text={ lang::HIDDEN_AUTH_REQUIRED } />
-        </>
+        { meta.clone() }
+        <Warning text={ lang::HIDDEN_AUTH_REQUIRED } />
     };
 
     if logged_user_context.is_not_inited() {
@@ -37,35 +35,31 @@ pub fn hidden_posts() -> Html {
 
     if author.editor != 1 {
         return html! {
-            <>
-                { meta.clone() }
-                <Warning text={ lang::HIDDEN_EDITORS_ONLY } />
-            </>
+            { meta.clone() }
+            <Warning text={ lang::HIDDEN_EDITORS_ONLY } />
         };
     }
 
     html! {
-        <>
-            { meta }
-            <SimpleTitleCard>
-                { Html::from(lang::HIDDEN_TITLE) }
-            </SimpleTitleCard>
-            <List<API<PostsContainer>, OptionTokened<PostsContainerParams>>
-                r#type={ LoadType::Params(OptionTokened {
-                    token: Some(token),
-                    params: PostsContainerParams {
-                        publish_type: PublishType::Hidden,
-                        search_query: None,
-                        author_id: None,
-                        tag_id: None
-                    }
-                }) }
-                route_to_page={ Route::UnpublishedPosts }
-                component={ |(_, post)| html! { <PostCard { post } is_full=false /> } }
-                error_component={ |_| html! { <Warning text={ lang::HIDDEN_ERROR } /> } }
-            >
-                <Warning text={ lang::HIDDEN_EMPTY } />
-            </List<API<PostsContainer>, OptionTokened<PostsContainerParams>>>
-        </>
+        { meta }
+        <SimpleTitleCard>
+            { Html::from(lang::HIDDEN_TITLE) }
+        </SimpleTitleCard>
+        <List<API<PostsContainer>, OptionTokened<PostsContainerParams>>
+            r#type={ LoadType::Params(OptionTokened {
+                token: Some(token),
+                params: PostsContainerParams {
+                    publish_type: PublishType::Hidden,
+                    search_query: None,
+                    author_id: None,
+                    tag_id: None
+                }
+            }) }
+            route_to_page={ Route::UnpublishedPosts }
+            component={ |(_, post)| html! { <PostCard { post } is_full=false /> } }
+            error_component={ |_| html! { <Warning text={ lang::HIDDEN_ERROR } /> } }
+        >
+            <Warning text={ lang::HIDDEN_EMPTY } />
+        </List<API<PostsContainer>, OptionTokened<PostsContainerParams>>>
     }
 }

@@ -76,14 +76,12 @@ pub fn post_card(props: &PostCardProps) -> Html {
                         })
                     };
                     html! {
-                        <>
-                            { " " }
-                            <a href="#" class="text-decoration-none" {onclick} title={ if *recommended { lang::POSTCARD_STAR_REMOVE } else { lang::POSTCARD_STAR_ADD } }>
-                                <i
-                                    class={ classes!("bi", if *recommended { "bi-star-fill" } else { "bi-star" }) }
-                                ></i>
-                            </a>
-                        </>
+                        { " " }
+                        <a href="#" class="text-decoration-none" {onclick} title={ if *recommended { lang::POSTCARD_STAR_REMOVE } else { lang::POSTCARD_STAR_ADD } }>
+                            <i
+                                class={ classes!("bi", if *recommended { "bi-star-fill" } else { "bi-star" }) }
+                            ></i>
+                        </a>
                     }
                 }
                 _ => html! {},
@@ -101,16 +99,14 @@ pub fn post_card(props: &PostCardProps) -> Html {
                 if (author.id == post.author.id || author.editor == 1) && author.blocked == 0 =>
             {
                 html! {
-                    <>
-                        { " " }
-                        <Link<Route, (), Post>
-                            classes="text-decoration-none"
-                            to={ Route::EditPost { id: post.id } }
-                            state={ Some(post.clone()) }
-                        >
-                            <i title={ lang::POSTCARD_EDIT_TITLE } class="bi bi-pencil-square"></i>
-                        </Link<Route, (), Post>>
-                    </>
+                    { " " }
+                    <Link<Route, (), Post>
+                        classes="text-decoration-none"
+                        to={ Route::EditPost { id: post.id } }
+                        state={ Some(post.clone()) }
+                    >
+                        <i title={ lang::POSTCARD_EDIT_TITLE } class="bi bi-pencil-square"></i>
+                    </Link<Route, (), Post>>
                 }
             }
             _ => html! {},
@@ -118,45 +114,53 @@ pub fn post_card(props: &PostCardProps) -> Html {
     };
 
     let main_content = html! {
-        <>
-            <div class="img-block bd-placeholder-img" style="height:194px;width:100%;overflow:hidden;">
-                <OptionalImage
-                    alt={ post.as_ref().map(|p| p.title.clone()) }
-                    priority={ is_full || priority }
-                    image={
-                        post.as_ref().and_then(|p| {
-                            p.image_url
-                                .clone()
-                                .map(|u| p.processed_image_urls.get(&u).cloned().unwrap_or(u))
-                        })
-                    }
-                />
-            </div>
-            <div class="card-body pb-0">
-                <h4 class="card-title placeholder-glow">
-                    if let Some(title) = post.as_ref().map(|p| p.title.clone()) {
-                        { title }
-                    } else {
-                        <span class="placeholder col-6 bg-secondary"></span>
-                    }
-                </h4>
-                <article class="card-text placeholder-glow">
-                    if let Some(text) = post.as_ref().map(|post| {
-                        if let (Some(content), true) = (post.content.clone(), is_full) {
-                            let links = post.processed_image_urls.clone();
-                            let content = content.map_in_pattern(["<img", ">"], |i| {
-                                let i = i.map_in_pattern(["src=\"", "\""], |u| {
-                                    links.get(u).cloned().unwrap_or_else(|| u.to_string())
-                                });
-                                format!(" loading=\"lazy\"{i}")
+        <div class="img-block bd-placeholder-img" style="height:194px;width:100%;overflow:hidden;">
+            <OptionalImage
+                alt={ post.as_ref().map(|p| p.title.clone()) }
+                priority={ is_full || priority }
+                image={
+                    post.as_ref().and_then(|p| {
+                        p.image_url
+                            .clone()
+                            .map(|u| p.processed_image_urls.get(&u).cloned().unwrap_or(u))
+                    })
+                }
+            />
+        </div>
+        <div class="card-body pb-0">
+            <h4 class="card-title placeholder-glow">
+                if let Some(title) = post.as_ref().map(|p| p.title.clone()) {
+                    { title }
+                } else {
+                    <span class="placeholder col-6 bg-secondary"></span>
+                }
+            </h4>
+            <article class="card-text placeholder-glow">
+                if let Some(text) = post.as_ref().map(|post| {
+                    if let (Some(content), true) = (post.content.clone(), is_full) {
+                        let links = post.processed_image_urls.clone();
+                        let content = content.map_in_pattern(["<img", ">"], |i| {
+                            let i = i.map_in_pattern(["src=\"", "\""], |u| {
+                                links.get(u).cloned().unwrap_or_else(|| u.to_string())
                             });
-                            Html::from_html_unchecked(AttrValue::from(content))
-                        } else {
-                            html! { post.summary.clone() }
-                        }
-                    }) {
-                        { text }
+                            format!(" loading=\"lazy\"{i}")
+                        });
+                        Html::from_html_unchecked(AttrValue::from(content))
                     } else {
+                        html! { post.summary.clone() }
+                    }
+                }) {
+                    { text }
+                } else {
+                    <span class="placeholder col-7 bg-secondary"></span> { " " }
+                    <span class="placeholder col-4 bg-secondary"></span> { " " }
+                    <span class="placeholder col-4 bg-secondary"></span> { " " }
+                    <span class="placeholder col-6 bg-secondary"></span> { " " }
+                    <span class="placeholder col-6 bg-secondary"></span> { " " }
+                    <span class="placeholder col-5 bg-secondary"></span> { " " }
+                    <span class="placeholder col-5 bg-secondary"></span> { " " }
+                    <span class="placeholder col-3 bg-secondary"></span> { " " }
+                    if is_full {
                         <span class="placeholder col-7 bg-secondary"></span> { " " }
                         <span class="placeholder col-4 bg-secondary"></span> { " " }
                         <span class="placeholder col-4 bg-secondary"></span> { " " }
@@ -165,20 +169,10 @@ pub fn post_card(props: &PostCardProps) -> Html {
                         <span class="placeholder col-5 bg-secondary"></span> { " " }
                         <span class="placeholder col-5 bg-secondary"></span> { " " }
                         <span class="placeholder col-3 bg-secondary"></span> { " " }
-                        if is_full {
-                            <span class="placeholder col-7 bg-secondary"></span> { " " }
-                            <span class="placeholder col-4 bg-secondary"></span> { " " }
-                            <span class="placeholder col-4 bg-secondary"></span> { " " }
-                            <span class="placeholder col-6 bg-secondary"></span> { " " }
-                            <span class="placeholder col-6 bg-secondary"></span> { " " }
-                            <span class="placeholder col-5 bg-secondary"></span> { " " }
-                            <span class="placeholder col-5 bg-secondary"></span> { " " }
-                            <span class="placeholder col-3 bg-secondary"></span> { " " }
-                        }
                     }
-                </article>
-            </div>
-        </>
+                }
+            </article>
+        </div>
     };
     let tags_content = {
         if let Some(post) = post.as_ref() {
@@ -187,16 +181,14 @@ pub fn post_card(props: &PostCardProps) -> Html {
                 tags_len += t.slug.len() + 1;
                 tags_len < 30
             }).map(|tag| { html! {
-                <>
-                    <Link<Route, (), Tag>
-                        classes="link link-underline-opacity-25 link-underline-opacity-100-hover"
-                        to={ Route::Tag { id: tag.id, slug: tag.slug.clone() } }
-                        state={ Some(tag.clone()) }
-                    >
-                        { tag.title.clone() }
-                    </Link<Route, (), Tag>>
-                    { " " }
-                </>
+                <Link<Route, (), Tag>
+                    classes="link link-underline-opacity-25 link-underline-opacity-100-hover"
+                    to={ Route::Tag { id: tag.id, slug: tag.slug.clone() } }
+                    state={ Some(tag.clone()) }
+                >
+                    { tag.title.clone() }
+                </Link<Route, (), Tag>>
+                { " " }
             } }).collect::<Html>();
             html! {
                 <p class="mt-0 mb-0">{ tags }</p>

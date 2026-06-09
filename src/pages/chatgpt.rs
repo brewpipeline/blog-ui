@@ -256,69 +256,65 @@ pub fn chatgpt() -> Html {
     }
 
     html! {
-        <>
-            <Meta title="ChatGPT" noindex=true />
-            { for (*messages).iter().map(|m| html! {
-                <div class="card mb-3">
-                    <div class="card-header d-flex align-items-center">
-                        <i class={classes!(
-                            "bi",
-                            match m.from {
-                                ChatFrom::User => "bi-person-fill",
-                                ChatFrom::ChatGpt => "bi-openai",
-                                ChatFrom::System => "bi-exclamation-triangle",
-                            },
-                            "me-2"
-                        )}></i>
+        <Meta title="ChatGPT" noindex=true />
+        { for (*messages).iter().map(|m| html! {
+            <div class="card mb-3">
+                <div class="card-header d-flex align-items-center">
+                    <i class={classes!(
+                        "bi",
+                        match m.from {
+                            ChatFrom::User => "bi-person-fill",
+                            ChatFrom::ChatGpt => "bi-openai",
+                            ChatFrom::System => "bi-exclamation-triangle",
+                        },
+                        "me-2"
+                    )}></i>
+                    {
+                        match m.from {
+                            ChatFrom::User => lang::CHATGPT_USER,
+                            ChatFrom::ChatGpt => "ChatGPT",
+                            ChatFrom::System => lang::CHATGPT_SYSTEM,
+                        }
+                    }
+                </div>
+                <div class="card-body">
+                    <p class="card-text">
                         {
                             match m.from {
-                                ChatFrom::User => lang::CHATGPT_USER,
-                                ChatFrom::ChatGpt => "ChatGPT",
-                                ChatFrom::System => lang::CHATGPT_SYSTEM,
+                                ChatFrom::ChatGpt => render_text_with_links(&m.text),
+                                _ => render_text_with_newlines(&m.text),
                             }
                         }
-                    </div>
-                    <div class="card-body">
-                        <p class="card-text">
-                            {
-                                match m.from {
-                                    ChatFrom::ChatGpt => render_text_with_links(&m.text),
-                                    _ => render_text_with_newlines(&m.text),
-                                }
-                            }
-                        </p>
+                    </p>
+                </div>
+            </div>
+        }) }
+        if *sending {
+            <div class="card mb-3">
+                <div class="card-header d-flex align-items-center">
+                    <i class={classes!("bi","bi-openai","me-2")}></i>
+                    { "ChatGPT" }
+                </div>
+                <div class="card-body">
+                    <div class="d-flex align-items-center">
+                        <span class="spinner-border spinner-border-sm me-2" role="status" aria-hidden="true"></span>
+                        <span>{ lang::CHATGPT_TYPING }</span>
                     </div>
                 </div>
-            }) }
-            { if *sending {
-                html! {
-                    <div class="card mb-3">
-                        <div class="card-header d-flex align-items-center">
-                            <i class={classes!("bi","bi-openai","me-2")}></i>
-                            { "ChatGPT" }
-                        </div>
-                        <div class="card-body">
-                            <div class="d-flex align-items-center">
-                                <span class="spinner-border spinner-border-sm me-2" role="status" aria-hidden="true"></span>
-                                <span>{ lang::CHATGPT_TYPING }</span>
-                            </div>
-                        </div>
-                    </div>
-                }
-            } else { html!{} } }
-            <div class="mb-3">
-                <textarea
-                    class="form-control"
-                    rows="3"
-                    placeholder={ lang::CHATGPT_PLACEHOLDER }
-                    value={(*question).clone()}
-                    {oninput}
-                    {onkeydown}
-                />
             </div>
-            <div class="mb-3 d-grid gap-2">
-                <button class="btn btn-light" {onclick} disabled={*sending}>{ lang::COMMON_SEND }</button>
-            </div>
-        </>
+        }
+        <div class="mb-3">
+            <textarea
+                class="form-control"
+                rows="3"
+                placeholder={ lang::CHATGPT_PLACEHOLDER }
+                value={(*question).clone()}
+                {oninput}
+                {onkeydown}
+            />
+        </div>
+        <div class="mb-3 d-grid gap-2">
+            <button class="btn btn-light" {onclick} disabled={*sending}>{ lang::COMMON_SEND }</button>
+        </div>
     }
 }

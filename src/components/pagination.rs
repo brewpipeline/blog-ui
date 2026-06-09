@@ -65,11 +65,9 @@ where
             .take(max_links - 2)
             .map(|page| render_link(page, props));
         html! {
-            <>
-                for link in links { {link} }
-                <li class="page-item text-center disabled"><span class="page-link">{ ELLIPSIS }</span></li>
-                { last_link }
-            </>
+            for link in links { {link} }
+            <li class="page-item text-center disabled"><span class="page-link">{ ELLIPSIS }</span></li>
+            { last_link }
         }
     } else {
         html! { for page in pages { {render_link(page, props)} } }
@@ -90,11 +88,9 @@ fn view_links(props: &PaginationProps) -> Html {
     let links_right = 2 * LINKS_PER_SIDE - links_left;
 
     html! {
-        <>
-            { render_links(1..page, pages_prev, links_left, props) }
-            { render_link(page, props) }
-            { render_links(page + 1..=total_pages, pages_next, links_right, props) }
-        </>
+        { render_links(1..page, pages_prev, links_left, props) }
+        { render_link(page, props) }
+        { render_links(page + 1..=total_pages, pages_next, links_right, props) }
     }
 }
 
