@@ -50,7 +50,12 @@ pub fn post(props: &PostProps) -> Html {
                             title={ lang::post_meta_title(&post.title) }
                             description={ post.summary.clone() }
                             keywords={ post.joined_tags_string(", ") }
-                            image={ post.image_url.clone().unwrap_or_default() }
+                            image={
+                                post.image_url
+                                    .clone()
+                                    .map(|u| post.processed_image_urls.get(&u).cloned().unwrap_or(u))
+                                    .unwrap_or_default()
+                            }
                             noindex={ post.noindex }
                         />
                     } else {

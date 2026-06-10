@@ -32,7 +32,12 @@ pub fn author(props: &AuthorProps) -> Html {
                         title={ lang::author_meta_title(&author_slug_formatter(&author)) }
                         description={ author.status.clone().unwrap_or_default() }
                         keywords=""
-                        image={ author.image_url.clone().unwrap_or_default() }
+                        image={
+                            author.image_url
+                                .clone()
+                                .map(|u| author.processed_image_urls.get(&u).cloned().unwrap_or(u))
+                                .unwrap_or_default()
+                        }
                     />
                 } else {
                     <Meta title={ lang::AUTHOR_TITLE } noindex=true />
