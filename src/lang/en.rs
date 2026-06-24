@@ -47,8 +47,10 @@ pub const AUTH_LOGOUT_MENU: &str = "Log out";
 
 // Posts page
 pub const POSTS_TITLE: &str = "Posts";
-pub const POSTS_ERROR: &str = "Failed to load posts!";
-pub const POSTS_EMPTY: &str = "No posts.";
+pub const POSTS_ERROR_TITLE: &str = "Failed to load posts";
+pub const POSTS_ERROR_TEXT: &str = "Failed to load posts!";
+pub const POSTS_EMPTY_TITLE: &str = "No posts";
+pub const POSTS_EMPTY_TEXT: &str = "No posts.";
 
 // Post page
 pub const POST_TITLE: &str = "Post";
@@ -62,8 +64,10 @@ pub fn post_meta_title(title: &str) -> String {
 
 // Authors page
 pub const AUTHORS_TITLE: &str = "Authors";
-pub const AUTHORS_ERROR: &str = "Failed to load authors!";
-pub const AUTHORS_EMPTY: &str = "No authors.";
+pub const AUTHORS_ERROR_TITLE: &str = "Failed to load authors";
+pub const AUTHORS_ERROR_TEXT: &str = "Failed to load authors!";
+pub const AUTHORS_EMPTY_TITLE: &str = "No authors";
+pub const AUTHORS_EMPTY_TEXT: &str = "No authors.";
 
 // Author page
 pub const AUTHOR_TITLE: &str = "Author";

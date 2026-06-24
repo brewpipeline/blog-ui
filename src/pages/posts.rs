@@ -28,12 +28,12 @@ pub fn posts() -> Html {
             route_to_page={ Route::Posts }
             component={ |(i, post)| html! { <PostCard { post } is_full=false priority={ i < 2 } /> } }
             error_component={ |_| html! {
-                <Meta title={ lang::POSTS_ERROR } noindex=true />
-                <Warning text={ lang::POSTS_ERROR } />
+                <Meta title={ lang::POSTS_ERROR_TITLE } noindex=true />
+                <Warning text={ lang::POSTS_ERROR_TEXT } />
             } }
         >
-            <Meta title={ lang::POSTS_EMPTY } noindex=true />
-            <Warning text={ lang::POSTS_EMPTY } />
+            <Meta title={ lang::POSTS_EMPTY_TITLE } noindex=true />
+            <Warning text={ lang::POSTS_EMPTY_TEXT } />
         </List<API<PostsContainer>, OptionTokened<PostsContainerParams>>>
     }
 }

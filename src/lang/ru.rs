@@ -47,8 +47,10 @@ pub const AUTH_LOGOUT_MENU: &str = "Выход";
 
 // Posts page
 pub const POSTS_TITLE: &str = "Публикации";
-pub const POSTS_ERROR: &str = "Ошибка загрузки публикаций!";
-pub const POSTS_EMPTY: &str = "Нет публикаций.";
+pub const POSTS_ERROR_TITLE: &str = "Ошибка загрузки публикаций";
+pub const POSTS_ERROR_TEXT: &str = "Ошибка загрузки публикаций!";
+pub const POSTS_EMPTY_TITLE: &str = "Нет публикаций";
+pub const POSTS_EMPTY_TEXT: &str = "Нет публикаций.";
 
 // Post page
 pub const POST_TITLE: &str = "Публикация";
@@ -62,8 +64,10 @@ pub fn post_meta_title(title: &str) -> String {
 
 // Authors page
 pub const AUTHORS_TITLE: &str = "Авторы";
-pub const AUTHORS_ERROR: &str = "Ошибка загрузки авторов!";
-pub const AUTHORS_EMPTY: &str = "Нет авторов.";
+pub const AUTHORS_ERROR_TITLE: &str = "Ошибка загрузки авторов";
+pub const AUTHORS_ERROR_TEXT: &str = "Ошибка загрузки авторов!";
+pub const AUTHORS_EMPTY_TITLE: &str = "Нет авторов";
+pub const AUTHORS_EMPTY_TEXT: &str = "Нет авторов.";
 
 // Author page
 pub const AUTHOR_TITLE: &str = "Автор";
