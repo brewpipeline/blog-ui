@@ -27,8 +27,12 @@ pub fn posts() -> Html {
             use_caches=true
             route_to_page={ Route::Posts }
             component={ |(i, post)| html! { <PostCard { post } is_full=false priority={ i < 2 } /> } }
-            error_component={ |_| html! { <Warning text={ lang::POSTS_ERROR } /> } }
+            error_component={ |_| html! {
+                <Meta title={ lang::POSTS_ERROR } noindex=true />
+                <Warning text={ lang::POSTS_ERROR } />
+            } }
         >
+            <Meta title={ lang::POSTS_EMPTY } noindex=true />
             <Warning text={ lang::POSTS_EMPTY } />
         </List<API<PostsContainer>, OptionTokened<PostsContainerParams>>>
     }

@@ -19,8 +19,12 @@ pub fn authors() -> Html {
             use_caches=true
             route_to_page={ Route::Authors }
             component={ |(i, author)| html! { <AuthorCard { author } link_to=true priority={ i < 4 } /> } }
-            error_component={ |_| html! { <Warning text={ lang::AUTHORS_ERROR } /> } }
+            error_component={ |_| html! {
+                <Meta title={ lang::AUTHORS_ERROR } noindex=true />
+                <Warning text={ lang::AUTHORS_ERROR } />
+            } }
         >
+            <Meta title={ lang::AUTHORS_EMPTY } noindex=true />
             <Warning text={ lang::AUTHORS_EMPTY } />
         </List<API<AuthorsContainer>>>
     }
